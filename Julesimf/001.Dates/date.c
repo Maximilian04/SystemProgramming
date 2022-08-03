@@ -4,47 +4,34 @@
 
 #include <stdio.h>
 
-void date_scan(struct date* date) {
+void date_scan(Date* date) {
     scanf("%d.%d.%d", &date->day, &date->month, &date->year);
 }
 
-void printFormattedInt(int out) {
-    if (out <= 9) {
-        printf("0%d", out);
-    } else {
-        printf("%d", out);
-    }
+void date_print(Date date) {
+    printf("%02d.%02d.%04d\n", date.day, date.month, date.year);
 }
 
-void date_print(struct date date) {
-    printFormattedInt(date.day);
-    printf(".");
-    printFormattedInt(date.month);
-    printf(".");
-    printFormattedInt(date.year);
-    printf("\n");
+int date_date2i(Date date) {
+    return gregCalendar_date2i(date);
 }
 
-int date_date2i(struct date date) {
-    return gregCalendar_day2i(date.day) +
-        gregCalendar_month2i(date.month, gregCalendar_isYearLeap(date.year)) +
-        gregCalendar_year2i(date.year);
-}
-
-//struct date date_i2date(int i) {
-//    return (struct date) { 0, 0, 0 };
+//date date_i2date(int i) {
+//    return (date) { 0, 0, 0 };
 //}
 
-bool date_less(struct date first, struct date second) {
+bool date_less(Date first, Date second) {
     if (first.year < second.year) {
         return true;
-    } else if (first.year > second.year) {
+    }
+    if (first.year > second.year) {
         return false;
     }
 
     if (first.month < second.month) {
         return true;
-    } else if (first.month > second.month) {
+    }
+    if (first.month > second.month) {
         return false;
     }
 
@@ -54,15 +41,15 @@ bool date_less(struct date first, struct date second) {
     return false;
 }
 
-bool date_equal(struct date first, struct date second) {
+bool date_equal(Date first, Date second) {
     return (
         first.day == second.day &&
         first.month == second.month &&
         first.year == second.year);
 }
 
-struct date date_sub(struct date date1, struct date date2) {
-    struct date res = { 0, 0, 0 };
+Date date_sub(Date date1, Date date2) {
+    Date res = { 0, 0, 0 };
     res.day = date1.day - date2.day;
     res.month = date1.month - date2.month;
     res.year = date1.year - date2.year;
@@ -70,8 +57,8 @@ struct date date_sub(struct date date1, struct date date2) {
     return res;
 }
 
-struct date date_add(struct date date1, struct date date2) {
-    struct date res = { 0, 0, 0 };
+Date date_add(Date date1, Date date2) {
+    Date res = { 0, 0, 0 };
     res.day = date1.day + date2.day;
     res.month = date1.month + date2.month;
     res.year = date1.year + date2.year;
@@ -79,12 +66,12 @@ struct date date_add(struct date date1, struct date date2) {
     return res;
 }
 
-int date_calcDuration(struct date begin, struct date end) {
+int date_calcDuration(Date begin, Date end) {
     return date_date2i(end) - date_date2i(begin);
 }
 
-struct date date_calcInterval(struct date begin, struct date end) {
-    struct date interval = date_sub(end, begin);
+Date date_calcInterval(Date begin, Date end) {
+    Date interval = date_sub(end, begin);
 
     if (interval.day < 0) {
         interval.month--;

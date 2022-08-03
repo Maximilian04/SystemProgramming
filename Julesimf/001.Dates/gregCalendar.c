@@ -33,12 +33,12 @@ int gregCalendar_monthDuration(int month, bool isLeap) {
     }
 }
 
-int gregCalendar_year2i(int year) {
+int year2i(int year) {
     year--;
     return year * 365 + year / 4 - year / 100 + year / 400;
 }
 
-int gregCalendar_month2i(int month, bool isLeap) {
+int month2i(int month, bool isLeap) {
     month--;
     int res = 0;
     switch (month) {
@@ -69,7 +69,13 @@ int gregCalendar_month2i(int month, bool isLeap) {
     return res;
 }
 
-int gregCalendar_day2i(int day) {
+int day2i(int day) {
     day--;
     return day;
+}
+
+int gregCalendar_date2i(Date date) {
+    return day2i(date.day) +
+        month2i(date.month, gregCalendar_isYearLeap(date.year)) +
+        year2i(date.year);
 }
