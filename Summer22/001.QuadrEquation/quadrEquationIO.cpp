@@ -3,6 +3,13 @@
 
 #include "quadrEquationIO.h"
 
+/**
+ * @brief Ask user to print coefficients for quadratic equation
+ * 
+ * Is working until gets correct input
+ * 
+ * @param [out] equationPtr Equation
+ */
 void inputQuadrEquation(QuadrEquation* equationPtr) {
     printf("Print coefficients for \"a*x^2 + b*x + c = 0\" equation: \n");
     while (!quadrEquation::scan(equationPtr)) {
@@ -11,6 +18,11 @@ void inputQuadrEquation(QuadrEquation* equationPtr) {
     }
 }
 
+/**
+ * @brief Solves quadratic equation and prints roots
+ * 
+ * @param [in] equationPtr 
+ */
 void outputQuadrEquation(QuadrEquation* equationPtr) {
     double root1 = 0;
     double root2 = 0;

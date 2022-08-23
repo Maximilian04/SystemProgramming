@@ -1,3 +1,12 @@
+/**
+ * @file quadrEquationIO.h
+ * @author Maximilian (https://github.com/Maximilian04)
+ * @brief Input and output of quadratic equations
+ * @date 2022-08-23
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #include "QuadrEquation.h"
 
 void inputQuadrEquation(QuadrEquation* equationPtr);
