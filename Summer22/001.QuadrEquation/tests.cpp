@@ -11,9 +11,9 @@ bool test_quadrEquation_solve(double a, double b, double c, int resultAns, doubl
     quadrEquation::NumberOfRoots result = quadrEquation::solve(&equation, &root1, &root2);
 
     return
-        compareDouble(result, resultAns) &&
-        compareDouble(root1, root1Ans) &&
-        compareDouble(root2, root2Ans);
+        (compareDouble(result, resultAns) ? true : (printf("got wrong result\n"))) &&
+        (compareDouble(root1, root1Ans)   ? true : (printf("got %lg expected %lg as root1\n", root1, root1Ans), false)) &&
+        (compareDouble(root2, root2Ans)   ? true : (printf("got %lg expected %lg as root2\n", root2, root2Ans), false));
 }
 
 int main() {
