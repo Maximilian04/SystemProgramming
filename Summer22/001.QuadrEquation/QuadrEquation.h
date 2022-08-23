@@ -16,9 +16,9 @@ namespace quadrEquation {
 
     enum NumberOfRoots {
         NO_ROOTS = 0,
-        ONE_ROOT = 1,
-        TWO_ROOTS = 2,
-        INF_ROOTS = 3,
+        ONE_ROOT,
+        TWO_ROOTS,
+        INF_ROOTS,
     }; // TODO занести выравнивание в editorconfig
 
     NumberOfRoots solve(QuadrEquation* equation, double* root1, double* root2);
