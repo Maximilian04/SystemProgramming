@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <math.h>
 
@@ -19,8 +18,8 @@ namespace quadrEquation {
 
         return (
             isfinite(equation->a) &&
-            isfinite(equation->a) &&
-            isfinite(equation->a));
+            isfinite(equation->b) &&
+            isfinite(equation->c));
     }
 
     void print(QuadrEquation equation) {
@@ -28,6 +27,8 @@ namespace quadrEquation {
     }
 
     NumberOfRoots solveLinearEquation(QuadrEquation* equation, double* root1) {
+        assert(equation != nullptr);
+        assert(root1 != nullptr);
         if (abs(equation->b) < DOUBLE_COMPARE_ACC) {
             // b = 0
             if (abs(equation->c) < DOUBLE_COMPARE_ACC) {
@@ -47,6 +48,7 @@ namespace quadrEquation {
     }
 
     NumberOfRoots solve(QuadrEquation* equation, double* root1, double* root2) {
+        assert(equation != nullptr);
         assert(root1 != nullptr);
         assert(root2 != nullptr);
 
