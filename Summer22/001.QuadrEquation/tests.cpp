@@ -17,7 +17,10 @@ bool test_quadrEquation_solve(double a, double b, double c, int resultAns, doubl
 }
 
 int main() {
-    TEST(test_quadrEquation_solve(0, 0, 0, quadrEquation::NumberOfRoots::INF_ROOTS, 0, 0));
+    TEST(test_quadrEquation_solve(1, 1,  1, quadrEquation::NumberOfRoots::NO_ROOTS,   0, 0));
+    TEST(test_quadrEquation_solve(1, 0,  0, quadrEquation::NumberOfRoots::ONE_ROOT,   0, 0));
+    TEST(test_quadrEquation_solve(1, 0, -1, quadrEquation::NumberOfRoots::TWO_ROOTS, -1, 1));
+    TEST(test_quadrEquation_solve(0, 0,  0, quadrEquation::NumberOfRoots::INF_ROOTS,  0, 0));
 
     printf("TESTS ARE DONE\n");
     return 0;
