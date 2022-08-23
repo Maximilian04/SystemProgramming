@@ -30,7 +30,7 @@ namespace quadrEquation {
         assert(root1 != nullptr);
         if (compareDouble(equation->b, 0.)) {
             // b = 0
-            if (compareDouble(equation->c, 0)) {
+            if (compareDouble(equation->c, 0.)) {
                 // c = 0
                 // 0 = 0
                 return NumberOfRoots::INF_ROOTS;
@@ -51,7 +51,7 @@ namespace quadrEquation {
         assert(root1 != nullptr);
         assert(root2 != nullptr);
 
-        if (compareDouble(equation->a, 0)) {
+        if (compareDouble(equation->a, 0.)) {
             // a = 0
             return solveLinearEquation(equation, root1);
         }
@@ -63,15 +63,16 @@ namespace quadrEquation {
             // D < 0
             return NumberOfRoots::NO_ROOTS;
         }
-        if (compareDouble(discr, 0)) {
+        if (compareDouble(discr, 0.)) {
             // D = 0
             *root1 = -equation->b / (2 * equation->a);
             return NumberOfRoots::ONE_ROOT;
         }
         // D > 0
 
-        *root1 = (-equation->b - sqrt(discr)) / (2 * equation->a);
-        *root2 = (-equation->b + sqrt(discr)) / (2 * equation->a);
+        double discrSqrt = sqrt(discr);
+        *root1 = (-equation->b - discrSqrt) / (2 * equation->a);
+        *root2 = (-equation->b + discrSqrt) / (2 * equation->a);
         return NumberOfRoots::TWO_ROOTS;
     }
 }
