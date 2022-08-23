@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <math.h>
 
+#include "compareDouble.h"
 #include "QuadrEquation.h"
-
-#define DOUBLE_COMPARE_ACC (1e-10)
 
 namespace quadrEquation {
     NumberOfRoots solveLinearEquation(QuadrEquation* equation, double* root1);
@@ -29,9 +28,9 @@ namespace quadrEquation {
     NumberOfRoots solveLinearEquation(QuadrEquation* equation, double* root1) {
         assert(equation != nullptr);
         assert(root1 != nullptr);
-        if (abs(equation->b) < DOUBLE_COMPARE_ACC) {
+        if (compareDouble(equation->b, 0.)) {
             // b = 0
-            if (abs(equation->c) < DOUBLE_COMPARE_ACC) {
+            if (compareDouble(equation->c, 0)) {
                 // c = 0
                 // 0 = 0
                 return NumberOfRoots::INF_ROOTS;
@@ -52,7 +51,7 @@ namespace quadrEquation {
         assert(root1 != nullptr);
         assert(root2 != nullptr);
 
-        if (abs(equation->a) < DOUBLE_COMPARE_ACC) {
+        if (compareDouble(equation->a, 0)) {
             // a = 0
             return solveLinearEquation(equation, root1);
         }
@@ -64,7 +63,7 @@ namespace quadrEquation {
             // D < 0
             return NumberOfRoots::NO_ROOTS;
         }
-        if (abs(discr) < DOUBLE_COMPARE_ACC) {
+        if (compareDouble(discr, 0)) {
             // D = 0
             *root1 = -equation->b / (2 * equation->a);
             return NumberOfRoots::ONE_ROOT;
