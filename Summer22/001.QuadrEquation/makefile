@@ -14,8 +14,8 @@ build\QuadrEquation.o: QuadrEquation.cpp
 	@ move QuadrEquation.o build > NUL
 
 
-tests: build\tests.o date
-	@ g++ $(COMPILE_FLAGS) build\tests.o build\date.o build\gregCalendar.o -o build\tests
+tests: build\tests.o
+	@ g++ $(COMPILE_FLAGS) build\tests.o -o build\tests
 	@ .\build\tests.exe
 
 build\tests.o: tests.c
