@@ -1,12 +1,17 @@
-#include "quadrEquation.h"
-
 #include <stdio.h>
 #include <cassert>
 
+#include "quadrEquation.h"
+
 int main() {
-    QuadrEquation equation;
+    QuadrEquation equation = {};
     printf("Print coefficients for \"a*x^2 + b*x + c = 0\" equation: \n");
-    quadrEquation::scan(&equation);
+    while (!quadrEquation::scan(&equation)) {
+        while (getchar() != '\n');
+        printf("Input is incorrect! Print coefficients for \"a*x^2 + b*x + c = 0\" equation: \n");
+    }
+
+    quadrEquation::print(equation);
 
     double root1 = 0;
     double root2 = 0;

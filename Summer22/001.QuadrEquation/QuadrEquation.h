@@ -1,4 +1,8 @@
-#pragma once
+#ifndef QUADREQUATION_H
+#define QUADREQUATION_H
+
+#include <cassert>
+#include <cerrno>
 
 typedef struct {
     double a;
@@ -7,15 +11,17 @@ typedef struct {
 } QuadrEquation;
 
 namespace quadrEquation {
-    void scan(QuadrEquation* equation);
+    bool scan(QuadrEquation* equation);
     void print(QuadrEquation equation);
 
     enum NumberOfRoots {
         NO_ROOTS = 0,
-        ONE_ROOT,
-        TWO_ROOTS,
-        INF_ROOTS,
-    };
+        ONE_ROOT = 1,
+        TWO_ROOTS = 2,
+        INF_ROOTS = 3,
+    }; // TODO занести выравнивание в editorconfig
 
     NumberOfRoots solve(QuadrEquation* equation, double* root1, double* root2);
 }
+
+#endif // QUADREQUATION_H
