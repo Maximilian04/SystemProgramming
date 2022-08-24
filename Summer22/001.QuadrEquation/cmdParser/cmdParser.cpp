@@ -24,7 +24,7 @@ namespace cmdParser {
 
                 flagsNumber++;
             } else {
-                if ((flagsNumber > 0) && (flags[flagsNumber - 1].index == (argI - 1))) {
+                if (flagsNumber > 0 && flags[flagsNumber - 1].index == (argI - 1)) {
                     flags[flagsNumber - 1].hasArgument = true;
                     strcpy(flags[flagsNumber - 1].argument, argv[argI]);
                 } else {

@@ -6,7 +6,7 @@
 
 /**
  * @brief Prints help message to console
- * 
+ *
  */
 void printHelpMessage() {
     printf(
@@ -41,7 +41,11 @@ cmdParser::ParserResult cmdParser::processFlags(int argc, char** argv, void* use
 
             *(((ProccessFlagsPtrs*)userdata)->programModePtr) |= ProgramMode::EXT_TEST_FILE;
             strcpy(((ProccessFlagsPtrs*)userdata)->userTestFileName, cmdArguments[cmdFlagI].argument);
+            break;
         default:
+            printf("Unknown flag '-%c'. Please use flags from list below.\n", cmdArguments[cmdFlagI].key);
+            printHelpMessage();
+            return cmdParser::ParserResult::BAD_INPUT;
             break;
         }
     }

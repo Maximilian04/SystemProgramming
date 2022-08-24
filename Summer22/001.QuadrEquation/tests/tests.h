@@ -14,7 +14,7 @@
 
 #include "TestResult.h"
 
-#define MAX_FUNC_NAME_LENGTH 64 ///< Size of string buffer for function is tested
+const int MAX_FUNC_NAME_LENGTH = 64; ///< Size of string buffer for function is tested
 
 namespace test {
     TestResult quadrEquation_solve(FILE* inputFile);

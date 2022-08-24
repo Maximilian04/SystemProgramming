@@ -18,8 +18,8 @@
  * Can be added via | operator
  */
 enum ProgramMode {
-    EXT_TEST_FILE = 0b0001, ///< Tests from user's file
     STD_TEST_FILE = 0b0000, ///< Tests from standart file
+    EXT_TEST_FILE = 0b0001, ///< Tests from user's file
 };
 
 /**

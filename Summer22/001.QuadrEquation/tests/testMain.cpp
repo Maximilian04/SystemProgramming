@@ -9,6 +9,7 @@
 int main(int argc, char** argv) {
     int programMode = ProgramMode::STD_TEST_FILE;
     char userTestFileName[MAX_CMD_ARG_LENGTH] = {};
+    // TODO убрать две strcpy
 
     ProccessFlagsPtrs proccessFlagsPtrs = {
         &programMode,
@@ -28,7 +29,7 @@ int main(int argc, char** argv) {
 
     FILE* testFile = autoTest::openTestFile((programMode & EXT_TEST_FILE), proccessFlagsPtrs.userTestFileName);
 
-    char command[MAX_FUNC_NAME_LENGTH];
+    char command[MAX_FUNC_NAME_LENGTH] = {};
 
     while (fscanf(testFile, "%s", command) != EOF) {
 
