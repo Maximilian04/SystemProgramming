@@ -18,12 +18,20 @@ build\QuadrEquation.o: QuadrEquation.cpp
 	@ move QuadrEquation.o build > NUL
 
 
-tests: build\tests.o
-	@ g++ $(COMPILE_FLAGS) build\tests.o build\QuadrEquation.o -o build\tests
+tests: build\testMain.o build\autoTest.o build\tests.o
+	@ g++ $(COMPILE_FLAGS) build\testMain.o build\autoTest.o build\tests.o build\QuadrEquation.o -o build\tests
 	@ .\build\tests.exe
 
-build\tests.o: tests.cpp
-	@ g++ $(COMPILE_FLAGS) -c tests.cpp
+build\testMain.o: tests\testMain.cpp
+	@ g++ $(COMPILE_FLAGS) -c tests\testMain.cpp -I .
+	@ move testMain.o build > NUL
+
+build\autoTest.o: tests\autoTest.cpp
+	@ g++ $(COMPILE_FLAGS) -c tests\autoTest.cpp -I .
+	@ move autoTest.o build > NUL
+
+build\tests.o: tests\tests.cpp
+	@ g++ $(COMPILE_FLAGS) -c tests\tests.cpp -I .
 	@ move tests.o build > NUL
 
 clean:

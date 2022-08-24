@@ -1,0 +1,2 @@
+quadrEquation_solve 4 0 -4 TWO_ROOTS -1 1
+quadrEquation_solve 1 -4 4 ONE_ROOT   2 0
