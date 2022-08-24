@@ -13,7 +13,7 @@
 #include "TestResult.h"
 
 namespace autoTest {
-    FILE* openTestFile(int argc, char** argv);
+    FILE* openTestFile(bool hasSpecialFile, char* userFileName = nullptr);
 
     bool runTest(TestResult(*testFunction) (FILE* inputFile), const char* name, char* command, FILE* testFile);
 }

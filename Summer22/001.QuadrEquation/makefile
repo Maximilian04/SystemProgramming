@@ -18,13 +18,17 @@ build\QuadrEquation.o: QuadrEquation.cpp
 	@ move QuadrEquation.o build > NUL
 
 
-tests: build\testMain.o build\autoTest.o build\tests.o
-	@ g++ $(COMPILE_FLAGS) build\testMain.o build\autoTest.o build\tests.o build\QuadrEquation.o -o build\tests
+tests: build\testMain.o build\cmdParser.o build\testUI.o build\autoTest.o build\tests.o
+	@ g++ $(COMPILE_FLAGS) build\testMain.o build\cmdParser.o build\testUI.o build\autoTest.o build\tests.o build\QuadrEquation.o -o build\tests
 	@ .\build\tests.exe
 
 build\testMain.o: tests\testMain.cpp
 	@ g++ $(COMPILE_FLAGS) -c tests\testMain.cpp -I .
 	@ move testMain.o build > NUL
+
+build\testUI.o: tests\testUI.cpp
+	@ g++ $(COMPILE_FLAGS) -c tests\testUI.cpp -I .
+	@ move testUI.o build > NUL
 
 build\autoTest.o: tests\autoTest.cpp
 	@ g++ $(COMPILE_FLAGS) -c tests\autoTest.cpp -I .
@@ -33,6 +37,12 @@ build\autoTest.o: tests\autoTest.cpp
 build\tests.o: tests\tests.cpp
 	@ g++ $(COMPILE_FLAGS) -c tests\tests.cpp -I .
 	@ move tests.o build > NUL
+
+
+build\cmdParser.o: cmdParser\cmdParser.cpp
+	@ g++ $(COMPILE_FLAGS) -c cmdParser\cmdParser.cpp -I .
+	@ move cmdParser.o build > NUL
+
 
 clean:
 	@ del build\*.o build\*.exe
