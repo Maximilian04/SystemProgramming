@@ -68,9 +68,9 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#define-members">Macros</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">cmdParser.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -85,17 +85,6 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcmd_parser_1_1_cmd_argument.html">cmdParser::CmdArgument</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Structure for cmd flags.  <a href="structcmd_parser_1_1_cmd_argument.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
-Macros</h2></td></tr>
-<tr class="memitem:af98cc25d0220721b6a0343f1a364bbc7"><td class="memItemLeft" align="right" valign="top"><a id="af98cc25d0220721b6a0343f1a364bbc7" name="af98cc25d0220721b6a0343f1a364bbc7"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>MAX_CMD_ARG_LENGTH</b>&#160;&#160;&#160;64</td></tr>
-<tr class="memdesc:af98cc25d0220721b6a0343f1a364bbc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size of string buffer for one cmd argument. <br /></td></tr>
-<tr class="separator:af98cc25d0220721b6a0343f1a364bbc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0647de3442f59816b422e10033781fa3"><td class="memItemLeft" align="right" valign="top"><a id="a0647de3442f59816b422e10033781fa3" name="a0647de3442f59816b422e10033781fa3"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>MAX_CMD_ARGS_COUNT</b>&#160;&#160;&#160;64</td></tr>
-<tr class="memdesc:a0647de3442f59816b422e10033781fa3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size of buffer for flags. <br /></td></tr>
-<tr class="separator:a0647de3442f59816b422e10033781fa3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -113,6 +102,17 @@ Functions</h2></td></tr>
 <tr class="memitem:a2d6f9bbbdd5ac12555a60b67af85096a"><td class="memItemLeft" align="right" valign="top">ParserResult&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cmd_parser_8h.html#a2d6f9bbbdd5ac12555a60b67af85096a">cmdParser::processFlags</a> (int argc, char **argv, void *userdata=nullptr)</td></tr>
 <tr class="memdesc:a2d6f9bbbdd5ac12555a60b67af85096a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function with description of reactions to flags.  <a href="cmd_parser_8h.html#a2d6f9bbbdd5ac12555a60b67af85096a">More...</a><br /></td></tr>
 <tr class="separator:a2d6f9bbbdd5ac12555a60b67af85096a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a7caf7b65f8ef62f7e09c225b0fda4c4d"><td class="memItemLeft" align="right" valign="top"><a id="a7caf7b65f8ef62f7e09c225b0fda4c4d" name="a7caf7b65f8ef62f7e09c225b0fda4c4d"></a>
+const int&#160;</td><td class="memItemRight" valign="bottom"><b>MAX_CMD_ARG_LENGTH</b> = 64</td></tr>
+<tr class="memdesc:a7caf7b65f8ef62f7e09c225b0fda4c4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size of string buffer for one cmd argument. <br /></td></tr>
+<tr class="separator:a7caf7b65f8ef62f7e09c225b0fda4c4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace73c3624b85818f59832d0ca05bfb7e"><td class="memItemLeft" align="right" valign="top"><a id="ace73c3624b85818f59832d0ca05bfb7e" name="ace73c3624b85818f59832d0ca05bfb7e"></a>
+const int&#160;</td><td class="memItemRight" valign="bottom"><b>MAX_CMD_ARGS_COUNT</b> = 64</td></tr>
+<tr class="memdesc:ace73c3624b85818f59832d0ca05bfb7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size of buffer for flags. <br /></td></tr>
+<tr class="separator:ace73c3624b85818f59832d0ca05bfb7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >Utilitys for parse cmd arguments. </p>

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['usertestfilename_0',['userTestFileName',['../struct_proccess_flags_ptrs.html#a1b35e7e984b6ab1786a86e5a2b65c87a',1,'ProccessFlagsPtrs']]]
+  ['programmodeptr_0',['programModePtr',['../struct_proccess_flags_ptrs.html#a834861502200dcd7a695215f6e08d1d1',1,'ProccessFlagsPtrs']]]
 ];
