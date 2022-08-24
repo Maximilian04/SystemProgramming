@@ -80,9 +80,9 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ae519e8d024d29e258bd573e071828fca"><td class="memItemLeft" align="right" valign="top">FILE *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="auto_test_8cpp.html#ae519e8d024d29e258bd573e071828fca">autoTest::openTestFile</a> (int argc, char **argv)</td></tr>
-<tr class="memdesc:ae519e8d024d29e258bd573e071828fca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open file from cmd arguments or standart file.  <a href="auto_test_8cpp.html#ae519e8d024d29e258bd573e071828fca">More...</a><br /></td></tr>
-<tr class="separator:ae519e8d024d29e258bd573e071828fca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a39216f55842dd2b3108c832563cca336"><td class="memItemLeft" align="right" valign="top">FILE *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="auto_test_8cpp.html#a39216f55842dd2b3108c832563cca336">autoTest::openTestFile</a> (bool hasSpecialFile, char *userFileName)</td></tr>
+<tr class="memdesc:a39216f55842dd2b3108c832563cca336"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open file from cmd arguments or standart file.  <a href="auto_test_8cpp.html#a39216f55842dd2b3108c832563cca336">More...</a><br /></td></tr>
+<tr class="separator:a39216f55842dd2b3108c832563cca336"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af5b08ced4864b03114250fd076999c00"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="auto_test_8cpp.html#af5b08ced4864b03114250fd076999c00">autoTest::runTest</a> (<a class="el" href="_test_result_8h.html#aae529400284a6182b4bdb3a5596bd093">TestResult</a>(*testFunction)(FILE *inputFile), const char *name, char *command, FILE *testFile)</td></tr>
 <tr class="memdesc:af5b08ced4864b03114250fd076999c00"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs test from <b>FILE</b> for <b>name</b> function if <b>name</b> is equal with <b>command</b>  <a href="auto_test_8cpp.html#af5b08ced4864b03114250fd076999c00">More...</a><br /></td></tr>
 <tr class="separator:af5b08ced4864b03114250fd076999c00"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -93,8 +93,8 @@ Functions</h2></td></tr>
 <dl class="section date"><dt>Date</dt><dd>2022-08-24</dd></dl>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2022 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="ae519e8d024d29e258bd573e071828fca" name="ae519e8d024d29e258bd573e071828fca"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae519e8d024d29e258bd573e071828fca">&#9670;&nbsp;</a></span>openTestFile()</h2>
+<a id="a39216f55842dd2b3108c832563cca336" name="a39216f55842dd2b3108c832563cca336"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a39216f55842dd2b3108c832563cca336">&#9670;&nbsp;</a></span>openTestFile()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -102,14 +102,14 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">FILE * autoTest::openTestFile </td>
           <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>argc</em>, </td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>hasSpecialFile</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">char **&#160;</td>
-          <td class="paramname"><em>argv</em>&#160;</td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>userFileName</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -122,8 +122,8 @@ Functions</h2></td></tr>
 <p>Open file from cmd arguments or standart file. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">argc</td><td>Cmd arguments </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">argv</td><td>Cmd arguments </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">hasSpecialFile</td><td>If user set file with tests </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">userFileName</td><td>(=nullptr) Name of user's file if hasSpecialFile is set to true </td></tr>
   </table>
   </dd>
 </dl>

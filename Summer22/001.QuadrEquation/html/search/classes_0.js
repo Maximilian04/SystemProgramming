@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['quadrequation_0',['QuadrEquation',['../struct_quadr_equation.html',1,'']]]
+  ['cmdargument_0',['CmdArgument',['../structcmd_parser_1_1_cmd_argument.html',1,'cmdParser']]]
 ];
