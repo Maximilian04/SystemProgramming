@@ -73,31 +73,31 @@ $(function() {
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &lt;cerrno&gt;</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno"><a class="line" href="struct_quadr_equation.html">   21</a></span><span class="keyword">typedef</span> <span class="keyword">struct </span>{</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno"><a class="line" href="struct_quadr_equation.html#a5085e2f736880023fd5e567ac1242b87">   23</a></span>    <span class="keywordtype">double</span> <a class="code hl_variable" href="struct_quadr_equation.html#a5085e2f736880023fd5e567ac1242b87">a</a>;</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno"><a class="line" href="struct_quadr_equation.html#a5b17e8f9d4fa4fe134b2996fd8cf0839">   25</a></span>    <span class="keywordtype">double</span> <a class="code hl_variable" href="struct_quadr_equation.html#a5b17e8f9d4fa4fe134b2996fd8cf0839">b</a>;</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="struct_quadr_equation.html#a3a0b6b1445736c70670659d503b173a5">   27</a></span>    <span class="keywordtype">double</span> <a class="code hl_variable" href="struct_quadr_equation.html#a3a0b6b1445736c70670659d503b173a5">c</a>;</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>} <a class="code hl_struct" href="struct_quadr_equation.html">QuadrEquation</a>;</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">namespace </span>quadrEquation {</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <span class="keywordtype">bool</span> scan(<a class="code hl_struct" href="struct_quadr_equation.html">QuadrEquation</a>* equation);</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <span class="keywordtype">void</span> print(<a class="code hl_struct" href="struct_quadr_equation.html">QuadrEquation</a> equation);</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="_quadr_equation_8h.html#a0f60d41a5d4efd0d030392bedf5e9018">   38</a></span>    <span class="keyword">enum</span> <a class="code hl_enumeration" href="_quadr_equation_8h.html#a0f60d41a5d4efd0d030392bedf5e9018">NumberOfRoots</a> {</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>        NO_ROOTS = 0,</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>        ONE_ROOT,</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        TWO_ROOTS,</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>        INF_ROOTS,</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    }; <span class="comment">// TODO занести выравнивание в editorconfig</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno"><a class="line" href="struct_quadr_equation.html#a5085e2f736880023fd5e567ac1242b87">   22</a></span>    <span class="keywordtype">double</span> <a class="code hl_variable" href="struct_quadr_equation.html#a5085e2f736880023fd5e567ac1242b87">a</a>; </div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno"><a class="line" href="struct_quadr_equation.html#a5b17e8f9d4fa4fe134b2996fd8cf0839">   23</a></span>    <span class="keywordtype">double</span> <a class="code hl_variable" href="struct_quadr_equation.html#a5b17e8f9d4fa4fe134b2996fd8cf0839">b</a>; </div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno"><a class="line" href="struct_quadr_equation.html#a3a0b6b1445736c70670659d503b173a5">   24</a></span>    <span class="keywordtype">double</span> <a class="code hl_variable" href="struct_quadr_equation.html#a3a0b6b1445736c70670659d503b173a5">c</a>; </div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>} <a class="code hl_struct" href="struct_quadr_equation.html">QuadrEquation</a>;</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="keyword">namespace </span>quadrEquation {</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    <span class="keywordtype">bool</span> scan(<a class="code hl_struct" href="struct_quadr_equation.html">QuadrEquation</a>* equation);</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    <span class="keywordtype">void</span> print(<a class="code hl_struct" href="struct_quadr_equation.html">QuadrEquation</a> equation);</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno"><a class="line" href="_quadr_equation_8h.html#a0f60d41a5d4efd0d030392bedf5e9018">   35</a></span>    <span class="keyword">enum</span> <a class="code hl_enumeration" href="_quadr_equation_8h.html#a0f60d41a5d4efd0d030392bedf5e9018">NumberOfRoots</a> {</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>        NO_ROOTS = 0,</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>        ONE_ROOT,</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        TWO_ROOTS,</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>        INF_ROOTS,</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    }; <span class="comment">// TODO занести выравнивание в editorconfig</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    NumberOfRoots solve(<a class="code hl_struct" href="struct_quadr_equation.html">QuadrEquation</a>* equation, <span class="keywordtype">double</span>* root1, <span class="keywordtype">double</span>* root2);</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>}</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    NumberOfRoots solve(<a class="code hl_struct" href="struct_quadr_equation.html">QuadrEquation</a>* equation, <span class="keywordtype">double</span>* root1, <span class="keywordtype">double</span>* root2);</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>}</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="preprocessor">#endif </span><span class="comment">// QUADREQUATION_H</span></div>
-<div class="ttc" id="a_quadr_equation_8h_html_a0f60d41a5d4efd0d030392bedf5e9018"><div class="ttname"><a href="_quadr_equation_8h.html#a0f60d41a5d4efd0d030392bedf5e9018">quadrEquation::NumberOfRoots</a></div><div class="ttdeci">NumberOfRoots</div><div class="ttdoc">Number of roots of equation.</div><div class="ttdef"><b>Definition:</b> QuadrEquation.h:38</div></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="preprocessor">#endif </span><span class="comment">// QUADREQUATION_H</span></div>
+<div class="ttc" id="a_quadr_equation_8h_html_a0f60d41a5d4efd0d030392bedf5e9018"><div class="ttname"><a href="_quadr_equation_8h.html#a0f60d41a5d4efd0d030392bedf5e9018">quadrEquation::NumberOfRoots</a></div><div class="ttdeci">NumberOfRoots</div><div class="ttdoc">Number of roots of equation.</div><div class="ttdef"><b>Definition:</b> QuadrEquation.h:35</div></div>
 <div class="ttc" id="astruct_quadr_equation_html"><div class="ttname"><a href="struct_quadr_equation.html">QuadrEquation</a></div><div class="ttdoc">Coefficients for quadratic equation.</div><div class="ttdef"><b>Definition:</b> QuadrEquation.h:21</div></div>
-<div class="ttc" id="astruct_quadr_equation_html_a3a0b6b1445736c70670659d503b173a5"><div class="ttname"><a href="struct_quadr_equation.html#a3a0b6b1445736c70670659d503b173a5">QuadrEquation::c</a></div><div class="ttdeci">double c</div><div class="ttdoc">coefficient before x^0</div><div class="ttdef"><b>Definition:</b> QuadrEquation.h:27</div></div>
-<div class="ttc" id="astruct_quadr_equation_html_a5085e2f736880023fd5e567ac1242b87"><div class="ttname"><a href="struct_quadr_equation.html#a5085e2f736880023fd5e567ac1242b87">QuadrEquation::a</a></div><div class="ttdeci">double a</div><div class="ttdoc">coefficient before x^2</div><div class="ttdef"><b>Definition:</b> QuadrEquation.h:23</div></div>
-<div class="ttc" id="astruct_quadr_equation_html_a5b17e8f9d4fa4fe134b2996fd8cf0839"><div class="ttname"><a href="struct_quadr_equation.html#a5b17e8f9d4fa4fe134b2996fd8cf0839">QuadrEquation::b</a></div><div class="ttdeci">double b</div><div class="ttdoc">coefficient before x^1</div><div class="ttdef"><b>Definition:</b> QuadrEquation.h:25</div></div>
+<div class="ttc" id="astruct_quadr_equation_html_a3a0b6b1445736c70670659d503b173a5"><div class="ttname"><a href="struct_quadr_equation.html#a3a0b6b1445736c70670659d503b173a5">QuadrEquation::c</a></div><div class="ttdeci">double c</div><div class="ttdoc">coefficient before x^0</div><div class="ttdef"><b>Definition:</b> QuadrEquation.h:24</div></div>
+<div class="ttc" id="astruct_quadr_equation_html_a5085e2f736880023fd5e567ac1242b87"><div class="ttname"><a href="struct_quadr_equation.html#a5085e2f736880023fd5e567ac1242b87">QuadrEquation::a</a></div><div class="ttdeci">double a</div><div class="ttdoc">coefficient before x^2</div><div class="ttdef"><b>Definition:</b> QuadrEquation.h:22</div></div>
+<div class="ttc" id="astruct_quadr_equation_html_a5b17e8f9d4fa4fe134b2996fd8cf0839"><div class="ttname"><a href="struct_quadr_equation.html#a5b17e8f9d4fa4fe134b2996fd8cf0839">QuadrEquation::b</a></div><div class="ttdeci">double b</div><div class="ttdoc">coefficient before x^1</div><div class="ttdef"><b>Definition:</b> QuadrEquation.h:23</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

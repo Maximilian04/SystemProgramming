@@ -19,12 +19,9 @@
  * Equation like \ f $ a*x^2 + b*x + x = 0 \ f $
  */
 typedef struct {
-    /// coefficient before x^2
-    double a;
-    /// coefficient before x^1
-    double b;
-    /// coefficient before x^0
-    double c;
+    double a; ///< coefficient before x^2
+    double b; ///< coefficient before x^1
+    double c; ///< coefficient before x^0
 } QuadrEquation;
 
 namespace quadrEquation {
