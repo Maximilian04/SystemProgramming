@@ -5,6 +5,13 @@
 #include "autoTest.h"
 
 namespace autoTest {
+    /**
+     * @brief Open file from cmd arguments or standart file
+     * 
+     * @param [in] argc Cmd arguments
+     * @param [in] argv Cmd arguments
+     * @return FILE* Opened file
+     */
     FILE* openTestFile(int argc, char** argv) {
         if (argc > 1) {
             const char* fileName = argv[1];
@@ -13,7 +20,7 @@ namespace autoTest {
             if (file != NULL) {
                 return file;
             }
-            printf("Cannot open file, run standart tests");
+            printf("Cannot open file, run standart tests\n");
         }
 
         const char* fileName = "tests/standartTests.txt";
@@ -27,6 +34,16 @@ namespace autoTest {
         return nullptr;
     }
 
+    /**
+     * @brief Runs test from **FILE** for **name** function if **name** is equal with **command**
+     * 
+     * @param [in] testFunction Function for being tested
+     * @param [in] name Name of function is tested
+     * @param [in] command Command for current position in **FILE**
+     * @param [in] testFile File with tests
+     * @return true If input is correct
+     * @warning Returns **true** whether or no test is passed
+     */
     bool runTest(TestResult(*testFunction) (FILE* inputFile), const char* name, char* command, FILE* testFile) {
         if (strcmp(command, name) == 0) {
             switch (testFunction(testFile)) {

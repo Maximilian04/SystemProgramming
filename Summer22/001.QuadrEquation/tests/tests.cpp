@@ -12,7 +12,17 @@
 }
 
 namespace test {
-    // quadrEquation::NumberOfRoots quadrEquation::solve(QuadrEquation* equation, double* root1, double* root2);
+    /**
+     * @brief Tests function
+     *
+     * **Function**:
+     * quadrEquation::NumberOfRoots quadrEquation::solve(QuadrEquation* equation, double* root1, double* root2);
+     * 
+     * Reads test parameters from file
+     *
+     * @param [in] inputFile File with test
+     * @return TestResult Result of testing
+     */
     TestResult quadrEquation_solve(FILE* inputFile) {
         struct {
             double a;

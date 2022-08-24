@@ -13,11 +13,11 @@
 #include <cassert>
 #include <cerrno>
 
- /**
-  * @brief Coefficients for quadratic equation
-  *
-  * Equation like \f a*x^2 + b*x + x = 0 \f
-  */
+/**
+ * @brief Coefficients for quadratic equation
+ *
+ * Equation like \ f $ a*x^2 + b*x + x = 0 \ f $
+ */
 typedef struct {
     /// coefficient before x^2
     double a;
@@ -31,6 +31,10 @@ namespace quadrEquation {
     bool scan(QuadrEquation* equation);
     void print(QuadrEquation equation);
 
+    /**
+     * @brief Number of roots of equation
+     * 
+     */
     enum NumberOfRoots {
         NO_ROOTS = 0,
         ONE_ROOT,
