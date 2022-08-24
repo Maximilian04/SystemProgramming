@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.4"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>QuadrEquation: tests.h File Reference</title>
+<title>QuadrEquation: tests/tests.h File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -60,6 +60,10 @@ $(function() {
 </iframe>
 </div>
 
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_59425e443f801f1f2fd8bbe4959a3ccf.html">tests</a></li>  </ul>
+</div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
@@ -71,53 +75,56 @@ $(function() {
 
 <p>Tests for <a class="el" href="struct_quadr_equation.html" title="Coefficients for quadratic equation.">QuadrEquation</a> project.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &lt;stdio.h&gt;</code><br />
-<code>#include &quot;<a class="el" href="compare_double_8h_source.html">compareDouble.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="_quadr_equation_8h_source.html">QuadrEquation.h</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="_quadr_equation_8h_source.html">QuadrEquation.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_test_result_8h_source.html">TestResult.h</a>&quot;</code><br />
 </div>
 <p><a href="tests_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:ace05fb89b0af6846a204aab75d528860"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tests_8h.html#ace05fb89b0af6846a204aab75d528860">TEST</a>(VALUE)</td></tr>
-<tr class="memdesc:ace05fb89b0af6846a204aab75d528860"><td class="mdescLeft">&#160;</td><td class="mdescRight">Alerts if <b>VALUE</b> is false.  <a href="tests_8h.html#ace05fb89b0af6846a204aab75d528860">More...</a><br /></td></tr>
-<tr class="separator:ace05fb89b0af6846a204aab75d528860"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad7daeb4aa142ea9b410bb5c82e696a91"><td class="memItemLeft" align="right" valign="top"><a id="ad7daeb4aa142ea9b410bb5c82e696a91" name="ad7daeb4aa142ea9b410bb5c82e696a91"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>MAX_FUNC_NAME_LENGTH</b>&#160;&#160;&#160;64</td></tr>
+<tr class="memdesc:ad7daeb4aa142ea9b410bb5c82e696a91"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size of string buffer for function is tested. <br /></td></tr>
+<tr class="separator:ad7daeb4aa142ea9b410bb5c82e696a91"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a3d5304f9f69716d5a971711e5b3b2df3"><td class="memItemLeft" align="right" valign="top"><a id="a3d5304f9f69716d5a971711e5b3b2df3" name="a3d5304f9f69716d5a971711e5b3b2df3"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>test_quadrEquation_solve</b> (double a, double b, double c, int resultAns, double root1Ans, double root2Ans)</td></tr>
-<tr class="separator:a3d5304f9f69716d5a971711e5b3b2df3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae380ffb193329ff993a6085b653b903"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_test_result_8h.html#aae529400284a6182b4bdb3a5596bd093">TestResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tests_8cpp.html#aae380ffb193329ff993a6085b653b903">test::quadrEquation_solve</a> (FILE *inputFile)</td></tr>
+<tr class="memdesc:aae380ffb193329ff993a6085b653b903"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests function.  <a href="tests_8cpp.html#aae380ffb193329ff993a6085b653b903">More...</a><br /></td></tr>
+<tr class="separator:aae380ffb193329ff993a6085b653b903"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >Tests for <a class="el" href="struct_quadr_equation.html" title="Coefficients for quadratic equation.">QuadrEquation</a> project. </p>
 <dl class="section author"><dt>Author</dt><dd>Maximilian (<a href="https://github.com/Maximilian04">https://github.com/Maximilian04</a>) </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2022-08-23</dd></dl>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2022 </dd></dl>
-</div><h2 class="groupheader">Macro Definition Documentation</h2>
-<a id="ace05fb89b0af6846a204aab75d528860" name="ace05fb89b0af6846a204aab75d528860"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ace05fb89b0af6846a204aab75d528860">&#9670;&nbsp;</a></span>TEST</h2>
+</div><h2 class="groupheader">Function Documentation</h2>
+<a id="aae380ffb193329ff993a6085b653b903" name="aae380ffb193329ff993a6085b653b903"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aae380ffb193329ff993a6085b653b903">&#9670;&nbsp;</a></span>quadrEquation_solve()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define TEST</td>
+          <td class="memname"><a class="el" href="_test_result_8h.html#aae529400284a6182b4bdb3a5596bd093">TestResult</a> test::quadrEquation_solve </td>
           <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">VALUE</td><td>)</td>
+          <td class="paramtype">FILE *&#160;</td>
+          <td class="paramname"><em>inputFile</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">{                                             \</div>
-<div class="line">    if (!(VALUE)) {                           \</div>
-<div class="line">        printf(<span class="stringliteral">&quot;TEST FAILED : %s\n&quot;</span>, #VALUE); \</div>
-<div class="line">    }                                         \</div>
-<div class="line">}</div>
-</div><!-- fragment -->
-<p>Alerts if <b>VALUE</b> is false. </p>
-<p >Use it like <a class="el" href="tests_8h.html#ace05fb89b0af6846a204aab75d528860" title="Alerts if VALUE is false.">TEST(test_function(params..., answers...))</a> </p>
+
+<p>Tests function. </p>
+<p ><b>Function</b>: quadrEquation::NumberOfRoots quadrEquation::solve(QuadrEquation* equation, double* root1, double* root2);</p>
+<p >Reads test parameters from file</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">inputFile</td><td>File with test </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>TestResult Result of testing </dd></dl>
 
 </div>
 </div>
