@@ -17,6 +17,7 @@ namespace test {
      *
      * **Function**:
      * quadrEquation::NumberOfRoots quadrEquation::solve(QuadrEquation* equation, double* root1, double* root2);
+     * \ref _quadr_equation_8cpp.html "func"
      * 
      * Reads test parameters from file
      *
