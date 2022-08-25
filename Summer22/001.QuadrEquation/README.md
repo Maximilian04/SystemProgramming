@@ -17,4 +17,4 @@ The project has its own doxygen documentation: [badlink](https://github.com/Maxi
 
 ## Documentation
 
-* Doxygen documentation: [**html/index.html**](https://github.com/Maximilian04/SystemProgramming/blob/main/Summer22/001.QuadrEquation/html/index.html)
+* Doxygen documentation: **html/index.html** (see how to generate documentation above)

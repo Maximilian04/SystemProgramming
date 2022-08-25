@@ -31,7 +31,7 @@ namespace autoTest {
             return file;
         }
 
-        assert(false && "Cannot open standartText.txt");
+        assert(false && "Cannot open standartTests.txt");
         return nullptr;
     }
 
