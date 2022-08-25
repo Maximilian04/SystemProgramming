@@ -18,6 +18,8 @@ void printHelpMessage() {
 /**
  * @brief Function with list of reactions to all possible flags
  *
+ * @note Also function open incoming stream as file or stdio
+ *
  * @note Must be given to cmdParser::handleFlags
  *
  * @param [in] cmdFlagC Number of active flags
@@ -48,8 +50,8 @@ cmdParser::ParserResult reactToFlags(int cmdFlagC, cmdParser::CmdArgument* cmdAr
                 return cmdParser::ParserResult::BAD_INPUT;
             }
 
-            *(((ProccessFlagsPtrs*)userdata)->programModePtr) |= ProgramMode::EXT_TEST_FILE;
-            *(((ProccessFlagsPtrs*)userdata)->userTestFileNamePtr) = cmdArguments[cmdFlagI].argument;
+            *((ProccessFlagsPtrs*)userdata)->testFilePtr = autoTest::openTestFile(true, cmdArguments[cmdFlagI].argument);
+
             break;
         default:
             printf("Unknown flag '-%c'. Please use flags from list below.\n", cmdArguments[cmdFlagI].key);
@@ -58,5 +60,10 @@ cmdParser::ParserResult reactToFlags(int cmdFlagC, cmdParser::CmdArgument* cmdAr
             break;
         }
     }
+
+    if (*((ProccessFlagsPtrs*)userdata)->testFilePtr == nullptr) {
+        *((ProccessFlagsPtrs*)userdata)->testFilePtr = autoTest::openTestFile(false);
+    }
+
     return cmdParser::ParserResult::GOOD_INPUT;
 }

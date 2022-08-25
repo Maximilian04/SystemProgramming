@@ -36,12 +36,16 @@ namespace autoTest {
     }
 
     /**
-     * @brief Close file with tests
+     * @brief Close file with tests (or NOT close stdin)
      *
      * @param [out] testFile File with tests
      * @return int Result of fclose()
      */
     int closeTestFile(FILE* testFile) {
+        assert(testFile != nullptr);
+        if (testFile == stdin) {
+            return 0;
+        }
         return fclose(testFile);
     }
 

@@ -1,18 +1,15 @@
 #include <stdio.h>
 
 #include "testUI.h"
-#include "autoTest.h"
 #include "tests.h"
 
 #define FUNC_TO_TEST(FUNC) &test::FUNC, #FUNC
 
 int main(int argc, const char* const* const argv) {
-    int programMode = ProgramMode::STD_TEST_FILE;
-    const char* userTestFileName;
+    FILE* testFile = nullptr;
 
     ProccessFlagsPtrs proccessFlagsPtrs = {
-        &programMode,
-        &userTestFileName
+        &testFile
     };
 
     switch (cmdParser::handleFlags(argc, argv, &reactToFlags, &proccessFlagsPtrs)) {
@@ -25,8 +22,6 @@ int main(int argc, const char* const* const argv) {
         assert(false && "cmdParser::processFlags()'s return is not a cmdParser::PARSER_RESULT's member");
         break;
     }
-
-    FILE* testFile = autoTest::openTestFile((programMode & EXT_TEST_FILE), userTestFileName);
 
     char command[MAX_FUNC_NAME_LENGTH] = {};
     bool testInputIsCorrect = true;
