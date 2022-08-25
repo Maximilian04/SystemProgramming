@@ -11,14 +11,16 @@
     }                                                  \
 }
 
+#define FUNC_TO_TEST_LIST(FUNC) FUNC, #FUNC
+
 namespace test {
     /**
      * @brief Tests function
      *
      * **Function**:
      * quadrEquation::NumberOfRoots quadrEquation::solve(QuadrEquation* equation, double* root1, double* root2);
-     * \ref _quadr_equation_8cpp.html "func"
-     * 
+     * \ ref _quadr_equation_8cpp.html "func"
+     *
      * Reads test parameters from file
      *
      * @param [in] inputFile File with test
@@ -66,12 +68,6 @@ namespace test {
         double root2 = 0;
         quadrEquation::NumberOfRoots result = quadrEquation::solve(&equation, &root1, &root2);
 
-        /*if (
-            (result == params.resultAns ? true : (printf("got wrong result\n"), false)) &&
-            (compareDouble(root1, params.root1Ans) ? true : (printf("got %lg expected %lg as root1\n", root1, params.root1Ans), false)) &&
-            (compareDouble(root2, params.root2Ans) ? true : (printf("got %lg expected %lg as root2\n", root2, params.root2Ans), false))) {
-            return TestResult::PASSED;
-        }*/
         if (
             (result == params.resultAns) &&
             (compareDouble(root1, params.root1Ans)) &&
@@ -87,4 +83,8 @@ namespace test {
             result, root1, root2);
         return TestResult::FAILED;
     }
+
+    const TestFuncInfo testFuncList[NUMBER_OF_TEST_FUNCS] = {
+        { FUNC_TO_TEST_LIST(quadrEquation_solve) },
+    };
 }

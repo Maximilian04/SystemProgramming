@@ -56,24 +56,26 @@ namespace autoTest {
      * @param [in] name Name of function is tested
      * @param [in] command Command for current position in **FILE**
      * @param [in] testFile File with tests
-     * @return true If input is correct
+     * @return TestResult Result of the test OR Input error OR wrong test notification
      * @warning Returns **true** whether or no test is passed
      */
-    bool runTest(TestResult(*testFunction) (FILE* inputFile), const char* name, char* command, FILE* testFile) {
+    TestResult runTest(TestResult(*testFunction) (FILE* inputFile), const char* name, char* command, FILE* testFile) {
         if (strcmp(command, name) == 0) {
             switch (testFunction(testFile)) {
             case TestResult::PASSED:
+                return TestResult::PASSED;
             case TestResult::FAILED:
-                return true;
+                return TestResult::FAILED;
                 break;
             case TestResult::INPUT_ERROR:
-                return false;
+                return TestResult::INPUT_ERROR;
                 break;
+            case TestResult::WRONG_TEST:
             default:
-                assert(false && "testFunction()'s return is not a TestResult's member");
+                assert(false && "testFunction()'s return is not a TestResult's member OR forbidden member");
             };
         }
 
-        return true;
+        return TestResult::WRONG_TEST;
     }
 }

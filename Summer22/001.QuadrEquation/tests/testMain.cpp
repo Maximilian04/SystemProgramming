@@ -3,8 +3,6 @@
 #include "testUI.h"
 #include "tests.h"
 
-#define FUNC_TO_TEST(FUNC) &test::FUNC, #FUNC
-
 int main(int argc, const char* const* const argv) {
     FILE* testFile = nullptr;
 
@@ -27,13 +25,34 @@ int main(int argc, const char* const* const argv) {
     bool testInputIsCorrect = true;
 
     while (fscanf(testFile, "%s", command) != EOF) {
+        bool doesTestExist = false;
 
-        if (!autoTest::runTest(FUNC_TO_TEST(quadrEquation_solve), command, testFile)) {
-            testInputIsCorrect = false;
-            printf("TEST INPUT IS INCORRECT");
-            break;
+        for (const test::TestFuncInfo testFunc : test::testFuncList) {
+            switch (autoTest::runTest(testFunc.func, testFunc.name, command, testFile)) {
+            case TestResult::PASSED:
+            case TestResult::FAILED:
+                doesTestExist = true;
+                goto breakEndOfFor;
+
+            case TestResult::INPUT_ERROR:
+                testInputIsCorrect = false;
+                printf("TEST INPUT IS INCORRECT\n");
+                goto breakEndOfWhile;
+
+            case TestResult::WRONG_TEST:
+                goto breakEndOfFor;
+
+            default:
+                assert(false && "autoTest::runTest()'s return is not a TestResult's member");
+            }
+        }
+    breakEndOfFor:;
+
+        if (!doesTestExist) {
+            printf("Test '%s' does not exist\n", command);
         }
     }
+breakEndOfWhile:;
 
     if (autoTest::closeTestFile(testFile) != 0) {
         printf("CANNOT CLOSE TEST FILE CORRECTLY\n");

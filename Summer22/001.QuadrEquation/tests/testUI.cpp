@@ -12,7 +12,8 @@ void printHelpMessage() {
     printf(
         "Help message. Command list:\n"
         "-h\t\tshow help message\n"
-        "-f [name]\trun tests from [name] file\n");
+        "-f [name]\trun tests from [name] file\n"
+        "-i\t\tallow you to enter test line via console\n");
 }
 
 /**
@@ -51,7 +52,9 @@ cmdParser::ParserResult reactToFlags(int cmdFlagC, cmdParser::CmdArgument* cmdAr
             }
 
             *((ProccessFlagsPtrs*)userdata)->testFilePtr = autoTest::openTestFile(true, cmdArguments[cmdFlagI].argument);
-
+            break;
+        case 'i':
+            *((ProccessFlagsPtrs*)userdata)->testFilePtr = stdin;
             break;
         default:
             printf("Unknown flag '-%c'. Please use flags from list below.\n", cmdArguments[cmdFlagI].key);
