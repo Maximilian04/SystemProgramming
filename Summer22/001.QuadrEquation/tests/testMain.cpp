@@ -15,7 +15,7 @@ int main(int argc, const char* const* const argv) {
         &userTestFileName
     };
 
-    switch (cmdParser::processFlags(argc, argv, &proccessFlagsPtrs)) {
+    switch (cmdParser::handleFlags(argc, argv, &reactToFlags, &proccessFlagsPtrs)) {
     case cmdParser::ParserResult::BAD_INPUT:
         return 0;
         break;

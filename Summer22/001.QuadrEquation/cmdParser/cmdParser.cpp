@@ -35,4 +35,23 @@ namespace cmdParser {
 
         return flagsNumber;
     }
+
+    /**
+     * @brief Handle flags and react to it with your function
+     *
+     * @param [in] argc Cmd arguments
+     * @param [in] argv Cmd arguments
+     * @param reactToFlags Function with description of reactions to flags
+     * @param [in] userdata void* for various information
+     * @return ParserResult Result of handling
+     */
+    ParserResult handleFlags(int argc, const char* const* const argv,
+        cmdParser::ParserResult(*reactToFlags)(int, cmdParser::CmdArgument*, void*),
+        void* userdata = nullptr) {
+
+        cmdParser::CmdArgument cmdArguments[MAX_CMD_ARGS_COUNT] = {};
+        int cmdFlagC = cmdParser::parse(argc, argv, cmdArguments);
+
+        return reactToFlags(cmdFlagC, cmdArguments, userdata);
+    }
 }

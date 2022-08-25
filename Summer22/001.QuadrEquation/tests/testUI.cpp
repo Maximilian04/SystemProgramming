@@ -15,9 +15,18 @@ void printHelpMessage() {
         "-f [name]\trun tests from [name] file\n");
 }
 
-cmdParser::ParserResult cmdParser::processFlags(int argc, const char* const* const argv, void* userdata) { // &programMode as userdata
-    cmdParser::CmdArgument cmdArguments[MAX_CMD_ARGS_COUNT] = {};
-    int cmdFlagC = cmdParser::parse(argc, argv, cmdArguments);
+/**
+ * @brief Function with list of reactions to all possible flags
+ *
+ * @note Must be given to cmdParser::handleFlags
+ *
+ * @param [in] cmdFlagC Number of active flags
+ * @param [in] cmdArguments Array of flags
+ * @param [out] userdata Pointer to #ProccessFlagsPtrs casted to (void*)
+ * @return cmdParser::ParserResult
+ */
+cmdParser::ParserResult reactToFlags(int cmdFlagC, cmdParser::CmdArgument* cmdArguments, void* userdata) {
+    assert(userdata != nullptr);
 
     if (cmdFlagC == cmdParser::BAD_INPUT) {
         printf("Cannot recognize flags. Please use flags from list below.\n");

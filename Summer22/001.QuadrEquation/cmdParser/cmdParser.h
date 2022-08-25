@@ -37,16 +37,9 @@ namespace cmdParser {
 
     int parse(int argc, const char* const* const argv, CmdArgument* flags);
 
-    /**
-     * @brief Function with description of reactions to flags
-     *
-     * @param [in] argc Cmd arguments
-     * @param [in] argv Cmd arguments
-     * @param [in] userdata void* for various information
-     * @return ParserResult Result of processing
-     * @warning Must be declared in file using it!
-     */
-    ParserResult processFlags(int argc, const char* const* const argv, void* userdata = nullptr);
+    ParserResult handleFlags(int argc, const char* const* const argv,
+        cmdParser::ParserResult(*reactToFlags)(int, cmdParser::CmdArgument*, void*),
+        void* userdata);
 }
 
 #endif // CMDPARSER_H

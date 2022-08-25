@@ -32,6 +32,6 @@ typedef struct {
 } ProccessFlagsPtrs;
 
 void printHelpMessage();
-// below declaration of cmdParser::ParserResult cmdParser::processFlags(int argc, char** argv, void* userdata);
+cmdParser::ParserResult reactToFlags(int cmdFlagC, cmdParser::CmdArgument* cmdArguments, void* userdata);
 
 #endif // TESTUI_H
