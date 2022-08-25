@@ -14,7 +14,7 @@ namespace cmdParser {
      * @return int Number of keys or cmdParser::PARSER_RESULT::BAD_INPUT
      * @warning Returns BAD_INPUT if cannot recognize all flags
      */
-    int parse(int argc, char** argv, CmdArgument* flags) {
+    int parse(int argc, const char* const* const argv, CmdArgument* flags) {
         int flagsNumber = 0;
         for (int argI = 1; argI < argc; ++argI) {
             if (argv[argI][0] == '-') {
@@ -26,7 +26,7 @@ namespace cmdParser {
             } else {
                 if (flagsNumber > 0 && flags[flagsNumber - 1].index == (argI - 1)) {
                     flags[flagsNumber - 1].hasArgument = true;
-                    strcpy(flags[flagsNumber - 1].argument, argv[argI]);
+                    flags[flagsNumber - 1].argument = argv[argI];
                 } else {
                     return ParserResult::BAD_INPUT;
                 }

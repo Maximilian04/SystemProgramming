@@ -27,8 +27,8 @@ enum ProgramMode {
  * 
  */
 typedef struct {
-    int* programModePtr;    ///< pointer to actual porgram mode
-    char* userTestFileName; ///< buffer with user's tests file's name
+    int* programModePtr;     ///< pointer to actual porgram mode
+    const char** userTestFileNamePtr; ///< buffer with user's tests file's name
 } ProccessFlagsPtrs;
 
 void printHelpMessage();

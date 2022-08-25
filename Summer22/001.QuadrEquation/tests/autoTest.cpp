@@ -12,7 +12,7 @@ namespace autoTest {
      * @param [in] userFileName (=nullptr) Name of user's file if hasSpecialFile is set to true
      * @return FILE* Opened file
      */
-    FILE* openTestFile(bool hasSpecialFile, char* userFileName) {
+    FILE* openTestFile(bool hasSpecialFile, const char* userFileName) {
         if (hasSpecialFile) {
             assert(userFileName != nullptr);
 
@@ -33,6 +33,16 @@ namespace autoTest {
 
         assert(false && "Cannot open standartText.txt");
         return nullptr;
+    }
+
+    /**
+     * @brief Close file with tests
+     *
+     * @param [out] testFile File with tests
+     * @return int Result of fclose()
+     */
+    int closeTestFile(FILE* testFile) {
+        return fclose(testFile);
     }
 
     /**

@@ -6,14 +6,13 @@
 
 #define FUNC_TO_TEST(FUNC) &test::FUNC, #FUNC
 
-int main(int argc, char** argv) {
+int main(int argc, const char* const* const argv) {
     int programMode = ProgramMode::STD_TEST_FILE;
-    char userTestFileName[MAX_CMD_ARG_LENGTH] = {};
-    // TODO убрать две strcpy
+    const char* userTestFileName;
 
     ProccessFlagsPtrs proccessFlagsPtrs = {
         &programMode,
-        userTestFileName
+        &userTestFileName
     };
 
     switch (cmdParser::processFlags(argc, argv, &proccessFlagsPtrs)) {
@@ -27,18 +26,27 @@ int main(int argc, char** argv) {
         break;
     }
 
-    FILE* testFile = autoTest::openTestFile((programMode & EXT_TEST_FILE), proccessFlagsPtrs.userTestFileName);
+    FILE* testFile = autoTest::openTestFile((programMode & EXT_TEST_FILE), userTestFileName);
 
     char command[MAX_FUNC_NAME_LENGTH] = {};
+    bool testInputIsCorrect = true;
 
     while (fscanf(testFile, "%s", command) != EOF) {
 
         if (!autoTest::runTest(FUNC_TO_TEST(quadrEquation_solve), command, testFile)) {
+            testInputIsCorrect = false;
             printf("TEST INPUT IS INCORRECT");
-            return 0;
+            break;
         }
     }
 
-    printf("TESTS ARE DONE\n");
+    if (autoTest::closeTestFile(testFile) != 0) {
+        printf("CANNOT CLOSE TEST FILE CORRECTLY\n");
+    }
+
+    if (testInputIsCorrect) {
+        printf("TESTS ARE DONE\n");
+    }
+
     return 0;
 }

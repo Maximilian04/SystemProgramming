@@ -15,7 +15,7 @@ void printHelpMessage() {
         "-f [name]\trun tests from [name] file\n");
 }
 
-cmdParser::ParserResult cmdParser::processFlags(int argc, char** argv, void* userdata) { // &programMode as userdata
+cmdParser::ParserResult cmdParser::processFlags(int argc, const char* const* const argv, void* userdata) { // &programMode as userdata
     cmdParser::CmdArgument cmdArguments[MAX_CMD_ARGS_COUNT] = {};
     int cmdFlagC = cmdParser::parse(argc, argv, cmdArguments);
 
@@ -40,7 +40,7 @@ cmdParser::ParserResult cmdParser::processFlags(int argc, char** argv, void* use
             }
 
             *(((ProccessFlagsPtrs*)userdata)->programModePtr) |= ProgramMode::EXT_TEST_FILE;
-            strcpy(((ProccessFlagsPtrs*)userdata)->userTestFileName, cmdArguments[cmdFlagI].argument);
+            *(((ProccessFlagsPtrs*)userdata)->userTestFileNamePtr) = cmdArguments[cmdFlagI].argument;
             break;
         default:
             printf("Unknown flag '-%c'. Please use flags from list below.\n", cmdArguments[cmdFlagI].key);
