@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdlib.h>
 
 #include "strLib.h"
 
@@ -142,4 +143,19 @@ namespace strLib {
         return tokenBegin;
     }
 
+    /**
+     * @brief Create copy of the string
+     *
+     * @param [in] str1 String to be copied
+     * @return char* Pointer to allocated memory with copy of **str1**
+     */
+    char* strdup(const char* str1) {
+        int lenght = strLib::strlen(str1);
+
+        char* str2 = (char*)calloc(lenght + 1, sizeof(char));
+        assert(str2 != nullptr);
+
+        strLib::strncpy(str2, str1, lenght + 1);
+        return str2;
+    }
 }

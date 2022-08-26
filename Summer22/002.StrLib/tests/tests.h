@@ -13,9 +13,8 @@
 #include "testingSystem\TestResult.h"
 
 const int MAX_FUNC_NAME_LENGTH = 64;  ///< Size of string buffer for function is tested or for enum key in test
-#define MAX_FUNC_NAME_LENGTH_STR "64" ///< Size of string buffer for function is tested or for enum key in test
 
-const int NUMBER_OF_TEST_FUNCS = 5; ///< Total number of tests
+const int NUMBER_OF_TEST_FUNCS = 6; ///< Total number of tests
 
 namespace test {
     /**
@@ -33,6 +32,7 @@ namespace test {
     TestResult strLib_strncat(FILE* inputFile);
     TestResult strLib_strstr (FILE* inputFile);
     TestResult strLib_strtok (FILE* inputFile);
+    TestResult strLib_strdup (FILE* inputFile);
 
     extern const TestFuncInfo testFuncList[NUMBER_OF_TEST_FUNCS];
 }

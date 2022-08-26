@@ -33,12 +33,12 @@ int main(int argc, const char* const* const argv) {
             case TestResult::PASSED:
             case TestResult::FAILED:
                 doesTestExist = true;
-                goto breakEndOfFor;
+                break;
 
             case TestResult::INPUT_ERROR:
                 testInputIsCorrect = false;
                 printf("'%s' TEST INPUT IS INCORRECT\n", testFunc.name);
-                goto breakEndOfWhile;
+                goto errorTestInput;
 
             case TestResult::WRONG_TEST:
                 break;
@@ -46,14 +46,17 @@ int main(int argc, const char* const* const argv) {
             default:
                 assert(false && "autoTest::runTest()'s return is not a TestResult's member");
             }
+
+            if (doesTestExist) {
+                break;
+            }
         }
-    breakEndOfFor:;
 
         if (!doesTestExist) {
             printf("Test '%s' does not exist\n", command);
         }
     }
-breakEndOfWhile:;
+errorTestInput:;
 
     if (autoTest::closeTestFile(testFile) != 0) {
         printf("CANNOT CLOSE TEST FILE CORRECTLY\n");

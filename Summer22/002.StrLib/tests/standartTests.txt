@@ -1,3 +1,5 @@
+strLib_strdup [6]qwerty
+
 strLib_strtok [28]one + two * (three - four)! [8]! +- (*) 0
 
 strLib_strstr [6]qwerty [3]ert    2

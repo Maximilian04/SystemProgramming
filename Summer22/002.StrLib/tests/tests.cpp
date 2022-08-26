@@ -281,11 +281,58 @@ namespace test {
         return TestResult::FAILED;
     }
 
+    /**
+     * @brief Tests function
+     *
+     * **Function**:
+     * char* strLib::strdup(const char* str1);
+     *
+     * @param [in] inputFile File with test
+     * @return TestResult Result of testing
+     */
+    TestResult strLib_strdup(FILE* inputFile) {
+        struct {
+            char str1[MAX_FUNC_NAME_LENGTH];
+            char* resultAns;
+        } params = {};
+
+        // ------------- read params -------------
+
+        int str1Key = 0;
+        SCAN(" [%d]", &str1Key);
+        SCANREAD(params.str1, str1Key);
+
+        // *resultAns must be = *str1
+        params.resultAns = params.str1;
+
+        // ------------- read params -------------
+        // test function
+
+        char* result = strLib::strdup(params.str1);
+
+        if (
+            (strcmp(result, params.resultAns) == 0)) {
+            free(result);
+            return TestResult::PASSED;
+        }
+
+        printf("TEST FAILED : %s: input: %s\n"
+            "       expected output: %s\n"
+            "       got      output: %s\n",
+            "strLib_strdup", params.str1,
+            params.resultAns,
+            result);
+
+        free(result);
+        return TestResult::FAILED;
+    }
+
     const TestFuncInfo testFuncList[NUMBER_OF_TEST_FUNCS] = {
         { FUNC_TO_TEST_LIST(strLib_strlen)  },
         { FUNC_TO_TEST_LIST(strLib_strncpy) },
         { FUNC_TO_TEST_LIST(strLib_strncat) },
         { FUNC_TO_TEST_LIST(strLib_strstr)  },
         { FUNC_TO_TEST_LIST(strLib_strtok)  },
+        { FUNC_TO_TEST_LIST(strLib_strdup)  },
     };
 }
