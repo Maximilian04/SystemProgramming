@@ -1,6 +1,8 @@
+strLib_strtok [28]one + two * (three - four)! [8]! +- (*) 0
+
 strLib_strstr [6]qwerty [3]ert    2
 strLib_strstr [6]qwerty [6]qwerty 0
-strLib_strstr [6]qwerty [2]12     -1
+strLib_strstr [6]qwerty [2]12    -1
 
 strLib_strncat [4]1234 [6]qwerty   4 [10]qwerty1234
 strLib_strncat [6]654321 [6]qwerty 4 [10]qwerty6543

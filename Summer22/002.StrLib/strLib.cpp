@@ -90,4 +90,56 @@ namespace strLib {
         return nullptr;
     }
 
+    /**
+     * @brief Finds the next token in a string **str**
+     *
+     * @param [out] str String to tokenize
+     * @param [in] delim String identifying delimiters
+     * @return char*
+     */
+    char* strtok(char* str, const char* delim) {
+        assert(delim != nullptr);
+        static char* staticPointer = nullptr;
+
+        if (str == nullptr) {
+            str = staticPointer;
+        }
+        assert(str != nullptr);
+
+        int strI = 0;
+        char* tokenBegin = nullptr;
+
+        for (strI = 0; str[strI] != '\0'; ++strI) {
+            if (!tokenBegin) { // don't hasContainedChar
+                bool isContained = false;
+                for (int delimI = 0; delim[delimI] != '\0'; ++delimI) {
+                    if (str[strI] == delim[delimI]) {
+                        isContained = true;
+                        break;
+                    }
+                }
+
+                if (!isContained) {
+                    tokenBegin = str + strI;
+                }
+
+            } else { // hasContainedChar
+                bool isContained = false;
+                for (int delimI = 0; delim[delimI] != '\0'; ++delimI) {
+                    if (str[strI] == delim[delimI]) {
+                        isContained = true;
+                        break;
+                    }
+                }
+
+                if (isContained) {
+                    str[strI] = '\0';
+                    staticPointer = str + strI + 1;
+                }
+            }
+        }
+
+        return tokenBegin;
+    }
+
 }
