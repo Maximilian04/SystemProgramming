@@ -59,9 +59,9 @@ namespace test {
         printf("TEST FAILED : %s: input: %s\n"
             "       expected output: %d\n"
             "       got      output: %d\n",
-            "quadrEquation_solve", params.str,
+            "strLib_strlen", params.str,
             params.resultAns,
-            result);
+                   result);
         return TestResult::FAILED;
     }
 
@@ -77,8 +77,10 @@ namespace test {
     TestResult strLib_strncpy(FILE* inputFile) {
         struct {
             char src[MAX_FUNC_NAME_LENGTH];
+            char dst[MAX_FUNC_NAME_LENGTH];
             int count;
             char* resultAns;
+            char dstAns[MAX_FUNC_NAME_LENGTH];
         } params = {};
 
         // ------------- read params -------------
@@ -90,26 +92,29 @@ namespace test {
         SCAN("%d", &params.count);
         // resultAns = dst
 
+        int dstKey = 0;
+        SCAN(" [%d]", &dstKey);
+        SCANREAD(params.dstAns, dstKey);
+
         // ------------- read params -------------
         // test function
 
-        char dst[MAX_FUNC_NAME_LENGTH] = {};
-        params.resultAns = dst;
-        char* result = strLib::strncpy(dst, params.src, params.count);
+        params.resultAns = params.dst;
+        char* result = strLib::strncpy(params.dst, params.src, params.count);
 
         if (
             (result == params.resultAns) &&
-            (strncmp(dst, params.src, params.count) == 0) &&
-            (dst[params.count] == '\0')) {
+            (strcmp(params.dst, params.dstAns) == 0) &&
+            (params.dst[params.count] == '\0')) {
             return TestResult::PASSED;
         }
 
         printf("TEST FAILED : %s: input: %s, %d\n"
-            "       expected output: %s\n"
-            "       got      output: %s\n",
-            "quadrEquation_solve", params.src, params.count,
-            params.resultAns,
-            result);
+            "       expected output: %s, %s\n"
+            "       got      output: %s, %s\n",
+            "strLib_strncpy", params.src, params.count,
+            params.dstAns, params.resultAns,
+            params.dst,           result);
         return TestResult::FAILED;
     }
 

@@ -19,9 +19,9 @@ namespace strLib {
     }
 
     /**
-     * @brief Copyes **count** symbols from **src** to **dest**
+     * @brief Copyes **count** characters from **src** to **dest**
      *
-     * @param [out] dest Pointer to the character array to copy to
+     * @param [out] dst Pointer to the character array to copy to
      * @param [in] src Pointer to the character array to copy from
      * @param [in] count Maximum number of characters to copy
      * @return char* Returns a copy of dest
@@ -38,6 +38,31 @@ namespace strLib {
         for (; length < count; ++length) {
             dst[length] = '\0';
         }
+
+        return dst;
+    }
+
+    /**
+     * @brief Adds **count** characters from **src** to end of **dest**
+     *
+     * @param [out] dst Pointer to the character array to copy to
+     * @param [in] src Pointer to the character array to copy from
+     * @param [in] count Maximum number of characters to copy
+     * @return char* Returns a copy of dest
+     */
+    char* strncat(char* dst, const char* src, int count) {
+        assert(dst != nullptr);
+        assert(src != nullptr);
+
+        int dstLength = 0;
+        int srcLength = 0;
+        for (dstLength = 0, srcLength = 0; dst[dstLength] != '\0'; ++dstLength);
+
+        for (; src[srcLength] != '\0' && srcLength < count; ++dstLength, ++srcLength) {
+            dst[dstLength] = src[srcLength];
+        }
+
+        dst[dstLength] = '\0';
 
         return dst;
     }

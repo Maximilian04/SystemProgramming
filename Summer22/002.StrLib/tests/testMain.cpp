@@ -37,7 +37,7 @@ int main(int argc, const char* const* const argv) {
 
             case TestResult::INPUT_ERROR:
                 testInputIsCorrect = false;
-                printf("TEST INPUT IS INCORRECT\n");
+                printf("'%s' TEST INPUT IS INCORRECT\n", testFunc.name);
                 goto breakEndOfWhile;
 
             case TestResult::WRONG_TEST:
