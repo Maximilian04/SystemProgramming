@@ -1,0 +1,2 @@
+strLib_strdup [6]qwerty
+
