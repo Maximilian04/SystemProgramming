@@ -4,8 +4,6 @@
 #include "tests.h"
 #include "compareDouble.h"
 
-#include "strLib.h"
-
 #define SCAN(STR, ADDR)                                \
 {                                                      \
         if (fscanf(inputFile, STR, ADDR) < 1) {        \
@@ -65,7 +63,7 @@ namespace test {
         return TestResult::FAILED;
     }*/
 
-//    const TestFuncInfo testFuncList[NUMBER_OF_TEST_FUNCS] = {
-//        { FUNC_TO_TEST_LIST(strLib_strlen)  },
-//    };
+    const TestFuncInfo testFuncList[NUMBER_OF_TEST_FUNCS] = {
+        { FUNC_TO_TEST_LIST(nullptr)  },
+    };
 }
