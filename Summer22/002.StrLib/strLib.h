@@ -14,6 +14,7 @@ namespace strLib {
     int strlen(const char* str);
     char* strncpy(char* dst, const char* src, int count);
     char* strncat(char* dst, const char* src, int count);
+    const char* strstr(const char* haystack, const char* needle);
 }
 
 #endif // STRLIB_H

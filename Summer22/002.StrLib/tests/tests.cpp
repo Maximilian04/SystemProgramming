@@ -174,9 +174,63 @@ namespace test {
         return TestResult::FAILED;
     }
 
+    /**
+     * @brief Tests function
+     *
+     * **Function**:
+     * const char* strLib::strstr(const char* haystack, const char* needle);
+     *
+     * @param [in] inputFile File with test
+     * @return TestResult Result of testing
+     */
+    TestResult strLib_strstr(FILE* inputFile) {
+        struct {
+            char haystack[MAX_FUNC_NAME_LENGTH];
+            char needle[MAX_FUNC_NAME_LENGTH];
+            char* resultAns;
+        } params = {};
+
+        // ------------- read params -------------
+
+        int haystackKey = 0;
+        SCAN(" [%d]", &haystackKey);
+        SCANREAD(params.haystack, haystackKey);
+
+        int needleKey = 0;
+        SCAN(" [%d]", &needleKey);
+        SCANREAD(params.needle, needleKey);
+
+        int resultAnsKey = 0;
+        SCAN("%d", &resultAnsKey);
+        if (resultAnsKey == -1) {
+            params.resultAns = nullptr;
+        } else {
+            params.resultAns = params.haystack + resultAnsKey;
+        }
+
+        // ------------- read params -------------
+        // test function
+
+        const char* result = strLib::strstr(params.haystack, params.needle);
+
+        if (
+            (result == params.resultAns)) {
+            return TestResult::PASSED;
+        }
+
+        printf("TEST FAILED : %s: input: %s, %s\n"
+            "       expected output: %s\n"
+            "       got      output: %s\n",
+            "strLib_strstr", params.haystack, params.needle,
+            params.resultAns,
+            result);
+        return TestResult::FAILED;
+    }
+
     const TestFuncInfo testFuncList[NUMBER_OF_TEST_FUNCS] = {
         { FUNC_TO_TEST_LIST(strLib_strlen)  },
         { FUNC_TO_TEST_LIST(strLib_strncpy) },
         { FUNC_TO_TEST_LIST(strLib_strncat) },
+        { FUNC_TO_TEST_LIST(strLib_strstr)  },
     };
 }

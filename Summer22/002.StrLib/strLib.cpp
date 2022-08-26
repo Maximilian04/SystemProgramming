@@ -66,4 +66,28 @@ namespace strLib {
 
         return dst;
     }
+
+    /**
+     * @brief Find first occurrence **needle** string in **haystack** string
+     *
+     * @param [in] haystack Pointer to the character array to copy to
+     * @param [in] needle Pointer to the character array to copy from
+     * @return const char* Begin of occurring or nullptr in the case of absence
+     */
+    const char* strstr(const char* haystack, const char* needle) {
+        assert(haystack != nullptr);
+        assert(needle != nullptr);
+
+        int haystackBase = 0;
+        for (haystackBase = 0; haystack[haystackBase] != '\0'; ++haystackBase) {
+            for (int needleI = 0; haystack[haystackBase + needleI] == needle[needleI] || needle[needleI] == '\0'; ++needleI) {
+                if (needle[needleI] == '\0') {
+                    return haystack + haystackBase;
+                }
+            }
+        }
+
+        return nullptr;
+    }
+
 }
