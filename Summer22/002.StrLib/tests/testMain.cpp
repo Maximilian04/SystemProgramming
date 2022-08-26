@@ -41,7 +41,7 @@ int main(int argc, const char* const* const argv) {
                 goto breakEndOfWhile;
 
             case TestResult::WRONG_TEST:
-                goto breakEndOfFor;
+                break;
 
             default:
                 assert(false && "autoTest::runTest()'s return is not a TestResult's member");
