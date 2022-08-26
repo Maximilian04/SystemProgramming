@@ -1,2 +1,7 @@
-strLib_strlen [6]qwerty    6
-strLib_strlen [12]qwerty rty1` 12
+strLib_strncpy [6]qwerty 6
+strLib_strncpy [6]qwerty 4
+strLib_strncpy [3]\/-    1
+
+strLib_strlen [6]qwerty         6
+strLib_strlen [12]qwerty rty1`  12
+strLib_strlen [0]               0

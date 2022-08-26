@@ -17,4 +17,28 @@ namespace strLib {
 
         return lenght;
     }
+
+    /**
+     * @brief Copyes **count** symbols from **src** to **dest**
+     *
+     * @param [out] dest Pointer to the character array to copy to
+     * @param [in] src Pointer to the character array to copy from
+     * @param [in] count Maximum number of characters to copy
+     * @return char* Returns a copy of dest
+     */
+    char* strncpy(char* dst, const char* src, int count) {
+        assert(dst != nullptr);
+        assert(src != nullptr);
+
+        int length = 0;
+        for (length = 0; src[length] != '\0' && length < count; ++length) {
+            dst[length] = src[length];
+        }
+
+        for (; length < count; ++length) {
+            dst[length] = '\0';
+        }
+
+        return dst;
+    }
 }

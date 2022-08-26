@@ -12,6 +12,7 @@
 
 namespace strLib {
     int strlen(const char* str);
+    char* strncpy(char* dst, const char* src, int count);
 }
 
 #endif // STRLIB_H
