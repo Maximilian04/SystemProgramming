@@ -61,7 +61,7 @@ namespace test {
             "       got      output: %d\n",
             "strLib_strlen", params.str,
             params.resultAns,
-                   result);
+            result);
         return TestResult::FAILED;
     }
 
@@ -85,16 +85,16 @@ namespace test {
 
         // ------------- read params -------------
 
-        int strKey = 0;
-        SCAN(" [%d]", &strKey);
-        SCANREAD(params.src, strKey);
+        int srcKey = 0;
+        SCAN(" [%d]", &srcKey);
+        SCANREAD(params.src, srcKey);
 
         SCAN("%d", &params.count);
         // resultAns = dst
 
-        int dstKey = 0;
-        SCAN(" [%d]", &dstKey);
-        SCANREAD(params.dstAns, dstKey);
+        int dstAnsKey = 0;
+        SCAN(" [%d]", &dstAnsKey);
+        SCANREAD(params.dstAns, dstAnsKey);
 
         // ------------- read params -------------
         // test function
@@ -114,12 +114,69 @@ namespace test {
             "       got      output: %s, %s\n",
             "strLib_strncpy", params.src, params.count,
             params.dstAns, params.resultAns,
-            params.dst,           result);
+            params.dst, result);
+        return TestResult::FAILED;
+    }
+
+    /**
+     * @brief Tests function
+     *
+     * **Function**:
+     * char* strLib::strncat(char* dst, const char* src, int count);
+     *
+     * @param [in] inputFile File with test
+     * @return TestResult Result of testing
+     */
+    TestResult strLib_strncat(FILE* inputFile) {
+        struct {
+            char src[MAX_FUNC_NAME_LENGTH];
+            char dst[MAX_FUNC_NAME_LENGTH];
+            int count;
+            char* resultAns;
+            char dstAns[MAX_FUNC_NAME_LENGTH];
+        } params = {};
+
+        // ------------- read params -------------
+
+        int srcKey = 0;
+        SCAN(" [%d]", &srcKey);
+        SCANREAD(params.src, srcKey);
+
+        int dstKey = 0;
+        SCAN(" [%d]", &dstKey);
+        SCANREAD(params.dst, dstKey);
+
+        SCAN("%d", &params.count);
+        // resultAns = dst
+
+        int dstAnsKey = 0;
+        SCAN(" [%d]", &dstAnsKey);
+        SCANREAD(params.dstAns, dstAnsKey);
+
+        // ------------- read params -------------
+        // test function
+
+        params.resultAns = params.dst;
+        char* result = strLib::strncat(params.dst, params.src, params.count);
+
+        if (
+            (result == params.resultAns) &&
+            (strcmp(params.dst, params.dstAns) == 0)) {
+            return TestResult::PASSED;
+        }
+
+        printf("TEST FAILED : %s: input: %s, %d\n"
+            "       expected output: %s, %s\n"
+            "       got      output: %s, %s\n",
+            "strLib_strncat", params.src, params.count,
+            params.dstAns, params.resultAns,
+            params.dst, result);
         return TestResult::FAILED;
     }
 
     const TestFuncInfo testFuncList[NUMBER_OF_TEST_FUNCS] = {
-        { FUNC_TO_TEST_LIST(strLib_strlen) },
+        { FUNC_TO_TEST_LIST(strLib_strlen)  },
         { FUNC_TO_TEST_LIST(strLib_strncpy) },
+        { FUNC_TO_TEST_LIST(strLib_strncat) },
     };
 }
