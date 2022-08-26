@@ -10,17 +10,14 @@
 #ifndef TESTS_H
 #define TESTS_H
 
-//#include "QuadrEquation.h"
-
 #include "testingSystem\TestResult.h"
 
-const int MAX_FUNC_NAME_LENGTH = 64; ///< Size of string buffer for function is tested or for enum key in test
+const int MAX_FUNC_NAME_LENGTH = 64;  ///< Size of string buffer for function is tested or for enum key in test
+#define MAX_FUNC_NAME_LENGTH_STR "64" ///< Size of string buffer for function is tested or for enum key in test
 
 const int NUMBER_OF_TEST_FUNCS = 1; ///< Total number of tests
 
 namespace test {
-    //TestResult quadrEquation_solve(FILE* inputFile);
-
     /**
      * @brief Structure with information about one test
      *
@@ -30,6 +27,8 @@ namespace test {
         TestResult(* const func)(FILE*); ///< Testing function
         const char* name;                ///< Name of testing function
     };
+
+    TestResult strLib_strlen(FILE* inputFile);
 
     extern const TestFuncInfo testFuncList[NUMBER_OF_TEST_FUNCS];
 }

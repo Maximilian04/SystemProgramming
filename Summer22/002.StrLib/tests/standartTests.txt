@@ -1,4 +1,2 @@
-quadrEquation_solve 1 1  1 NO_ROOTS   0 0
-quadrEquation_solve 1 0  0 ONE_ROOT   0 0
-quadrEquation_solve 1 0 -1 TWO_ROOTS -1 1
-quadrEquation_solve 0 0  0 INF_ROOTS  0 0
+strLib_strlen [6]qwerty    6
+strLib_strlen [12]qwerty rty1` 12
