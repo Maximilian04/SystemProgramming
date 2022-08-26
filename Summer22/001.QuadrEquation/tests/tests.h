@@ -12,7 +12,7 @@
 
 #include "QuadrEquation.h"
 
-#include "TestResult.h"
+#include "testingSystem\TestResult.h"
 
 const int MAX_FUNC_NAME_LENGTH = 64; ///< Size of string buffer for function is tested or for enum key in test
 

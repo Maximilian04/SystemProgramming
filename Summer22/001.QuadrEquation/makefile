@@ -26,17 +26,18 @@ build\testMain.o: tests\testMain.cpp
 	@ g++ $(COMPILE_FLAGS) -c tests\testMain.cpp -I .
 	@ move testMain.o build > NUL
 
-build\testUI.o: tests\testUI.cpp
-	@ g++ $(COMPILE_FLAGS) -c tests\testUI.cpp -I .
-	@ move testUI.o build > NUL
-
-build\autoTest.o: tests\autoTest.cpp
-	@ g++ $(COMPILE_FLAGS) -c tests\autoTest.cpp -I .
-	@ move autoTest.o build > NUL
-
 build\tests.o: tests\tests.cpp
 	@ g++ $(COMPILE_FLAGS) -c tests\tests.cpp -I .
 	@ move tests.o build > NUL
+
+
+build\testUI.o: testingSystem\testUI.cpp
+	@ g++ $(COMPILE_FLAGS) -c testingSystem\testUI.cpp -I .
+	@ move testUI.o build > NUL
+
+build\autoTest.o: testingSystem\autoTest.cpp
+	@ g++ $(COMPILE_FLAGS) -c testingSystem\autoTest.cpp -I .
+	@ move autoTest.o build > NUL
 
 
 build\cmdParser.o: cmdParser\cmdParser.cpp
