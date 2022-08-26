@@ -12,12 +12,24 @@ void printHelpMessage() {
     printf(
         "Help message. Command list:\n"
         "-h\t\tshow help message\n"
-        "-f [name]\trun tests from [name] file\n");
+        "-f [name]\trun tests from [name] file\n"
+        "-i\t\tallow you to enter test line via console\n");
 }
 
-cmdParser::ParserResult cmdParser::processFlags(int argc, const char* const* const argv, void* userdata) { // &programMode as userdata
-    cmdParser::CmdArgument cmdArguments[MAX_CMD_ARGS_COUNT] = {};
-    int cmdFlagC = cmdParser::parse(argc, argv, cmdArguments);
+/**
+ * @brief Function with list of reactions to all possible flags
+ *
+ * @note Also function open incoming stream as file or stdio
+ *
+ * @note Must be given to cmdParser::handleFlags
+ *
+ * @param [in] cmdFlagC Number of active flags
+ * @param [in] cmdArguments Array of flags
+ * @param [out] userdata Pointer to #ProccessFlagsPtrs casted to (void*)
+ * @return cmdParser::ParserResult
+ */
+cmdParser::ParserResult reactToFlags(int cmdFlagC, cmdParser::CmdArgument* cmdArguments, void* userdata) {
+    assert(userdata != nullptr);
 
     if (cmdFlagC == cmdParser::BAD_INPUT) {
         printf("Cannot recognize flags. Please use flags from list below.\n");
@@ -39,8 +51,10 @@ cmdParser::ParserResult cmdParser::processFlags(int argc, const char* const* con
                 return cmdParser::ParserResult::BAD_INPUT;
             }
 
-            *(((ProccessFlagsPtrs*)userdata)->programModePtr) |= ProgramMode::EXT_TEST_FILE;
-            *(((ProccessFlagsPtrs*)userdata)->userTestFileNamePtr) = cmdArguments[cmdFlagI].argument;
+            *((ProccessFlagsPtrs*)userdata)->testFilePtr = autoTest::openTestFile(true, cmdArguments[cmdFlagI].argument);
+            break;
+        case 'i':
+            *((ProccessFlagsPtrs*)userdata)->testFilePtr = stdin;
             break;
         default:
             printf("Unknown flag '-%c'. Please use flags from list below.\n", cmdArguments[cmdFlagI].key);
@@ -49,5 +63,10 @@ cmdParser::ParserResult cmdParser::processFlags(int argc, const char* const* con
             break;
         }
     }
+
+    if (*((ProccessFlagsPtrs*)userdata)->testFilePtr == nullptr) {
+        *((ProccessFlagsPtrs*)userdata)->testFilePtr = autoTest::openTestFile(false);
+    }
+
     return cmdParser::ParserResult::GOOD_INPUT;
 }

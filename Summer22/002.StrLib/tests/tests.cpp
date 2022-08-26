@@ -11,13 +11,16 @@
     }                                                  \
 }
 
+#define FUNC_TO_TEST_LIST(FUNC) FUNC, #FUNC
+
 namespace test {
-    /*
+    /**
      * @brief Tests function
      *
      * **Function**:
      * quadrEquation::NumberOfRoots quadrEquation::solve(QuadrEquation* equation, double* root1, double* root2);
-     * 
+     * \ ref _quadr_equation_8cpp.html "func"
+     *
      * Reads test parameters from file
      *
      * @param [in] inputFile File with test
@@ -80,4 +83,9 @@ namespace test {
             result, root1, root2);
         return TestResult::FAILED;
     }*/
+
+    const TestFuncInfo testFuncList[NUMBER_OF_TEST_FUNCS] = {
+//        { FUNC_TO_TEST_LIST(quadrEquation_solve) },
+        {nullptr, "w"}
+    };
 }

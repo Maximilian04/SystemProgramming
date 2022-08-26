@@ -16,7 +16,7 @@ namespace autoTest {
     FILE* openTestFile(bool hasSpecialFile, const char* userFileName = nullptr);
     int closeTestFile(FILE* testFile);
 
-    bool runTest(TestResult(*testFunction) (FILE* inputFile), const char* name, char* command, FILE* testFile);
+    TestResult runTest(TestResult(*testFunction) (FILE* inputFile), const char* name, char* command, FILE* testFile);
 }
 
 #endif // AUTOTEST_H

@@ -11,6 +11,7 @@
 #define TESTUI_H
 
 #include "cmdParser/cmdParser.h"
+#include "autoTest.h"
 
 /**
  * @brief Flags for description of mode program works
@@ -18,8 +19,6 @@
  * Can be added via | operator
  */
 enum ProgramMode {
-    STD_TEST_FILE = 0b0000, ///< Tests from standart file
-    EXT_TEST_FILE = 0b0001, ///< Tests from user's file
 };
 
 /**
@@ -27,11 +26,10 @@ enum ProgramMode {
  * 
  */
 typedef struct {
-    int* programModePtr;     ///< pointer to actual porgram mode
-    const char** userTestFileNamePtr; ///< buffer with user's tests file's name
+    FILE** testFilePtr;  ///< buffer with user's tests file's name
 } ProccessFlagsPtrs;
 
 void printHelpMessage();
-// below declaration of cmdParser::ParserResult cmdParser::processFlags(int argc, char** argv, void* userdata);
+cmdParser::ParserResult reactToFlags(int cmdFlagC, cmdParser::CmdArgument* cmdArguments, void* userdata);
 
 #endif // TESTUI_H

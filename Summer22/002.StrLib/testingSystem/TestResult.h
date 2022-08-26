@@ -13,11 +13,14 @@
 /**
  * @brief Possible result of testing
  * 
+ * Also WRONG_TEST for autoTest::runTest()
+ * 
  */
 enum TestResult {
     FAILED = 0,
     PASSED,
     INPUT_ERROR,
+    WRONG_TEST,
 };
 
 #endif // TESTRESULT_H

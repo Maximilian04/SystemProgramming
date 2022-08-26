@@ -1,22 +1,17 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include "testUI.h"
-#include "autoTest.h"
+#include "testingSystem\testUI.h"
 #include "tests.h"
 
-#define FUNC_TO_TEST(FUNC) &test::FUNC, #FUNC
-
 int main(int argc, const char* const* const argv) {
-    int programMode = ProgramMode::STD_TEST_FILE;
-    const char* userTestFileName;
+    FILE* testFile = nullptr;
 
     ProccessFlagsPtrs proccessFlagsPtrs = {
-        &programMode,
-        &userTestFileName
+        &testFile
     };
 
-    switch (cmdParser::processFlags(argc, argv, &proccessFlagsPtrs)) {
+    switch (cmdParser::handleFlags(argc, argv, &reactToFlags, &proccessFlagsPtrs)) {
     case cmdParser::ParserResult::BAD_INPUT:
         return 0;
         break;
@@ -27,19 +22,38 @@ int main(int argc, const char* const* const argv) {
         break;
     }
 
-    FILE* testFile = autoTest::openTestFile((programMode & EXT_TEST_FILE), userTestFileName);
-
     char command[MAX_FUNC_NAME_LENGTH] = {};
     bool testInputIsCorrect = true;
 
     while (fscanf(testFile, "%s", command) != EOF) {
+        bool doesTestExist = false;
 
-        //if (!autoTest::runTest(FUNC_TO_TEST(quadrEquation_solve), command, testFile)) {
-        //    testInputIsCorrect = false;
-        //    printf("TEST INPUT IS INCORRECT");
-        //    break;
-        //}
+        for (const test::TestFuncInfo testFunc : test::testFuncList) {
+            switch (autoTest::runTest(testFunc.func, testFunc.name, command, testFile)) {
+            case TestResult::PASSED:
+            case TestResult::FAILED:
+                doesTestExist = true;
+                goto breakEndOfFor;
+
+            case TestResult::INPUT_ERROR:
+                testInputIsCorrect = false;
+                printf("TEST INPUT IS INCORRECT\n");
+                goto breakEndOfWhile;
+
+            case TestResult::WRONG_TEST:
+                goto breakEndOfFor;
+
+            default:
+                assert(false && "autoTest::runTest()'s return is not a TestResult's member");
+            }
+        }
+    breakEndOfFor:;
+
+        if (!doesTestExist) {
+            printf("Test '%s' does not exist\n", command);
+        }
     }
+breakEndOfWhile:;
 
     if (autoTest::closeTestFile(testFile) != 0) {
         printf("CANNOT CLOSE TEST FILE CORRECTLY\n");
