@@ -3,16 +3,19 @@
 #include "pervert.h"
 
 int main() {
-    FILE* filer = fopen("EvgeniyOnegin.txt", "r");
-    char str[256];
-    fscanf(filer, "%[^\n]", str);
-    fclose(filer);
+    pervert::uploadAlphabet();
 
-    FILE* file = fopen("file.txt", "w");
-    fprintf(file, "Also Слухов про него ходило много.\n'%s'\nBut he was killed\n", str);
-    fclose(file);
+    for (int i = 0; i < pervert::listOfAlphabet.size; ++i) {
+        printf("%d\n", pervert::listOfAlphabet.lines[i].str[0]);
+    }
 
     pervert::readListOfLines();
+    pervert::openOutFile();
+
+    pervert::sortLinesBeginning();
+    pervert::writeOutPoem(pervert::WritingPos::BEGIN);
+
+    pervert::closeOutFile();
     pervert::destroyListOfLines();
 
     return 0;

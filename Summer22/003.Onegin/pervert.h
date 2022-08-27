@@ -36,6 +36,25 @@ namespace pervert {
     };
 
     extern ListOfLines listOfLines; ///< List of separated lines
+    extern ListOfLines listOfAlphabet; ///< List of separated characters
+
+    /**
+     * @brief Position in output file to write out
+     * 
+     */
+    enum WritingPos {
+        BEGIN, ///< Beginning of the file
+        END,   ///< End of file
+    };
+
+    void sortLinesBeginning();
+    void sortLinesEnding();
+
+    void writeOutPoem(WritingPos pos);
+
+    void uploadAlphabet();
+    void openOutFile();
+    void closeOutFile();
 
     void readListOfLines();
     void destroyListOfLines();

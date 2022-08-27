@@ -1,5 +1,5 @@
 *.exe
 *.out
 *.o
-trashlog.txt
+build
 html
