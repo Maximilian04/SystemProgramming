@@ -5,15 +5,15 @@
 int main() {
     pervert::uploadAlphabet();
 
-    for (int i = 0; i < pervert::listOfAlphabet.size; ++i) {
-        printf("%d\n", pervert::listOfAlphabet.lines[i].str[0]);
-    }
-
     pervert::readListOfLines();
     pervert::openOutFile();
 
     pervert::sortLinesBeginning();
-    pervert::writeOutPoem(pervert::WritingPos::BEGIN);
+    pervert::writeOutPoem();
+    pervert::sortLinesReal();
+    pervert::writeOutPoem();
+    pervert::sortLinesEnding();
+    pervert::writeOutPoem();
 
     pervert::closeOutFile();
     pervert::destroyListOfLines();

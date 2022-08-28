@@ -15,8 +15,9 @@
  * 
  */
 struct Line {
-    char* str;  ///< Stringed line
-    int lenght; ///< Lenght of line
+    char* str;   ///< Stringed line
+    int lenght;  ///< Lenght of line
+    int realNum; ///< Number of line in raw poem
 };
 
 namespace pervert {
@@ -48,9 +49,10 @@ namespace pervert {
     };
 
     void sortLinesBeginning();
+    void sortLinesReal();
     void sortLinesEnding();
 
-    void writeOutPoem(WritingPos pos);
+    void writeOutPoem();
 
     void uploadAlphabet();
     void openOutFile();

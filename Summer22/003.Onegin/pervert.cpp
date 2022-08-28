@@ -14,24 +14,56 @@ namespace pervert {
     ListOfLines listOfAlphabet = { {}, 0 };
     FILE* outFile = nullptr; ///< File for output
 
+    enum CmpCyrillicResult {
+        BAD_A,
+        BAD_B,
+        LESSER,
+        GREATER,
+        EQV,
+    };
+
+    int getCyrillicIndex(const char a);
+    CmpCyrillicResult cmpCyrillic(const char a, const char b);
     void qsortLinesBegining(int begin, int end);
     int cmpLinesStr(const char* a, const char* b);
+    int cmpLinesBackStr(const char* a, const char* b);
+    int cmpLinesRealNum(const char* a, const char* b);
     int cmpLines(const void* a, const void* b);
-    bool isCyrilic(const char a);
+    int cmpLinesBack(const void* a, const void* b);
+    int cmpLinesRealNum(const void* a, const void* b);
 
-    bool isCyrilic(const char a) {
+    enum {
+        BAD_CHAR = -1,
+    };
+
+    int getCyrillicIndex(const char a) {
         for (int i = 0; i < listOfAlphabet.size; ++i) {
             if (
                 a == listOfAlphabet.lines[i].str[0]
                 )
-                return true;
+                return i;
         }
 
-        return false;
+        return BAD_CHAR;
+    }
 
-        return
-            a >= listOfAlphabet.lines[0].str[0] &&
-            a <= listOfAlphabet.lines[listOfAlphabet.size - 1].str[0];
+    CmpCyrillicResult cmpCyrillic(const char a, const char b) {
+        int aIndex = getCyrillicIndex(a);
+        int bIndex = getCyrillicIndex(b);
+
+        if (aIndex == BAD_CHAR) {
+            return CmpCyrillicResult::BAD_A;
+        }
+        if (bIndex == BAD_CHAR) {
+            return CmpCyrillicResult::BAD_B;
+        }
+        if (aIndex < bIndex) {
+            return CmpCyrillicResult::LESSER;
+        }
+        if (aIndex > bIndex) {
+            return CmpCyrillicResult::GREATER;
+        }
+        return CmpCyrillicResult::EQV;
     }
 
     int cmpLinesStr(const char* a, const char* b) {
@@ -48,21 +80,72 @@ namespace pervert {
                 if (b[iB] == '\0') {
                     return 1;
                 } else {
-                    if (!isCyrilic(a[iA])) {
+                    switch (cmpCyrillic(a[iA], b[iB])) {
+                    case CmpCyrillicResult::BAD_A:
                         ++iA;
                         continue;
-                    }
-                    if (!isCyrilic(b[iB])) {
+                        break;
+                    case CmpCyrillicResult::BAD_B:
                         ++iB;
                         continue;
-                    }
-                    if (a[iA] < b[iB]) {
+                        break;
+                    case CmpCyrillicResult::LESSER:
                         return -1;
-                    } else if (a[iA] > b[iB]) {
+                        break;
+                    case CmpCyrillicResult::GREATER:
                         return 1;
-                    } else {
+                        break;
+                    case CmpCyrillicResult::EQV:
                         ++iA;
                         ++iB;
+                        break;
+                    default:
+                        assert(false);
+                    }
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    int cmpLinesBackStr(const char* a, const char* b) {
+        int iA = 0;
+        int iB = 0;
+        while (a[iA] != '\0') ++iA;
+        while (b[iB] != '\0') ++iB;
+        while (true) {
+            if (iA == -1) {
+                if (iB == -1) {
+                    return 0;
+                } else {
+                    return -1;
+                }
+            } else {
+                if (iB == -1) {
+                    return 1;
+                } else {
+                    switch (cmpCyrillic(a[iA], b[iB])) {
+                    case CmpCyrillicResult::BAD_A:
+                        --iA;
+                        continue;
+                        break;
+                    case CmpCyrillicResult::BAD_B:
+                        --iB;
+                        continue;
+                        break;
+                    case CmpCyrillicResult::LESSER:
+                        return -1;
+                        break;
+                    case CmpCyrillicResult::GREATER:
+                        return 1;
+                        break;
+                    case CmpCyrillicResult::EQV:
+                        --iA;
+                        --iB;
+                        break;
+                    default:
+                        assert(false);
                     }
                 }
             }
@@ -72,8 +155,21 @@ namespace pervert {
     }
 
     int cmpLines(const void* a, const void* b) {
-        //return strcmp(((const Line*)a)->str, ((const Line*)b)->str);
         return cmpLinesStr(((const Line*)a)->str, ((const Line*)b)->str);
+    }
+
+    int cmpLinesBack(const void* a, const void* b) {
+        return cmpLinesBackStr(((const Line*)a)->str, ((const Line*)b)->str);
+    }
+
+    int cmpLinesRealNum(const void* a, const void* b) {
+        if (((const Line*)a)->realNum < ((const Line*)b)->realNum) {
+            return -1;
+        }
+        if (((const Line*)a)->realNum > ((const Line*)b)->realNum) {
+            return 1;
+        }
+        return 0;
     }
 
     /**
@@ -114,43 +210,43 @@ namespace pervert {
     }
 
     /**
-     * @brief
+     * @brief Sort lines with its beginning
      *
      */
     void sortLinesBeginning() {
-        //qsortLinesBegining(0, listOfLines.size - 1);
         qsort(listOfLines.lines, listOfLines.size, sizeof(Line), cmpLines);
     }
 
     /**
-     * @brief
+     * @brief Sort lines with its number in raw poem
+     *
+     */
+    void sortLinesReal() {
+        qsort(listOfLines.lines, listOfLines.size, sizeof(Line), cmpLinesRealNum);
+    }
+
+    /**
+     * @brief Sort lines with its ending
      *
      */
     void sortLinesEnding() {
-
+        qsort(listOfLines.lines, listOfLines.size, sizeof(Line), cmpLinesBack);
     }
 
     /**
      * @brief Prints listOfLines to output in current state
      *
      */
-    void writeOutPoem(WritingPos pos) {
-        switch (pos) {
-        case WritingPos::BEGIN:
-            fseek(outFile, 0, SEEK_SET);
-            break;
-        case WritingPos::END:
-            fseek(outFile, 0, SEEK_END);
-            break;
-        default:
-            assert(false && "WritingPos is who???");
-        }
-
+    void writeOutPoem() {
         for (int listI = 0; listI < listOfLines.size; ++listI) {
             fprintf(outFile, "%s\n", listOfLines.lines[listI].str);
         }
     }
 
+    /**
+     * @brief Upload cyrillic alphabet from file
+     *
+     */
     void uploadAlphabet() {
         assert(listOfAlphabet.size == 0);
         listOfAlphabet.lines = (Line*)calloc(MAX_LINE_NUMBER, sizeof(Line));
@@ -220,6 +316,7 @@ namespace pervert {
             }
 
             listOfLines.lines[listOfLines.size].lenght = (int)strlen(listOfLines.lines[listOfLines.size].str);
+            listOfLines.lines[listOfLines.size].realNum = listOfLines.size;
             listOfLines.size++;
         }
         fclose(file);
