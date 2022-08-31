@@ -17,6 +17,7 @@ namespace pervert {
     enum CmpCyrillicResult {
         BAD_A,
         BAD_B,
+        BAD_BOTH,
         LESSER,
         GREATER,
         EQV,
@@ -24,13 +25,13 @@ namespace pervert {
 
     int getCyrillicIndex(const char a);
     CmpCyrillicResult cmpCyrillic(const char a, const char b);
-    void qsortLinesBegining(int begin, int end);
     int cmpLinesStr(const char* a, const char* b);
     int cmpLinesBackStr(const char* a, const char* b);
     int cmpLinesRealNum(const char* a, const char* b);
     int cmpLines(const void* a, const void* b);
     int cmpLinesBack(const void* a, const void* b);
     int cmpLinesRealNum(const void* a, const void* b);
+    void uq_sort(void* arr, int size, int begin, int end, int(*cmp)(const void*, const void*));
 
     enum {
         BAD_CHAR = -1,
@@ -51,11 +52,14 @@ namespace pervert {
         int aIndex = getCyrillicIndex(a);
         int bIndex = getCyrillicIndex(b);
 
-        if (aIndex == BAD_CHAR) {
+        if (aIndex == BAD_CHAR && bIndex != BAD_CHAR) {
             return CmpCyrillicResult::BAD_A;
         }
-        if (bIndex == BAD_CHAR) {
+        if (aIndex != BAD_CHAR && bIndex == BAD_CHAR) {
             return CmpCyrillicResult::BAD_B;
+        }
+        if (aIndex == BAD_CHAR && bIndex == BAD_CHAR) {
+            return CmpCyrillicResult::BAD_BOTH;
         }
         if (aIndex < bIndex) {
             return CmpCyrillicResult::LESSER;
@@ -86,6 +90,11 @@ namespace pervert {
                         continue;
                         break;
                     case CmpCyrillicResult::BAD_B:
+                        ++iB;
+                        continue;
+                        break;
+                    case CmpCyrillicResult::BAD_BOTH:
+                        ++iA;
                         ++iB;
                         continue;
                         break;
@@ -171,42 +180,52 @@ namespace pervert {
         }
         return 0;
     }
+    void uq_sort(void* arr, int begin, int end, int(*cmp)(const void*, const void*), int size);
 
-    /**
-     * @brief Sorting algorithm for array
-     *
-     * @param begin Index of the first element to be sorted
-     * @param end Index of the last element to be sorted
-     */
-    void qsortLinesBegining(int begin, int end) {
-        /*if (begin < end) {
-            int baseI = (begin + end) / 2;
-            Line base;
-            base.lenght = listOfLines.lines[baseI].lenght;
-            base.str = strdup(listOfLines.lines[baseI].str);
+    void uq_sort(void* arr, int begin, int end, int(*cmp)(const void*, const void*), int size) {
+        if (begin >= end) {
+            return;
+        }
 
-            int i = begin;
-            int j = end;
+        int baseI = (begin + end) / 2;
 
-            while (i <= j) {
-                while (isLineLesser(&listOfLines.lines[i], &base)) ++i;
-                while (isLineGreater(&listOfLines.lines[j], &base)) --j;
-                if (i >= j) break;
+        int l = begin;
+        int r = end;
 
-                // swap
-                Line tmp = listOfLines.lines[j];
-                listOfLines.lines[j] = listOfLines.lines[i];
-                listOfLines.lines[i] = tmp;
+        void* tmp = calloc(1, size);
 
-                ++i;
-                --j;
+        while (l < r) {
+            while (cmp((char*)arr + l * size, (char*)arr + baseI * size) == -1) ++l;
+            while (cmp((char*)arr + r * size, (char*)arr + baseI * size) == +1) --r;
+
+            if (l >= r) {
+                break;
             }
 
-            free(base.str);
+            // swap
+            if (l == baseI) {
+                baseI = r;
+            } else if (r == baseI) {
+                baseI = l;
+            }
+            memcpy(tmp,                   (char*)arr + l * size, size);
+            memcpy((char*)arr + l * size, (char*)arr + r * size, size);
+            memcpy((char*)arr + r * size, tmp,                   size);
+            ++l;
+            --r;
+        }
 
-            qsortLinesBegining(begin, j);
-            qsortLinesBegining(j + 1, end);
-        }*/
+        free(tmp);
+
+        for(int i = begin; i <= baseI; ++i){
+            assert(cmp((char*)arr + i * size, (char*)arr + baseI * size) <= 0 || (printf("%d %d", i, baseI), false));
+        }
+        for(int i = baseI; i <= end; ++i){
+            assert(cmp((char*)arr + i * size, (char*)arr + baseI * size) >= 0 || (printf("%d %d", i, baseI), false));
+        }
+
+        uq_sort(arr, begin, baseI - 1, cmp, size);
+        uq_sort(arr, baseI + 1,   end, cmp, size);
     }
 
     /**
@@ -214,7 +233,9 @@ namespace pervert {
      *
      */
     void sortLinesBeginning() {
-        qsort(listOfLines.lines, listOfLines.size, sizeof(Line), cmpLines);
+        //qsort(listOfLines.lines, listOfLines.size, sizeof(Line), cmpLines);
+        printf("1\n");
+        uq_sort(listOfLines.lines, 0, listOfLines.size - 1, cmpLines, sizeof(Line));
     }
 
     /**
@@ -222,7 +243,9 @@ namespace pervert {
      *
      */
     void sortLinesReal() {
-        qsort(listOfLines.lines, listOfLines.size, sizeof(Line), cmpLinesRealNum);
+        printf("2\n");
+        //qsort(listOfLines.lines, listOfLines.size, sizeof(Line), cmpLinesRealNum);
+        uq_sort(listOfLines.lines, 0, listOfLines.size - 1, cmpLinesRealNum, sizeof(Line));
     }
 
     /**
@@ -230,7 +253,9 @@ namespace pervert {
      *
      */
     void sortLinesEnding() {
-        qsort(listOfLines.lines, listOfLines.size, sizeof(Line), cmpLinesBack);
+        printf("3\n");
+        //qsort(listOfLines.lines, listOfLines.size, sizeof(Line), cmpLinesBack);
+        uq_sort(listOfLines.lines, 0, listOfLines.size - 1, cmpLinesBack, sizeof(Line));
     }
 
     /**
