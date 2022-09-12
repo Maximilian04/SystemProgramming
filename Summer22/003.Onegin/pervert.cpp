@@ -143,6 +143,11 @@ namespace pervert {
                         --iB;
                         continue;
                         break;
+                    case CmpCyrillicResult::BAD_BOTH:
+                        --iA;
+                        --iB;
+                        continue;
+                        break;
                     case CmpCyrillicResult::LESSER:
                         return -1;
                         break;
@@ -211,8 +216,12 @@ namespace pervert {
             memcpy(tmp,                   (char*)arr + l * size, size);
             memcpy((char*)arr + l * size, (char*)arr + r * size, size);
             memcpy((char*)arr + r * size, tmp,                   size);
-            ++l;
-            --r;
+            
+            // Ифы имени Миши
+            if (l != baseI)
+                ++l;
+            if (r != baseI)
+                --r;
         }
 
         free(tmp);

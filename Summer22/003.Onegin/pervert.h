@@ -36,7 +36,7 @@ namespace pervert {
         int size;                    ///< Number of lines in list
     };
 
-    extern ListOfLines listOfLines; ///< List of separated lines
+    extern ListOfLines listOfLines;    ///< List of separated lines
     extern ListOfLines listOfAlphabet; ///< List of separated characters
 
     /**
