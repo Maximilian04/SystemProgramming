@@ -1,0 +1,1 @@
+g++ main.cpp -Xlinker -Map="a.map"
