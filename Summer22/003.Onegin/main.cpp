@@ -5,7 +5,7 @@
 int main() {
     pervert::uploadAlphabet();
 
-    pervert::readListOfLines();
+    pervert::uploadPoem();
     pervert::openOutFile();
 
     pervert::sortLinesBeginning();
@@ -16,7 +16,7 @@ int main() {
     pervert::writeOutPoem();
 
     pervert::closeOutFile();
-    pervert::destroyListOfLines();
+    pervert::destroyAll();
 
     return 0;
 }

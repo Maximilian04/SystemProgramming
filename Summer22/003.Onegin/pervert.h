@@ -10,28 +10,11 @@
 #ifndef PERVERT_H
 #define PERVERT_H
 
-/**
- * @brief One line
- * 
- */
-struct Line {
-    char* str;   ///< Stringed line
-    int lenght;  ///< Lenght of line
-};
+#include "ListOfLines.h"
 
 namespace pervert {
-    /**
-     * @brief List of separated lines
-     * 
-     */
-    struct ListOfLines {
-        Line* lines;       ///< Lines
-        char* firstVacant; ///< Pointer to memory to write
-        int size;          ///< Number of lines in list
-    };
-
-    extern ListOfLines listOfLines;    ///< List of separated lines
-    extern ListOfLines listOfAlphabet; ///< List of separated characters
+    extern ListOfLines linesOfPoem;    ///< List of separated lines
+    extern ListOfLines linesOfAlphabet; ///< List of separated characters
 
     /**
      * @brief Position in output file to write out
@@ -48,13 +31,14 @@ namespace pervert {
 
     void writeOutPoem();
 
+    void uploadPoem();
     void uploadAlphabet();
-    void openOutFile();
+
+    void  openOutFile();
     void closeOutFile();
 
-    void readListOfLines();
-
-    void destroyListOfLines();
+    void destroyAll();
+    void destroyPoem();
     void destroyAlphabet();
 }
 

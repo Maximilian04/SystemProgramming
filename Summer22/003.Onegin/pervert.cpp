@@ -2,7 +2,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <sys\stat.h>
 
 #include "pervert.h"
 
@@ -11,8 +10,8 @@ const char FILE_ALPH_NAME[] = "alphabet.txt";
 const char FILE_OUT_NAME[] = "build\\PunyEvgeniyOnegin.txt";
 
 namespace pervert {
-    ListOfLines listOfLines = { nullptr, nullptr, 0 };
-    ListOfLines listOfAlphabet = { nullptr, nullptr, 0 };
+    ListOfLines linesOfPoem     = { nullptr, nullptr, 0 };
+    ListOfLines linesOfAlphabet = { nullptr, nullptr, 0 };
     FILE* outFile = nullptr; ///< File for output
 
     enum CmpCyrillicResult {
@@ -39,9 +38,9 @@ namespace pervert {
     };
 
     int getCyrillicIndex(const char a) {
-        for (int i = 0; i < listOfAlphabet.size; ++i) {
+        for (int i = 0; i < linesOfAlphabet.size; ++i) {
             if (
-                a == listOfAlphabet.lines[i].str[0]
+                a == linesOfAlphabet.lines[i].str[0]
                 )
                 return i;
         }
@@ -244,8 +243,8 @@ namespace pervert {
      *
      */
     void sortLinesBeginning() {
-        //qsort(listOfLines.lines, listOfLines.size, sizeof(Line), cmpLines);
-        uq_sort(listOfLines.lines, 0, listOfLines.size - 1, cmpLines, sizeof(Line));
+        //qsort(linesOfPoem.lines, linesOfPoem.size, sizeof(Line), cmpLines);
+        uq_sort(linesOfPoem.lines, 0, linesOfPoem.size - 1, cmpLines, sizeof(Line));
     }
 
     /**
@@ -253,8 +252,8 @@ namespace pervert {
      *
      */
     void sortLinesReal() {
-        //qsort(listOfLines.lines, listOfLines.size, sizeof(Line), cmpLinesRealNum);
-        uq_sort(listOfLines.lines, 0, listOfLines.size - 1, cmpLinesRealNum, sizeof(Line));
+        //qsort(linesOfPoem.lines, linesOfPoem.size, sizeof(Line), cmpLinesRealNum);
+        uq_sort(linesOfPoem.lines, 0, linesOfPoem.size - 1, cmpLinesRealNum, sizeof(Line));
     }
 
     /**
@@ -262,8 +261,8 @@ namespace pervert {
      *
      */
     void sortLinesEnding() {
-        //qsort(listOfLines.lines, listOfLines.size, sizeof(Line), cmpLinesBack);
-        uq_sort(listOfLines.lines, 0, listOfLines.size - 1, cmpLinesBack, sizeof(Line));
+        //qsort(linesOfPoem.lines, linesOfPoem.size, sizeof(Line), cmpLinesBack);
+        uq_sort(linesOfPoem.lines, 0, linesOfPoem.size - 1, cmpLinesBack, sizeof(Line));
     }
 
     /**
@@ -271,9 +270,17 @@ namespace pervert {
      *
      */
     void writeOutPoem() {
-        for (int listI = 0; listI < listOfLines.size; ++listI) {
-            fprintf(outFile, "%s\n", listOfLines.lines[listI].str);
+        for (int listI = 0; listI < linesOfPoem.size; ++listI) {
+            fprintf(outFile, "%s\n", linesOfPoem.lines[listI].str);
         }
+    }
+
+    /**
+     * @brief Read linesOfPoem from file
+     *
+     */
+    void uploadPoem() {
+        listOfLines::uploadList(&linesOfPoem, FILE_NAME);
     }
 
     /**
@@ -281,29 +288,7 @@ namespace pervert {
      *
      */
     void uploadAlphabet() {
-        assert(listOfAlphabet.size == 0);
-        listOfAlphabet.lines = (Line*)calloc(9000, sizeof(Line));
-
-        FILE* file = fopen(FILE_ALPH_NAME, "r");
-        listOfAlphabet.size = 0;
-        while (listOfAlphabet.size < 9000) {
-            listOfAlphabet.lines[listOfAlphabet.size].str = (char*)calloc(100, sizeof(char));
-            int fscanfRes = fscanf(file, "%" "100" "[^\n]", listOfAlphabet.lines[listOfAlphabet.size].str);
-            fgetc(file);
-
-            if (fscanfRes == EOF) {
-                break;
-            } else if (fscanfRes == 0) {
-                continue;
-            } else if (fscanfRes != 1) {
-                assert(false && "fscanf returned ???");
-            }
-
-            listOfAlphabet.lines[listOfAlphabet.size].lenght = (int)strlen(listOfAlphabet.lines[listOfAlphabet.size].str);
-            listOfAlphabet.size++;
-        }
-        fclose(file);
-        assert(listOfAlphabet.size < 9000);
+        listOfLines::uploadList(&linesOfAlphabet, FILE_ALPH_NAME);
     }
 
     /**
@@ -326,77 +311,27 @@ namespace pervert {
     }
 
     /**
-     * @brief Read ListOfLines from file
+     * @brief Free memory used by poem and alphabet
      *
      */
-    void readListOfLines() {
-        assert(listOfLines.size == 0);
-
-        struct stat fileStat;
-
-        int statResult = stat(FILE_NAME, &fileStat);
-        FILE* file = fopen(FILE_NAME, "rt");
-        assert(statResult == 0 && "Cannot get file info");
-        assert(file != nullptr && "Cannot open file");
-
-        listOfLines.firstVacant = (char*)calloc(fileStat.st_size + 1, sizeof(char));
-        size_t freadResult = fread(listOfLines.firstVacant, sizeof(char), fileStat.st_size, file);
-        listOfLines.firstVacant = (char*)realloc((void*)listOfLines.firstVacant, sizeof(char) * (freadResult + 1));
-        listOfLines.firstVacant[freadResult] = '\0';
-
-        //printf("%d %d\n", (int)freadResult, (int)fileStat.st_size);
-
-        listOfLines.lines = (Line*)calloc(freadResult + 1, sizeof(Line));
-        listOfLines.size = 0;
-
-        do {
-            listOfLines.lines[listOfLines.size].str = listOfLines.firstVacant;
-            listOfLines.lines[listOfLines.size].lenght = 0;
-
-            while (true) {
-                int* indexPtr = &listOfLines.lines[listOfLines.size].lenght;
-                char* symbPtr = &listOfLines.lines[listOfLines.size].str[*indexPtr];
-                if (*symbPtr == '\n') {
-                    *symbPtr = '\0';
-                }
-                if (*symbPtr == '\0') {
-                    break;
-                }
-                (*indexPtr)++;
-            }
-
-            listOfLines.firstVacant += listOfLines.lines[listOfLines.size].lenght + 1;
-            if (listOfLines.lines[listOfLines.size].lenght == 0) {
-                continue;
-            }
-            listOfLines.size++;
-        } while (listOfLines.firstVacant < (listOfLines.lines[0].str + freadResult + 1));
-
-        fclose(file);
-
-        //printf("%d\n", listOfLines.size);
-        listOfLines.lines = (Line*)realloc(listOfLines.lines, sizeof(Line) * listOfLines.size);
+    void destroyAll() {
+        destroyPoem();
+        destroyAlphabet();
     }
 
     /**
-     * @brief Free memory used by listOfLines
+     * @brief Free memory used by linesOfPoem
      *
      */
-    void destroyListOfLines() {
-        for (int i = 0; i < listOfLines.size; ++i) {
-            free(listOfLines.lines[i].str);
-        }
-        free(listOfLines.lines);
+    void destroyPoem() {
+        listOfLines::destroyList(&linesOfPoem);
     }
 
     /**
-     * @brief Free memory used by listAlphabet
+     * @brief Free memory used by linesOfAlphabet
      *
      */
     void destroyAlphabet() {
-        for (int i = 0; i < listOfAlphabet.size; ++i) {
-            free(listOfAlphabet.lines[i].str);
-        }
-        free(listOfAlphabet.lines);
+        listOfLines::destroyList(&linesOfAlphabet);
     }
 }
