@@ -37,7 +37,6 @@ namespace cyrillicString {
     int cmpLinesBackStr(const char* a, const char* b);
     int cmpLines(const void* a, const void* b);
     int cmpLinesBack(const void* a, const void* b);
-    int cmpLinesRealNum(const void* a, const void* b);
 }
 
 void uq_sort(void* arr, int begin, int end, int(*cmp)(const void*, const void*), int size);
