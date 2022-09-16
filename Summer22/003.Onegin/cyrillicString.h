@@ -34,7 +34,7 @@ namespace cyrillicString {
     int getCyrillicIndex(const char a);
     CmpCyrillicResult cmpCyrillic(const char a, const char b);
     int cmpLinesStr(const char* a, const char* b);
-    int cmpLinesBackStr(const char* a, const char* b);
+    int cmpLinesBackStr(const char* a, const char* b, int aLength, int bLength);
     int cmpLines(const void* a, const void* b);
     int cmpLinesBack(const void* a, const void* b);
 }

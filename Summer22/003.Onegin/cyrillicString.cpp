@@ -94,11 +94,9 @@ namespace cyrillicString {
         return 0;
     }
 
-    int cmpLinesBackStr(const char* a, const char* b) {
-        int iA = 0;
-        int iB = 0;
-        while (a[iA] != '\0') ++iA;
-        while (b[iB] != '\0') ++iB;
+    int cmpLinesBackStr(const char* a, const char* b, int aLength, int bLength) {
+        int iA = aLength;
+        int iB = bLength;
         while (true) {
             if (iA == -1) {
                 if (iB == -1) {
@@ -149,7 +147,7 @@ namespace cyrillicString {
     }
 
     int cmpLinesBack(const void* a, const void* b) {
-        return cmpLinesBackStr(((const Line*)a)->str, ((const Line*)b)->str);
+        return cmpLinesBackStr(((const Line*)a)->str, ((const Line*)b)->str, ((const Line*)a)->lenght, ((const Line*)b)->lenght);
     }
 }
 
@@ -164,6 +162,7 @@ void uq_sort(void* arr, int begin, int end, int(*cmp)(const void*, const void*),
     int r = end;
 
     void* tmp = calloc(1, size);
+    assert(tmp != nullptr);
 
     while (l < r) {
         while (cmp((char*)arr + l * size, (char*)arr + baseI * size) == -1) ++l;

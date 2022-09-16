@@ -17,6 +17,7 @@ namespace listOfLines {
         assert(file != nullptr && "Cannot open file");
 
         listPtr->firstVacant = (char*)calloc(fileStat.st_size + 1, sizeof(char));
+        assert(listPtr->firstVacant != nullptr);
         size_t freadResult = fread(listPtr->firstVacant, sizeof(char), fileStat.st_size, file);
         listPtr->firstVacant = (char*)realloc((void*)listPtr->firstVacant, sizeof(char) * (freadResult + 1));
         listPtr->firstVacant[freadResult] = '\0';
@@ -24,6 +25,7 @@ namespace listOfLines {
         //printf("%d %d\n", (int)freadResult, (int)fileStat.st_size);
 
         listPtr->lines = (Line*)calloc(freadResult + 1, sizeof(Line));
+        assert(listPtr->lines != nullptr);
         listPtr->size = 0;
 
         do {

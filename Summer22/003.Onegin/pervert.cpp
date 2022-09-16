@@ -5,15 +5,9 @@
 
 #include "pervert.h"
 
-const char FILE_NAME     [] = "EvgeniyOnegin.txt";
-const char FILE_ALPH_NAME[] = "alphabet.txt";
-const char FILE_OUT_NAME [] = "build\\PunyEvgeniyOnegin.txt";
-bool     hasUsrFileName     = false;
-const char* usrFileName     = nullptr;
-bool     hasUsrFileAlphName = false;
-const char* usrFileAlphName = nullptr;
-bool     hasUsrFileOutName  = false;
-const char* usrFileOutName  = nullptr;
+const char* fileName     = "EvgeniyOnegin.txt";
+const char* fileAlphName = "alphabet.txt";
+const char* fileOutName  = "build\\PunyEvgeniyOnegin.txt";
 
 namespace pervert {
     int cmpLinesRealNum(const void* a, const void* b); ///< Compare via comparing pointers
@@ -75,7 +69,7 @@ namespace pervert {
      *
      */
     void uploadPoem() {
-        listOfLines::uploadList(&linesOfPoem, hasUsrFileName ? usrFileName : FILE_NAME);
+        listOfLines::uploadList(&linesOfPoem, fileName);
     }
 
     /**
@@ -83,7 +77,7 @@ namespace pervert {
      *
      */
     void uploadAlphabet() {
-        listOfLines::uploadList(&linesOfAlphabet, hasUsrFileAlphName ? usrFileAlphName : FILE_ALPH_NAME);
+        listOfLines::uploadList(&linesOfAlphabet, fileAlphName);
         cyrillicString::setAlphabet(&linesOfAlphabet);
     }
 
@@ -93,7 +87,7 @@ namespace pervert {
      */
     void openOutFile() {
         assert(outFile == nullptr);
-        outFile = fopen(hasUsrFileOutName ? usrFileOutName : FILE_OUT_NAME, "wt");
+        outFile = fopen(fileOutName, "wt");
         assert(outFile != nullptr);
     }
 
@@ -180,8 +174,7 @@ namespace pervert {
                     return cmdParser::ParserResult::BAD_INPUT;
                 }
 
-                hasUsrFileName = true;
-                usrFileName = cmdArguments[cmdFlagI].argument;
+                fileName = cmdArguments[cmdFlagI].argument;
 
                 break;
             case 'a':
@@ -191,8 +184,7 @@ namespace pervert {
                     return cmdParser::ParserResult::BAD_INPUT;
                 }
 
-                hasUsrFileAlphName = true;
-                usrFileAlphName = cmdArguments[cmdFlagI].argument;
+                fileAlphName = cmdArguments[cmdFlagI].argument;
 
                 break;
             case 'o':
@@ -202,8 +194,7 @@ namespace pervert {
                     return cmdParser::ParserResult::BAD_INPUT;
                 }
 
-                hasUsrFileOutName = true;
-                usrFileOutName = cmdArguments[cmdFlagI].argument;
+                fileOutName = cmdArguments[cmdFlagI].argument;
 
                 break;
             default:
