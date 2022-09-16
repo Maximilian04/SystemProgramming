@@ -10,6 +10,7 @@
 #ifndef PERVERT_H
 #define PERVERT_H
 
+#include "cmdParser\cmdParser.h"
 #include "ListOfLines.h"
 
 namespace pervert {
@@ -40,6 +41,8 @@ namespace pervert {
     void destroyAll();
     void destroyPoem();
     void destroyAlphabet();
+
+    cmdParser::ParserResult reactToFlags(int cmdFlagC, cmdParser::CmdArgument* cmdArguments, void* userdata);
 }
 
 #endif // PERVERT_H

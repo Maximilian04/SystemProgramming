@@ -1,8 +1,21 @@
+#include <assert.h>
 #include <stdio.h>
 
 #include "pervert.h"
+#include "cmdParser/cmdParser.h"
 
-int main() {
+int main(int argc, const char* const* const argv) {
+    switch (cmdParser::handleFlags(argc, argv, &pervert::reactToFlags, nullptr)) {
+    case cmdParser::ParserResult::BAD_INPUT:
+        return 0;
+        break;
+    case cmdParser::ParserResult::GOOD_INPUT:
+        break;
+    default:
+        assert(false && "cmdParser::processFlags()'s return is not a cmdParser::PARSER_RESULT's member");
+        break;
+    }
+
     pervert::uploadAlphabet();
 
     pervert::uploadPoem();

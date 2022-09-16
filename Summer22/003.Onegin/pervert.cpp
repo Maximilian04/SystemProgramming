@@ -5,12 +5,19 @@
 
 #include "pervert.h"
 
-const char FILE_NAME[] = "EvgeniyOnegin.txt";
+const char FILE_NAME     [] = "EvgeniyOnegin.txt";
 const char FILE_ALPH_NAME[] = "alphabet.txt";
-const char FILE_OUT_NAME[] = "build\\PunyEvgeniyOnegin.txt";
+const char FILE_OUT_NAME [] = "build\\PunyEvgeniyOnegin.txt";
+bool     hasUsrFileName     = false;
+const char* usrFileName     = nullptr;
+bool     hasUsrFileAlphName = false;
+const char* usrFileAlphName = nullptr;
+bool     hasUsrFileOutName  = false;
+const char* usrFileOutName  = nullptr;
 
 namespace pervert {
     int cmpLinesRealNum(const void* a, const void* b); ///< Compare via comparing pointers
+    void printHelpMessage();
 
     ListOfLines linesOfPoem     = { nullptr, nullptr, 0 };
     ListOfLines linesOfAlphabet = { nullptr, nullptr, 0 };
@@ -68,15 +75,15 @@ namespace pervert {
      *
      */
     void uploadPoem() {
-        listOfLines::uploadList(&linesOfPoem, FILE_NAME);
+        listOfLines::uploadList(&linesOfPoem, hasUsrFileName ? usrFileName : FILE_NAME);
     }
 
     /**
-     * @brief Upload cyrillic alphabet from file
+     * @brief Upload cyrillic alphabet from file and set cyrillicString::setAlphabet
      *
      */
     void uploadAlphabet() {
-        listOfLines::uploadList(&linesOfAlphabet, FILE_ALPH_NAME);
+        listOfLines::uploadList(&linesOfAlphabet, hasUsrFileAlphName ? usrFileAlphName : FILE_ALPH_NAME);
         cyrillicString::setAlphabet(&linesOfAlphabet);
     }
 
@@ -86,7 +93,7 @@ namespace pervert {
      */
     void openOutFile() {
         assert(outFile == nullptr);
-        outFile = fopen(FILE_OUT_NAME, "wt");
+        outFile = fopen(hasUsrFileOutName ? usrFileOutName : FILE_OUT_NAME, "wt");
         assert(outFile != nullptr);
     }
 
@@ -117,10 +124,96 @@ namespace pervert {
     }
 
     /**
-     * @brief Free memory used by linesOfAlphabet
+     * @brief Free memory used by linesOfAlphabet and set cyrillicString::setAlphabet to nullptr
      *
      */
     void destroyAlphabet() {
         listOfLines::destroyList(&linesOfAlphabet);
+        cyrillicString::setAlphabet(nullptr);
+    }
+
+    /**
+     * @brief Prints help message to console
+     *
+     */
+    void printHelpMessage() {
+        printf(
+            "Help message. Command list:\n"
+            "-h\t\tshow help message\n"
+            "-f [name]\tget mutable poem from [name] file\n"
+            "-o [name]\twrite program output to [name] file\n"
+            "-a [name]\tget mutable alphabet from [name] file\n");
+    }
+
+    /**
+     * @brief Function with list of reactions to all possible flags
+     *
+     * @note Also function open incoming stream as file or stdio
+     *
+     * @note Must be given to cmdParser::handleFlags
+     *
+     * @param [in] cmdFlagC Number of active flags
+     * @param [in] cmdArguments Array of flags
+     * @param [out] userdata Pointer to #ProccessFlagsPtrs casted to (void*)
+     * @return cmdParser::ParserResult
+     */
+    cmdParser::ParserResult reactToFlags(int cmdFlagC, cmdParser::CmdArgument* cmdArguments, void* userdata) {
+        assert(userdata == nullptr);
+
+        if (cmdFlagC == cmdParser::BAD_INPUT) {
+            printf("Cannot recognize flags. Please use flags from list below.\n");
+            printHelpMessage();
+            return cmdParser::ParserResult::BAD_INPUT;
+        }
+
+        for (int cmdFlagI = 0; cmdFlagI < cmdFlagC; ++cmdFlagI) {
+            assert(cmdArguments[cmdFlagI].isActive);
+
+            switch (cmdArguments[cmdFlagI].key) {
+            case 'h':
+                printHelpMessage();
+                break;
+            case 'f':
+                if (!cmdArguments[cmdFlagI].hasArgument) {
+                    printf("Cannot recognize file name after '-f'. Please use flags from list below.\n");
+                    printHelpMessage();
+                    return cmdParser::ParserResult::BAD_INPUT;
+                }
+
+                hasUsrFileName = true;
+                usrFileName = cmdArguments[cmdFlagI].argument;
+
+                break;
+            case 'a':
+                if (!cmdArguments[cmdFlagI].hasArgument) {
+                    printf("Cannot recognize file name after '-f'. Please use flags from list below.\n");
+                    printHelpMessage();
+                    return cmdParser::ParserResult::BAD_INPUT;
+                }
+
+                hasUsrFileAlphName = true;
+                usrFileAlphName = cmdArguments[cmdFlagI].argument;
+
+                break;
+            case 'o':
+                if (!cmdArguments[cmdFlagI].hasArgument) {
+                    printf("Cannot recognize file name after '-f'. Please use flags from list below.\n");
+                    printHelpMessage();
+                    return cmdParser::ParserResult::BAD_INPUT;
+                }
+
+                hasUsrFileOutName = true;
+                usrFileOutName = cmdArguments[cmdFlagI].argument;
+
+                break;
+            default:
+                printf("Unknown flag '-%c'. Please use flags from list below.\n", cmdArguments[cmdFlagI].key);
+                printHelpMessage();
+                return cmdParser::ParserResult::BAD_INPUT;
+                break;
+            }
+        }
+
+        return cmdParser::ParserResult::GOOD_INPUT;
     }
 }

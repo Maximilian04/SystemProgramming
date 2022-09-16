@@ -2,8 +2,8 @@ all: Onegin #tests
 
 COMPILE_FLAGS = -Wshadow -Winit-self -Wredundant-decls -Wcast-align -Wundef -Wfloat-equal -Winline -Wunreachable-code -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Weffc++ -Wmain -Wextra -Wall -g -pipe -fexceptions -Wcast-qual -Wconversion -Wctor-dtor-privacy -Wempty-body -Wformat-security -Wformat=2 -Wignored-qualifiers -Wlogical-op -Wmissing-field-initializers -Wnon-virtual-dtor -Woverloaded-virtual -Wpointer-arith -Wsign-promo -Wstack-usage=8192 -Wstrict-aliasing -Wstrict-null-sentinel -Wtype-limits -Wwrite-strings -D_DEBUG -D_EJUDGE_CLIENT_SIDE
 
-Onegin: build\main.o build\pervert.o build\ListOfLines.o build\cyrillicString.o
-	@ g++ $(COMPILE_FLAGS) build\main.o build\pervert.o build\ListOfLines.o build\cyrillicString.o -o build\Onegin
+Onegin: build\main.o build\cmdParser.o build\pervert.o build\ListOfLines.o build\cyrillicString.o
+	@ g++ $(COMPILE_FLAGS) build\main.o  build\cmdParser.o build\pervert.o build\ListOfLines.o build\cyrillicString.o -o build\Onegin
 
 build\main.o: main.cpp
 	@ g++ $(COMPILE_FLAGS) -c main.cpp
