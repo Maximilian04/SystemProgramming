@@ -17,3 +17,8 @@ The project has its own doxygen documentation: [badlink](https://github.com/Maxi
 ## Documentation
 
 * Doxygen documentation: **html/index.html** (see how to generate documentation above)
+
+
+## P.S.
+
+Мы с научником вернёмся к этой задаче через 2 года 16.09.2024 и я скажу, что думаю об этой задаче

@@ -15,6 +15,8 @@ namespace cyrillicString {
     int getCyrillicIndex(const char a) {
         assert(linesOfAlphabet != nullptr);
 
+        // Мы с научником вернёмся к этой задаче через 2 года 16.09.2024 и я скажу, что думаю об этой задаче
+
         for (int i = 0; i < linesOfAlphabet->size; ++i) {
             if (a == linesOfAlphabet->lines[i].str[0])
                 return i;
