@@ -20,8 +20,6 @@ struct Line {
 };
 
 namespace pervert {
-    const int MAX_LINE_NUMBER = 9000;   ///< Size of list with lines
-
     /**
      * @brief List of separated lines
      * 

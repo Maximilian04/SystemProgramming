@@ -228,10 +228,10 @@ namespace pervert {
 
         free(tmp);
 
-        for(int i = begin; i <= baseI; ++i){
+        for (int i = begin; i <= baseI; ++i) {
             assert(cmp((char*)arr + i * size, (char*)arr + baseI * size) <= 0 || (printf("%d %d", i, baseI), false));
         }
-        for(int i = baseI; i <= end; ++i){
+        for (int i = baseI; i <= end; ++i) {
             assert(cmp((char*)arr + i * size, (char*)arr + baseI * size) >= 0 || (printf("%d %d", i, baseI), false));
         }
 
@@ -282,11 +282,11 @@ namespace pervert {
      */
     void uploadAlphabet() {
         assert(listOfAlphabet.size == 0);
-        listOfAlphabet.lines = (Line*)calloc(MAX_LINE_NUMBER, sizeof(Line));
+        listOfAlphabet.lines = (Line*)calloc(9000, sizeof(Line));
 
         FILE* file = fopen(FILE_ALPH_NAME, "r");
         listOfAlphabet.size = 0;
-        while (listOfAlphabet.size < MAX_LINE_NUMBER) {
+        while (listOfAlphabet.size < 9000) {
             listOfAlphabet.lines[listOfAlphabet.size].str = (char*)calloc(100, sizeof(char));
             int fscanfRes = fscanf(file, "%" "100" "[^\n]", listOfAlphabet.lines[listOfAlphabet.size].str);
             fgetc(file);
@@ -303,7 +303,7 @@ namespace pervert {
             listOfAlphabet.size++;
         }
         fclose(file);
-        assert(listOfAlphabet.size < MAX_LINE_NUMBER);
+        assert(listOfAlphabet.size < 9000);
     }
 
     /**
@@ -344,9 +344,9 @@ namespace pervert {
         listOfLines.firstVacant = (char*)realloc((void*)listOfLines.firstVacant, sizeof(char) * (freadResult + 1));
         listOfLines.firstVacant[freadResult] = '\0';
 
-        printf("%d %d\n", (int)freadResult, (int)fileStat.st_size);
+        //printf("%d %d\n", (int)freadResult, (int)fileStat.st_size);
 
-        listOfLines.lines = (Line*)calloc(MAX_LINE_NUMBER, sizeof(Line));
+        listOfLines.lines = (Line*)calloc(freadResult + 1, sizeof(Line));
         listOfLines.size = 0;
 
         do {
@@ -371,10 +371,10 @@ namespace pervert {
             }
             listOfLines.size++;
         } while (listOfLines.firstVacant < (listOfLines.lines[0].str + freadResult + 1));
-        fclose(file);
-        printf("%d\n", listOfLines.size);
-        assert(listOfLines.size < MAX_LINE_NUMBER);
 
+        fclose(file);
+
+        //printf("%d\n", listOfLines.size);
         listOfLines.lines = (Line*)realloc(listOfLines.lines, sizeof(Line) * listOfLines.size);
     }
 
