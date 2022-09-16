@@ -12,6 +12,8 @@ namespace cyrillicString {
     }
 
     int getCyrillicIndex(const char a) {
+        assert(linesOfAlphabet != nullptr);
+
         for (int i = 0; i < linesOfAlphabet->size; ++i) {
             if (a == linesOfAlphabet->lines[i].str[0])
                 return i;
@@ -21,6 +23,8 @@ namespace cyrillicString {
     }
 
     CmpCyrillicResult cmpCyrillic(const char a, const char b) {
+        assert(linesOfAlphabet != nullptr);
+
         int aIndex = getCyrillicIndex(a);
         int bIndex = getCyrillicIndex(b);
 
