@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h>
 
 #include "cyrillicString.h"
 
@@ -151,6 +152,50 @@ namespace cyrillicString {
     }
 }
 
+void memswap(void* aVoid, void* bVoid, size_t size); ///< Fast memory swapping
+
+void memswap(void* aVoid, void* bVoid, size_t size) {
+    char* aPtr = (char*)aVoid;
+    char* bPtr = (char*)bVoid;
+    size_t sizeDone = 0;
+
+    uint64_t tmp64 = 0;
+    while ((sizeDone - size) >> sizeof(uint64_t)) {
+        tmp64                         = *(uint64_t*)(aPtr + sizeDone);
+        *(uint64_t*)(aPtr + sizeDone) = *(uint64_t*)(bPtr + sizeDone);
+        *(uint64_t*)(bPtr + sizeDone) = tmp64;
+
+        sizeDone += sizeof(uint64_t);
+    }
+
+    uint32_t tmp32 = 0;
+    while ((sizeDone - size) >> sizeof(uint32_t)) {
+        tmp32                         = *(uint32_t*)(aPtr + sizeDone);
+        *(uint32_t*)(aPtr + sizeDone) = *(uint32_t*)(bPtr + sizeDone);
+        *(uint32_t*)(bPtr + sizeDone) = tmp32;
+
+        sizeDone += sizeof(uint32_t);
+    }
+    
+    uint16_t tmp16 = 0;
+    while ((sizeDone - size) >> sizeof(uint16_t)) {
+        tmp16                         = *(uint16_t*)(aPtr + sizeDone);
+        *(uint16_t*)(aPtr + sizeDone) = *(uint16_t*)(bPtr + sizeDone);
+        *(uint16_t*)(bPtr + sizeDone) = tmp16;
+
+        sizeDone += sizeof(uint16_t);
+    }
+
+    uint8_t tmp8 = 0;
+    while ((sizeDone - size) >> sizeof(uint8_t)) {
+        tmp8                         = *(uint8_t*)(aPtr + sizeDone);
+        *(uint8_t*)(aPtr + sizeDone) = *(uint8_t*)(bPtr + sizeDone);
+        *(uint8_t*)(bPtr + sizeDone) = tmp8;
+
+        sizeDone += sizeof(uint8_t);
+    }
+}
+
 void uq_sort(void* arr, int begin, int end, int(*cmp)(const void*, const void*), int size) {
     if (begin >= end) {
         return;
@@ -178,9 +223,7 @@ void uq_sort(void* arr, int begin, int end, int(*cmp)(const void*, const void*),
         } else if (r == baseI) {
             baseI = l;
         }
-        memcpy(tmp,                   (char*)arr + l * size, size);
-        memcpy((char*)arr + l * size, (char*)arr + r * size, size);
-        memcpy((char*)arr + r * size, tmp,                   size);
+        memswap((char*)arr + l * size, (char*)arr + r * size, size);
             
         // Ифы имени Миши
         if (l != baseI)
