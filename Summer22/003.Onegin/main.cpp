@@ -9,11 +9,11 @@ int main() {
     pervert::openOutFile();
 
     pervert::sortLinesBeginning();
-    pervert::writeOutPoem();
+    //pervert::writeOutPoem();
     pervert::sortLinesReal();
     pervert::writeOutPoem();
     pervert::sortLinesEnding();
-    pervert::writeOutPoem();
+    //pervert::writeOutPoem();
 
     pervert::closeOutFile();
     pervert::destroyListOfLines();

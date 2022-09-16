@@ -17,14 +17,9 @@
 struct Line {
     char* str;   ///< Stringed line
     int lenght;  ///< Lenght of line
-    int realNum; ///< Number of line in raw poem
 };
 
 namespace pervert {
-    const int BUFFER_SIZE = 256;        ///< Size of buffer for one line
-#define       BUFFER_SIZE_ "256"        ///< Size of buffer for one line
-    const int EXTRA_BUFFER_SIZE = 2048; ///< Size of buffer for one bigger line
-#define       EXTRA_BUFFER_SIZE_ "2048" ///< Size of buffer for one bigger line
     const int MAX_LINE_NUMBER = 9000;   ///< Size of list with lines
 
     /**
@@ -32,8 +27,9 @@ namespace pervert {
      * 
      */
     struct ListOfLines {
-        Line* lines; ///< Lines
-        int size;                    ///< Number of lines in list
+        Line* lines;       ///< Lines
+        char* firstVacant; ///< Pointer to memory to write
+        int size;          ///< Number of lines in list
     };
 
     extern ListOfLines listOfLines;    ///< List of separated lines
@@ -59,7 +55,9 @@ namespace pervert {
     void closeOutFile();
 
     void readListOfLines();
+
     void destroyListOfLines();
+    void destroyAlphabet();
 }
 
 #endif // PERVERT_H

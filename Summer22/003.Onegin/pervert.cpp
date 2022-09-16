@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <sys\stat.h>
 
 #include "pervert.h"
 
@@ -10,8 +11,8 @@ const char FILE_ALPH_NAME[] = "alphabet.txt";
 const char FILE_OUT_NAME[] = "build\\PunyEvgeniyOnegin.txt";
 
 namespace pervert {
-    ListOfLines listOfLines = { {}, 0 };
-    ListOfLines listOfAlphabet = { {}, 0 };
+    ListOfLines listOfLines = { nullptr, nullptr, 0 };
+    ListOfLines listOfAlphabet = { nullptr, nullptr, 0 };
     FILE* outFile = nullptr; ///< File for output
 
     enum CmpCyrillicResult {
@@ -177,14 +178,15 @@ namespace pervert {
     }
 
     int cmpLinesRealNum(const void* a, const void* b) {
-        if (((const Line*)a)->realNum < ((const Line*)b)->realNum) {
+        if (((const Line*)a)->str < ((const Line*)b)->str) {
             return -1;
         }
-        if (((const Line*)a)->realNum > ((const Line*)b)->realNum) {
+        if (((const Line*)a)->str > ((const Line*)b)->str) {
             return 1;
         }
         return 0;
     }
+
     void uq_sort(void* arr, int begin, int end, int(*cmp)(const void*, const void*), int size);
 
     void uq_sort(void* arr, int begin, int end, int(*cmp)(const void*, const void*), int size) {
@@ -243,7 +245,6 @@ namespace pervert {
      */
     void sortLinesBeginning() {
         //qsort(listOfLines.lines, listOfLines.size, sizeof(Line), cmpLines);
-        printf("1\n");
         uq_sort(listOfLines.lines, 0, listOfLines.size - 1, cmpLines, sizeof(Line));
     }
 
@@ -252,7 +253,6 @@ namespace pervert {
      *
      */
     void sortLinesReal() {
-        printf("2\n");
         //qsort(listOfLines.lines, listOfLines.size, sizeof(Line), cmpLinesRealNum);
         uq_sort(listOfLines.lines, 0, listOfLines.size - 1, cmpLinesRealNum, sizeof(Line));
     }
@@ -262,7 +262,6 @@ namespace pervert {
      *
      */
     void sortLinesEnding() {
-        printf("3\n");
         //qsort(listOfLines.lines, listOfLines.size, sizeof(Line), cmpLinesBack);
         uq_sort(listOfLines.lines, 0, listOfLines.size - 1, cmpLinesBack, sizeof(Line));
     }
@@ -288,8 +287,8 @@ namespace pervert {
         FILE* file = fopen(FILE_ALPH_NAME, "r");
         listOfAlphabet.size = 0;
         while (listOfAlphabet.size < MAX_LINE_NUMBER) {
-            listOfAlphabet.lines[listOfAlphabet.size].str = (char*)calloc(EXTRA_BUFFER_SIZE, sizeof(char));
-            int fscanfRes = fscanf(file, "%" EXTRA_BUFFER_SIZE_ "[^\n]", listOfAlphabet.lines[listOfAlphabet.size].str);
+            listOfAlphabet.lines[listOfAlphabet.size].str = (char*)calloc(100, sizeof(char));
+            int fscanfRes = fscanf(file, "%" "100" "[^\n]", listOfAlphabet.lines[listOfAlphabet.size].str);
             fgetc(file);
 
             if (fscanfRes == EOF) {
@@ -313,7 +312,7 @@ namespace pervert {
      */
     void openOutFile() {
         assert(outFile == nullptr);
-        outFile = fopen(FILE_OUT_NAME, "w");
+        outFile = fopen(FILE_OUT_NAME, "wt");
         assert(outFile != nullptr);
     }
 
@@ -332,29 +331,51 @@ namespace pervert {
      */
     void readListOfLines() {
         assert(listOfLines.size == 0);
+
+        struct stat fileStat;
+
+        int statResult = stat(FILE_NAME, &fileStat);
+        FILE* file = fopen(FILE_NAME, "rt");
+        assert(statResult == 0 && "Cannot get file info");
+        assert(file != nullptr && "Cannot open file");
+
+        listOfLines.firstVacant = (char*)calloc(fileStat.st_size + 1, sizeof(char));
+        size_t freadResult = fread(listOfLines.firstVacant, sizeof(char), fileStat.st_size, file);
+        listOfLines.firstVacant = (char*)realloc((void*)listOfLines.firstVacant, sizeof(char) * (freadResult + 1));
+        listOfLines.firstVacant[freadResult] = '\0';
+
+        printf("%d %d\n", (int)freadResult, (int)fileStat.st_size);
+
         listOfLines.lines = (Line*)calloc(MAX_LINE_NUMBER, sizeof(Line));
-
-        FILE* file = fopen(FILE_NAME, "r");
         listOfLines.size = 0;
-        while (listOfLines.size < MAX_LINE_NUMBER) {
-            listOfLines.lines[listOfLines.size].str = (char*)calloc(EXTRA_BUFFER_SIZE, sizeof(char));
-            int fscanfRes = fscanf(file, "%" EXTRA_BUFFER_SIZE_ "[^\n]", listOfLines.lines[listOfLines.size].str);
-            fgetc(file);
 
-            if (fscanfRes == EOF) {
-                break;
-            } else if (fscanfRes == 0) {
-                continue;
-            } else if (fscanfRes != 1) {
-                assert(false && "fscanf returned ???");
+        do {
+            listOfLines.lines[listOfLines.size].str = listOfLines.firstVacant;
+            listOfLines.lines[listOfLines.size].lenght = 0;
+
+            while (true) {
+                int* indexPtr = &listOfLines.lines[listOfLines.size].lenght;
+                char* symbPtr = &listOfLines.lines[listOfLines.size].str[*indexPtr];
+                if (*symbPtr == '\n') {
+                    *symbPtr = '\0';
+                }
+                if (*symbPtr == '\0') {
+                    break;
+                }
+                (*indexPtr)++;
             }
 
-            listOfLines.lines[listOfLines.size].lenght = (int)strlen(listOfLines.lines[listOfLines.size].str);
-            listOfLines.lines[listOfLines.size].realNum = listOfLines.size;
+            listOfLines.firstVacant += listOfLines.lines[listOfLines.size].lenght + 1;
+            if (listOfLines.lines[listOfLines.size].lenght == 0) {
+                continue;
+            }
             listOfLines.size++;
-        }
+        } while (listOfLines.firstVacant < (listOfLines.lines[0].str + freadResult + 1));
         fclose(file);
+        printf("%d\n", listOfLines.size);
         assert(listOfLines.size < MAX_LINE_NUMBER);
+
+        listOfLines.lines = (Line*)realloc(listOfLines.lines, sizeof(Line) * listOfLines.size);
     }
 
     /**
@@ -366,5 +387,16 @@ namespace pervert {
             free(listOfLines.lines[i].str);
         }
         free(listOfLines.lines);
+    }
+
+    /**
+     * @brief Free memory used by listAlphabet
+     *
+     */
+    void destroyAlphabet() {
+        for (int i = 0; i < listOfAlphabet.size; ++i) {
+            free(listOfAlphabet.lines[i].str);
+        }
+        free(listOfAlphabet.lines);
     }
 }
