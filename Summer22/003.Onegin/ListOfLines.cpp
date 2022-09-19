@@ -17,6 +17,8 @@ namespace listOfLines {
      * @return _off_t Size of file
      */
     _off_t getSizeOfFile(const char* fileName) {
+        assert(fileName != nullptr);
+
         struct stat fileStat = {};
 
         int statResult = stat(fileName, &fileStat);
@@ -36,6 +38,9 @@ namespace listOfLines {
      * @return size_t Size of buffer or 0 if error
      */
     size_t readFileToBuffer(const char* fileName, char** buffer) {
+        assert(fileName != nullptr);
+        assert(buffer   != nullptr);
+
         assert((*buffer) == nullptr);
 
         int fileSize = getSizeOfFile(fileName);
@@ -67,6 +72,8 @@ namespace listOfLines {
      * @param [in] good Cheracter to replace with
      */
     void replaceSymbol(ListOfLines* listPtr, size_t bufferSize, char bad, char good) {
+        assert(listPtr != nullptr);
+
         do {
             listPtr->lines[listPtr->size].str = listPtr->firstVacant;
             listPtr->lines[listPtr->size].lenght = 0;
@@ -99,6 +106,8 @@ namespace listOfLines {
      * @return int 1 if file cannot be opened
      */
     int uploadList(ListOfLines* listPtr, const char* fileName) {
+        assert(listPtr  != nullptr);
+        assert(fileName != nullptr);
         assert(listPtr->size == 0);
 
         size_t bufferSize = readFileToBuffer(fileName, &listPtr->firstVacant);
@@ -126,6 +135,8 @@ namespace listOfLines {
      * @param listPtr Pointer to ListOfLines
      */
     void destroyList(ListOfLines* listPtr) {
+        assert(listPtr != nullptr);
+
         free(listPtr->lines[0].str);
         free(listPtr->lines);
     }

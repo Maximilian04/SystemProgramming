@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <assert.h>
+#include <stdlib.h>
 
 #include "cyrillicString.h"
 
@@ -22,11 +23,14 @@ namespace pervert {
      *
      */
     void sortLinesBeginning() {
-        //qsort(linesOfPoem.lines, linesOfPoem.size, sizeof(Line), cmpLines);
-        uq_sort(linesOfPoem.lines, 0, linesOfPoem.size - 1, cyrillicString::cmpLines, sizeof(Line));
+        qsort(linesOfPoem.lines, linesOfPoem.size, sizeof(Line), cyrillicString::cmpLines);
+        //uq_sort(linesOfPoem.lines, 0, linesOfPoem.size - 1, cyrillicString::cmpLines, sizeof(Line));
     }
 
     int cmpLinesRealNum(const void* a, const void* b) {
+        assert(a != nullptr);
+        assert(b != nullptr);
+
         if (((const Line*)a)->str < ((const Line*)b)->str) {
             return -1;
         }
@@ -166,6 +170,7 @@ namespace pervert {
      */
     cmdParser::ParserResult reactToFlags(int cmdFlagC, cmdParser::CmdArgument* cmdArguments, void* userdata) {
         assert(userdata == nullptr);
+        assert(cmdArguments != nullptr);
 
         if (cmdFlagC == cmdParser::BAD_INPUT) {
             printf("Cannot recognize flags. Please use flags from list below.\n");

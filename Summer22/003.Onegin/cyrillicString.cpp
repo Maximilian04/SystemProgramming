@@ -12,19 +12,21 @@ namespace cyrillicString {
 
     /**
      * @brief Set the alphabet with its ListOfLines
-     * 
-     * @param linesOfAlphabetPtr 
+     *
+     * @param [in] linesOfAlphabetPtr
      */
     void setAlphabet(const ListOfLines* linesOfAlphabetPtr) {
+        assert(linesOfAlphabet != nullptr);
+        
         cyrillicString::linesOfAlphabet = linesOfAlphabetPtr;
         isAlphabetInitialized = false;
     }
 
     /**
      * @brief Get the index of cyrillic character
-     * 
+     *
      * Can be used for comparing
-     * 
+     *
      * @param [in] a Character
      * @return int Index
      */
@@ -51,10 +53,10 @@ namespace cyrillicString {
 
     /**
      * @brief Comparator for cyrillic characters
-     * 
-     * @param a 
-     * @param b 
-     * @return CmpCyrillicResult 
+     *
+     * @param a
+     * @param b
+     * @return CmpCyrillicResult
      */
     CmpCyrillicResult cmpCyrillic(const char a, const char b) {
         assert(linesOfAlphabet != nullptr);
@@ -82,53 +84,47 @@ namespace cyrillicString {
 
     /**
      * @brief Comparator for cyrillic lines
-     * 
-     * @param a 
-     * @param b 
+     *
+     * @param a
+     * @param b
      * @return int -1 / 0 / 1
      */
     int cmpLinesStr(const char* a, const char* b) {
+        assert(a != nullptr);
+        assert(b != nullptr);
+
         int iA = 0;
         int iB = 0;
         while (true) {
             if (a[iA] == '\0') {
-                if (b[iB] == '\0') {
-                    return 0;
-                } else {
+                if (b[iB] == '\0') return  0;
+                else               return -1;                
+            }
+            if (b[iB] == '\0')
+                return 1;
+
+            switch (cmpCyrillic(a[iA], b[iB])) {
+                case CmpCyrillicResult::BAD_A:
+                    ++iA;
+                    continue;
+                case CmpCyrillicResult::BAD_B:
+                    ++iB;
+                    continue;
+                case CmpCyrillicResult::BAD_BOTH:
+                    ++iA;
+                    ++iB;
+                    continue;
+
+                case CmpCyrillicResult::LESSER:
                     return -1;
-                }
-            } else {
-                if (b[iB] == '\0') {
+                case CmpCyrillicResult::GREATER:
                     return 1;
-                } else {
-                    switch (cmpCyrillic(a[iA], b[iB])) {
-                    case CmpCyrillicResult::BAD_A:
-                        ++iA;
-                        continue;
-                        break;
-                    case CmpCyrillicResult::BAD_B:
-                        ++iB;
-                        continue;
-                        break;
-                    case CmpCyrillicResult::BAD_BOTH:
-                        ++iA;
-                        ++iB;
-                        continue;
-                        break;
-                    case CmpCyrillicResult::LESSER:
-                        return -1;
-                        break;
-                    case CmpCyrillicResult::GREATER:
-                        return 1;
-                        break;
-                    case CmpCyrillicResult::EQV:
-                        ++iA;
-                        ++iB;
-                        break;
-                    default:
-                        assert(false);
-                    }
-                }
+                case CmpCyrillicResult::EQV:
+                    ++iA;
+                    ++iB;
+                    continue;
+                default:
+                    assert(false && "cmpCyrillic returned what?");
             }
         }
 
@@ -137,11 +133,11 @@ namespace cyrillicString {
 
     /**
      * @brief Back comparator for cyrillic lines
-     * 
-     * @param a 
-     * @param b 
-     * @param aLength 
-     * @param bLength 
+     *
+     * @param a
+     * @param b
+     * @param aLength
+     * @param bLength
      * @return int -1 / 0 / 1
      */
     int cmpLinesBackStr(const char* a, const char* b, int aLength, int bLength) {
@@ -194,23 +190,27 @@ namespace cyrillicString {
 
     /**
      * @brief Type independed comparator for cyrillic lines
-     * 
+     *
      * @param a (void*)charPtr
      * @param b (void*)charPtr
-     * @return int 
+     * @return int
      */
     int cmpLines(const void* a, const void* b) {
+        assert(a != nullptr);
+        assert(b != nullptr);
         return cmpLinesStr(((const Line*)a)->str, ((const Line*)b)->str);
     }
 
     /**
      * @brief Type independed back omparator for cyrillic lines
-     * 
+     *
      * @param a (void*)charPtr
      * @param b (void*)charPtr
-     * @return int 
+     * @return int
      */
     int cmpLinesBack(const void* a, const void* b) {
+        assert(a != nullptr);
+        assert(b != nullptr);
         return cmpLinesBackStr(((const Line*)a)->str, ((const Line*)b)->str, ((const Line*)a)->lenght, ((const Line*)b)->lenght);
     }
 }
@@ -218,6 +218,9 @@ namespace cyrillicString {
 void memswap(void* aVoid, void* bVoid, size_t size); ///< Fast memory swapping
 
 void memswap(void* aVoid, void* bVoid, size_t size) {
+    assert(aVoid != nullptr);
+    assert(bVoid != nullptr);
+
     char* aPtr = (char*)aVoid;
     char* bPtr = (char*)bVoid;
     size_t sizeDone = 0;
@@ -239,7 +242,7 @@ void memswap(void* aVoid, void* bVoid, size_t size) {
 
         sizeDone += sizeof(uint32_t);
     }
-    
+
     uint16_t tmp16 = 0;
     while ((sizeDone - size) >> sizeof(uint16_t)) {
         tmp16                         = *(uint16_t*)(aPtr + sizeDone);
@@ -261,7 +264,7 @@ void memswap(void* aVoid, void* bVoid, size_t size) {
 
 /**
  * @brief Quick sort algorithm
- * 
+ *
  * @param arr Array
  * @param begin Begin index
  * @param end End index
@@ -296,7 +299,7 @@ void uq_sort(void* arr, int begin, int end, int(*cmp)(const void*, const void*),
             baseI = l;
         }
         memswap((char*)arr + l * size, (char*)arr + r * size, size);
-            
+
         // Ифы имени Миши
         if (l != baseI)
             ++l;
