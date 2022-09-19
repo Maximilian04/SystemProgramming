@@ -1,28 +1,39 @@
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
 
 #include "cyrillicString.h"
 
 namespace cyrillicString {
-    const ListOfLines* linesOfAlphabet = nullptr;
+    static const ListOfLines* linesOfAlphabet = nullptr;
+    static bool isAlphabetInitialized = false;
 
     void setAlphabet(const ListOfLines* linesOfAlphabetPtr) {
         cyrillicString::linesOfAlphabet = linesOfAlphabetPtr;
+        isAlphabetInitialized = false;
     }
 
     int getCyrillicIndex(const char a) {
+        static int alphabetTable[256] = { 0 };
+
         assert(linesOfAlphabet != nullptr);
 
-        // Мы с научником вернёмся к этой задаче через 2 года 16.09.2024 и я скажу, что думаю об этой задаче
+        // Мы с научником вернёмся к этой задаче через 2 года 16.09.2024 и я скажу, что думаю об этом решении
+        // Ну вот теперь решение получше (19.09.2022)
+        if (isAlphabetInitialized == false) {
+            isAlphabetInitialized = true;
 
-        for (int i = 0; i < linesOfAlphabet->size; ++i) {
-            if (a == linesOfAlphabet->lines[i].str[0])
-                return i;
+            for (int symbI = 0; symbI < 256; ++symbI) {
+                alphabetTable[symbI] = BAD_CHAR;
+            }
+            for (int i = 0; i < linesOfAlphabet->size; ++i) {
+                alphabetTable[(unsigned char)linesOfAlphabet->lines[i].str[0]] = i;
+            }
         }
 
-        return BAD_CHAR;
+        return alphabetTable[(unsigned char)a];
     }
 
     CmpCyrillicResult cmpCyrillic(const char a, const char b) {

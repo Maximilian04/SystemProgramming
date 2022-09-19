@@ -14,8 +14,6 @@
 #include "ListOfLines.h"
 
 namespace cyrillicString {
-    extern const ListOfLines* linesOfAlphabet;
-
     enum CmpCyrillicResult {
         BAD_A,
         BAD_B,
