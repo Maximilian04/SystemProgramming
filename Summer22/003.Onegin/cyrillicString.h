@@ -14,6 +14,10 @@
 #include "ListOfLines.h"
 
 namespace cyrillicString {
+    /**
+     * @brief Result of comparator for cyrillic chars
+     * 
+     */
     enum CmpCyrillicResult {
         BAD_A,
         BAD_B,

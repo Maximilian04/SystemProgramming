@@ -16,9 +16,13 @@ int main(int argc, const char* const* const argv) {
         break;
     }
 
-    pervert::uploadAlphabet();
+    if (pervert::uploadAlphabet()) {
+        return 0;
+    }
 
-    pervert::uploadPoem();
+    if (pervert::uploadPoem()) {
+        return 0;
+    }
     pervert::openOutFile();
 
     pervert::sortLinesBeginning();

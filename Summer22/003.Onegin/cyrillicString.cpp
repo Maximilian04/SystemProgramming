@@ -10,11 +10,24 @@ namespace cyrillicString {
     static const ListOfLines* linesOfAlphabet = nullptr;
     static bool isAlphabetInitialized = false;
 
+    /**
+     * @brief Set the alphabet with its ListOfLines
+     * 
+     * @param linesOfAlphabetPtr 
+     */
     void setAlphabet(const ListOfLines* linesOfAlphabetPtr) {
         cyrillicString::linesOfAlphabet = linesOfAlphabetPtr;
         isAlphabetInitialized = false;
     }
 
+    /**
+     * @brief Get the index of cyrillic character
+     * 
+     * Can be used for comparing
+     * 
+     * @param [in] a Character
+     * @return int Index
+     */
     int getCyrillicIndex(const char a) {
         static int alphabetTable[256] = { 0 };
 
@@ -36,6 +49,13 @@ namespace cyrillicString {
         return alphabetTable[(unsigned char)a];
     }
 
+    /**
+     * @brief Comparator for cyrillic characters
+     * 
+     * @param a 
+     * @param b 
+     * @return CmpCyrillicResult 
+     */
     CmpCyrillicResult cmpCyrillic(const char a, const char b) {
         assert(linesOfAlphabet != nullptr);
 
@@ -60,6 +80,13 @@ namespace cyrillicString {
         return CmpCyrillicResult::EQV;
     }
 
+    /**
+     * @brief Comparator for cyrillic lines
+     * 
+     * @param a 
+     * @param b 
+     * @return int -1 / 0 / 1
+     */
     int cmpLinesStr(const char* a, const char* b) {
         int iA = 0;
         int iB = 0;
@@ -108,6 +135,15 @@ namespace cyrillicString {
         return 0;
     }
 
+    /**
+     * @brief Back comparator for cyrillic lines
+     * 
+     * @param a 
+     * @param b 
+     * @param aLength 
+     * @param bLength 
+     * @return int -1 / 0 / 1
+     */
     int cmpLinesBackStr(const char* a, const char* b, int aLength, int bLength) {
         int iA = aLength;
         int iB = bLength;
@@ -156,10 +192,24 @@ namespace cyrillicString {
         return 0;
     }
 
+    /**
+     * @brief Type independed comparator for cyrillic lines
+     * 
+     * @param a (void*)charPtr
+     * @param b (void*)charPtr
+     * @return int 
+     */
     int cmpLines(const void* a, const void* b) {
         return cmpLinesStr(((const Line*)a)->str, ((const Line*)b)->str);
     }
 
+    /**
+     * @brief Type independed back omparator for cyrillic lines
+     * 
+     * @param a (void*)charPtr
+     * @param b (void*)charPtr
+     * @return int 
+     */
     int cmpLinesBack(const void* a, const void* b) {
         return cmpLinesBackStr(((const Line*)a)->str, ((const Line*)b)->str, ((const Line*)a)->lenght, ((const Line*)b)->lenght);
     }
@@ -209,6 +259,15 @@ void memswap(void* aVoid, void* bVoid, size_t size) {
     }
 }
 
+/**
+ * @brief Quick sort algorithm
+ * 
+ * @param arr Array
+ * @param begin Begin index
+ * @param end End index
+ * @param cmp Compare function
+ * @param size sizeof(element)
+ */
 void uq_sort(void* arr, int begin, int end, int(*cmp)(const void*, const void*), int size) {
     if (begin >= end) {
         return;

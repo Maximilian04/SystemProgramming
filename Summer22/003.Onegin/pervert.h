@@ -32,8 +32,8 @@ namespace pervert {
 
     void writeOutPoem();
 
-    void uploadPoem();
-    void uploadAlphabet();
+    int uploadPoem();
+    int uploadAlphabet();
 
     void  openOutFile();
     void closeOutFile();

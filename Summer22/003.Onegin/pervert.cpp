@@ -67,18 +67,31 @@ namespace pervert {
     /**
      * @brief Read linesOfPoem from file
      *
+     * @return int 1 if file cannot be opened
      */
-    void uploadPoem() {
-        listOfLines::uploadList(&linesOfPoem, fileName);
+    int uploadPoem() {
+        int result = listOfLines::uploadList(&linesOfPoem, fileName);
+        if (result) {
+            printf("Cannot open poem file");
+            return 1;
+        }
+        return 0;
     }
 
     /**
      * @brief Upload cyrillic alphabet from file and set cyrillicString::setAlphabet
      *
+     * @return int 1 if file cannot be opened
      */
-    void uploadAlphabet() {
-        listOfLines::uploadList(&linesOfAlphabet, fileAlphName);
+    int uploadAlphabet() {
+        int result = listOfLines::uploadList(&linesOfAlphabet, fileAlphName);
+        if (result) {
+            printf("Cannot open alphabet file");
+            return 1;
+        }
         cyrillicString::setAlphabet(&linesOfAlphabet);
+
+        return 0;
     }
 
     /**
