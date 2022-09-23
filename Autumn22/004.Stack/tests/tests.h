@@ -14,7 +14,7 @@
 
 const int MAX_FUNC_NAME_LENGTH = 64;  ///< Size of string buffer for function is tested or for enum key in test
 
-const int NUMBER_OF_TEST_FUNCS = 6; ///< Total number of tests
+const int NUMBER_OF_TEST_FUNCS = 1; ///< Total number of tests
 
 namespace test {
     /**

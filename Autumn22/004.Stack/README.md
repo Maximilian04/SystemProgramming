@@ -19,7 +19,6 @@ The project has its own doxygen documentation: [badlink](https://github.com/Maxi
 * Doxygen documentation: **html/index.html** (see how to generate documentation above)
 
 
-## P.S.
+## Typical errors
 
-Мы с научником вернёмся к этой задаче через 2 года 16.09.2024 и я скажу, что думаю об этом решении
-Ну вот теперь решение получше, кстати
+* *mingw32-make: \*\*\* [makefile:19: tests] Error -1073741819* - in file **tests/tests.h** wrong value in **NUMBER_OF_TEST_FUNCS**
