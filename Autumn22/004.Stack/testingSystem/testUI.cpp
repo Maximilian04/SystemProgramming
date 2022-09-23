@@ -29,6 +29,7 @@ void printHelpMessage() {
  * @return cmdParser::ParserResult
  */
 cmdParser::ParserResult reactToFlags(int cmdFlagC, cmdParser::CmdArgument* cmdArguments, void* userdata) {
+    assert(cmdArguments != nullptr);
     assert(userdata != nullptr);
 
     if (cmdFlagC == cmdParser::BAD_INPUT) {

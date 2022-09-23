@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <assert.h>
 
 #include "testingSystem\testUI.h"
@@ -27,6 +28,10 @@ int main(int argc, const char* const* const argv) {
 
     while (fscanf(testFile, "%s", command) != EOF) {
         bool doesTestExist = false;
+
+        if (strcmp(command, "exit") == 0) {
+            break;
+        }
 
         for (const test::TestFuncInfo testFunc : test::testFuncList) {
             switch (autoTest::runTest(testFunc.func, testFunc.name, command, testFile)) {

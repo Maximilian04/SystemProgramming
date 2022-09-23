@@ -1,4 +1,5 @@
 #include <string.h>
+#include <assert.h>
 
 #include "cmdParser.h"
 
@@ -15,6 +16,9 @@ namespace cmdParser {
      * @warning Returns BAD_INPUT if cannot recognize all flags
      */
     int parse(int argc, const char* const* const argv, CmdArgument* flags) {
+        assert(argv != nullptr);
+        assert(flags != nullptr);
+
         int flagsNumber = 0;
         for (int argI = 1; argI < argc; ++argI) {
             if (argv[argI][0] == '-') {
@@ -48,6 +52,8 @@ namespace cmdParser {
     ParserResult handleFlags(int argc, const char* const* const argv,
         cmdParser::ParserResult(*reactToFlags)(int, cmdParser::CmdArgument*, void*),
         void* userdata = nullptr) {
+        assert(argv != nullptr);
+        assert(reactToFlags != nullptr);
 
         cmdParser::CmdArgument cmdArguments[MAX_CMD_ARGS_COUNT] = {};
         int cmdFlagC = cmdParser::parse(argc, argv, cmdArguments);

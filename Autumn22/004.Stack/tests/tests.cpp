@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
 
 #include "tests.h"
 #include "compareDouble.h"
@@ -72,6 +73,8 @@ namespace test {
      * @return TestResult Result of testing
      */
     TestResult stack_do_test(FILE* inputFile) {
+        assert(inputFile != nullptr);
+
         struct {
             char command[MAX_FUNC_NAME_LENGTH];
             int resultAns;

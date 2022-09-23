@@ -1,6 +1,6 @@
 #include <string.h>
 #include <stdio.h>
-#include <cassert>
+#include <assert.h>
 
 #include "autoTest.h"
 
@@ -60,6 +60,10 @@ namespace autoTest {
      * @warning Returns **true** whether or no test is passed
      */
     TestResult runTest(TestResult(*testFunction) (FILE* inputFile), const char* name, char* command, FILE* testFile) {
+        assert(testFunction != nullptr);
+        assert(name != nullptr);
+        assert(command != nullptr);
+
         if (strcmp(command, name) == 0) {
             switch (testFunction(testFile)) {
             case TestResult::PASSED:
