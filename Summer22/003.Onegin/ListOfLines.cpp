@@ -9,6 +9,7 @@ namespace listOfLines {
     _off_t getSizeOfFile(const char* fileName);
     size_t readFileToBuffer(const char* fileName, char** buffer);
     void replaceSymbol(ListOfLines* listPtr, size_t bufferSize, char bad, char good);
+    size_t countLinesInBuffer(const char* buffer, size_t bufferSize);
 
     /**
      * @brief Get the size of file
@@ -64,7 +65,7 @@ namespace listOfLines {
     }
 
     /**
-     * @brief Replace specific character in ListOfLines
+     * @brief Replace specific character in ListOfLines and separates lines
      * 
      * @param [out] listPtr Struct with buffer
      * @param [in] bufferSize Size of buffer
@@ -81,6 +82,7 @@ namespace listOfLines {
             while (true) {
                 int* indexPtr = &listPtr->lines[listPtr->size].lenght;
                 char* symbPtr = &listPtr->lines[listPtr->size].str[*indexPtr];
+
                 if (*symbPtr == bad) {
                     *symbPtr = good;
                 }
@@ -96,6 +98,28 @@ namespace listOfLines {
             }
             listPtr->size++;
         } while (listPtr->firstVacant < (listPtr->lines[0].str + bufferSize));
+    }
+
+    /**
+     * @brief Count number of this symbol in buffer
+     *
+     * @param [in] buffer Buffer of chars
+     * @param [in] bufferSize Size of buffer
+     * @param [in] symb Symbol to compare with
+     * @return size_t Count of symbols
+     */
+    size_t countLinesInBuffer(const char* buffer, const size_t bufferSize) {
+        assert(buffer != nullptr);
+
+        size_t linesCounter = 0;
+        for (size_t i = 0; i < bufferSize; ++i) {
+            if (buffer[i] == '\0' ||
+                buffer[i] == '\n') {
+                ++linesCounter;
+            }
+        }
+
+        return linesCounter;
     }
 
     /**
@@ -115,15 +139,14 @@ namespace listOfLines {
             return 1;
         }
 
-        //printf("%d %d\n", (int)freadResult, (int)fileStat.st_size);
-
-        listPtr->lines = (Line*)calloc(bufferSize, sizeof(Line));
+        size_t tempCountOfLines = countLinesInBuffer(listPtr->firstVacant, bufferSize);
+        listPtr->lines = (Line*)calloc(tempCountOfLines, sizeof(Line));
         assert(listPtr->lines != nullptr);
         listPtr->size = 0;
 
         replaceSymbol(listPtr, bufferSize, '\n', '\0');
 
-        //printf("%d\n", listPtr->size);
+        assert(tempCountOfLines >= (size_t)listPtr->size);
         listPtr->lines = (Line*)realloc(listPtr->lines, sizeof(Line) * listPtr->size);
 
         return 0;

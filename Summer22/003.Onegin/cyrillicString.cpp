@@ -16,7 +16,7 @@ namespace cyrillicString {
      * @param [in] linesOfAlphabetPtr
      */
     void setAlphabet(const ListOfLines* linesOfAlphabetPtr) {
-        assert(linesOfAlphabet != nullptr);
+        assert(linesOfAlphabetPtr != nullptr);
         
         cyrillicString::linesOfAlphabet = linesOfAlphabetPtr;
         isAlphabetInitialized = false;
