@@ -63,7 +63,48 @@ namespace test {
         return TestResult::FAILED;
     }*/
 
+    /**
+     * @brief Tests function
+     *
+     * Do some action
+     *
+     * @param [in] inputFile File with test
+     * @return TestResult Result of testing
+     */
+    TestResult stack_do_test(FILE* inputFile) {
+        struct {
+            char command[MAX_FUNC_NAME_LENGTH];
+            int resultAns;
+        } params = {};
+
+        // ------------- read params -------------
+
+        int strKey = 0;
+        SCAN(" [%d]", &strKey);
+        SCANREAD(params.command, strKey);
+
+        params.resultAns = 0;
+
+        // ------------- read params -------------
+        // test function
+
+        int result = 0; //strLib::strlen(params.str);
+
+        if (
+            (result == params.resultAns)) {
+            return TestResult::PASSED;
+        }
+
+        printf("TEST FAILED : %s: input: %s\n"
+            "       expected output: %d\n"
+            "       got      output: %d\n",
+            "stack_do_test", params.command,
+            params.resultAns,
+            result);
+        return TestResult::FAILED;
+    }
+
     const TestFuncInfo testFuncList[NUMBER_OF_TEST_FUNCS] = {
-        { FUNC_TO_TEST_LIST(nullptr)  },
+        { FUNC_TO_TEST_LIST(stack_do_test)  },
     };
 }

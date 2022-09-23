@@ -28,6 +28,7 @@ namespace test {
     };
 
 //    TestResult strLib_strlen (FILE* inputFile);
+    TestResult stack_do_test(FILE* inputFile);
 
     extern const TestFuncInfo testFuncList[NUMBER_OF_TEST_FUNCS];
 }

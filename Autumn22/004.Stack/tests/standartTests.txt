@@ -1,2 +1,1 @@
-strLib_strdup [6]qwerty
-
+stack_do_test [4]push
