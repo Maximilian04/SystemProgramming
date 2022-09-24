@@ -5,6 +5,9 @@
 #include "testingSystem\testUI.h"
 #include "tests.h"
 
+#include "stack\Stack.h"
+#include "logger\logger.h"
+
 int main(int argc, const char* const* const argv) {
     FILE* testFile = nullptr;
 
@@ -22,6 +25,11 @@ int main(int argc, const char* const* const argv) {
         assert(false && "cmdParser::processFlags()'s return is not a cmdParser::PARSER_RESULT's member");
         break;
     }
+
+    // ------------------------------ logging ------------------------------
+    Stack stack = {};
+    stack::dump(&stack);
+    // ------------------------------ logging ------------------------------
 
     char command[MAX_FUNC_NAME_LENGTH] = {};
     bool testInputIsCorrect = true;

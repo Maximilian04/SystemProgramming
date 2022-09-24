@@ -2,8 +2,8 @@ all: Stack tests
 
 COMPILE_FLAGS = -Wshadow -Winit-self -Wredundant-decls -Wcast-align -Wundef -Wfloat-equal -Winline -Wunreachable-code -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Weffc++ -Wmain -Wextra -Wall -g -pipe -fexceptions -Wcast-qual -Wconversion -Wctor-dtor-privacy -Wempty-body -Wformat-security -Wformat=2 -Wignored-qualifiers -Wlogical-op -Wmissing-field-initializers -Wnon-virtual-dtor -Woverloaded-virtual -Wpointer-arith -Wsign-promo -Wstack-usage=8192 -Wstrict-aliasing -Wstrict-null-sentinel -Wtype-limits -Wwrite-strings -D_DEBUG -D_EJUDGE_CLIENT_SIDE
 
-Stack: build\main.o build\Stack.o
-	@ g++ $(COMPILE_FLAGS) build\main.o  build\Stack.o -o build\Stack
+Stack: build\main.o build\Stack.o build\logger.o
+	@ g++ $(COMPILE_FLAGS) build\main.o  build\Stack.o build\logger.o -o build\Stack
 
 build\main.o: main.cpp
 	@ g++ $(COMPILE_FLAGS) -c main.cpp
@@ -11,11 +11,15 @@ build\main.o: main.cpp
 
 build\Stack.o: stack\Stack.cpp
 	@ g++ $(COMPILE_FLAGS) -c stack\Stack.cpp
-	@ move stack.o build > NUL
+	@ move Stack.o build > NUL
+
+build\logger.o: logger\logger.cpp
+	@ g++ $(COMPILE_FLAGS) -c logger\logger.cpp
+	@ move logger.o build > NUL
 
 
-tests: build\testMain.o build\cmdParser.o build\testUI.o build\autoTest.o build\tests.o build\Stack.o
-	@ g++ $(COMPILE_FLAGS) build\testMain.o build\cmdParser.o build\testUI.o build\autoTest.o build\tests.o build\Stack.o -o build\tests
+tests: build\testMain.o build\cmdParser.o build\testUI.o build\autoTest.o build\tests.o build\Stack.o build\logger.o
+	@ g++ $(COMPILE_FLAGS) build\testMain.o build\cmdParser.o build\testUI.o build\autoTest.o build\tests.o build\Stack.o build\logger.o -o build\tests
 	@ .\build\tests.exe
 
 build\testMain.o: tests\testMain.cpp

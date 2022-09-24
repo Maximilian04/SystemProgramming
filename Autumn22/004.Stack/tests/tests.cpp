@@ -5,6 +5,8 @@
 #include "tests.h"
 #include "compareDouble.h"
 
+#include "stack\Stack.h"
+
 #define SCAN(STR, ADDR)                                \
 {                                                      \
         if (fscanf(inputFile, STR, ADDR) < 1) {        \
