@@ -13,6 +13,8 @@
 
 #include <stdlib.h>
 
+#include "..\logger\loggerIncludeDefines.h"
+
 typedef int Elem_t;
 
 struct Stack {
@@ -27,7 +29,8 @@ namespace stack {
 
     void push(Stack* stack, Elem_t elem);
 
-    void dump(Stack* stack);
+#define STACK_dump(stack) stack::dump(&stack, LOGFUNCHEAD_PARAMS_R);
+    void dump(Stack* stack, LOGFUNCHEAD_PARAMS_H);
 }
 
 #endif // STACK_H

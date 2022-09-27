@@ -1,74 +1,154 @@
 #include <assert.h>
+#include <stdarg.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
 
 #include "logger.h"
 
-static const char htmlHead[] =
-"<!DOCTYPE html>\n"
-"<html>\n"
-"<head>\n"
-"    <title>Log</title>\n"
-"\n"
-"    <style>\n"
-"        body {\n"
-"            font-family: 'Roboto Mono', monospace;\n"
-"            line-height: 0%;\n"
-"        }\n"
-"    </style>\n"
-"</head>\n"
-"<body>\n"
-"\n"
-;
+#include "..\logger\loggerIncludeConsts.cpp"
+#include "..\strFParser\strFParser.h"
 
-static const char htmlTail[] =
-"\n"
-"</html>\n"
-"</body>\n"
-;
-
-static const char htmlBeginBlock[] =
-"<p> <div style=\"margin-left:%dch\">{</div>\n"
-;
-
-static const char htmlEndBlock[] =
-"<p> <div style=\"margin-left:%dch\">}</div>\n"
-;
-
-static const char htmlStrTemplate[] =
-"<p> <div style=\"margin-left:%dch\">%s</div>\n"
-;
+static int numberOfDigits(size_t n) {
+    int number = 0;
+    for (number = 0; n; n /= 10, number++);
+    return number;
+}
 
 namespace logger {
+    static FILE* logTarget = nullptr;
     static int marginCounter = 0;
 
-    void logHtmlHead(FILE* logFile) {
-        assert(logFile != nullptr);
-        fprintf(logFile, "%s",
+    void printLog(FILE* stream, const char* format, ...);
+    void setLogTargetHard(FILE* _logTarget);
+
+
+
+    void printLog(FILE* stream, const char* format, ...) {
+        assert(stream != nullptr);
+        assert(format != nullptr);
+
+        va_list ap;
+        va_start(ap, format);
+        vfprintf(stream, format, ap);
+        va_end(ap);
+    }
+
+    void setLogTargetHard(FILE* _logTarget) {
+        logTarget = _logTarget;
+    }
+
+    void setLogTarget(FILE* _logTarget) {
+        assert(_logTarget != nullptr);
+
+        assert(logTarget == nullptr);
+        setLogTargetHard(_logTarget);
+    }
+
+    int openLogFile(const char* fileName) {
+        assert(fileName != nullptr);
+        assert(logTarget == nullptr);
+
+        FILE* file = 0;
+        file = fopen(fileName, "at");
+        if (file == nullptr)
+            return 1;
+
+        setvbuf(file, nullptr, _IONBF, 0);
+        setLogTarget(file);
+        return 0;
+    }
+
+    int openLogFile() {
+        return openLogFile(logFileName);
+    }
+
+    int closeLogFile() {
+        assert(logTarget != nullptr && logTarget != stdout);
+        int fcloseRes = fclose(logTarget);
+        setLogTargetHard(nullptr);
+        return fcloseRes;
+    }
+
+    void logHtmlHead() {
+        assert(logTarget != nullptr);
+        printLog(logTarget, "%s",
             htmlHead);
     }
 
-    void logHtmlTail(FILE* logFile) {
-        assert(logFile != nullptr);
-        fprintf(logFile, "%s",
+    void logHtmlTail() {
+        assert(logTarget != nullptr);
+        printLog(logTarget, "%s",
             htmlTail);
     }
 
-    void beginBlock(FILE* logFile) {
-        assert(logFile != nullptr);
+    void logFuncHead(LOGFUNCHEAD_PARAMS_H) {
+        assert(funcName != nullptr);
+        assert(fileName != nullptr);
+
+        logger::logLine(strFParser::parseF("%s at %s (%d line)", funcName, fileName, lineN));
+    }
+
+    void logStructHead(const char* structName, const void* objPtr) {
+        assert(structName != nullptr);
+
+        logger::logLine(strFParser::parseF("%s[%s%p%s] \"stack1\" at main() at main.cpp (50 line):",
+            structName, htmlCyanColorStart, objPtr, htmlCyanColorStop));
+    }
+
+#define LOGGER_LOGFIELD_IMPL(fieldType, flag)                                              \
+    LOGGER_LOGFIELD_DEF(fieldType)) {                                                       \
+        assert(fieldName != nullptr);                                                        \
+                                                                                              \
+        logger::logLine(fieldName);                                                            \
+        logger::logStrS(strFParser::parseF("= %"#flag, fieldValue), (int)strlen(fieldName) + 1 + shift); \
+    }
+    LOGGER_LOGFIELD_IMPL(size_t, llu);
+
+
+
+#define LOGGER_LOGFIELDARRAY_IMPL(fieldType, flag)                                                    \
+    LOGGER_LOGFIELDARRAY_DEF(fieldType)) {                                                             \
+        assert(arrayName != nullptr);                                                                   \
+        assert(array != nullptr);                                                                        \
+        assert(size < SIZE_MAX);                                                                          \
+                                                                                                           \
+        logger::logLine(strFParser::parseF("%s[%s%p%s]:", arrayName, htmlCyanColorStart, array, htmlCyanColorStop)); \
+        logger::beginBlock();                                                                                \
+        int digitsNumber = numberOfDigits(size - 1);                                                              \
+        for (size_t elemI = 0; elemI < size; ++elemI) {                                                        \
+                logger::logLine(strFParser::parseF(strFParser::parseFCalloc("[%%%dd]", digitsNumber), elemI));                        \
+                logger::logStrS(strFParser::parseF("= %"#flag, array[elemI]), 3 + digitsNumber); \
+        }                                                                                   \
+        logger::endBlock();                                                                 \
+    }
+    LOGGER_LOGFIELDARRAY_IMPL(int, d);
+
+    void beginBlock() {
+        assert(logTarget != nullptr);
         ++marginCounter;
-        fprintf(logFile, htmlBeginBlock,
+        printLog(logTarget, htmlBeginBlock,
             marginCounter * 4);
     }
 
-    void endBlock(FILE* logFile) {
-        assert(logFile != nullptr);
-        fprintf(logFile, htmlEndBlock,
+    void endBlock() {
+        assert(logTarget != nullptr);
+        printLog(logTarget, htmlEndBlock,
             marginCounter * 4);
         --marginCounter;
     }
 
-    void logStr(FILE* logFile, const char* const str) {
-        assert(logFile != nullptr);
-        fprintf(logFile, htmlStrTemplate,
+    void logLine(const char* const str) {
+        assert(str != nullptr);
+        assert(logTarget != nullptr);
+        printLog(logTarget, htmlLineTemplate,
             marginCounter * 4, str);
+    }
+
+    void logStrS(const char* const str, int shift) {
+        assert(str != nullptr);
+        assert(logTarget != nullptr);
+        printLog(logTarget, htmlStrTemplate,
+            marginCounter * 4 + shift, str);
     }
 }

@@ -28,7 +28,8 @@ int main(int argc, const char* const* const argv) {
 
     // ------------------------------ logging ------------------------------
     Stack stack = {};
-    stack::dump(&stack);
+    stack::ctor(&stack, 11);
+    STACK_dump(stack);
     // ------------------------------ logging ------------------------------
 
     char command[MAX_FUNC_NAME_LENGTH] = {};
