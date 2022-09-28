@@ -1,7 +1,6 @@
 #include <assert.h>
 #include <stdio.h>
 
-#include "..\logger\logger.h" //TODO: WTF???
 #include "..\logger\loggerStack.h" //TODO: WTF???
 
 #include "Stack.h"
@@ -48,11 +47,12 @@ namespace stack {
      *
      * @param [in] stack Stack
      */
-    void dump(Stack* stack, LOGFUNCHEAD_PARAMS_H) {
+    void dump(Stack* stack, LOGFUNCHEAD_ARGS_H) {
         logger::openLogFile();
 
         logger::logHtmlHead();
-        logger::logFuncHead(LOGFUNCHEAD_PARAMS);
+        logger__logFuncHead());
+        //logger::logFuncHead(LOGFUNCHEAD_ARGS);
         logger::logStructHead("Stack", stack);
         logger::logStack(stack);
         logger::logHtmlTail();

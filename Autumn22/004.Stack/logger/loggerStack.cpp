@@ -5,9 +5,9 @@
 namespace logger {
     void logStack(const Stack* stack) {
         logger::addBlock();
-        LOGGER_logFieldS(stack, size, 4);
-        LOGGER_logField(stack, capacity);
-        LOGGER_logFieldArray(stack, data, stack->capacity);
+        logger__logField(stack, size), 4);
+        logger__logField(stack, capacity));
+        logger__logFieldArray(stack, data, stack->capacity));
         logger::addInvisibleBlock();
         logger::logLine("*", -1, -5);
         logger::endInvisibleBlock();

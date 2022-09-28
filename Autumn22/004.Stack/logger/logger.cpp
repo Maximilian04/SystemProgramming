@@ -82,7 +82,7 @@ namespace logger {
             htmlTail);
     }
 
-    void logFuncHead(LOGFUNCHEAD_PARAMS_H) {
+    void logFuncHead(LOGFUNCHEAD_ARGS_H) {
         assert(funcName != nullptr);
         assert(fileName != nullptr);
 
