@@ -96,31 +96,38 @@ namespace logger {
             structName, htmlCyanColorStart, objPtr, htmlCyanColorStop));
     }
 
-#define LOGGER_LOGFIELD_IMPL(fieldType, flag)                                              \
-    LOGGER_LOGFIELD_DEF(fieldType)) {                                                       \
-        assert(fieldName != nullptr);                                                        \
-                                                                                              \
-        logger::logLine(fieldName);                                                            \
+
+
+#define LOGGER_LOGFIELD_IMPL(fieldType, flag)                                                       \
+    LOGGER_LOGFIELD_DEF(fieldType)) {                                                                \
+        assert(fieldName != nullptr);                                                                 \
+                                                                                                       \
+        logger::logLine(fieldName);                                                                     \
         logger::logStrS(strFParser::parseF("= %"#flag, fieldValue), (int)strlen(fieldName) + 1 + shift); \
     }
     LOGGER_LOGFIELD_IMPL(size_t, llu);
 
 
 
-#define LOGGER_LOGFIELDARRAY_IMPL(fieldType, flag)                                                    \
-    LOGGER_LOGFIELDARRAY_DEF(fieldType)) {                                                             \
-        assert(arrayName != nullptr);                                                                   \
-        assert(array != nullptr);                                                                        \
-        assert(size < SIZE_MAX);                                                                          \
-                                                                                                           \
-        logger::logLine(strFParser::parseF("%s[%s%p%s]:", arrayName, htmlCyanColorStart, array, htmlCyanColorStop)); \
-        logger::beginBlock();                                                                                \
-        int digitsNumber = numberOfDigits(size - 1);                                                              \
-        for (size_t elemI = 0; elemI < size; ++elemI) {                                                        \
-                logger::logLine(strFParser::parseF(strFParser::parseFCalloc("[%%%dd]", digitsNumber), elemI));                        \
-                logger::logStrS(strFParser::parseF("= %"#flag, array[elemI]), 3 + digitsNumber); \
-        }                                                                                   \
-        logger::endBlock();                                                                 \
+
+
+
+#define LOGGER_LOGFIELDARRAY_IMPL(fieldType, flag)                                                                \
+    LOGGER_LOGFIELDARRAY_DEF(fieldType)) {                                                                         \
+        assert(arrayName != nullptr);                                                                               \
+        assert(array != nullptr);                                                                                    \
+        assert(size < SIZE_MAX);                                                                                      \
+                                                                                                                       \
+        logger::logLine(strFParser::parseF("%s[%s%p%s]:", arrayName, htmlCyanColorStart, array, htmlCyanColorStop));    \
+        logger::beginBlock();                                                                                            \
+        int digitsNumber = numberOfDigits(size - 1);                                                                      \
+        int parseBufferNum = strFParser::addCallocBuf();                                                                   \
+        for (size_t elemI = 0; elemI < size; ++elemI) {                                                                     \
+                logger::logLine(strFParser::parseF(strFParser::parseFNBuf(parseBufferNum, "[%%%dd]", digitsNumber), elemI)); \
+                logger::logStrS(strFParser::parseF("= %"#flag, array[elemI]), 3 + digitsNumber);                              \
+        }                                                                                                                      \
+        strFParser::freeCalloc();                                                                                               \
+        logger::endBlock();                                                                                                      \
     }
     LOGGER_LOGFIELDARRAY_IMPL(int, d);
 

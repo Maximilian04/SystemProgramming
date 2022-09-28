@@ -16,6 +16,9 @@ const int LINE_BUFFER_SIZE = 256;
 namespace strFParser {
     const char* parseF(const char* format, ...);
     const char* parseFCalloc(const char* format, ...);
+    const char* parseFNBuf(int bufferNum, const char* format, ...);
+    int addCallocBuf();
+    void freeCalloc();
 }
 
 #endif // STRFPARSER
