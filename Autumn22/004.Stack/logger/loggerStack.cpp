@@ -3,29 +3,23 @@
 #include "..\logger\logger.h"
 
 namespace logger {
-    void logStack(const Stack* stack) {
+    void logStackData(const Stack* const stack);
+
+    void logStackData(const Stack* const stack) {
+        const char* starPtr = "*";
+        const char** labels = (const char**)calloc(stack->capacity, sizeof(const char*));
+        for (size_t labelI = 0; labelI < stack->capacity; ++labelI) {
+            labels[labelI] = labelI < stack->size ? nullptr : starPtr;
+        }
+        logger__logFieldArray(stack, data, stack->capacity), labels);
+        free(labels);
+    }
+
+    void logStack(const Stack* const stack) {
         logger::addBlock();
         logger__logField(stack, size), 4);
         logger__logField(stack, capacity));
-        logger__logFieldArray(stack, data, stack->capacity));
-        logger::addInvisibleBlock();
-        logger::logLine("*", -1, -5);
-        logger::endInvisibleBlock();
-        /*logger::beginBlock();
-        logger::logLine("[0] =");
-        logger::logStrS("*", -1);
-        logger::logStrS("1", 6);
-        logger::logLine("[1] =");
-        logger::logStrS("*", -1);
-        logger::logStrS("2", 6);
-        logger::logLine("[2] =");
-        logger::logStrS("*", -1);
-        logger::logStrS("3", 6);
-        logger::logLine("[3] =");
-        logger::logStrS("NAN (POISON)", 6);
-        logger::logLine("[4] =");
-        logger::logStrS("NAN (POISON)", 6);
-        logger::endBlock();*/
+        logStackData(stack);
         logger::endBlock();
     }
 }

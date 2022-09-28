@@ -36,8 +36,10 @@ namespace logger {
     LOGGER_LOGFIELD_DEF(size_t) = 0);
 
 #define logger__logFieldArray(fieldClass, fieldName, size) logger::logFieldArray(#fieldName, fieldClass->fieldName, size
-#define LOGGER_LOGFIELDARRAY_DEF(fieldType) void logFieldArray(const char* arrayName,  fieldType* array, size_t size
-    LOGGER_LOGFIELDARRAY_DEF(int));
+#define LOGGER_LOGFIELDARRAY_DEF0(fieldType) void logFieldArray(const char* arrayName,  fieldType* array, size_t size
+#define LOGGER_LOGFIELDARRAY_DEF1(fieldType) LOGGER_LOGFIELDARRAY_DEF0(fieldType), const char** labels
+    LOGGER_LOGFIELDARRAY_DEF0(int));
+    LOGGER_LOGFIELDARRAY_DEF1(int));
 
     void addBlock();
     void endBlock();

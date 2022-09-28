@@ -112,8 +112,8 @@ namespace logger {
 
 
 
-#define LOGGER_LOGFIELDARRAY_IMPL(fieldType, flag)                                                                \
-    LOGGER_LOGFIELDARRAY_DEF(fieldType)) {                                                                         \
+#define LOGGER_LOGFIELDARRAY_IMPL0(fieldType, flag)                                                               \
+    LOGGER_LOGFIELDARRAY_DEF0(fieldType)) {                                                                        \
         assert(arrayName != nullptr);                                                                               \
         assert(array != nullptr);                                                                                    \
         assert(size < SIZE_MAX);                                                                                      \
@@ -129,7 +129,30 @@ namespace logger {
         strFParser::freeCalloc();                                                                                               \
         logger::endBlock();                                                                                                      \
     }
-    LOGGER_LOGFIELDARRAY_IMPL(int, d);
+    LOGGER_LOGFIELDARRAY_IMPL0(int, d);
+
+
+#define LOGGER_LOGFIELDARRAY_IMPL1(fieldType, flag)                                                              \
+    LOGGER_LOGFIELDARRAY_DEF1(fieldType)) {                                                                       \
+        assert(arrayName != nullptr);                                                                              \
+        assert(labels != nullptr);                                                                                  \
+        assert(array != nullptr);                                                                                    \
+        assert(size < SIZE_MAX);                                                                                      \
+                                                                                                                       \
+        logger::logLine(strFParser::parseF("%s[%s%p%s]:", arrayName, htmlCyanColorStart, array, htmlCyanColorStop));    \
+        logger::addBlock();                                                                                              \
+        int digitsNumber = numberOfDigits(size - 1);                                                                      \
+        int parseBufferNum = strFParser::addCallocBuf();                                                                   \
+        for (size_t elemI = 0; elemI < size; ++elemI) {                                                                     \
+                logger::logLine(strFParser::parseF(strFParser::parseFNBuf(parseBufferNum, "[%%%dd]", digitsNumber), elemI)); \
+                logger::logStr(strFParser::parseF("= %"#flag, array[elemI]), 3 + digitsNumber);                               \
+                if (labels[elemI] == nullptr) continue;                                                                        \
+                logger::logStr(labels[elemI], -(int)strlen(labels[elemI]));                                                     \
+        }                                                                                                                        \
+        strFParser::freeCalloc();                                                                                                 \
+        logger::endBlock();                                                                                                        \
+    }
+    LOGGER_LOGFIELDARRAY_IMPL1(int, d);
 
     void addBlock() {
         assert(logTarget != nullptr);
