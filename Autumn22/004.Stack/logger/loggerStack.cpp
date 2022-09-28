@@ -4,11 +4,14 @@
 
 namespace logger {
     void logStack(const Stack* stack) {
-        logger::beginBlock();
-        LOGGER_logField(stack, size);
+        logger::addBlock();
+        LOGGER_logFieldS(stack, size, 4);
         LOGGER_logField(stack, capacity);
         LOGGER_logFieldArray(stack, data, stack->capacity);
-        logger::beginBlock();
+        logger::addInvisibleBlock();
+        logger::logLine("*", -1, -5);
+        logger::endInvisibleBlock();
+        /*logger::beginBlock();
         logger::logLine("[0] =");
         logger::logStrS("*", -1);
         logger::logStrS("1", 6);
@@ -22,7 +25,7 @@ namespace logger {
         logger::logStrS("NAN (POISON)", 6);
         logger::logLine("[4] =");
         logger::logStrS("NAN (POISON)", 6);
-        logger::endBlock();
+        logger::endBlock();*/
         logger::endBlock();
     }
 }

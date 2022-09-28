@@ -11,7 +11,7 @@
 #ifndef STRFPARSER
 #define STRFPARSER
 
-const int LINE_BUFFER_SIZE = 256;
+const int LINE_BUFFER_SIZE = 512;
 
 namespace strFParser {
     const char* parseF(const char* format, ...);

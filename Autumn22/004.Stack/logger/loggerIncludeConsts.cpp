@@ -25,20 +25,9 @@ static const char htmlTail[] =
 "</html>\n"
 ;
 
-static const char htmlBeginBlock[] =
-"<p> <div style=\"margin-left:%dch\">{</div>\n"
-;
-
-static const char htmlEndBlock[] =
-"<p> <div style=\"margin-left:%dch\">}</div>\n"
-;
-
-static const char htmlLineTemplate[] =
-"<p> <div style=\"margin-left:%dch\">%s</div>\n"
-;
-
 static const char htmlStrTemplate[] =
-"    <div style=\"margin-left:%dch\">%s</div>\n"
+"    <div style=\"margin-left:%dch; margin-top:%dem\">%s</div>\n"
+"    <div style=\"margin-top:%dem\"></div>\n"
 ;
 
 static const char htmlCyanColorStart[] =

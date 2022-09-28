@@ -103,7 +103,7 @@ namespace logger {
         assert(fieldName != nullptr);                                                                 \
                                                                                                        \
         logger::logLine(fieldName);                                                                     \
-        logger::logStrS(strFParser::parseF("= %"#flag, fieldValue), (int)strlen(fieldName) + 1 + shift); \
+        logger::logStr(strFParser::parseF("= %"#flag, fieldValue), (int)strlen(fieldName) + 1 + shift);  \
     }
     LOGGER_LOGFIELD_IMPL(size_t, llu);
 
@@ -119,43 +119,66 @@ namespace logger {
         assert(size < SIZE_MAX);                                                                                      \
                                                                                                                        \
         logger::logLine(strFParser::parseF("%s[%s%p%s]:", arrayName, htmlCyanColorStart, array, htmlCyanColorStop));    \
-        logger::beginBlock();                                                                                            \
+        logger::addBlock();                                                                                              \
         int digitsNumber = numberOfDigits(size - 1);                                                                      \
         int parseBufferNum = strFParser::addCallocBuf();                                                                   \
         for (size_t elemI = 0; elemI < size; ++elemI) {                                                                     \
                 logger::logLine(strFParser::parseF(strFParser::parseFNBuf(parseBufferNum, "[%%%dd]", digitsNumber), elemI)); \
-                logger::logStrS(strFParser::parseF("= %"#flag, array[elemI]), 3 + digitsNumber);                              \
+                logger::logStr(strFParser::parseF("= %"#flag, array[elemI]), 3 + digitsNumber);                               \
         }                                                                                                                      \
         strFParser::freeCalloc();                                                                                               \
         logger::endBlock();                                                                                                      \
     }
     LOGGER_LOGFIELDARRAY_IMPL(int, d);
 
-    void beginBlock() {
+    void addBlock() {
         assert(logTarget != nullptr);
-        ++marginCounter;
-        printLog(logTarget, htmlBeginBlock,
-            marginCounter * 4);
+        addInvisibleBlock();
+        logLine("{");
     }
 
     void endBlock() {
         assert(logTarget != nullptr);
-        printLog(logTarget, htmlEndBlock,
-            marginCounter * 4);
+        logLine("}");
+        endInvisibleBlock();
+    }
+
+    void addInvisibleBlock() {
+        ++marginCounter;
+    }
+
+    void endInvisibleBlock() {
         --marginCounter;
+    }
+
+    void logStr(const char* const str, int shiftW, int shiftH, int shiftHB) {
+        assert(str != nullptr);
+        assert(logTarget != nullptr);
+        printLog(logTarget, htmlStrTemplate,
+            marginCounter * 4 + shiftW, shiftH, str, shiftHB);
+    }
+
+    void logStr(const char* const str, int shiftW) {
+        assert(str != nullptr);
+        assert(logTarget != nullptr);
+        logStr(str, shiftW, 0, 0);
+    }
+
+    void logStr(const char* const str, int shiftW, int shiftH) {
+        assert(str != nullptr);
+        assert(logTarget != nullptr);
+        logStr(str, shiftW, shiftH, -shiftH);
     }
 
     void logLine(const char* const str) {
         assert(str != nullptr);
         assert(logTarget != nullptr);
-        printLog(logTarget, htmlLineTemplate,
-            marginCounter * 4, str);
+        logStr(str, 0, 1, 0);
     }
 
-    void logStrS(const char* const str, int shift) {
+    void logLine(const char* const str, int shiftW, int shiftH) {
         assert(str != nullptr);
         assert(logTarget != nullptr);
-        printLog(logTarget, htmlStrTemplate,
-            marginCounter * 4 + shift, str);
+        logStr(str, shiftW, shiftH + 1, -shiftH);
     }
 }

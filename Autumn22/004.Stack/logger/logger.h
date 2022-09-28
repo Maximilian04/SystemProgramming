@@ -36,11 +36,16 @@ namespace logger {
 #define LOGGER_logFieldArray(fieldClass, fieldName, size)    logger::logFieldArray(#fieldName, fieldClass->fieldName, size)
     LOGGER_LOGFIELDARRAY_DEF(int));
 
-    void beginBlock();
+    void addBlock();
     void endBlock();
+    void addInvisibleBlock();
+    void endInvisibleBlock();
 
+    void logStr(const char* const str, int shiftW, int shiftH, int shiftHB);
+    void logStr(const char* const str, int shiftW);
+    void logStr(const char* const str, int shiftW, int shiftH);
     void logLine(const char* const str);
-    void logStrS(const char* const str, int shift);
+    void logLine(const char* const str, int shiftW, int shiftH);
 }
 
 #endif // LOGGER_H
