@@ -12,6 +12,7 @@
 #define STACK_H
 
 #include <stdlib.h>
+#include <stdint.h>
 
 #include "..\logger\logger.h"
 #include "..\DebugInfo\DebugInfo.h"
@@ -34,6 +35,14 @@ public:
     Elem_t* data;
     size_t size;
     size_t capacity;
+};
+
+typedef uint8_t VerifierCode;
+enum StackVerifierError {
+    OK            = 0b00000000, ///< No errors
+    SIZE_OVER_CAP = 0b00000001, ///< Size is greater than capacity
+    BAD_DATA_PTR  = 0b00000010, ///< Wrong data pointer
+    POISONE_LEAK  = 0b00000100, ///< Poison in data space or poison leak
 };
 
 #define stack_POISON(type)     stack::POISON##type
@@ -72,6 +81,8 @@ namespace stack {
 
 #define STACK__dump(stackObj) stack::dump(&stackObj, LOGFUNCHEAD_ARGS_R
     Error dump(Stack* const stack, LOGFUNCHEAD_ARGS_H);
+
+    VerifierCode verify(Stack* const stack);
 }
 
 #endif // STACK_H

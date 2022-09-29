@@ -8,6 +8,9 @@
 
 #include "Stack.h"
 
+#define VERIFY(obj) if (verify(obj)) STACK__dump(*obj))
+#define VERIFYINLINE(obj) (verify(obj) ? STACK__dump(*obj)) : 0)
+
 namespace stack {
     double getCapacityFactor(size_t currentCapacity);
     Error increaseSize(Stack* const stack);
@@ -39,6 +42,7 @@ namespace stack {
         stack->debugInfo.ctorCallFunc = ctorCallFunc;
 #endif // STACK_DEBUG
 
+        VERIFY(stack);
         return Error::OK;
     }
 
@@ -49,6 +53,7 @@ namespace stack {
      * @return Error Error code
      */
     Error dtor(Stack* const stack) {
+        VERIFY(stack);
         free(stack->data);
 
         stack->data = stack_POISON_PTR(Elem_t);
@@ -66,7 +71,7 @@ namespace stack {
      * @return Error Error code
      */
     Error resize(Stack* const stack, size_t newCapacity) {
-        assert(stack != nullptr);
+        VERIFY(stack);
 
         if (newCapacity == 0) {
             free(stack->data);
@@ -86,8 +91,10 @@ namespace stack {
 
         if (newCapacity < stack->size) {
             stack->size = newCapacity;
+            VERIFY(stack);
             return Error::DATA_TRUNC;
         }
+        VERIFY(stack);
         return Error::OK;
     }
 
@@ -98,7 +105,7 @@ namespace stack {
      * @return size_t Size
      */
     size_t getSize(Stack* const stack) {
-        assert(stack != nullptr);
+        VERIFY(stack);
         return stack->size;
     }
 
@@ -127,7 +134,7 @@ namespace stack {
             newCapacity = newCapacity + (newCapacity > stack->capacity ? 0 : 1);
 
             Error err = resize(stack, newCapacity);
-            if (err) return err;
+            if (err) return VERIFYINLINE(stack), err;
         }
 
         stack->size++;
@@ -147,7 +154,7 @@ namespace stack {
         assert(capacityBound >= stack->size);
         if (capacityBound < stack->capacity) {
             Error err = resize(stack, stack->size);
-            if (err) return err;
+            if (err) return VERIFYINLINE(stack), err;
         }
 
         return Error::OK;
@@ -161,13 +168,14 @@ namespace stack {
      * @return Error Error code
      */
     Error push(Stack* const stack, Elem_t elem) {
-        assert(stack != nullptr);
+        VERIFY(stack);
 
         Error err = increaseSize(stack);
         if (err) return err;
 
         stack->data[stack->size - 1] = elem;
 
+        VERIFY(stack);
         return Error::OK;
     }
 
@@ -179,15 +187,16 @@ namespace stack {
      * @return Error Error code
      */
     Error pop(Stack* const stack, Elem_t* const dst) {
-        assert(stack != nullptr);
+        VERIFY(stack);
 
         if (dst != nullptr) {
             Error err = getLast(stack, dst);
-            if (err) return err;
+            if (err) return VERIFYINLINE(stack), err;
         }
         Error err = decreaseSize(stack);
-        if (err) return err;
+        if (err) return VERIFYINLINE(stack), err;
 
+        VERIFY(stack);
         return Error::OK;
     }
 
@@ -199,13 +208,15 @@ namespace stack {
      * @return Error Error code
      */
     Error getLast(Stack* const stack, Elem_t* const dst) {
-        assert(stack != nullptr);
+        VERIFY(stack);
         assert(dst != nullptr);
 
         if (stack->size == 0) {
+            VERIFY(stack);
             return Error::EMPTY;
         }
         *dst = stack->data[stack->size - 1];
+        VERIFY(stack);
         return Error::OK;
     }
 
@@ -216,6 +227,9 @@ namespace stack {
      * @return Error Error code
      */
     Error dump(Stack* const stack, LOGFUNCHEAD_ARGS_H) {
+        assert(stack != nullptr);
+        assert(funcName != nullptr);
+        assert(fileName != nullptr);
         logger::openLogFile();
 
         logger::logHtmlHead();
@@ -231,5 +245,54 @@ namespace stack {
         logger::closeLogFile();
 
         return Error::OK;
+    }
+
+    /**
+     * @brief Verify correctness of Stack
+     *
+     * @param [in] stack Stack
+     * @return Error Error code as disjunction of StackVerifierError
+     */
+    VerifierCode verify(Stack* const stack) {
+        assert(stack != nullptr);
+        VerifierCode errorCode = StackVerifierError::OK;
+
+        if (stack->size > stack->capacity) {
+            errorCode |= StackVerifierError::SIZE_OVER_CAP;
+            logger::emergencyLog(strFParser::parseF("Stack size[%d] > than capacity[%d]!", stack->size, stack->capacity));
+        }
+        if (stack->capacity == 0) {
+            if (stack->data != nullptr) {
+                errorCode |= StackVerifierError::BAD_DATA_PTR;
+                logger::emergencyLog(strFParser::parseF("Stack data field[%p] isn't nullptr with zero capacity[%d]!",
+                    stack->data, stack->capacity));
+            }
+        } else { // stack->capacity != 0
+            if (stack->data == nullptr) {
+                errorCode |= StackVerifierError::BAD_DATA_PTR;
+                logger::emergencyLog(strFParser::parseF("Stack data field[%p] is nullptr with unzero capacity[%d]!",
+                    stack->data, stack->capacity));
+            }
+        }
+
+        if (errorCode) return errorCode;
+
+        for (size_t elemI = 0; elemI < stack->capacity; ++elemI) {
+            if (elemI < stack->size) {
+                if (stack->data[elemI] == stack_POISON(Elem_t)) {
+                    errorCode |= StackVerifierError::POISONE_LEAK;
+                    logger::emergencyLog(strFParser::parseF("Stack poison in data space[%p]: index[%d] poisoned!",
+                        &stack->data[elemI], elemI));
+                }
+            } else { // elemI >= stack->size
+                if (stack->data[elemI] != stack_POISON(Elem_t)) {
+                    errorCode |= StackVerifierError::POISONE_LEAK;
+                    logger::emergencyLog(strFParser::parseF("Stack (approximately) data in poisoned space[%p]: index[%d]: data (%d)!",
+                        &stack->data[elemI], elemI, stack->data[elemI])); //TODO change %d for data to universal flag
+                }
+            }
+        }
+
+        return errorCode;
     }
 }
