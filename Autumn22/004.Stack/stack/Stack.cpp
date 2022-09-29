@@ -9,6 +9,12 @@
 #include "Stack.h"
 
 namespace stack {
+    static const int POISON = 0xCAFED00D;
+
+    double getCapacityFactor(size_t currentCapacity);
+    Error increaseSize(Stack* const stack);
+    Error decreaseSize(Stack* const stack);
+
     /**
      * @brief Stack constructor
      *
@@ -24,12 +30,9 @@ namespace stack {
         assert(stack != nullptr);
 
         stack->size = 0;
-        stack->capacity = capacity;
         stack->data = nullptr;
-        if (capacity > 0) {
-            stack->data = (Elem_t*)calloc(capacity, sizeof(Elem_t));
-            assert(stack->data != nullptr);
-        }
+        if (capacity > 0)
+            resize(stack, capacity);
 
 #ifdef STACK_DEBUG
         stack->debugInfo.objName = objName;
@@ -83,6 +86,56 @@ namespace stack {
     }
 
     /**
+     * @brief Get capacity factor depending on current capacity
+     *
+     * @param [in] currentCapacity Current capacity
+     * @return double Factor
+     */
+    double getCapacityFactor(size_t currentCapacity) {
+        if (currentCapacity == 0)
+            return 1.0;
+        return 2.0;
+    }
+
+    /**
+     * @brief Increase stack size
+     *
+     * @param [out] stack Stack
+     * @return Error Error code
+     */
+    Error increaseSize(Stack* const stack) {
+        assert(stack != nullptr);
+        if (stack->size == stack->capacity) {
+            size_t newCapacity = (size_t)(getCapacityFactor(stack->capacity) * double(stack->capacity));
+            newCapacity = newCapacity + (newCapacity > stack->capacity ? 0 : 1);
+
+            Error err = resize(stack, newCapacity);
+            if (err) return err;
+        }
+
+        stack->size++;
+
+        return Error::OK;
+    }
+
+    Error decreaseSize(Stack* const stack) {
+        assert(stack != nullptr);
+        if (stack->size == 0)
+            return Error::EMPTY;
+
+        stack->size--;
+
+        size_t capacityBound = (size_t)(getCapacityFactor(stack->size) * double(stack->size));
+        assert(capacityBound >= stack->size);
+        if (capacityBound < stack->capacity) {
+            Error err = resize(stack, capacityBound);
+            if (err) return err;
+        }
+
+        return Error::OK;
+    }
+
+    /**
      * @brief Push element to stack
      *
      * @param [out] stack Stack
@@ -91,9 +144,11 @@ namespace stack {
      */
     Error push(Stack* const stack, Elem_t elem) {
         assert(stack != nullptr);
-        assert(stack->size < stack->capacity);
-        stack->data[stack->size] = elem;
-        stack->size++;
+
+        Error err = increaseSize(stack);
+        if (err) return err;
+
+        stack->data[stack->size - 1] = elem;
 
         return Error::OK;
     }
@@ -109,9 +164,12 @@ namespace stack {
         assert(stack != nullptr);
 
         if (dst != nullptr) {
-            getLast(stack, dst);
+            Error err = getLast(stack, dst);
+            if (err) return err;
         }
-        stack->size--;
+        Error err = decreaseSize(stack);
+        if (err) return err;
+
         return Error::OK;
     }
 
