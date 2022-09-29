@@ -37,6 +37,7 @@ namespace logger {
 #define logger__logField(fieldClass, fieldName) logger::logField(#fieldName, fieldClass->fieldName
 #define LOGGER_LOGFIELD_DEF(fieldType) void logField(const char* fieldName, fieldType fieldValue, int shift
     LOGGER_LOGFIELD_DEF(size_t) = 0);
+    LOGGER_LOGFIELD_DEF(void*) = 0);
 
 #define logger__logFieldArray(fieldClass, fieldName, size) logger::logFieldArray(#fieldName, fieldClass->fieldName, size
 #define LOGGER_LOGFIELDARRAY_DEF0(fieldType) void logFieldArray(const char* arrayName,  fieldType* array, size_t size

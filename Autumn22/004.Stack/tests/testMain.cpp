@@ -28,7 +28,25 @@ int main(int argc, const char* const* const argv) {
 
     // ------------------------------ logging ------------------------------
     Stack stack = {};
-    STACK__ctor(stack), 11);
+    STACK__ctor(stack), 1);
+    STACK__dump(stack));
+    stack::resize(&stack, 0);
+    STACK__dump(stack));
+    stack::resize(&stack, 10);
+    STACK__dump(stack));
+    stack::push(&stack, 8);
+    stack::push(&stack, 7);
+    stack::push(&stack, 6);
+    stack::push(&stack, 5);
+    STACK__dump(stack));
+    int var = 0;
+    stack::pop(&stack, &var);
+    stack::pop(&stack);
+    STACK__dump(stack));
+    stack::push(&stack, 7);
+    stack::push(&stack, 6);
+    stack::push(&stack, 5);
+    stack::resize(&stack, 2);
     STACK__dump(stack));
     // ------------------------------ logging ------------------------------
 

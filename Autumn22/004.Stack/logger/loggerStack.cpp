@@ -6,6 +6,11 @@ namespace logger {
     void logStackData(const Stack* const stack);
 
     void logStackData(const Stack* const stack) {
+        if (stack->data == nullptr) {
+            logger__logField(stack, data));
+            
+            return;
+        }
         const char* starPtr = "*";
         const char** labels = (const char**)calloc(stack->capacity, sizeof(const char*));
         for (size_t labelI = 0; labelI < stack->capacity; ++labelI) {

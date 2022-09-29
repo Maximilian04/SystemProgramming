@@ -47,7 +47,10 @@ namespace logger {
 
     int openLogFile(const char* fileName) {
         assert(fileName != nullptr);
-        assert(logTarget == nullptr);
+        //assert(logTarget == nullptr);
+        if (logTarget != nullptr) {
+            return 2;
+        }
 
         FILE* file = 0;
         file = fopen(fileName, "at");
@@ -113,7 +116,7 @@ namespace logger {
         logger::logStr(strFParser::parseF("= %"#flag, fieldValue), (int)strlen(fieldName) + 1 + shift);  \
     }
     LOGGER_LOGFIELD_IMPL(size_t, llu);
-
+    LOGGER_LOGFIELD_IMPL(void*, p);
 
 
 

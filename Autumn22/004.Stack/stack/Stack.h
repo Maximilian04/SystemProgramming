@@ -37,19 +37,30 @@ public:
 };
 
 namespace stack {
+    enum Error {
+        OK = 0,
+        EMPTY,
+        DATA_TRUNC,
+    };
+
 #ifdef STACK_DEBUG
 #define STACK__ctor(obj) stack::ctor(&obj, DEBUGINFO_CTOR_ARGS_R(#obj)
-    void ctor(Stack* stack, DEBUGINFO_CTOR_ARGS_H, size_t capacity);
+    Error ctor(Stack* const stack, DEBUGINFO_CTOR_ARGS_H, size_t capacity);
 #else // !STACK_DEBUG
 #define STACK__ctor(obj) stack::ctor(&obj
-    void ctor(Stack* stack, size_t capacity);
+    Error ctor(Stack* const stack, size_t capacity);
 #endif // STACK_DEBUG
-    void dtor(Stack* stack);
 
-    void push(Stack* stack, Elem_t elem);
+    Error dtor(Stack* const stack);
+
+    Error resize(Stack* const stack, size_t newCapacity);
+
+    Error push(Stack* const stack, Elem_t elem);
+    Error pop(Stack* const stack, Elem_t* const dst = nullptr);
+    Error getLast(Stack* const stack, Elem_t* const dst);
 
 #define STACK__dump(stackObj) stack::dump(&stackObj, LOGFUNCHEAD_ARGS_R
-    void dump(Stack* stack, LOGFUNCHEAD_ARGS_H);
+    Error dump(Stack* const stack, LOGFUNCHEAD_ARGS_H);
 }
 
 #endif // STACK_H
