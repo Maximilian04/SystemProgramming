@@ -62,6 +62,8 @@ const char* arrayName, fieldType* array, size_t size, fieldType*  POISON_CODEPTR
     void logStr(const char* const str, int shiftW, int shiftH);
     void logLine(const char* const str);
     void logLine(const char* const str, int shiftW, int shiftH);
+
+    void emergencyLog(const char* const str);
 }
 
 #endif // LOGGER_H

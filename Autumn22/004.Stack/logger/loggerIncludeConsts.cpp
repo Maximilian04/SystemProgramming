@@ -49,3 +49,11 @@ static const char htmlCrimsonColorStart[] =
 static const char htmlCrimsonColorStop[] =
 "</font>"
 ;
+
+static const char htmlEmergencyColorStart[] =
+"<font color=\"orangeRed\">"
+;
+
+static const char htmlEmergencyColorStop[] =
+"</font>"
+;

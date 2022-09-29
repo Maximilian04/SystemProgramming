@@ -205,4 +205,15 @@ namespace logger {
         assert(logTarget != nullptr);
         logStr(str, shiftW, shiftH + 1, -shiftH);
     }
+
+    void emergencyLog(const char* const str) {
+        assert(str != nullptr);
+        logger::openLogFile();
+        logger::logHtmlHead();
+        logger::printLog(logTarget, htmlEmergencyColorStart);
+        logger::logLine(str);
+        logger::printLog(logTarget, htmlEmergencyColorStop);
+        logger::logHtmlTail();
+        logger::closeLogFile();
+    }
 }

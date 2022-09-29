@@ -42,6 +42,7 @@ int main(int argc, const char* const* const argv) {
     STACK__dump(stack));
     int var = 0;
     stack::pop(&stack, &var);
+    logger::emergencyLog("abba");
     STACK__dump(stack));
     stack::pop(&stack);
     STACK__dump(stack));
