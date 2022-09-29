@@ -59,6 +59,12 @@ int main(int argc, const char* const* const argv) {
     STACK__dump(stack));
     stack::pop(&stack);
     STACK__dump(stack));
+    stack::push(&stack, 94);
+    STACK__dump(stack));
+    stack::pop(&stack);
+    STACK__dump(stack));
+    stack::push(&stack, 96);
+    STACK__dump(stack));
     stack::pop(&stack);
     STACK__dump(stack));
     stack::resize(&stack, 2);

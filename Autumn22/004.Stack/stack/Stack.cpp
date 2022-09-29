@@ -9,8 +9,6 @@
 #include "Stack.h"
 
 namespace stack {
-    static const int POISON = 0xCAFED00D;
-
     double getCapacityFactor(size_t currentCapacity);
     Error increaseSize(Stack* const stack);
     Error decreaseSize(Stack* const stack);
@@ -53,6 +51,10 @@ namespace stack {
     Error dtor(Stack* const stack) {
         free(stack->data);
 
+        stack->data = stack_POISON_PTR(Elem_t);
+        stack->size = stack_POISON(size_t);
+        stack->capacity = stack_POISON(size_t);
+
         return Error::OK;
     }
 
@@ -74,7 +76,11 @@ namespace stack {
             assert(stack->data != nullptr);
         }
         if (newCapacity > stack->capacity) {
-            memset((Elem_t*)(stack->data) + stack->size, 0, (newCapacity - stack->size) * sizeof(Elem_t));
+            memset((Elem_t*)(stack->data) + stack->capacity, 0, (newCapacity - stack->capacity) * sizeof(Elem_t));
+
+            for (size_t elemI = stack->capacity; elemI < newCapacity; ++elemI) {
+                stack->data[elemI] = stack_POISON(Elem_t);
+            }
         }
         stack->capacity = newCapacity;
 
@@ -134,6 +140,7 @@ namespace stack {
         if (stack->size == 0)
             return Error::EMPTY;
 
+        stack->data[stack->size - 1] = stack_POISON(Elem_t);
         stack->size--;
 
         size_t capacityBound = (size_t)(getCapacityFactor(stack->size) * double(stack->size));

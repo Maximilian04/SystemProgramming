@@ -34,16 +34,23 @@ namespace logger {
     void logStructHead(const char* structName, const void* objPtr);
     void logStructHeadDebug(const char* structName, const Debuggable* objPtr);
 
-#define logger__logField(fieldClass, fieldName) logger::logField(#fieldName, fieldClass->fieldName
-#define LOGGER_LOGFIELD_DEF(fieldType) void logField(const char* fieldName, fieldType fieldValue, int shift
-    LOGGER_LOGFIELD_DEF(size_t) = 0);
-    LOGGER_LOGFIELD_DEF(void*) = 0);
+#define logger__logField(fieldClass, fieldName, fieldType) logger::logField(\
+           #fieldName, fieldClass->fieldName,  fieldClass::POISON##fieldType
+#define LOGGER_LOGFIELD_HDR(fieldType) void logField(\
+const char* fieldName, fieldType   fieldValue, fieldType   POISON_CODE, int shift
 
-#define logger__logFieldArray(fieldClass, fieldName, size) logger::logFieldArray(#fieldName, fieldClass->fieldName, size
-#define LOGGER_LOGFIELDARRAY_DEF0(fieldType) void logFieldArray(const char* arrayName,  fieldType* array, size_t size
-#define LOGGER_LOGFIELDARRAY_DEF1(fieldType) LOGGER_LOGFIELDARRAY_DEF0(fieldType), const char** labels
-    LOGGER_LOGFIELDARRAY_DEF0(int));
-    LOGGER_LOGFIELDARRAY_DEF1(int));
+#define LOGGER_LOGFIELD_DEF(fieldType) LOGGER_LOGFIELD_HDR(fieldType) = 0
+    LOGGER_LOGFIELD_DEF(size_t));
+    LOGGER_LOGFIELD_DEF(void*));
+
+
+#define logger__logFieldArray(fieldClass, fieldName, size, fieldType) logger::logFieldArray(\
+           #fieldName, fieldClass->fieldName,   size, fieldClass::POISON##fieldType##PTR, fieldClass::POISON##fieldType
+#define LOGGER_LOGFIELDARRAY_HDR(fieldType) void logFieldArray(\
+const char* arrayName, fieldType* array, size_t size, fieldType*  POISON_CODEPTR,         fieldType   POISON_CODE, const char** labels
+
+#define LOGGER_LOGFIELDARRAY_DEF(fieldType) LOGGER_LOGFIELDARRAY_HDR(fieldType) = nullptr
+    LOGGER_LOGFIELDARRAY_DEF(int));
 
     void addBlock();
     void endBlock();

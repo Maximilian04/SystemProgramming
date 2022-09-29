@@ -36,7 +36,16 @@ public:
     size_t capacity;
 };
 
+#define stack_POISON(type)     stack::POISON##type
+#define stack_POISON_PTR(type) stack::POISON##type##PTR
+#define stack_POISONDEF(type)     const type POISON##type        =         0xCAFED00D
+#define stack_POISONDEF_PTR(type) type * const POISON##type##PTR = (type *)0xCAFED00D
+
 namespace stack {
+    stack_POISONDEF(Elem_t);
+    stack_POISONDEF(size_t);
+    stack_POISONDEF_PTR(Elem_t);
+
     enum Error {
         OK = 0,
         EMPTY,
