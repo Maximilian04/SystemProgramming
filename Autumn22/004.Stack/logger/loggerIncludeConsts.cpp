@@ -41,3 +41,11 @@ static const char htmlCyanColorStop[] =
 static const char htmlCyanPointer[] =
 "<font color=\"cyan\">%p</font>"
 ;
+
+static const char htmlCrimsonColorStart[] =
+"<font color=\"indianRed\">"
+;
+
+static const char htmlCrimsonColorStop[] =
+"</font>"
+;

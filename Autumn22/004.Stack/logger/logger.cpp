@@ -9,6 +9,9 @@
 #include "..\logger\loggerIncludeConsts.cpp"
 #include "..\strFParser\strFParser.h"
 
+#define POISONED_STR(flag, obj) "= %s%"#flag" (POISON)%s", htmlCrimsonColorStart, obj, htmlCrimsonColorStop
+#define GOODDATA_STR(flag, obj) "= %"#flag, obj
+
 static int numberOfDigits(size_t n) {
     int number = 0;
     for (number = 0; n; n /= 10, number++);
@@ -108,19 +111,16 @@ namespace logger {
             objPtr->debugInfo.objName, objPtr->debugInfo.ctorCallFunc, objPtr->debugInfo.ctorCallFile, objPtr->debugInfo.ctorCallLine));
     }
 
-
-
-
-#define LOGGER_LOGFIELD_IMPL(fieldType, flag)                                                                    \
-    LOGGER_LOGFIELD_HDR(fieldType)) {                                                                             \
-        assert(fieldName != nullptr);                                                                              \
-                                                                                                                    \
-        logger::logLine(fieldName);                                                                                  \
-        if (fieldValue == POISON_CODE) {                                                                              \
-            logger::logStr(strFParser::parseF("= %"#flag" (POISON)", fieldValue), (int)strlen(fieldName) + 1 + shift); \
-        } else {                                                                                                        \
-            logger::logStr(strFParser::parseF("= %"#flag, fieldValue), (int)strlen(fieldName) + 1 + shift);              \
-        }                                                                                                                 \
+#define LOGGER_LOGFIELD_IMPL(fieldType, flag)                                                                  \
+    LOGGER_LOGFIELD_HDR(fieldType)) {                                                                           \
+        assert(fieldName != nullptr);                                                                            \
+                                                                                                                  \
+        logger::logLine(fieldName);                                                                                \
+        if (fieldValue == POISON_CODE) {                                                                            \
+            logger::logStr(strFParser::parseF(POISONED_STR(#flag, fieldValue)), (int)strlen(fieldName) + 1 + shift); \
+        } else {                                                                                                      \
+            logger::logStr(strFParser::parseF(GOODDATA_STR(flag, fieldValue)), (int)strlen(fieldName) + 1 + shift);    \
+        }                                                                                                               \
     }
     LOGGER_LOGFIELD_IMPL(size_t, llu);
     LOGGER_LOGFIELD_IMPL(void*, p);
@@ -143,9 +143,9 @@ namespace logger {
         for (size_t elemI = 0; elemI < size; ++elemI) {                                                                                  \
                 logger::logLine(strFParser::parseF(strFParser::parseFNBuf(parseBufferNum, "[%%%dd]", digitsNumber), elemI));              \
                 if (array[elemI] == POISON_CODE) {                                                                                         \
-                    logger::logStr(strFParser::parseF("= %"#flag" (POISON)", array[elemI]), 3 + digitsNumber);                              \
+                    logger::logStr(strFParser::parseF(POISONED_STR(flag, array[elemI])), 3 + digitsNumber);                                 \
                 } else {                                                                                                                     \
-                    logger::logStr(strFParser::parseF("= %"#flag, array[elemI]), 3 + digitsNumber);                                           \
+                    logger::logStr(strFParser::parseF(GOODDATA_STR(flag, array[elemI])), 3 + digitsNumber);                                   \
                 }                                                                                                                              \
                 if (labels == nullptr || labels[elemI] == nullptr) continue;                                                                    \
                 logger::logStr(labels[elemI], -(int)strlen(labels[elemI]));                                                                      \
