@@ -1,1 +1,11 @@
-stack_do_test [4]push
+stack_do_test [4]ctor
+stack_do_test [4]push 31
+stack_do_test [4]push 33
+stack_do_test [4]push 39
+stack_do_test [7]getSize 3
+stack_do_test [3]pop 39
+stack_do_test [7]getSize 2
+stack_do_test [4]push 43
+stack_do_test [4]push 45
+stack_do_test [7]getLast 45
+stack_do_test [7]getSize 4

@@ -33,53 +33,55 @@ namespace test {
      * @param [in] inputFile File with test
      * @return TestResult Result of testing
      */
-    /*TestResult strLib_strlen(FILE* inputFile) {
-        struct {
-            char str[MAX_FUNC_NAME_LENGTH];
-            int resultAns;
-        } params = {};
+     /*TestResult strLib_strlen(FILE* inputFile) {
+         struct {
+             char str[MAX_FUNC_NAME_LENGTH];
+             int resultAns;
+         } params = {};
 
-        // ------------- read params -------------
+         // ------------- read params -------------
 
-        int strKey = 0;
-        SCAN(" [%d]", &strKey);
-        SCANREAD(params.str, strKey);
+         int strKey = 0;
+         SCAN(" [%d]", &strKey);
+         SCANREAD(params.str, strKey);
 
-        SCAN("%d", &params.resultAns);
+         SCAN("%d", &params.resultAns);
 
-        // ------------- read params -------------
-        // test function
+         // ------------- read params -------------
+         // test function
 
-        int result = strLib::strlen(params.str);
+         int result = strLib::strlen(params.str);
 
-        if (
-            (result == params.resultAns)) {
-            return TestResult::PASSED;
-        }
+         if (
+             (result == params.resultAns)) {
+             return TestResult::PASSED;
+         }
 
-        printf("TEST FAILED : %s: input: %s\n"
-            "       expected output: %d\n"
-            "       got      output: %d\n",
-            "strLib_strlen", params.str,
-            params.resultAns,
-            result);
-        return TestResult::FAILED;
-    }*/
+         printf("TEST FAILED : %s: input: %s\n"
+             "       expected output: %d\n"
+             "       got      output: %d\n",
+             "strLib_strlen", params.str,
+             params.resultAns,
+             result);
+         return TestResult::FAILED;
+     }*/
 
-    /**
-     * @brief Tests function
-     *
-     * Do some action
-     *
-     * @param [in] inputFile File with test
-     * @return TestResult Result of testing
-     */
+     /**
+      * @brief Tests function
+      *
+      * Do some action
+      *
+      * @param [in] inputFile File with test
+      * @return TestResult Result of testing
+      */
     TestResult stack_do_test(FILE* inputFile) {
         assert(inputFile != nullptr);
 
         struct {
             char command[MAX_FUNC_NAME_LENGTH];
             int resultAns;
+            int varAns;
+            int sizeAns;
         } params = {};
 
         // ------------- read params -------------
@@ -89,23 +91,52 @@ namespace test {
         SCANREAD(params.command, strKey);
 
         params.resultAns = 0;
+        params.varAns = 0;
+        params.sizeAns = 0;
 
         // ------------- read params -------------
         // test function
 
+        int var = 0;
+        int size = 0;
         int result = 0; //strLib::strlen(params.str);
 
+        static Stack stack;
+        if (false) {
+        } else if (strcmp(params.command, "ctor") == 0) {
+            result = STACK__ctor(stack));
+        } else if (strcmp(params.command, "dtor") == 0) {
+            result = stack::dtor(&stack);
+        } else if (strcmp(params.command, "push") == 0) {
+            SCAN("%d", &var);
+            result = stack::push(&stack, var);
+            params.varAns = var;
+        } else if (strcmp(params.command, "pop") == 0) {
+            SCAN("%d", &params.varAns);
+            result = stack::pop(&stack, &var);
+        } else if (strcmp(params.command, "getLast") == 0) {
+            SCAN("%d", &params.varAns);
+            result = stack::getLast(&stack, &var);
+        } else if (strcmp(params.command, "getSize") == 0) {
+            SCAN("%d", &params.sizeAns);
+            size = (int)stack::getSize(&stack);
+        } else {
+            return TestResult::INPUT_ERROR;
+        }
+
         if (
-            (result == params.resultAns)) {
+            (result == params.resultAns) &&
+            (var == params.varAns) &&
+            (size == params.sizeAns)) {
             return TestResult::PASSED;
         }
 
         printf("TEST FAILED : %s: input: %s\n"
-            "       expected output: %d\n"
-            "       got      output: %d\n",
+            "       expected output: %d; %d; %d\n"
+            "       got      output: %d; %d; %d\n",
             "stack_do_test", params.command,
-            params.resultAns,
-            result);
+            params.varAns, params.sizeAns, params.resultAns,
+            var, size, result);
         return TestResult::FAILED;
     }
 

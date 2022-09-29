@@ -45,15 +45,17 @@ namespace stack {
 
 #ifdef STACK_DEBUG
 #define STACK__ctor(obj) stack::ctor(&obj, DEBUGINFO_CTOR_ARGS_R(#obj)
-    Error ctor(Stack* const stack, DEBUGINFO_CTOR_ARGS_H, size_t capacity);
+    Error ctor(Stack* const stack, DEBUGINFO_CTOR_ARGS_H, size_t capacity = 0);
 #else // !STACK_DEBUG
 #define STACK__ctor(obj) stack::ctor(&obj
-    Error ctor(Stack* const stack, size_t capacity);
+    Error ctor(Stack* const stack, size_t capacity = 0);
 #endif // STACK_DEBUG
 
     Error dtor(Stack* const stack);
 
     Error resize(Stack* const stack, size_t newCapacity);
+
+    size_t getSize(Stack* const stack);
 
     Error push(Stack* const stack, Elem_t elem);
     Error pop(Stack* const stack, Elem_t* const dst = nullptr);

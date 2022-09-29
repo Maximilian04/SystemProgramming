@@ -86,6 +86,17 @@ namespace stack {
     }
 
     /**
+     * @brief Get size
+     *
+     * @param [in] stack
+     * @return size_t Size
+     */
+    size_t getSize(Stack* const stack) {
+        assert(stack != nullptr);
+        return stack->size;
+    }
+
+    /**
      * @brief Get capacity factor depending on current capacity
      *
      * @param [in] currentCapacity Current capacity
