@@ -13,6 +13,8 @@
 
 #include <stdio.h>
 
+#include "..\DebugInfo\DebugInfo.h"
+
 namespace logger {
     void setLogTarget(FILE* _logTarget);
 
@@ -29,7 +31,8 @@ namespace logger {
 #define logger__logFuncHead() logger::logFuncHead(funcName,             fileName,           lineN
     void logFuncHead(LOGFUNCHEAD_ARGS_H);
 
-    void logStructHead(const char* structName, const void* onjPtr);
+    void logStructHead(const char* structName, const void* objPtr);
+    void logStructHeadDebug(const char* structName, const Debuggable* objPtr);
 
 #define logger__logField(fieldClass, fieldName) logger::logField(#fieldName, fieldClass->fieldName
 #define LOGGER_LOGFIELD_DEF(fieldType) void logField(const char* fieldName, fieldType fieldValue, int shift

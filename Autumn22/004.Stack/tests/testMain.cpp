@@ -28,7 +28,7 @@ int main(int argc, const char* const* const argv) {
 
     // ------------------------------ logging ------------------------------
     Stack stack = {};
-    stack::ctor(&stack, 11);
+    STACK__ctor(stack), 11);
     STACK__dump(stack));
     // ------------------------------ logging ------------------------------
 

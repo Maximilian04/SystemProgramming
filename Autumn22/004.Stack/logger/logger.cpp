@@ -92,11 +92,18 @@ namespace logger {
     void logStructHead(const char* structName, const void* objPtr) {
         assert(structName != nullptr);
 
-        logger::logLine(strFParser::parseF("%s[%s%p%s] \"stack1\" at main() at main.cpp (50 line):",
+        logger::logLine(strFParser::parseF("%s[%s%p%s]:",
             structName, htmlCyanColorStart, objPtr, htmlCyanColorStop));
     }
 
+    void logStructHeadDebug(const char* structName, const Debuggable* objPtr) {
+        assert(structName != nullptr);
 
+        logger::logLine(strFParser::parseF("%s[%s%p%s] "
+            "\"%s\" at %s at %s (%d line):",
+            structName, htmlCyanColorStart, objPtr, htmlCyanColorStop,
+            objPtr->debugInfo.objName, objPtr->debugInfo.ctorCallFunc, objPtr->debugInfo.ctorCallFile, objPtr->debugInfo.ctorCallLine));
+    }
 
 #define LOGGER_LOGFIELD_IMPL(fieldType, flag)                                                       \
     LOGGER_LOGFIELD_DEF(fieldType)) {                                                                \

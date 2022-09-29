@@ -12,12 +12,23 @@ namespace stack {
      * @param [out] stack Stack
      * @param [in] capacity Init capacity
      */
+#ifdef STACK_DEBUG
+    void ctor(Stack* stack, DEBUGINFO_CTOR_ARGS_H, size_t capacity) {
+#else // !STACK_DEBUG
     void ctor(Stack* stack, size_t capacity) {
+#endif // STACK_DEBUG
 
         stack->size = 0;
         stack->capacity = capacity;
         stack->data = (Elem_t*)calloc(capacity, sizeof(Elem_t));
         assert(stack->data != nullptr);
+
+#ifdef STACK_DEBUG
+        stack->debugInfo.objName = objName;
+        stack->debugInfo.ctorCallLine = ctorCallLine;
+        stack->debugInfo.ctorCallFile = ctorCallFile;
+        stack->debugInfo.ctorCallFunc = ctorCallFunc;
+#endif // STACK_DEBUG
     }
 
     /**
@@ -52,8 +63,11 @@ namespace stack {
 
         logger::logHtmlHead();
         logger__logFuncHead());
-        //logger::logFuncHead(LOGFUNCHEAD_ARGS);
+#ifdef STACK_DEBUG
+        logger::logStructHeadDebug("Stack", stack);
+#else // !STACK_DEBUG
         logger::logStructHead("Stack", stack);
+#endif // STACK_DEBUG
         logger::logStack(stack);
         logger::logHtmlTail();
 
