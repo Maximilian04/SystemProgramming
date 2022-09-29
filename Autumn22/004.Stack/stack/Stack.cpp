@@ -128,7 +128,7 @@ namespace stack {
         size_t capacityBound = (size_t)(getCapacityFactor(stack->size) * double(stack->size));
         assert(capacityBound >= stack->size);
         if (capacityBound < stack->capacity) {
-            Error err = resize(stack, capacityBound);
+            Error err = resize(stack, stack->size);
             if (err) return err;
         }
 
