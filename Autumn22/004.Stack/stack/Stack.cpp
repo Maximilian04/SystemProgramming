@@ -13,6 +13,20 @@
 #define VERIFY(obj) if (verify(obj)) STACK__dump(*obj))
 #define VERIFYINLINE(obj) (verify(obj) ? STACK__dump(*obj)) : 0)
 
+#ifdef STACK_CANARY
+#define DATA_CANARY_BEGIN_PTR(data) ((data != nullptr) ? ((Canary_t*)(data) - 1) : nullptr)
+#define DATA_CANARY_BEGIN_PTR_REVERSE(data)     (Elem_t*)((Canary_t*)(data) + 1)
+#define DATA_CANARY_END_PTR(data, capacity)     (Canary_t*)((Elem_t*)(data) + (capacity))
+#define DATA_SIZE (newCapacity * sizeof(Elem_t)) + (2 * sizeof(Canary_t))
+#else // !STACK_CANARY
+#define DATA_CANARY_BEGIN_PTR(data)        (data)
+#define DATA_CANARY_BEGIN_PTR_REVERSE(data)(data)
+#define DATA_SIZE (newCapacity * sizeof(Elem_t))
+#endif // STACK_CANARY
+#define VER_DATA_CANARY_BGN_PTR DATA_CANARY_BEGIN_PTR(stack->data)
+#define VER_DATA_CANARY_END_PTR DATA_CANARY_END_PTR(stack->data, stack->capacity)
+
+
 namespace stack {
     double getCapacityFactor(size_t currentCapacity);
     Error increaseSize(Stack* const stack);
@@ -63,7 +77,7 @@ namespace stack {
      */
     Error dtor(Stack* const stack) {
         VERIFY(stack);
-        free(stack->data);
+        free(DATA_CANARY_BEGIN_PTR(stack->data));
 
         stack->data = stack_POISON_PTR(Elem_t);
         stack->size = stack_POISON(size_t);
@@ -83,11 +97,17 @@ namespace stack {
         VERIFY(stack);
 
         if (newCapacity == 0) {
-            free(stack->data);
+            free(DATA_CANARY_BEGIN_PTR(stack->data));
             stack->data = nullptr;
         } else {
-            stack->data = (Elem_t*)realloc(stack->data, newCapacity * sizeof(Elem_t));
+            stack->data = (Elem_t*)realloc(DATA_CANARY_BEGIN_PTR(stack->data), DATA_SIZE);
+            stack->data = DATA_CANARY_BEGIN_PTR_REVERSE(stack->data);
             assert(stack->data != nullptr);
+
+#ifdef STACK_CANARY
+            *(DATA_CANARY_BEGIN_PTR(stack->data))              = stack_POISON_CANARY;
+            *(DATA_CANARY_END_PTR  (stack->data, newCapacity)) = stack_POISON_CANARY;
+#endif // STACK_CANARY
         }
         if (newCapacity > stack->capacity) {
             memset((Elem_t*)(stack->data) + stack->capacity, 0, (newCapacity - stack->capacity) * sizeof(Elem_t));
@@ -278,12 +298,12 @@ namespace stack {
         if (errorCode) return errorCode;
 
 #ifdef STACK_CANARY
-        if (stack->canaryBegin != stack_POISON(Canary_t)) {
+        if (stack->canaryBegin != stack_POISON_CANARY) {
             errorCode |= StackVerifierError::CANARY_LEAK;
             logger::emergencyLog(strFParser::parseF("Canary protection-begin[%p] has leaked: (%" PRIx64 ") != (%" PRIx64 ")!",
                 &stack->canaryBegin, stack->canaryBegin, stack_POISON_CANARY));
         }
-        if (stack->canaryEnd != stack_POISON(Canary_t)) {
+        if (stack->canaryEnd != stack_POISON_CANARY) {
             errorCode |= StackVerifierError::CANARY_LEAK;
             logger::emergencyLog(strFParser::parseF("Canary protection---end[%p] has leaked: (%" PRIx64 ") != (%" PRIx64 ")!",
                 &stack->canaryEnd, stack->canaryEnd, stack_POISON_CANARY));
@@ -306,6 +326,19 @@ namespace stack {
                 logger::emergencyLog(strFParser::parseF("Stack data field[%p] is nullptr with unzero capacity[%d]!",
                     stack->data, stack->capacity));
             }
+
+#ifdef STACK_CANARY //TODO
+            if (*VER_DATA_CANARY_BGN_PTR != stack_POISON_CANARY) {
+                errorCode |= StackVerifierError::CANARY_LEAK;
+                logger::emergencyLog(strFParser::parseF("Data canary protection-begin[%p] has leaked: (%" PRIx64 ") != (%" PRIx64 ")!",
+                    VER_DATA_CANARY_BGN_PTR, *VER_DATA_CANARY_BGN_PTR, stack_POISON_CANARY));
+            }
+            if (*VER_DATA_CANARY_END_PTR != stack_POISON_CANARY) {
+                errorCode |= StackVerifierError::CANARY_LEAK;
+                logger::emergencyLog(strFParser::parseF("Data canary protection---end[%p] has leaked: (%" PRIx64 ") != (%" PRIx64 ")!",
+                    VER_DATA_CANARY_END_PTR, *VER_DATA_CANARY_END_PTR, stack_POISON_CANARY));
+            }
+#endif // STACK_CANARY
         }
 
         if (errorCode) return errorCode;
