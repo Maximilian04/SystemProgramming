@@ -29,14 +29,14 @@
 #define UPDATE_HASH            \
 #ifdef STACK_HASH               \
     stack->hash = nullhash;      \
-    stack->hash = getHash(stack); \
+    stack->hash = getStackHash(stack); \
 #endif // STACK_HASH 
 
 namespace stack {
     double getCapacityFactor(size_t currentCapacity);
     Error increaseSize(Stack* const stack);
     Error decreaseSize(Stack* const stack);
-    Hash_t getHash(Stack* const stack);
+    Hash_t getStackHash(Stack* const stack);
 
     /**
      * @brief Stack constructor
@@ -70,7 +70,7 @@ namespace stack {
 
 #ifdef STACK_HASH
         stack->hash = nullhash;
-        stack->hash = getHash(stack);
+        stack->hash = getStackHash(stack);
 #endif // STACK_HASH
 
         if (capacity > 0)
@@ -78,7 +78,7 @@ namespace stack {
 
 #ifdef STACK_HASH
         stack->hash = nullhash;
-        stack->hash = getHash(stack);
+        stack->hash = getStackHash(stack);
 #endif // STACK_HASH
 
         VERIFY(stack);
@@ -107,14 +107,18 @@ namespace stack {
 
     /**
      * @brief Update Stack hash
-     * 
+     *
      * @param [in] stack Stack
      * @return Error Error code
      */
-    Hash_t getHash(Stack* const stack) {
+    Hash_t getStackHash(Stack* const stack) {
         assert(stack != nullptr);
 #ifdef STACK_HASH
-        return getHash(stack, sizeof(Stack));
+        if (stack->data != nullptr) {
+            return getHash(getHash(stack->data, stack->capacity * sizeof(Elem_t)), stack, sizeof(Stack));
+        } else {
+            return getHash(stack, sizeof(Stack));
+        }
 #else // !STACK_HASH
         stack->size = stack->size;
         return nullhash;
@@ -158,14 +162,14 @@ namespace stack {
 
 #ifdef STACK_HASH
             stack->hash = nullhash;
-            stack->hash = getHash(stack);
+            stack->hash = getStackHash(stack);
 #endif // STACK_HASH
             VERIFY(stack);
             return Error::DATA_TRUNC;
         }
 #ifdef STACK_HASH
         stack->hash = nullhash;
-        stack->hash = getHash(stack);
+        stack->hash = getStackHash(stack);
 #endif // STACK_HASH
         VERIFY(stack);
         return Error::OK;
@@ -213,10 +217,10 @@ namespace stack {
 
         stack->size++;
         stack->data[stack->size - 1] = 0;
-        
+
 #ifdef STACK_HASH
         stack->hash = nullhash;
-        stack->hash = getHash(stack);
+        stack->hash = getStackHash(stack);
 #endif // STACK_HASH
         VERIFY(stack);
         return Error::OK;
@@ -233,7 +237,7 @@ namespace stack {
 
 #ifdef STACK_HASH
         stack->hash = nullhash;
-        stack->hash = getHash(stack);
+        stack->hash = getStackHash(stack);
 #endif // STACK_HASH
         VERIFY(stack);
 
@@ -243,10 +247,10 @@ namespace stack {
             Error err = resize(stack, stack->size);
             if (err) return err;
         }
-        
+
 #ifdef STACK_HASH
         stack->hash = nullhash;
-        stack->hash = getHash(stack);
+        stack->hash = getStackHash(stack);
 #endif // STACK_HASH
         VERIFY(stack);
 
@@ -270,7 +274,7 @@ namespace stack {
 
 #ifdef STACK_HASH
         stack->hash = nullhash;
-        stack->hash = getHash(stack);
+        stack->hash = getStackHash(stack);
 #endif // STACK_HASH
         VERIFY(stack);
         return Error::OK;
@@ -430,7 +434,7 @@ namespace stack {
 #ifdef STACK_HASH
         Hash_t stackHash = stack->hash;
         stack->hash = nullhash;
-        Hash_t currHash = getHash(stack);
+        Hash_t currHash = getStackHash(stack);
         stack->hash = currHash;
 
         if (currHash != stackHash) {

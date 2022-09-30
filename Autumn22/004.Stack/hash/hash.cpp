@@ -17,7 +17,7 @@ Hash_t getHash(Hash_t hash, void* ptr, size_t size) {
 
     if (intSize * sizeof(Hash_t) != size) {
         Hash_t temp = 0;
-        memcpy(&temp, (Hash_t*)ptr + intSize, intSize * sizeof(Hash_t) - size);
+        memcpy(&temp, (Hash_t*)ptr + intSize, size - intSize * sizeof(Hash_t));
         updateHash(&hash, temp);
     }
 
