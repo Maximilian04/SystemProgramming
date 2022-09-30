@@ -21,9 +21,4 @@ struct DebugInfo {
     int         ctorCallLine;
 };
 
-class Debuggable {
-public:
-    DebugInfo debugInfo;
-};
-
 #endif // DEBUGINFO_H

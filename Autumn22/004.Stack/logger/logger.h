@@ -32,7 +32,7 @@ namespace logger {
     void logFuncHead(LOGFUNCHEAD_ARGS_H);
 
     void logStructHead(const char* structName, const void* objPtr);
-    void logStructHeadDebug(const char* structName, const Debuggable* objPtr);
+    void logStructHeadDebug(const char* structName, const void* objPtr, const DebugInfo* debugPtr);
 
 #define logger__logField(fieldClass, fieldName, fieldType) logger::logField(\
            #fieldName, fieldClass->fieldName,  fieldClass::POISON##fieldType

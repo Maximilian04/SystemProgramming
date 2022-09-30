@@ -235,7 +235,7 @@ namespace stack {
         logger::logHtmlHead();
         logger__logFuncHead());
 #ifdef STACK_DEBUG
-        logger::logStructHeadDebug("Stack", stack);
+        logger::logStructHeadDebug("Stack", stack, &stack->debugInfo);
 #else // !STACK_DEBUG
         logger::logStructHead("Stack", stack);
 #endif // STACK_DEBUG

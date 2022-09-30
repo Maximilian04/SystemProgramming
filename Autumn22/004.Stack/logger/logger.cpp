@@ -102,13 +102,13 @@ namespace logger {
             structName, htmlCyanColorStart, objPtr, htmlCyanColorStop));
     }
 
-    void logStructHeadDebug(const char* structName, const Debuggable* objPtr) {
+    void logStructHeadDebug(const char* structName, const void* objPtr, const DebugInfo* debugPtr) {
         assert(structName != nullptr);
 
         logger::logLine(strFParser::parseF("%s[%s%p%s] "
             "\"%s\" at %s at %s (%d line):",
             structName, htmlCyanColorStart, objPtr, htmlCyanColorStop,
-            objPtr->debugInfo.objName, objPtr->debugInfo.ctorCallFunc, objPtr->debugInfo.ctorCallFile, objPtr->debugInfo.ctorCallLine));
+            debugPtr->objName, debugPtr->ctorCallFunc, debugPtr->ctorCallFile, debugPtr->ctorCallLine));
     }
 
 #define LOGGER_LOGFIELD_IMPL(fieldType, flag)                                                                  \

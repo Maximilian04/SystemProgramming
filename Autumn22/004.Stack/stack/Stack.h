@@ -26,15 +26,15 @@ typedef int Elem_t;
 #endif // STACK_DEBUG
 */
 
-#ifdef STACK_DEBUG
-class Stack : public Debuggable {
-#else // !STACK_DEBUG
 class Stack {
-#endif // STACK_DEBUG
 public:
     Elem_t* data;
     size_t size;
     size_t capacity;
+
+#ifdef STACK_DEBUG
+    DebugInfo debugInfo;
+#endif // STACK_DEBUG
 };
 
 typedef uint8_t VerifierCode;
