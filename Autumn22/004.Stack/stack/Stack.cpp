@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#define __STDC_FORMAT_MACROS 1
+#include <inttypes.h>
 
 #include "..\logger\loggerStack.h" //TODO: WTF???
 #include "..\strFParser\strFParser.h"
@@ -32,8 +34,7 @@ namespace stack {
 
         stack->size = 0;
         stack->data = nullptr;
-        if (capacity > 0)
-            resize(stack, capacity);
+        stack->capacity = 0;
 
 #ifdef STACK_DEBUG
         stack->debugInfo.objName = objName;
@@ -41,6 +42,14 @@ namespace stack {
         stack->debugInfo.ctorCallFile = ctorCallFile;
         stack->debugInfo.ctorCallFunc = ctorCallFunc;
 #endif // STACK_DEBUG
+
+#ifdef STACK_CANARY
+        stack->canaryBegin = stack_POISON(Canary_t);
+        stack->canaryEnd   = stack_POISON(Canary_t);
+#endif // STACK_CANARY
+
+        if (capacity > 0)
+            resize(stack, capacity);
 
         VERIFY(stack);
         return Error::OK;
@@ -234,12 +243,17 @@ namespace stack {
 
         logger::logHtmlHead();
         logger__logFuncHead());
+        if (stack == nullptr) {
+            logger::emergencyLog("Stack is nullptr");
+            return Error::NULLPTR_ERR;
+        } else {
 #ifdef STACK_DEBUG
-        logger::logStructHeadDebug("Stack", stack, &stack->debugInfo);
+            logger::logStructHeadDebug("Stack", stack, &stack->debugInfo);
 #else // !STACK_DEBUG
-        logger::logStructHead("Stack", stack);
+            logger::logStructHead("Stack", stack);
 #endif // STACK_DEBUG
-        logger::logStack(stack);
+            logger::logStack(stack);
+        }
         logger::logHtmlTail();
 
         logger::closeLogFile();
@@ -256,6 +270,25 @@ namespace stack {
     VerifierCode verify(Stack* const stack) {
         assert(stack != nullptr);
         VerifierCode errorCode = StackVerifierError::OK;
+        if (stack == nullptr) {
+            errorCode |= StackVerifierError::NULLPTR_ERR;
+            logger::emergencyLog(strFParser::parseF("Stack pointer is nullptr[%p]!", stack));
+        }
+
+        if (errorCode) return errorCode;
+
+#ifdef STACK_CANARY
+        if (stack->canaryBegin != stack_POISON(Canary_t)) {
+            errorCode |= StackVerifierError::CANARY_LEAK;
+            logger::emergencyLog(strFParser::parseF("Canary protection-begin[%p] has leaked: (%" PRIx64 ") != (%" PRIx64 ")!",
+                &stack->canaryBegin, stack->canaryBegin, stack_POISON_CANARY));
+        }
+        if (stack->canaryEnd != stack_POISON(Canary_t)) {
+            errorCode |= StackVerifierError::CANARY_LEAK;
+            logger::emergencyLog(strFParser::parseF("Canary protection---end[%p] has leaked: (%" PRIx64 ") != (%" PRIx64 ")!",
+                &stack->canaryEnd, stack->canaryEnd, stack_POISON_CANARY));
+        }
+#endif // STACK_CANARY
 
         if (stack->size > stack->capacity) {
             errorCode |= StackVerifierError::SIZE_OVER_CAP;

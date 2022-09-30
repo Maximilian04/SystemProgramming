@@ -85,6 +85,9 @@ namespace strFParser {
 
         int lineSize = vsnprintf(buffer, LINE_BUFFER_SIZE, format, ap);
         assert(lineSize < LINE_BUFFER_SIZE);
+#ifdef NDEBUG
+        lineSize = lineSize;
+#endif
 
         return buffer;
     }

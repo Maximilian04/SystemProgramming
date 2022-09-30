@@ -64,12 +64,14 @@ int main(int argc, const char* const* const argv) {
     //STACK__dump(stack));
     stack::pop(&stack);
     //stack.data[5] = 8;
+    //stack.canaryEnd++;
     //STACK__dump(stack));
     stack::push(&stack, 96);
     //STACK__dump(stack));
     stack::pop(&stack);
     //STACK__dump(stack));
     stack::resize(&stack, 2);
+    //stack::pop(nullptr);
     //STACK__dump(stack));
     // ------------------------------ logging ------------------------------
 

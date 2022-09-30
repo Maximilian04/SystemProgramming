@@ -19,15 +19,35 @@
 
 typedef int Elem_t;
 
-/*
-#define STACK_DEBUG
-#ifndef STACK_DEBUG
+
+#ifdef STACK_DEBUG
 #else // !STACK_DEBUG
+#define STACK_DEBUG
 #endif // STACK_DEBUG
-*/
+
+#ifdef STACK_CANARY
+#else // !STACK_CANARY
+#define STACK_CANARY
+#endif // STACK_CANARY
+
+
+#ifdef STACK_CANARY
+#define stack_POISON_CANARY POISONCanary_t
+#endif // STACK_CANARY
+#define stack_POISON(type)     stack::POISON##type
+#define stack_POISON_PTR(type) stack::POISON##type##PTR
+#define stack_POISONDEF(type)     const type POISON##type        =         0xCAFED00D
+#define stack_POISONDEF_PTR(type) type * const POISON##type##PTR = (type *)0xCAFED00D
+
+#ifdef STACK_CANARY
+typedef uint64_t Canary_t;
+#endif // STACK_CANARY
 
 class Stack {
 public:
+#ifdef STACK_CANARY
+    Canary_t canaryBegin;
+#endif // STACK_CANARY
     Elem_t* data;
     size_t size;
     size_t capacity;
@@ -35,6 +55,9 @@ public:
 #ifdef STACK_DEBUG
     DebugInfo debugInfo;
 #endif // STACK_DEBUG
+#ifdef STACK_CANARY
+    uint64_t canaryEnd;
+#endif // STACK_CANARY
 };
 
 typedef uint8_t VerifierCode;
@@ -43,22 +66,25 @@ enum StackVerifierError {
     SIZE_OVER_CAP = 0b00000001, ///< Size is greater than capacity
     BAD_DATA_PTR  = 0b00000010, ///< Wrong data pointer
     POISONE_LEAK  = 0b00000100, ///< Poison in data space or poison leak
+    NULLPTR_ERR   = 0b00001000, ///< Got nullptr as object
+#ifdef STACK_CANARY
+    CANARY_LEAK   = 0b00010000, ///< Defect in canary protection
+#endif // STACK_CANARY
 };
-
-#define stack_POISON(type)     stack::POISON##type
-#define stack_POISON_PTR(type) stack::POISON##type##PTR
-#define stack_POISONDEF(type)     const type POISON##type        =         0xCAFED00D
-#define stack_POISONDEF_PTR(type) type * const POISON##type##PTR = (type *)0xCAFED00D
 
 namespace stack {
     stack_POISONDEF(Elem_t);
     stack_POISONDEF(size_t);
     stack_POISONDEF_PTR(Elem_t);
+#ifdef STACK_CANARY
+    const Canary_t stack_POISON_CANARY = 0xFEE1DEADFACEBEAD;
+#endif // STACK_CANARY
 
     enum Error {
         OK = 0,
         EMPTY,
         DATA_TRUNC,
+        NULLPTR_ERR,
     };
 
 #ifdef STACK_DEBUG
