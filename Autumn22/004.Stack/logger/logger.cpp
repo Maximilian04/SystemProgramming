@@ -98,16 +98,16 @@ namespace logger {
     void logStructHead(const char* structName, const void* objPtr) {
         assert(structName != nullptr);
 
-        logger::logLine(strFParser::parseF("%s[%s%p%s]:",
-            structName, htmlCyanColorStart, objPtr, htmlCyanColorStop));
+        logger::logLine(strFParser::parseF("%s[" COLORED_TEXT("cyan", "%p") "]:",
+            structName, objPtr));
     }
 
     void logStructHeadDebug(const char* structName, const void* objPtr, const DebugInfo* debugPtr) {
         assert(structName != nullptr);
 
-        logger::logLine(strFParser::parseF("%s[%s%p%s] "
+        logger::logLine(strFParser::parseF("%s[" COLORED_TEXT("cyan", "%p") "] "
             "\"%s\" at %s at %s (%d line):",
-            structName, htmlCyanColorStart, objPtr, htmlCyanColorStop,
+            structName, objPtr,
             debugPtr->objName, debugPtr->ctorCallFunc, debugPtr->ctorCallFile, debugPtr->ctorCallLine));
     }
 
@@ -125,33 +125,33 @@ namespace logger {
     LOGGER_LOGFIELD_IMPL(size_t, llu);
     LOGGER_LOGFIELD_IMPL(void*, p);
 
-#define LOGGER_LOGFIELDARRAY_IMPL(fieldType, flag)                                                                        \
-    LOGGER_LOGFIELDARRAY_HDR(fieldType)) {                                                                                 \
-        assert(arrayName != nullptr);                                                                                       \
-        assert(array != nullptr);                                                                                            \
-        assert(size < SIZE_MAX);                                                                                              \
-                                                                                                                               \
-        if (array == POISON_CODEPTR) {                                                                                          \
-            logger::logLine(strFParser::parseF("%s[%s%p%s] (POISON)", arrayName, htmlCyanColorStart, array, htmlCyanColorStop)); \
-            return;                                                                                                               \
-        }                                                                                                                          \
-                                                                                                                                    \
-        logger::logLine(strFParser::parseF("%s[%s%p%s]:", arrayName, htmlCyanColorStart, array, htmlCyanColorStop));                 \
-        logger::addBlock();                                                                                                           \
-        int digitsNumber = numberOfDigits(size - 1);                                                                                   \
-        int parseBufferNum = strFParser::addCallocBuf();                                                                                \
-        for (size_t elemI = 0; elemI < size; ++elemI) {                                                                                  \
-                logger::logLine(strFParser::parseF(strFParser::parseFNBuf(parseBufferNum, "[%%%dd]", digitsNumber), elemI));              \
-                if (array[elemI] == POISON_CODE) {                                                                                         \
-                    logger::logStr(strFParser::parseF(POISONED_STR(flag, array[elemI])), 3 + digitsNumber);                                 \
-                } else {                                                                                                                     \
-                    logger::logStr(strFParser::parseF(GOODDATA_STR(flag, array[elemI])), 3 + digitsNumber);                                   \
-                }                                                                                                                              \
-                if (labels == nullptr || labels[elemI] == nullptr) continue;                                                                    \
-                logger::logStr(labels[elemI], -(int)strlen(labels[elemI]));                                                                      \
-        }                                                                                                                                         \
-        strFParser::freeCalloc();                                                                                                                  \
-        logger::endBlock();                                                                                                                         \
+#define LOGGER_LOGFIELDARRAY_IMPL(fieldType, flag)                                                           \
+    LOGGER_LOGFIELDARRAY_HDR(fieldType)) {                                                                    \
+        assert(arrayName != nullptr);                                                                          \
+        assert(array != nullptr);                                                                               \
+        assert(size < SIZE_MAX);                                                                                 \
+                                                                                                                  \
+        if (array == POISON_CODEPTR) {                                                                             \
+            logger::logLine(strFParser::parseF("%s[" COLORED_TEXT("cyan", "%p") "] (POISON)", arrayName, array));   \
+            return;                                                                                                  \
+        }                                                                                                             \
+                                                                                                                       \
+        logger::logLine(strFParser::parseF("%s[" COLORED_TEXT("cyan", "%p") "]:", arrayName, array));                   \
+        logger::addBlock();                                                                                              \
+        int digitsNumber = numberOfDigits(size - 1);                                                                      \
+        int parseBufferNum = strFParser::addCallocBuf();                                                                   \
+        for (size_t elemI = 0; elemI < size; ++elemI) {                                                                     \
+                logger::logLine(strFParser::parseF(strFParser::parseFNBuf(parseBufferNum, "[%%%dd]", digitsNumber), elemI)); \
+                if (array[elemI] == POISON_CODE) {                                                                            \
+                    logger::logStr(strFParser::parseF(POISONED_STR(flag, array[elemI])), 3 + digitsNumber);                    \
+                } else {                                                                                                        \
+                    logger::logStr(strFParser::parseF(GOODDATA_STR(flag, array[elemI])), 3 + digitsNumber);                      \
+                }                                                                                                                 \
+                if (labels == nullptr || labels[elemI] == nullptr) continue;                                                       \
+                logger::logStr(labels[elemI], -(int)strlen(labels[elemI]));                                                         \
+        }                                                                                                                            \
+        strFParser::freeCalloc();                                                                                                     \
+        logger::endBlock();                                                                                                            \
     }
     LOGGER_LOGFIELDARRAY_IMPL(int, d);
 
@@ -213,6 +213,15 @@ namespace logger {
         logger::printLog(logTarget, htmlEmergencyColorStart);
         logger::logLine(str);
         logger::printLog(logTarget, htmlEmergencyColorStop);
+        logger::logHtmlTail();
+        logger::closeLogFile();
+    }
+
+    void logMsg(const char* const str) {
+        assert(str != nullptr);
+        logger::openLogFile();
+        logger::logHtmlHead();
+        logger::logLine(str);
         logger::logHtmlTail();
         logger::closeLogFile();
     }

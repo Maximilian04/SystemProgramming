@@ -64,6 +64,9 @@ const char* arrayName, fieldType* array, size_t size, fieldType*  POISON_CODEPTR
     void logLine(const char* const str, int shiftW, int shiftH);
 
     void emergencyLog(const char* const str);
+    void logMsg(const char* const str);
 }
+
+#define COLORED_TEXT(color, text) "<font color=\"" color "\">" text "</font>"
 
 #endif // LOGGER_H

@@ -27,7 +27,8 @@ int main(int argc, const char* const* const argv) {
     }
 
     // ------------------------------ logging ------------------------------
-    logger::emergencyLog("<font color=\"MistyRose\">Hello log</font>");
+    logger::logMsg(COLORED_TEXT("MistyRose", "Hello log"));
+    logger::logMsg(COLORED_TEXT("LimeGreen", "Hey-ya hey"));
     Stack stack = {};
     STACK__ctor(stack), 1);
     //STACK__dump(stack));
@@ -51,7 +52,7 @@ int main(int argc, const char* const* const argv) {
     stack::push(&stack, 6);
     //STACK__dump(stack));
     stack::push(&stack, 5);
-    //STACK__dump(stack));
+    STACK__dump(stack));
     stack::push(&stack, 93);
     //STACK__dump(stack));
     stack::pop(&stack);
