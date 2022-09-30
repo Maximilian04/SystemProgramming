@@ -17,3 +17,4 @@ const Hash_t nullhash = 0;
 Hash_t getHash(Hash_t hash, void* ptr, size_t size);
 Hash_t getHash(void* begin, size_t size);
 Hash_t getHash(void* begin, void* end);
+

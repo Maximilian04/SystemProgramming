@@ -31,3 +31,4 @@ Hash_t getHash(void* begin, size_t size) {
 Hash_t getHash(void* begin, void* end) {
     return getHash(begin, (uint8_t*)end - (uint8_t*)begin);
 }
+

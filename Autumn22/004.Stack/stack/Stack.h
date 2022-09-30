@@ -50,7 +50,11 @@ typedef int Elem_t;
 typedef uint64_t Canary_t;
 #endif // STACK_CANARY
 
+#ifdef STACK_DEBUG
+class Stack : public Debuggable {
+#else // !STACK_DEBUG
 class Stack {
+#endif // STACK_DEBUG
 public:
 #ifdef STACK_CANARY
     Canary_t canaryBegin;
@@ -59,9 +63,6 @@ public:
     size_t size;
     size_t capacity;
 
-#ifdef STACK_DEBUG
-    DebugInfo debugInfo;
-#endif // STACK_DEBUG
 #ifdef STACK_HASH
     Hash_t hash;
 #endif // STACK_HASH

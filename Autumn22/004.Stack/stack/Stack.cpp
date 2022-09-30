@@ -92,6 +92,10 @@ namespace stack {
      * @return Error Error code
      */
     Error dtor(Stack* const stack) {
+#ifdef STACK_HASH
+        stack->hash = nullhash;
+        stack->hash = getStackHash(stack);
+#endif // STACK_HASH
         VERIFY(stack);
         free(DATA_CANARY_BEGIN_PTR(stack->data));
 
@@ -133,6 +137,10 @@ namespace stack {
      * @return Error Error code
      */
     Error resize(Stack* const stack, size_t newCapacity) {
+#ifdef STACK_HASH
+        stack->hash = nullhash;
+        stack->hash = getStackHash(stack);
+#endif // STACK_HASH
         VERIFY(stack);
 
         if (newCapacity == 0) {
@@ -182,6 +190,10 @@ namespace stack {
      * @return size_t Size
      */
     size_t getSize(Stack* const stack) {
+#ifdef STACK_HASH
+        stack->hash = nullhash;
+        stack->hash = getStackHash(stack);
+#endif // STACK_HASH
         VERIFY(stack);
         return stack->size;
     }
@@ -206,6 +218,10 @@ namespace stack {
      */
     Error increaseSize(Stack* const stack) {
         assert(stack != nullptr);
+#ifdef STACK_HASH
+        stack->hash = nullhash;
+        stack->hash = getStackHash(stack);
+#endif // STACK_HASH
         VERIFY(stack);
         if (stack->size == stack->capacity) {
             size_t newCapacity = (size_t)(getCapacityFactor(stack->capacity) * double(stack->capacity));
@@ -228,6 +244,10 @@ namespace stack {
 
     Error decreaseSize(Stack* const stack) {
         assert(stack != nullptr);
+#ifdef STACK_HASH
+        stack->hash = nullhash;
+        stack->hash = getStackHash(stack);
+#endif // STACK_HASH
         VERIFY(stack);
         if (stack->size == 0)
             return Error::EMPTY;
@@ -265,6 +285,10 @@ namespace stack {
      * @return Error Error code
      */
     Error push(Stack* const stack, Elem_t elem) {
+#ifdef STACK_HASH
+        stack->hash = nullhash;
+        stack->hash = getStackHash(stack);
+#endif // STACK_HASH
         VERIFY(stack);
 
         Error err = increaseSize(stack);
@@ -288,6 +312,10 @@ namespace stack {
      * @return Error Error code
      */
     Error pop(Stack* const stack, Elem_t* const dst) {
+#ifdef STACK_HASH
+        stack->hash = nullhash;
+        stack->hash = getStackHash(stack);
+#endif // STACK_HASH
         VERIFY(stack);
 
         if (dst != nullptr) {
@@ -309,6 +337,10 @@ namespace stack {
      * @return Error Error code
      */
     Error getLast(Stack* const stack, Elem_t* const dst) {
+#ifdef STACK_HASH
+        stack->hash = nullhash;
+        stack->hash = getStackHash(stack);
+#endif // STACK_HASH
         VERIFY(stack);
         assert(dst != nullptr);
 
