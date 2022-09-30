@@ -26,11 +26,17 @@
 #define VER_DATA_CANARY_BGN_PTR DATA_CANARY_BEGIN_PTR(stack->data)
 #define VER_DATA_CANARY_END_PTR DATA_CANARY_END_PTR(stack->data, stack->capacity)
 
+#define UPDATE_HASH            \
+#ifdef STACK_HASH               \
+    stack->hash = nullhash;      \
+    stack->hash = getHash(stack); \
+#endif // STACK_HASH 
 
 namespace stack {
     double getCapacityFactor(size_t currentCapacity);
     Error increaseSize(Stack* const stack);
     Error decreaseSize(Stack* const stack);
+    Hash_t getHash(Stack* const stack);
 
     /**
      * @brief Stack constructor
@@ -62,8 +68,18 @@ namespace stack {
         stack->canaryEnd   = stack_POISON(Canary_t);
 #endif // STACK_CANARY
 
+#ifdef STACK_HASH
+        stack->hash = nullhash;
+        stack->hash = getHash(stack);
+#endif // STACK_HASH
+
         if (capacity > 0)
             resize(stack, capacity);
+
+#ifdef STACK_HASH
+        stack->hash = nullhash;
+        stack->hash = getHash(stack);
+#endif // STACK_HASH
 
         VERIFY(stack);
         return Error::OK;
@@ -82,8 +98,27 @@ namespace stack {
         stack->data = stack_POISON_PTR(Elem_t);
         stack->size = stack_POISON(size_t);
         stack->capacity = stack_POISON(size_t);
+#ifdef STACK_HASH
+        stack->hash = stack_POISON(Hash_t);
+#endif // STACK_HASH
 
         return Error::OK;
+    }
+
+    /**
+     * @brief Update Stack hash
+     * 
+     * @param [in] stack Stack
+     * @return Error Error code
+     */
+    Hash_t getHash(Stack* const stack) {
+        assert(stack != nullptr);
+#ifdef STACK_HASH
+        return getHash(stack, sizeof(Stack));
+#else // !STACK_HASH
+        stack->size = stack->size;
+        return nullhash;
+#endif // STACK_HASH
     }
 
     /**
@@ -120,9 +155,18 @@ namespace stack {
 
         if (newCapacity < stack->size) {
             stack->size = newCapacity;
+
+#ifdef STACK_HASH
+            stack->hash = nullhash;
+            stack->hash = getHash(stack);
+#endif // STACK_HASH
             VERIFY(stack);
             return Error::DATA_TRUNC;
         }
+#ifdef STACK_HASH
+        stack->hash = nullhash;
+        stack->hash = getHash(stack);
+#endif // STACK_HASH
         VERIFY(stack);
         return Error::OK;
     }
@@ -158,33 +202,53 @@ namespace stack {
      */
     Error increaseSize(Stack* const stack) {
         assert(stack != nullptr);
+        VERIFY(stack);
         if (stack->size == stack->capacity) {
             size_t newCapacity = (size_t)(getCapacityFactor(stack->capacity) * double(stack->capacity));
             newCapacity = newCapacity + (newCapacity > stack->capacity ? 0 : 1);
 
             Error err = resize(stack, newCapacity);
-            if (err) return VERIFYINLINE(stack), err;
+            if (err) return err;
         }
 
         stack->size++;
-
+        stack->data[stack->size - 1] = 0;
+        
+#ifdef STACK_HASH
+        stack->hash = nullhash;
+        stack->hash = getHash(stack);
+#endif // STACK_HASH
+        VERIFY(stack);
         return Error::OK;
     }
 
     Error decreaseSize(Stack* const stack) {
         assert(stack != nullptr);
+        VERIFY(stack);
         if (stack->size == 0)
             return Error::EMPTY;
 
         stack->data[stack->size - 1] = stack_POISON(Elem_t);
         stack->size--;
 
+#ifdef STACK_HASH
+        stack->hash = nullhash;
+        stack->hash = getHash(stack);
+#endif // STACK_HASH
+        VERIFY(stack);
+
         size_t capacityBound = (size_t)(getCapacityFactor(stack->size) * double(stack->size));
         assert(capacityBound >= stack->size);
         if (capacityBound < stack->capacity) {
             Error err = resize(stack, stack->size);
-            if (err) return VERIFYINLINE(stack), err;
+            if (err) return err;
         }
+        
+#ifdef STACK_HASH
+        stack->hash = nullhash;
+        stack->hash = getHash(stack);
+#endif // STACK_HASH
+        VERIFY(stack);
 
         return Error::OK;
     }
@@ -204,6 +268,10 @@ namespace stack {
 
         stack->data[stack->size - 1] = elem;
 
+#ifdef STACK_HASH
+        stack->hash = nullhash;
+        stack->hash = getHash(stack);
+#endif // STACK_HASH
         VERIFY(stack);
         return Error::OK;
     }
@@ -358,6 +426,19 @@ namespace stack {
                 }
             }
         }
+
+#ifdef STACK_HASH
+        Hash_t stackHash = stack->hash;
+        stack->hash = nullhash;
+        Hash_t currHash = getHash(stack);
+        stack->hash = currHash;
+
+        if (currHash != stackHash) {
+            errorCode |= StackVerifierError::HASH_ERR;
+            logger::emergencyLog(strFParser::parseF("Stack hash is wrong(%" PRIx64 "), calculated hash: (%" PRIx64 ")!",
+                stackHash, currHash));
+        }
+#endif // STACK_HASH
 
         return errorCode;
     }

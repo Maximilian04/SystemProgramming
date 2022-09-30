@@ -16,10 +16,11 @@
 
 #include "..\logger\logger.h"
 #include "..\DebugInfo\DebugInfo.h"
+#include "..\hash\hash.h"
 
 typedef int Elem_t;
 
-
+#ifndef NDEBUG
 #ifdef STACK_DEBUG
 #else // !STACK_DEBUG
 #define STACK_DEBUG
@@ -29,6 +30,12 @@ typedef int Elem_t;
 #else // !STACK_CANARY
 #define STACK_CANARY
 #endif // STACK_CANARY
+
+#ifdef STACK_HASH
+#else // !STACK_HASH
+#define STACK_HASH
+#endif // STACK_HASH
+#endif // NDEBUG
 
 
 #ifdef STACK_CANARY
@@ -55,6 +62,9 @@ public:
 #ifdef STACK_DEBUG
     DebugInfo debugInfo;
 #endif // STACK_DEBUG
+#ifdef STACK_HASH
+    Hash_t hash;
+#endif // STACK_HASH
 #ifdef STACK_CANARY
     uint64_t canaryEnd;
 #endif // STACK_CANARY
@@ -67,6 +77,7 @@ enum StackVerifierError {
     BAD_DATA_PTR  = 0b00000010, ///< Wrong data pointer
     POISONE_LEAK  = 0b00000100, ///< Poison in data space or poison leak
     NULLPTR_ERR   = 0b00001000, ///< Got nullptr as object
+    HASH_ERR      = 0b00010000, ///< Wrong hash
 #ifdef STACK_CANARY
     CANARY_LEAK   = 0b00010000, ///< Defect in canary protection
 #endif // STACK_CANARY
@@ -75,6 +86,7 @@ enum StackVerifierError {
 namespace stack {
     stack_POISONDEF(Elem_t);
     stack_POISONDEF(size_t);
+    stack_POISONDEF(Hash_t);
     stack_POISONDEF_PTR(Elem_t);
 #ifdef STACK_CANARY
     const Canary_t stack_POISON_CANARY = 0xFEE1DEADFACEBEAD;
