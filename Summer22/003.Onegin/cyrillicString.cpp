@@ -87,32 +87,57 @@ namespace cyrillicString {
      *
      * @param a
      * @param b
+     * @param dir
+     * @param aLength
+     * @param bLength
      * @return int -1 / 0 / 1
      */
-    int cmpLinesStr(const char* a, const char* b) {
+    int cmpLinesStr(const char* a, const char* b, CmpDirection dir, int aLength, int bLength) {
         assert(a != nullptr);
         assert(b != nullptr);
+        switch (dir) {
+        case CmpDirection::RIGHT:
+            assert(aLength >= 0);
+            assert(bLength >= 0);
+            break;
+        case CmpDirection::REVERSE:
+            assert(aLength > 0);
+            assert(bLength > 0);
+            break;
+        default:
+            assert(false && "CmpDirection is what?");
+            break;
+        }
 
-        int iA = 0;
-        int iB = 0;
+        int iA = (dir == CmpDirection::RIGHT) ? 0 : aLength;
+        int iB = (dir == CmpDirection::RIGHT) ? 0 : bLength;
         while (true) {
-            if (a[iA] == '\0') {
-                if (b[iB] == '\0') return  0;
-                else               return -1;                
+            if (dir == CmpDirection::RIGHT) {
+                if (a[iA] == '\0') {
+                    if (b[iB] == '\0') return  0;
+                    else               return -1;
+                }
+                if (b[iB] == '\0')
+                    return 1;
+            } else  { // dir == CmpDirection::REVERSE
+                if (iA == -1) {
+                    if (iB == -1)      return  0;
+                    else               return -1;
+                }
+                if (iB == -1)
+                    return 1;
             }
-            if (b[iB] == '\0')
-                return 1;
 
             switch (cmpCyrillic(a[iA], b[iB])) {
                 case CmpCyrillicResult::BAD_A:
-                    ++iA;
+                    iA += dir;
                     continue;
                 case CmpCyrillicResult::BAD_B:
-                    ++iB;
+                    iB += dir;
                     continue;
                 case CmpCyrillicResult::BAD_BOTH:
-                    ++iA;
-                    ++iB;
+                    iA += dir;
+                    iB += dir;
                     continue;
 
                 case CmpCyrillicResult::LESSER:
@@ -120,68 +145,11 @@ namespace cyrillicString {
                 case CmpCyrillicResult::GREATER:
                     return 1;
                 case CmpCyrillicResult::EQV:
-                    ++iA;
-                    ++iB;
+                    iA += dir;
+                    iB += dir;
                     continue;
                 default:
                     assert(false && "cmpCyrillic returned what?");
-            }
-        }
-
-        return 0;
-    }
-
-    /**
-     * @brief Back comparator for cyrillic lines
-     *
-     * @param a
-     * @param b
-     * @param aLength
-     * @param bLength
-     * @return int -1 / 0 / 1
-     */
-    int cmpLinesBackStr(const char* a, const char* b, int aLength, int bLength) {
-        int iA = aLength;
-        int iB = bLength;
-        while (true) {
-            if (iA == -1) {
-                if (iB == -1) {
-                    return 0;
-                } else {
-                    return -1;
-                }
-            } else {
-                if (iB == -1) {
-                    return 1;
-                } else {
-                    switch (cmpCyrillic(a[iA], b[iB])) {
-                    case CmpCyrillicResult::BAD_A:
-                        --iA;
-                        continue;
-                        break;
-                    case CmpCyrillicResult::BAD_B:
-                        --iB;
-                        continue;
-                        break;
-                    case CmpCyrillicResult::BAD_BOTH:
-                        --iA;
-                        --iB;
-                        continue;
-                        break;
-                    case CmpCyrillicResult::LESSER:
-                        return -1;
-                        break;
-                    case CmpCyrillicResult::GREATER:
-                        return 1;
-                        break;
-                    case CmpCyrillicResult::EQV:
-                        --iA;
-                        --iB;
-                        break;
-                    default:
-                        assert(false);
-                    }
-                }
             }
         }
 
@@ -198,7 +166,7 @@ namespace cyrillicString {
     int cmpLines(const void* a, const void* b) {
         assert(a != nullptr);
         assert(b != nullptr);
-        return cmpLinesStr(((const Line*)a)->str, ((const Line*)b)->str);
+        return cmpLinesStr(((const Line*)a)->str, ((const Line*)b)->str, CmpDirection::RIGHT);
     }
 
     /**
@@ -211,7 +179,7 @@ namespace cyrillicString {
     int cmpLinesBack(const void* a, const void* b) {
         assert(a != nullptr);
         assert(b != nullptr);
-        return cmpLinesBackStr(((const Line*)a)->str, ((const Line*)b)->str, ((const Line*)a)->lenght, ((const Line*)b)->lenght);
+        return cmpLinesStr(((const Line*)a)->str, ((const Line*)b)->str, CmpDirection::REVERSE, ((const Line*)a)->lenght, ((const Line*)b)->lenght);
     }
 }
 

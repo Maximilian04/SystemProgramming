@@ -35,8 +35,11 @@ namespace cyrillicString {
 
     int getCyrillicIndex(const char a);
     CmpCyrillicResult cmpCyrillic(const char a, const char b);
-    int cmpLinesStr(const char* a, const char* b);
-    int cmpLinesBackStr(const char* a, const char* b, int aLength, int bLength);
+    enum CmpDirection {
+        RIGHT   =  1,
+        REVERSE = -1,
+    };
+    int cmpLinesStr(const char* a, const char* b, CmpDirection dir, int aLength = 0, int bLength = 0);
     int cmpLines(const void* a, const void* b);
     int cmpLinesBack(const void* a, const void* b);
 }
