@@ -66,7 +66,9 @@ int main(int argc, const char* const* const argv) {
     stack::pop(&stack);
     //stack.data[0] = -77;
     //stack.data[5] = 8;
+    //stack.data++;
     //stack.canaryEnd++;
+    //stack.canaryBegin++;
     //*(stack.data - 1) = 0;
     //*(stack.data + stack.capacity) = 0;
     //STACK__dump(stack));

@@ -14,9 +14,9 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#include "..\logger\logger.h"
-#include "..\DebugInfo\DebugInfo.h"
-#include "..\hash\hash.h"
+#include "logger\logger.h"
+#include "DebugInfo\DebugInfo.h"
+#include "hash\hash.h"
 
 typedef int Elem_t;
 
@@ -97,6 +97,7 @@ namespace stack {
         EMPTY,
         DATA_TRUNC,
         NULLPTR_ERR,
+        VERIFIER_ERR,
     };
 
 #ifdef STACK_DEBUG

@@ -13,7 +13,7 @@
 
 #include <stdio.h>
 
-#include "..\DebugInfo\DebugInfo.h"
+#include "DebugInfo\DebugInfo.h"
 
 namespace logger {
     void setLogTarget(FILE* _logTarget);

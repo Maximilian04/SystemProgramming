@@ -6,8 +6,8 @@
 
 #include "logger.h"
 
-#include "..\logger\loggerIncludeConsts.cpp"
-#include "..\strFParser\strFParser.h"
+#include "logger\loggerIncludeConsts.cpp"
+#include "strFParser\strFParser.h"
 
 #define POISONED_STR(flag, obj) "= %s%"#flag" (POISON)%s", htmlCrimsonColorStart, obj, htmlCrimsonColorStop
 #define GOODDATA_STR(flag, obj) "= %"#flag, obj

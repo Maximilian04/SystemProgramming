@@ -11,7 +11,7 @@
 #ifndef LOGGERSTACK_H
 #define LOGGERSTACK_H
 
-#include "..\stack\Stack.h"
+#include "stack\Stack.h"
 
 namespace logger {
     void logStack(const Stack* stack);

@@ -1,6 +1,6 @@
 #include "loggerStack.h"
 
-#include "..\logger\logger.h"
+#include "logger\logger.h"
 
 namespace logger {
     void logStackData(const Stack* const stack);

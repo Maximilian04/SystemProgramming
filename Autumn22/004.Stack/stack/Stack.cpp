@@ -5,12 +5,12 @@
 #define __STDC_FORMAT_MACROS 1
 #include <inttypes.h>
 
-#include "..\logger\loggerStack.h" //TODO: WTF???
-#include "..\strFParser\strFParser.h"
+#include "logger\loggerStack.h"
+#include "strFParser\strFParser.h"
 
 #include "Stack.h"
 
-#define VERIFY(obj) if (verify(obj)) STACK__dump(*obj))
+#define VERIFY(obj) if (verify(obj)) { STACK__dump(*obj)); return Error::VERIFIER_ERR; } //TODO add return
 #define VERIFYINLINE(obj) (verify(obj) ? STACK__dump(*obj)) : 0)
 
 #ifdef STACK_CANARY
@@ -26,17 +26,19 @@
 #define VER_DATA_CANARY_BGN_PTR DATA_CANARY_BEGIN_PTR(stack->data)
 #define VER_DATA_CANARY_END_PTR DATA_CANARY_END_PTR(stack->data, stack->capacity)
 
-#define UPDATE_HASH            \
-#ifdef STACK_HASH               \
-    stack->hash = nullhash;      \
-    stack->hash = getStackHash(stack); \
+#ifdef STACK_HASH
+#define UPDATE_HASH        \
+    stack->hash = nullhash; \
+    stack->hash = getStackHash(stack);
+#else // STACK_HASH
+#define UPDATE_HASH
 #endif // STACK_HASH 
 
 namespace stack {
     double getCapacityFactor(size_t currentCapacity);
     Error increaseSize(Stack* const stack);
     Error decreaseSize(Stack* const stack);
-    Hash_t getStackHash(Stack* const stack);
+    static Hash_t getStackHash(Stack* const stack);
 
     /**
      * @brief Stack constructor
@@ -68,18 +70,12 @@ namespace stack {
         stack->canaryEnd   = stack_POISON(Canary_t);
 #endif // STACK_CANARY
 
-#ifdef STACK_HASH
-        stack->hash = nullhash;
-        stack->hash = getStackHash(stack);
-#endif // STACK_HASH
+        UPDATE_HASH;
 
         if (capacity > 0)
             resize(stack, capacity);
 
-#ifdef STACK_HASH
-        stack->hash = nullhash;
-        stack->hash = getStackHash(stack);
-#endif // STACK_HASH
+        UPDATE_HASH;
 
         VERIFY(stack);
         return Error::OK;
@@ -111,7 +107,7 @@ namespace stack {
      * @param [in] stack Stack
      * @return Error Error code
      */
-    Hash_t getStackHash(Stack* const stack) {
+    static Hash_t getStackHash(Stack* const stack) {
         assert(stack != nullptr);
 #ifdef STACK_HASH
         if (stack->data != nullptr) {
@@ -167,10 +163,7 @@ namespace stack {
             VERIFY(stack);
             return Error::DATA_TRUNC;
         }
-#ifdef STACK_HASH
-        stack->hash = nullhash;
-        stack->hash = getStackHash(stack);
-#endif // STACK_HASH
+        UPDATE_HASH;
         VERIFY(stack);
         return Error::OK;
     }
@@ -218,10 +211,7 @@ namespace stack {
         stack->size++;
         stack->data[stack->size - 1] = 0;
 
-#ifdef STACK_HASH
-        stack->hash = nullhash;
-        stack->hash = getStackHash(stack);
-#endif // STACK_HASH
+        UPDATE_HASH;
         VERIFY(stack);
         return Error::OK;
     }
@@ -235,10 +225,7 @@ namespace stack {
         stack->data[stack->size - 1] = stack_POISON(Elem_t);
         stack->size--;
 
-#ifdef STACK_HASH
-        stack->hash = nullhash;
-        stack->hash = getStackHash(stack);
-#endif // STACK_HASH
+        UPDATE_HASH;
         VERIFY(stack);
 
         size_t capacityBound = (size_t)(getCapacityFactor(stack->size) * double(stack->size));
@@ -248,10 +235,7 @@ namespace stack {
             if (err) return err;
         }
 
-#ifdef STACK_HASH
-        stack->hash = nullhash;
-        stack->hash = getStackHash(stack);
-#endif // STACK_HASH
+        UPDATE_HASH;
         VERIFY(stack);
 
         return Error::OK;
@@ -272,10 +256,7 @@ namespace stack {
 
         stack->data[stack->size - 1] = elem;
 
-#ifdef STACK_HASH
-        stack->hash = nullhash;
-        stack->hash = getStackHash(stack);
-#endif // STACK_HASH
+        UPDATE_HASH;
         VERIFY(stack);
         return Error::OK;
     }
@@ -328,7 +309,7 @@ namespace stack {
      * @return Error Error code
      */
     Error dump(Stack* const stack, LOGFUNCHEAD_ARGS_H) {
-        assert(stack != nullptr);
+        assert(stack != nullptr); //TODO Dump (nullptr)
         assert(funcName != nullptr);
         assert(fileName != nullptr);
         logger::openLogFile();
