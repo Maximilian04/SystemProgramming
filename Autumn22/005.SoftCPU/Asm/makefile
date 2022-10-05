@@ -4,20 +4,20 @@ COMPILE_DEFAULT_FLAGS = -I . -Wshadow -Winit-self -Wredundant-decls -Wcast-align
 COMPILE_FLAGS = $(COMPILE_DEFAULT_FLAGS) -D_DEBUG
 #COMPILE_FLAGS = $(COMPILE_DEFAULT_FLAGS) -DNDEBUG
 
-Asm: build\main.o
-	@ g++ $(COMPILE_FLAGS) build\main.o -o build\Asm
+COMPILE_O = @ g++ $(COMPILE_FLAGS) -c $^ -o $@
+
+Asm: build\main.o build\ui.o build\cmdParser.o
+	@ g++ $(COMPILE_FLAGS) $^ -o build\Asm
 
 build\main.o: main.cpp
-	@ g++ $(COMPILE_FLAGS) -c main.cpp -o build\main.o
+	${COMPILE_O}
 
-#build\Stack.o: stack\Stack.cpp
-#	@ g++ $(COMPILE_FLAGS) -c stack\Stack.cpp
-#	@ move Stack.o build > NUL
+build\ui.o: ui.cpp
+	${COMPILE_O}
 
 
 build\cmdParser.o: cmdParser\cmdParser.cpp
-	@ g++ $(COMPILE_FLAGS) -c cmdParser\cmdParser.cpp -I .
-	@ move cmdParser.o build > NUL
+	${COMPILE_O}
 
 
 clean:

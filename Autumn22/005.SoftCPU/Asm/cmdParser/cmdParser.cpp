@@ -3,6 +3,8 @@
 
 #include "cmdParser.h"
 
+const int MAX_CMD_ARGS_COUNT = 64; ///< Size of buffer for flag
+
 namespace cmdParser {
     /**
      * @brief Recognizes flags in cmd input

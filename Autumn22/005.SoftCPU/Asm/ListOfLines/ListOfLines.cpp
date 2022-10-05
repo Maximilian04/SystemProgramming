@@ -13,7 +13,7 @@ namespace listOfLines {
 
     /**
      * @brief Get the size of file
-     *
+     * 
      * @param [in] fileName Name of file
      * @return _off_t Size of file
      */
@@ -30,10 +30,10 @@ namespace listOfLines {
 
     /**
      * @brief Read the whole file to buffer
-     *
+     * 
      * @note Need nullptr-ed buffer
      * @note Need free() for buffer
-     *
+     * 
      * @param [in] fileName Name of file
      * @param [out] buffer Pointer to pointer to place with buffer
      * @return size_t Size of buffer or 0 if error
@@ -66,7 +66,7 @@ namespace listOfLines {
 
     /**
      * @brief Replace specific character in ListOfLines and separates lines
-     *
+     * 
      * @param [out] listPtr Struct with buffer
      * @param [in] bufferSize Size of buffer
      * @param [in] bad Character to be replaced
@@ -124,7 +124,7 @@ namespace listOfLines {
 
     /**
      * @brief Upload ListOfLines from file
-     *
+     * 
      * @param [out] listPtr ListOFLines
      * @param [in] fileName File name
      * @return int 1 if file cannot be opened
@@ -154,7 +154,7 @@ namespace listOfLines {
 
     /**
      * @brief Free memory used with ListOfLines
-     *
+     * 
      * @param listPtr Pointer to ListOfLines
      */
     void destroyList(ListOfLines* listPtr) {
