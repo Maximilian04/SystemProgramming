@@ -133,6 +133,7 @@ namespace listOfLines {
         assert(listPtr  != nullptr);
         assert(fileName != nullptr);
         assert(listPtr->size == 0);
+        assert(listPtr->lines == nullptr);
 
         size_t bufferSize = readFileToBuffer(fileName, &listPtr->firstVacant);
         if (bufferSize == 0) {
