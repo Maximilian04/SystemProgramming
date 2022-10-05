@@ -13,9 +13,9 @@ namespace listOfLines {
 
     /**
      * @brief Get the size of file
-     * 
+     *
      * @param [in] fileName Name of file
-     * @return _off_t Size of file
+     * @return _off_t Size of file or 0 if error
      */
     _off_t getSizeOfFile(const char* fileName) {
         assert(fileName != nullptr);
@@ -23,6 +23,8 @@ namespace listOfLines {
         struct stat fileStat = {};
 
         int statResult = stat(fileName, &fileStat);
+        if (statResult == 0)
+            return 0;
         assert(statResult == 0 && "Cannot get file info");
 
         return fileStat.st_size;
@@ -30,27 +32,28 @@ namespace listOfLines {
 
     /**
      * @brief Read the whole file to buffer
-     * 
+     *
      * @note Need nullptr-ed buffer
      * @note Need free() for buffer
-     * 
+     *
      * @param [in] fileName Name of file
      * @param [out] buffer Pointer to pointer to place with buffer
      * @return size_t Size of buffer or 0 if error
      */
     size_t readFileToBuffer(const char* fileName, char** buffer) {
         assert(fileName != nullptr);
-        assert(buffer   != nullptr);
+        assert(buffer != nullptr);
 
         assert((*buffer) == nullptr);
 
         int fileSize = getSizeOfFile(fileName);
+        if (fileSize == 0)
+            return 0;
 
         FILE* file = fopen(fileName, "rt");
         assert(file != nullptr && "Cannot open file");
-        if (file == nullptr) {
+        if (file == nullptr)
             return 0;
-        }
 
         (*buffer) = (char*)calloc(fileSize + 1, sizeof(char));
         assert((*buffer) != nullptr);
@@ -66,7 +69,7 @@ namespace listOfLines {
 
     /**
      * @brief Replace specific character in ListOfLines and separates lines
-     * 
+     *
      * @param [out] listPtr Struct with buffer
      * @param [in] bufferSize Size of buffer
      * @param [in] bad Character to be replaced
@@ -124,13 +127,13 @@ namespace listOfLines {
 
     /**
      * @brief Upload ListOfLines from file
-     * 
+     *
      * @param [out] listPtr ListOFLines
      * @param [in] fileName File name
      * @return int 1 if file cannot be opened
      */
     int uploadList(ListOfLines* listPtr, const char* fileName) {
-        assert(listPtr  != nullptr);
+        assert(listPtr != nullptr);
         assert(fileName != nullptr);
         assert(listPtr->size == 0);
         assert(listPtr->lines == nullptr);
@@ -155,7 +158,7 @@ namespace listOfLines {
 
     /**
      * @brief Free memory used with ListOfLines
-     * 
+     *
      * @param listPtr Pointer to ListOfLines
      */
     void destroyList(ListOfLines* listPtr) {
