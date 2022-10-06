@@ -6,43 +6,63 @@
 namespace ui {
     cmdParser::ParserResult reactToFlags(int cmdFlagC, cmdParser::CmdArgument* cmdArguments, void* userdata);
     void printHelpMessage();
-    FILE* openFile(const char* const fileName);
-
-    static FILE* asmInputFile = nullptr;
 
     /**
-     * @brief Handle console flags
+     * @brief Struct for transfering information to cmdParser::processFlags
+     *
+     */
+    typedef struct {
+        const char* asmTextFileName;  ///< buffer with user's tests file's name
+    } ProccessFlagsPtrs;
+
+    /**
+     * @brief Handle console flags & upload asmText
      *
      * @param [in] argc Console input
      * @param [in] argv Console input
+     * @param [out] asmTextPtr Asm text
      * @return Error Error code
      */
-    Error handleFlags(const int argc, const char* const* const argv) {
-        ProccessFlagsPtrs proccessFlagsPtrs = { &asmInputFile };
+    Error handleFlags(const int argc, const char* const* const argv, ListOfLines* asmTextPtr) {
+        ProccessFlagsPtrs proccessFlagsPtrs = { nullptr };
         switch (cmdParser::handleFlags(argc, argv, &reactToFlags, &proccessFlagsPtrs)) {
         case cmdParser::ParserResult::BAD_INPUT:
+            printf("F*U*SB\n");
             return Error::FLAG_ERR;
             break;
         case cmdParser::ParserResult::GOOD_INPUT:
             break;
         default:
             assert(false && "cmdParser::processFlags()'s return is not a cmdParser::PARSER_RESULT's member");
-            break;
         }
-        return Error::FLAG_ERR;
-    }
 
-    /**
-     * @brief Close input program file
-     * 
-     * @return Error Error code
-     */
-    Error closeInputFile() {
-        int res = fclose(asmInputFile);
-        if (res != 0) {
+        if (proccessFlagsPtrs.asmTextFileName == nullptr) {
+            printf("Please enter program code file name\n");
             return Error::FILE_ERR;
         }
 
+        int uploadRes = listOfLines::uploadList(asmTextPtr, proccessFlagsPtrs.asmTextFileName);
+        if (uploadRes == 0) {
+            printf("F*U*B\n");
+            return Error::FILE_ERR;
+        }
+
+        return Error::OK;
+    }
+
+    /**
+     * @brief Translate asm text to asm code
+     *
+     * @param [in] asmText Asm text
+     * @param [out] asmCode Asm code
+     * @return Error Error code
+     */
+    Error translateAsm(ListOfLines* asmText, AsmCode* asmCode) {
+        switch (asmbler::translate(asmText, asmCode)) {
+        case asmbler::Error::OK:
+        default:
+            assert(false && "asmbler::translate()'s return is not a asmbler::Error's member");
+        }
         return Error::OK;
     }
 
@@ -74,6 +94,8 @@ namespace ui {
         assert(cmdArguments != nullptr);
         assert(userdata != nullptr);
 
+        const char* asmTextFileName = nullptr;
+
         if (cmdFlagC == cmdParser::BAD_INPUT) {
             printf("Cannot recognize flags. Please use flags from list below.\n");
             printHelpMessage();
@@ -94,14 +116,11 @@ namespace ui {
                     return cmdParser::ParserResult::BAD_INPUT;
                 }
 
-                *((ProccessFlagsPtrs*)userdata)->testFilePtr = openFile(cmdArguments[cmdFlagI].argument);
-                if (*((ProccessFlagsPtrs*)userdata)->testFilePtr == nullptr) {
-                    printf("Cannot open program file correctly\n");
-                    return cmdParser::ParserResult::BAD_INPUT;
-                }
+                asmTextFileName = cmdArguments[cmdFlagI].argument;
                 break;
             case 'c':
-                *((ProccessFlagsPtrs*)userdata)->testFilePtr = stdin;
+                printf("F*U.\n");
+                return cmdParser::ParserResult::BAD_INPUT;
                 break;
             default:
                 printf("Unknown flag '-%c'. Please use flags from list below.\n", cmdArguments[cmdFlagI].key);
@@ -112,12 +131,5 @@ namespace ui {
         }
 
         return cmdParser::ParserResult::GOOD_INPUT;
-    }
-
-    FILE* openFile(const char* const fileName) {
-        assert(fileName != nullptr);
-
-        FILE* file = fopen(fileName, "rt");
-        return file;
     }
 }

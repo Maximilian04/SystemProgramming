@@ -12,16 +12,11 @@
 #define UI_H
 
 #include <cmdParser\cmdParser.h>
+#include <ListOfLines\ListOfLines.h>
+
+#include "asm.h"
 
 namespace ui {
-    /**
-     * @brief Struct for transfering information to cmdParser::processFlags
-     *
-     */
-    typedef struct {
-        FILE** testFilePtr;  ///< buffer with user's tests file's name
-    } ProccessFlagsPtrs;
-
     /**
      * @brief Codes for errors in returned values
      * 
@@ -31,8 +26,8 @@ namespace ui {
         FLAG_ERR, ///< Error in console flags
         FILE_ERR, ///< Error with file
     };
-    Error handleFlags(const int argc, const char* const* const argv);
-    Error closeInputFile();
+    Error handleFlags(const int argc, const char* const* const argv, ListOfLines* asmTextPtr);
+    Error translateAsm(ListOfLines* asmText, AsmCode* asmCode);
 }
 
 #endif // UI_H

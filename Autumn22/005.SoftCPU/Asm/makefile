@@ -6,19 +6,47 @@ COMPILE_FLAGS = $(COMPILE_DEFAULT_FLAGS) -D_DEBUG
 
 COMPILE_O = @ g++ $(COMPILE_FLAGS) -c $^ -o $@
 
-Asm: build\main.o build\ui.o build\cmdParser.o
+define ADD_SOURCE
+OBJECTS := ${OBJECTS} build\${NAME}.o
+build\${NAME}.o: ${NAME}.cpp
+	${COMPILE_O}
+endef
+
+define ADD_LIBSOURCE
+OBJECTS := ${OBJECTS} build\${NAME}.o
+build\${NAME}.o: ${NAME}\${NAME}.cpp
+	${COMPILE_O}
+endef
+
+NAME = main
+OBJECTS := ${OBJECTS} build\${NAME}.o
+build\${NAME}.o: ${NAME}.cpp
+	${COMPILE_O}
+
+NAME = ui
+OBJECTS := ${OBJECTS} build\${NAME}.o
+build\${NAME}.o: ${NAME}.cpp
+	${COMPILE_O}
+
+NAME = asm
+OBJECTS := ${OBJECTS} build\${NAME}.o
+build\${NAME}.o: ${NAME}.cpp
+	${COMPILE_O}
+
+
+NAME = ListOfLines
+OBJECTS := ${OBJECTS} build\${NAME}.o
+build\${NAME}.o: ${NAME}\${NAME}.cpp
+	${COMPILE_O}
+
+NAME = cmdParser
+OBJECTS := ${OBJECTS} build\${NAME}.o
+build\${NAME}.o: ${NAME}\${NAME}.cpp
+	${COMPILE_O}
+
+
+Asm: ${OBJECTS}
 	@ g++ $(COMPILE_FLAGS) $^ -o build\Asm
-
-build\main.o: main.cpp
-	${COMPILE_O}
-
-build\ui.o: ui.cpp
-	${COMPILE_O}
-
-
-build\cmdParser.o: cmdParser\cmdParser.cpp
-	${COMPILE_O}
-
 
 clean:
 	@ del build\*.o build\*.exe
