@@ -10,6 +10,7 @@ namespace listOfLines {
     size_t readFileToBuffer(const char* fileName, char** buffer);
     void replaceSymbol(ListOfLines* listPtr, size_t bufferSize, char bad, char good);
     size_t countLinesInBuffer(const char* buffer, size_t bufferSize);
+    size_t getRidOfSpaces(ListOfLines* listPtr, size_t bufferSize);
 
     /**
      * @brief Get the size of file
@@ -22,6 +23,7 @@ namespace listOfLines {
 
         struct stat fileStat = {};
 
+        printf("%s", fileName);
         int statResult = stat(fileName, &fileStat);
         if (statResult == 0)
             return 0;
@@ -132,7 +134,7 @@ namespace listOfLines {
      * @param [in] fileName File name
      * @return int 1 if file cannot be opened
      */
-    int uploadList(ListOfLines* listPtr, const char* fileName) {
+    int uploadList(ListOfLines* listPtr, const char* fileName, bool doGetRidOfSpaces) {
         assert(listPtr != nullptr);
         assert(fileName != nullptr);
         assert(listPtr->size == 0);
@@ -149,11 +151,56 @@ namespace listOfLines {
         listPtr->size = 0;
 
         replaceSymbol(listPtr, bufferSize, '\n', '\0');
+        printf("hjk\n");
+        for (int i = 0; i < listPtr->size; ++i)
+            printf("%s\n", listPtr->lines[i].str);
+
+        if (doGetRidOfSpaces) {
+            bufferSize = getRidOfSpaces(listPtr, bufferSize);
+        }
 
         assert(tempCountOfLines >= (size_t)listPtr->size);
         listPtr->lines = (Line*)realloc(listPtr->lines, sizeof(Line) * listPtr->size);
+        assert(listPtr->lines != nullptr);
 
         return 0;
+    }
+
+    size_t getRidOfSpaces(ListOfLines* listPtr, size_t bufferSize) {
+        assert(listPtr != nullptr);
+
+        int lineCounter = 0;
+        size_t shiftCounter = 0;
+
+        size_t readSymbolIndex = 0;
+        size_t writeSymbolIndex = 0;
+        bool allowedSpace = false;
+
+        for (; readSymbolIndex < bufferSize;) {
+            if (listPtr->lines[0].str[readSymbolIndex] == ' ') {
+                if (allowedSpace) {
+                    allowedSpace = false;
+                } else {
+                    ++readSymbolIndex;
+                    continue;
+                }
+            } else if (listPtr->lines[0].str[readSymbolIndex] == '\n') {
+                allowedSpace = false;
+
+                if (lineCounter > 0)
+                    listPtr->lines[lineCounter].str = listPtr->lines[lineCounter - 1].str + listPtr->lines[lineCounter - 1].lenght;
+                listPtr->lines[lineCounter].lenght -= (int)(readSymbolIndex - writeSymbolIndex - shiftCounter);
+                shiftCounter = readSymbolIndex - writeSymbolIndex;
+            } else {
+                allowedSpace = true;
+            }
+
+            listPtr->lines[0].str[writeSymbolIndex] = listPtr->lines[0].str[readSymbolIndex];
+            ++readSymbolIndex;
+            ++writeSymbolIndex;
+        }
+
+        return writeSymbolIndex;
     }
 
     /**

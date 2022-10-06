@@ -30,7 +30,7 @@ struct ListOfLines {
 };
 
 namespace listOfLines {
-    int uploadList(ListOfLines* listPtr, const char* fileName);
+    int uploadList(ListOfLines* listPtr, const char* fileName, bool doGetRidOfSpaces = false);
     void destroyList(ListOfLines* listPtr);
 }
 
