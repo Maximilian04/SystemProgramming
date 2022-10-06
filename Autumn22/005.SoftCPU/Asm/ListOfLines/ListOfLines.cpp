@@ -23,9 +23,8 @@ namespace listOfLines {
 
         struct stat fileStat = {};
 
-        printf("%s", fileName);
         int statResult = stat(fileName, &fileStat);
-        if (statResult == 0)
+        if (statResult != 0)
             return 0;
         assert(statResult == 0 && "Cannot get file info");
 
