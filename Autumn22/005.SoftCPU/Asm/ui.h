@@ -25,6 +25,7 @@ namespace ui {
         OK = 0,   ///< No errors
         FLAG_ERR, ///< Error in console flags
         FILE_ERR, ///< Error with file
+        MEM_ERR,  ///< Some error with memory allocation
     };
     Error handleFlags(const int argc, const char* const* const argv, ListOfLines* asmTextPtr);
     Error translateAsm(ListOfLines* asmText, AsmCode* asmCode);

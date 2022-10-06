@@ -27,7 +27,7 @@ namespace ui {
         ProccessFlagsPtrs proccessFlagsPtrs = { nullptr };
         switch (cmdParser::handleFlags(argc, argv, &reactToFlags, &proccessFlagsPtrs)) {
         case cmdParser::ParserResult::BAD_INPUT:
-            printf("F*U*SB\n");
+            printf("F*U*SB Input error\n");
             return Error::FLAG_ERR;
             break;
         case cmdParser::ParserResult::GOOD_INPUT:
@@ -40,10 +40,9 @@ namespace ui {
             printf("Please enter program code file name\n");
             return Error::FILE_ERR;
         }
-
-        int uploadRes = listOfLines::uploadList(asmTextPtr, proccessFlagsPtrs.asmTextFileName);
-        if (uploadRes == 0) {
-            printf("F*U*B\n");
+        int uploadRes = listOfLines::uploadList(asmTextPtr, proccessFlagsPtrs.asmTextFileName, true);
+        if (uploadRes != 0) {
+            printf("F*U*B uploadList error\n");
             return Error::FILE_ERR;
         }
 
@@ -60,6 +59,7 @@ namespace ui {
     Error translateAsm(ListOfLines* asmText, AsmCode* asmCode) {
         switch (asmbler::translate(asmText, asmCode)) {
         case asmbler::Error::OK:
+            break;
         default:
             assert(false && "asmbler::translate()'s return is not a asmbler::Error's member");
         }
@@ -93,8 +93,7 @@ namespace ui {
     cmdParser::ParserResult reactToFlags(int cmdFlagC, cmdParser::CmdArgument* cmdArguments, void* userdata) {
         assert(cmdArguments != nullptr);
         assert(userdata != nullptr);
-
-        const char* asmTextFileName = nullptr;
+        assert(((ProccessFlagsPtrs*)userdata)->asmTextFileName == nullptr);
 
         if (cmdFlagC == cmdParser::BAD_INPUT) {
             printf("Cannot recognize flags. Please use flags from list below.\n");
@@ -116,7 +115,7 @@ namespace ui {
                     return cmdParser::ParserResult::BAD_INPUT;
                 }
 
-                asmTextFileName = cmdArguments[cmdFlagI].argument;
+                ((ProccessFlagsPtrs*)userdata)->asmTextFileName = cmdArguments[cmdFlagI].argument;
                 break;
             case 'c':
                 printf("F*U.\n");
