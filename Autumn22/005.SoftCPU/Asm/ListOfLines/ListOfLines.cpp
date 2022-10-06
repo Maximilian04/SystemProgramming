@@ -150,9 +150,6 @@ namespace listOfLines {
         listPtr->size = 0;
 
         replaceSymbol(listPtr, bufferSize, '\n', '\0');
-        printf("hjk\n");
-        for (int i = 0; i < listPtr->size; ++i)
-            printf("%s\n", listPtr->lines[i].str);
 
         if (doGetRidOfSpaces) {
             bufferSize = getRidOfSpaces(listPtr, bufferSize);
