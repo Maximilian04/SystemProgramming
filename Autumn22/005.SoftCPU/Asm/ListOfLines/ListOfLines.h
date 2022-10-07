@@ -16,7 +16,7 @@
  */
 struct Line {
     char* str;   ///< Stringed line
-    int lenght;  ///< Lenght of line
+    int lenght;  ///< Lenght of line (excluding \0)
 };
 
 /**

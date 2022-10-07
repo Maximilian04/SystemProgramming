@@ -162,6 +162,13 @@ namespace listOfLines {
         return 0;
     }
 
+    /**
+     * @brief Bring string to correct form
+     * 
+     * @param [out] listPtr ListOfLines
+     * @param [in] bufferSize Size of list's continious buffer
+     * @return size_t New used buffer size
+     */
     size_t getRidOfSpaces(ListOfLines* listPtr, size_t bufferSize) {
         assert(listPtr != nullptr);
 
@@ -171,6 +178,7 @@ namespace listOfLines {
         size_t readSymbolIndex = 0;
         size_t writeSymbolIndex = 0;
         bool allowedSpace = false;
+        bool prefixSpaces = true;
 
         for (; readSymbolIndex < bufferSize;) {
             if (listPtr->lines[0].str[readSymbolIndex] == ' ') {
@@ -180,15 +188,22 @@ namespace listOfLines {
                     ++readSymbolIndex;
                     continue;
                 }
-            } else if (listPtr->lines[0].str[readSymbolIndex] == '\n') {
+            } else if (listPtr->lines[0].str[readSymbolIndex] == '\0') {
                 allowedSpace = false;
+                prefixSpaces = true;
 
                 if (lineCounter > 0)
-                    listPtr->lines[lineCounter].str = listPtr->lines[lineCounter - 1].str + listPtr->lines[lineCounter - 1].lenght;
+                    listPtr->lines[lineCounter].str = listPtr->lines[lineCounter - 1].str + listPtr->lines[lineCounter - 1].lenght + 1;
+                
                 listPtr->lines[lineCounter].lenght -= (int)(readSymbolIndex - writeSymbolIndex - shiftCounter);
                 shiftCounter = readSymbolIndex - writeSymbolIndex;
+
+                ++lineCounter;
             } else {
-                allowedSpace = true;
+                if (prefixSpaces) {
+                    prefixSpaces = false;
+                    allowedSpace = true;
+                }
             }
 
             listPtr->lines[0].str[writeSymbolIndex] = listPtr->lines[0].str[readSymbolIndex];
