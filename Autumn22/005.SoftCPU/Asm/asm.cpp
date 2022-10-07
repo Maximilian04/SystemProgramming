@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <..\asmLang.cpp>
 #include "strAsmLang\strAsmLang.h"
@@ -26,6 +27,11 @@ namespace asmbler {
         assert(asmCode != nullptr);
         assert(asmText->size != 0);
 
+        if (asmCode->code == nullptr) {
+            asmCode::createBuf(asmCode);
+        }
+        asmCode->pc = 0;
+
         for (int lineI = 0; lineI < asmText->size; ++lineI) {
             // printf("%s\n", asmText->lines[lineI].str);
 
@@ -46,6 +52,7 @@ namespace asmbler {
 
     Error translateLine(Line* asmTextLine, AsmCode* asmCode) {
         assert(asmTextLine != nullptr);
+        assert(asmCode != nullptr);
 
         char commandName[BUFFER_SIZE] = {};
         int commandNameLength = 0;
@@ -78,6 +85,45 @@ namespace asmbler {
 }
 
 namespace asmCode {
+    /**
+     * @brief Calloc buffer of asmLang::MAX_CODE_SIZE size for asmCode object
+     *
+     * @param [out] asmCode asmCode object
+     * @return int 0 if no error occures
+     */
+    int createBuf(AsmCode* asmCode) {
+        return createBuf(asmCode, asmLang::MAX_CODE_SIZE);
+    }
+
+    /**
+     * @brief Calloc buffer for asmCode object
+     *
+     * @param [out] asmCode asmCode object
+     * @param [in] size Size of buffer
+     * @return int 0 if no error occures
+     */
+    int createBuf(AsmCode* asmCode, size_t size) {
+        assert(asmCode != nullptr);
+        assert(asmCode->code == nullptr);
+
+        asmCode->code = (uint8_t*)calloc(size, sizeof(uint8_t));
+        assert(asmCode->code != nullptr);
+
+        return 0;
+    }
+
+
+    int freeBuf(AsmCode* asmCode) {
+        assert(asmCode != nullptr);
+        assert(asmCode->code != nullptr);
+
+        free(asmCode->code);
+        asmCode->code = nullptr;
+        asmCode->pc = 0;
+
+        return 0;
+    }
+
     /**
      * @brief Add command to machine code
      *

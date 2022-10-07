@@ -24,6 +24,10 @@ struct AsmCode {
 };
 
 namespace asmCode {
+    int createBuf(AsmCode* asmCode);
+    int createBuf(AsmCode* asmCode, size_t size);
+    int freeBuf(AsmCode* asmCode);
+
     void add(AsmCode* asmCode, uint8_t byte);
 }
 

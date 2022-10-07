@@ -1,9 +1,13 @@
 #include <assert.h>
 #include <stdio.h>
 
+#include "fileIO.h"
+
 #include "ui.h"
 
 namespace ui {
+    static const char* outputFileName = nullptr;
+
     cmdParser::ParserResult reactToFlags(int cmdFlagC, cmdParser::CmdArgument* cmdArguments, void* userdata);
     void printHelpMessage();
 
@@ -63,6 +67,18 @@ namespace ui {
         default:
             assert(false && "asmbler::translate()'s return is not a asmbler::Error's member");
         }
+        return Error::OK;
+    }
+
+    /**
+     * @brief Write out machine code to file
+     *
+     * @param [in] asmCode Asm Code
+     * @return Error Error code
+     */
+    Error writeAsmCode2File(AsmCode* asmCode) {
+        fileIO::Error writingRes = fileIO::writeAsmCode2File(asmCode, nullptr);
+
         return Error::OK;
     }
 

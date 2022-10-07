@@ -29,6 +29,7 @@ namespace ui {
     };
     Error handleFlags(const int argc, const char* const* const argv, ListOfLines* asmTextPtr);
     Error translateAsm(ListOfLines* asmText, AsmCode* asmCode);
+    Error writeAsmCode2File(AsmCode* asmCode);
 }
 
 #endif // UI_H

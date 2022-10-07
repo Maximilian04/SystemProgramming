@@ -13,5 +13,8 @@ int main(const int argc, const char* const* const argv) {
     if (ui::translateAsm(&asmText, &asmCode))
         return 1;
 
+    ui::writeAsmCode2File(&asmCode);
+    asmCode::freeBuf(&asmCode);
+
     return 0;
 }
