@@ -207,6 +207,8 @@ namespace listOfLines {
             }
 
             listPtr->lines[0].str[writeSymbolIndex] = listPtr->lines[0].str[readSymbolIndex];
+            if (listPtr->lines[0].str[writeSymbolIndex] == ' ')
+                listPtr->lines[0].str[writeSymbolIndex] = '@';
             ++readSymbolIndex;
             ++writeSymbolIndex;
         }
