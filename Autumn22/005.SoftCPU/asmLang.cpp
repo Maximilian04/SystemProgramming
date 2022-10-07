@@ -20,8 +20,17 @@ namespace asmLang {
     static const char    COMMAND_HALT_NAME[] = "hlt";
     static const uint8_t COMMAND_HALT_CODE = 0x00;
 
+    static const char    COMMAND_PUSH_NAME[] = "push";
+    static const uint8_t COMMAND_PUSH_CODE = 0x01;
+
+    static const char    COMMAND_ADD_NAME[] = "add";
+    static const uint8_t COMMAND_ADD_CODE = 0x02;
+
+    static const char    COMMAND_DIV_NAME[] = "div";
+    static const uint8_t COMMAND_DIV_CODE = 0x03;
+
     static const char    COMMAND_OUT_NAME[] = "out";
-    static const uint8_t COMMAND_OUT_CODE = 0x03;
+    static const uint8_t COMMAND_OUT_CODE = 0x04;
 }
 
 #endif // ASMLANG_CPP

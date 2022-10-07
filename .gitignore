@@ -1,4 +1,5 @@
 *.exe
+*.mae
 *.out
 *.o
 build

@@ -40,6 +40,7 @@ namespace asmbler {
             case Error::BROKEN_ASMTEXT:
             case Error::OVERFLOW_BY_NAME:
             case Error::UNKNOWN_COMMAND:
+            case Error::COMMAND_SYNTAX:
                 return translationRes;
             case Error::OK:
                 break;
@@ -74,6 +75,19 @@ namespace asmbler {
 
         if (!strcmp(commandName, asmLang::COMMAND_HALT_NAME)) {
             asmCode::add(asmCode, asmLang::COMMAND_HALT_CODE);
+        } else if (!strcmp(commandName, asmLang::COMMAND_PUSH_NAME)) {
+            asmCode::add(asmCode, asmLang::COMMAND_PUSH_CODE);
+
+            uint8_t arg;
+            uint8_t argRes = sscanf(asmTextLine->str + commandNameLength, "%u", &arg);
+            if (argRes != 1) {
+                return Error::COMMAND_SYNTAX;
+            }
+            asmCode::add(asmCode, arg);
+        } else if (!strcmp(commandName, asmLang::COMMAND_ADD_NAME)) {
+            asmCode::add(asmCode, asmLang::COMMAND_ADD_CODE);
+        } else if (!strcmp(commandName, asmLang::COMMAND_DIV_NAME)) {
+            asmCode::add(asmCode, asmLang::COMMAND_DIV_CODE);
         } else if (!strcmp(commandName, asmLang::COMMAND_OUT_NAME)) {
             asmCode::add(asmCode, asmLang::COMMAND_OUT_CODE);
         } else {

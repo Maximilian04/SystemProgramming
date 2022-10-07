@@ -41,6 +41,7 @@ namespace asmbler {
         BROKEN_ASMTEXT,   ///< Error inside of ListOfLines struc
         OVERFLOW_BY_NAME, ///< Name overflowed buffer
         UNKNOWN_COMMAND,  ///< Syntax error: unknown command
+        COMMAND_SYNTAX,   ///< Syntax error: invalid command syntax
     };
 
     Error translate(ListOfLines* asmText, AsmCode* asmCode);
