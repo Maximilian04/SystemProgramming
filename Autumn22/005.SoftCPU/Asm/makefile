@@ -39,6 +39,11 @@ OBJECTS := ${OBJECTS} build\${NAME}.o
 build\${NAME}.o: ${NAME}\${NAME}.cpp
 	${COMPILE_O}
 
+NAME = strAsmLang
+OBJECTS := ${OBJECTS} build\${NAME}.o
+build\${NAME}.o: ${NAME}\${NAME}.cpp
+	${COMPILE_O}
+
 NAME = cmdParser
 OBJECTS := ${OBJECTS} build\${NAME}.o
 build\${NAME}.o: ${NAME}\${NAME}.cpp

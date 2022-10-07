@@ -131,6 +131,7 @@ namespace listOfLines {
      *
      * @param [out] listPtr ListOFLines
      * @param [in] fileName File name
+     * @param [in] doGetRidOfSpaces If do process file to asm-work form
      * @return int 1 if file cannot be opened
      */
     int uploadList(ListOfLines* listPtr, const char* fileName, bool doGetRidOfSpaces) {
