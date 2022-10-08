@@ -22,10 +22,12 @@ namespace ui {
      * 
      */
     enum Error {
-        OK = 0,   ///< No errors
-        FLAG_ERR, ///< Error in console flags
-        FILE_ERR, ///< Error with file
-        MEM_ERR,  ///< Some error with memory allocation
+        OK = 0,    ///< No errors
+        FLAG_ERR,  ///< Error in console flags
+        FILE_ERR,  ///< Error with file
+        MEM_ERR,   ///< Some error with memory allocation
+        SYNTAX,    ///< Syntax error in asm program file
+        TRANS_ERR, ///< Some internal transletion error
     };
     Error handleFlags(const int argc, const char* const* const argv, ListOfLines* asmTextPtr);
     Error translateAsm(ListOfLines* asmText, AsmCode* asmCode);

@@ -64,6 +64,19 @@ namespace ui {
         switch (asmbler::translate(asmText, asmCode)) {
         case asmbler::Error::OK:
             break;
+        case asmbler::Error::BROKEN_ASMTEXT:
+            printf("Broken ListOfLines inside of translation\n");
+            return Error::TRANS_ERR;
+        case asmbler::Error::OVERFLOW_BY_NAME:
+            printf("Incorrect file name (buffer was overflowed)\n");
+            return Error::TRANS_ERR;
+        case asmbler::Error::UNKNOWN_COMMAND:
+            printf("Syntax error: unknown command\n");
+            return Error::SYNTAX;
+        case asmbler::Error::COMMAND_SYNTAX:
+            printf("Syntax error: incorrect command syntax\n");
+            printf("\n");
+            return Error::SYNTAX;
         default:
             assert(false && "asmbler::translate()'s return is not a asmbler::Error's member");
         }

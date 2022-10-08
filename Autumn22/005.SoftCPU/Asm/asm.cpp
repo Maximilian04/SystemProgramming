@@ -78,8 +78,11 @@ namespace asmbler {
         } else if (!strcmp(commandName, asmLang::COMMAND_PUSH_NAME)) {
             asmCode::add(asmCode, asmLang::COMMAND_PUSH_CODE);
 
-            uint8_t arg;
-            uint8_t argRes = sscanf(asmTextLine->str + commandNameLength, "%u", &arg);
+            if (asmTextLine->str[commandNameLength] != '@') {
+                return Error::COMMAND_SYNTAX;
+            }
+            uint8_t arg = 0;
+            uint8_t argRes = sscanf_s(asmTextLine->str + commandNameLength + 1, "%u", &arg);
             if (argRes != 1) {
                 return Error::COMMAND_SYNTAX;
             }
