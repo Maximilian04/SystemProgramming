@@ -4,21 +4,53 @@ COMPILE_DEFAULT_FLAGS = -I . -Wshadow -Winit-self -Wredundant-decls -Wcast-align
 COMPILE_FLAGS = $(COMPILE_DEFAULT_FLAGS) -D_DEBUG
 #COMPILE_FLAGS = $(COMPILE_DEFAULT_FLAGS) -DNDEBUG
 
-SoftCPU: build\main.o
-	@ g++ $(COMPILE_FLAGS) build\main.o -o build\SoftCPU
+COMPILE_O = @ g++ $(COMPILE_FLAGS) -c $^ -o $@
 
-build\main.o: main.cpp
-	@ g++ $(COMPILE_FLAGS) -c main.cpp -o build\main.o
+define ADD_SOURCE
+OBJECTS := ${OBJECTS} build\${NAME}.o
+build\${NAME}.o: ${NAME}.cpp
+	${COMPILE_O}
+endef
+
+define ADD_LIBSOURCE
+OBJECTS := ${OBJECTS} build\${NAME}.o
+build\${NAME}.o: ${NAME}\${NAME}.cpp
+	${COMPILE_O}
+endef
+
+
+NAME = main
+OBJECTS := ${OBJECTS} build\${NAME}.o
+build\${NAME}.o: ${NAME}.cpp
+	${COMPILE_O}
+
+NAME = ui
+OBJECTS := ${OBJECTS} build\${NAME}.o
+build\${NAME}.o: ${NAME}.cpp
+	${COMPILE_O}
+
+NAME = AsmCode
+OBJECTS := ${OBJECTS} build\${NAME}.o
+build\${NAME}.o: ..\${NAME}.cpp
+	${COMPILE_O}
+
+NAME = cpu
+OBJECTS := ${OBJECTS} build\${NAME}.o
+build\${NAME}.o: ${NAME}.cpp
+	${COMPILE_O}
 
 #build\Stack.o: stack\Stack.cpp
 #	@ g++ $(COMPILE_FLAGS) -c stack\Stack.cpp
 #	@ move Stack.o build > NUL
 
+NAME = cmdParser
+OBJECTS := ${OBJECTS} build\${NAME}.o
+build\${NAME}.o: ${NAME}\${NAME}.cpp
+	${COMPILE_O}
 
-build\cmdParser.o: cmdParser\cmdParser.cpp
-	@ g++ $(COMPILE_FLAGS) -c cmdParser\cmdParser.cpp -I .
-	@ move cmdParser.o build > NUL
 
+SoftCPU: ${OBJECTS}
+	@ g++ $(COMPILE_FLAGS) $^ -o build\Asm
 
 clean:
 	@ del build\*.o build\*.exe

@@ -11,7 +11,7 @@
 #ifndef ASMCODE_H
 #define ASMCODE_H
 
-#include <..\asmLang.cpp>
+#include "asmLang.cpp"
 #include <stdint.h>
 
 typedef uint8_t AsmCode_t;
