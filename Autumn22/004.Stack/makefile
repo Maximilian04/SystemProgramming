@@ -65,3 +65,6 @@ build\cmdParser.o: cmdParser\cmdParser.cpp
 
 clean:
 	@ del build\*.o build\*.exe
+
+include makefile-StackLib
+StackLib: StackLib.a

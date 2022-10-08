@@ -18,6 +18,10 @@ build\${NAME}.o: ${NAME}\${NAME}.cpp
 	${COMPILE_O}
 endef
 
+STACKLIB_PATH = "..\..\004.Stack"
+LINK_STACKLIB = -L$(STACKLIB_PATH) -lStackLib
+# include ..\..\004.Stack\makefile-StackLib
+# OBJECTS := ${OBJECTS} build\StackLib.a
 
 NAME = main
 OBJECTS := ${OBJECTS} build\${NAME}.o
@@ -50,7 +54,7 @@ build\${NAME}.o: ${NAME}\${NAME}.cpp
 
 
 SoftCPU: ${OBJECTS}
-	@ g++ $(COMPILE_FLAGS) $^ -o build\Asm
+	@ g++ ${LINK_STACKLIB} $(COMPILE_FLAGS) $^ -o build\Asm
 
 clean:
 	@ del build\*.o build\*.exe

@@ -1,0 +1,41 @@
+# STACKLIB_SOURCES := ${STACKLIB_PATH}\stack\Stack.cpp
+# STACKLIB_SOURCES := ${STACKLIB_SOURCES} ${STACKLIB_PATH}\logger\loggerStack.cpp
+# STACKLIB_SOURCES := ${STACKLIB_SOURCES} ${STACKLIB_PATH}\logger\logger.cpp
+# STACKLIB_SOURCES := ${STACKLIB_SOURCES} ${STACKLIB_PATH}\strFParser\strFParser.cpp
+# STACKLIB_SOURCES := ${STACKLIB_SOURCES} ${STACKLIB_PATH}\DebugInfo\DebugInfo.cpp
+# STACKLIB_SOURCES := ${STACKLIB_SOURCES} ${STACKLIB_PATH}\hash\hash.cpp
+#STACKLIB_SOURCES := ${STACKLIB_SOURCES} ${STACKLIB_PATH}\
+
+# build\StackLib.a: ${STACKLIB_SOURCES}
+# 	@ g++ $(COMPILE_FLAGS) -I ${STACKLIB_PATH} -c $^ -o StackLib.a
+# 	@ move StackLib.a build > NUL
+
+# all: build\StackLib.a
+
+# build\Stack.o: stack\Stack.cpp
+# 	@ g++ $(COMPILE_FLAGS) -c stack\Stack.cpp
+# 	@ move Stack.o build > NUL
+
+# build\logger.o: logger\logger.cpp
+# 	@ g++ $(COMPILE_FLAGS) -c logger\logger.cpp
+# 	@ move logger.o build > NUL
+
+# build\loggerStack.o: logger\loggerStack.cpp
+# 	@ g++ $(COMPILE_FLAGS) -c logger\loggerStack.cpp
+# 	@ move loggerStack.o build > NUL
+
+# build\strFParser.o: strFParser\strFParser.cpp
+# 	@ g++ $(COMPILE_FLAGS) -c strFParser\strFParser.cpp
+# 	@ move strFParser.o build > NUL
+
+# build\DebugInfo.o: DebugInfo\DebugInfo.cpp
+# 	@ g++ $(COMPILE_FLAGS) -c DebugInfo\DebugInfo.cpp
+# 	@ move DebugInfo.o build > NUL
+
+# build\hash.o: hash\hash.cpp
+# 	@ g++ $(COMPILE_FLAGS) -c hash\hash.cpp
+# 	@ move hash.o build > NUL
+
+StackLib.a: build\Stack.o build\logger.o build\loggerStack.o build\strFParser.o build\DebugInfo.o build\hash.o
+	@ ar -rc StackLib.lib -c $^ 
+	@ ranlib StackLib.lib
