@@ -33,6 +33,11 @@ OBJECTS := ${OBJECTS} build\${NAME}.o
 build\${NAME}.o: ${NAME}.cpp
 	${COMPILE_O}
 
+NAME = AsmCode
+OBJECTS := ${OBJECTS} build\${NAME}.o
+build\${NAME}.o: ..\${NAME}.cpp
+	${COMPILE_O}
+
 NAME = fileIO
 OBJECTS := ${OBJECTS} build\${NAME}.o
 build\${NAME}.o: ${NAME}.cpp

@@ -1,7 +1,7 @@
 /**
  * @file asm.h
  * @author Maximilian (https://github.com/MaximilianYan)
- * @brief Asm code
+ * @brief Assembler
  * @date 2022-10-06
  *
  * @copyright Copyright (c) 2022
@@ -11,25 +11,8 @@
 #ifndef ASM_H
 #define ASM_H
 
-#include <stdint.h>
 #include <ListOfLines\ListOfLines.h>
-
-/**
- * @brief Struct for translated asm code
- *
- */
-struct AsmCode {
-    uint8_t* code; ///< Bytes sequence
-    size_t pc;     ///< Current program counter
-};
-
-namespace asmCode {
-    int createBuf(AsmCode* asmCode);
-    int createBuf(AsmCode* asmCode, size_t size);
-    int freeBuf(AsmCode* asmCode);
-
-    void add(AsmCode* asmCode, uint8_t byte);
-}
+#include <..\AsmCode.h>
 
 namespace asmbler {
     /**
