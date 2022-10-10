@@ -14,7 +14,7 @@
 #include <..\AsmCode.h>
 
 struct CPU {
-    AsmCode_t code;
+    AsmCode code;
 };
 
 

@@ -29,7 +29,6 @@ namespace ui {
         TRANS_ERR, ///< Some internal transletion error
     };
     Error handleFlags(const int argc, const char* const* const argv, AsmCode* asmCodePtr);
-    Error writeAsmCode2File(AsmCode* asmCode);
 }
 
 #endif // UI_H

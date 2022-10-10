@@ -4,8 +4,6 @@
 #include "ui.h"
 
 namespace ui {
-    static const char* outputFileName = nullptr;
-
     cmdParser::ParserResult reactToFlags(int cmdFlagC, cmdParser::CmdArgument* cmdArguments, void* userdata);
     void printHelpMessage();
 
@@ -14,7 +12,7 @@ namespace ui {
      *
      */
     typedef struct {
-        const char* asmTextFileName;  ///< buffer with user's tests file's name
+        const char* asmCodeFileName;  ///< buffer with user's tests file's name
     } ProccessFlagsPtrs;
 
     /**
@@ -38,8 +36,8 @@ namespace ui {
             assert(false && "cmdParser::processFlags()'s return is not a cmdParser::PARSER_RESULT's member");
         }
 
-        if (proccessFlagsPtrs.asmTextFileName == nullptr) {
-            printf("Please enter program code file name\n");
+        if (proccessFlagsPtrs.asmCodeFileName == nullptr) {
+            printf("Please enter program file name\n");
             return Error::FILE_ERR;
         }
         //int uploadRes = listOfLines::uploadList(asmTextPtr, proccessFlagsPtrs.asmTextFileName, true);
@@ -47,18 +45,26 @@ namespace ui {
         //    printf("F*U*B uploadList error\n");
         //    return Error::FILE_ERR;
         //}
+        FILE* file = fopen(proccessFlagsPtrs.asmCodeFileName, "rb");
+        if (file == nullptr) {
+            printf("Cannot open file\n");
+            return Error::FILE_ERR;
+        }
 
-        return Error::OK;
-    }
 
-    /**
-     * @brief Write out machine code to file
-     *
-     * @param [in] asmCode Asm Code
-     * @return Error Error code
-     */
-    Error writeAsmCode2File(AsmCode* asmCode) {
-        //fileIO::Error writingRes = fileIO::writeAsmCode2File(asmCode, nullptr);
+        size_t freadRes = fread(&asmCodePtr->pc, sizeof(size_t), 1, file);
+        if (freadRes != 1 || asmCodePtr->pc > asmLang::MAX_CODE_SIZE) {
+            printf("Incorrect file\n");
+            return Error::FILE_ERR;
+        }
+        fread(asmCodePtr->code, sizeof(uint8_t), asmCodePtr->pc, file);
+        if (freadRes != asmCodePtr->pc) {
+            printf("Incorrect file\n");
+            return Error::FILE_ERR;
+        }
+        asmCodePtr->pc = 0;
+
+        fclose(file);
 
         return Error::OK;
     }
@@ -90,7 +96,7 @@ namespace ui {
     cmdParser::ParserResult reactToFlags(int cmdFlagC, cmdParser::CmdArgument* cmdArguments, void* userdata) {
         assert(cmdArguments != nullptr);
         assert(userdata != nullptr);
-        assert(((ProccessFlagsPtrs*)userdata)->asmTextFileName == nullptr);
+        assert(((ProccessFlagsPtrs*)userdata)->asmCodeFileName == nullptr);
 
         if (cmdFlagC == cmdParser::BAD_INPUT) {
             printf("Cannot recognize flags. Please use flags from list below.\n");
@@ -112,7 +118,7 @@ namespace ui {
                     return cmdParser::ParserResult::BAD_INPUT;
                 }
 
-                ((ProccessFlagsPtrs*)userdata)->asmTextFileName = cmdArguments[cmdFlagI].argument;
+                ((ProccessFlagsPtrs*)userdata)->asmCodeFileName = cmdArguments[cmdFlagI].argument;
                 break;
             case 'c':
                 printf("F*U.\n");
