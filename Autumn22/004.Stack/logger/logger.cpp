@@ -154,6 +154,7 @@ namespace logger {
         logger::endBlock();                                                                                                            \
     }
     LOGGER_LOGFIELDARRAY_IMPL(int, d);
+    LOGGER_LOGFIELDARRAY_IMPL(uint8_t, u);
 
     void addBlock() {
         assert(logTarget != nullptr);

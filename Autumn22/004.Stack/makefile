@@ -67,4 +67,4 @@ clean:
 	@ del build\*.o build\*.exe
 
 include makefile-StackLib
-StackLib: StackLib.a
+StackLib: StackLib.lib

@@ -97,7 +97,8 @@ namespace test {
         // ------------- read params -------------
         // test function
 
-        int var = 0;
+        // int var = 0;
+        uint8_t var = 0;
         int size = 0;
         int result = 0; //strLib::strlen(params.str);
 

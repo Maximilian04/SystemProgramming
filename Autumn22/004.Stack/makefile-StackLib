@@ -36,6 +36,6 @@
 # 	@ g++ $(COMPILE_FLAGS) -c hash\hash.cpp
 # 	@ move hash.o build > NUL
 
-StackLib.a: build\Stack.o build\logger.o build\loggerStack.o build\strFParser.o build\DebugInfo.o build\hash.o
+StackLib.lib: build\Stack.o build\logger.o build\loggerStack.o build\strFParser.o build\DebugInfo.o build\hash.o
 	@ ar -rc StackLib.lib -c $^ 
 	@ ranlib StackLib.lib

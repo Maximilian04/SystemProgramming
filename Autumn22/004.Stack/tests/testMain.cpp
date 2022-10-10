@@ -42,7 +42,8 @@ int main(int argc, const char* const* const argv) {
     //STACK__dump(stack));
     stack::push(&stack, 5);
     //STACK__dump(stack));
-    int var = 0;
+    //int var = 0;
+    uint8_t var = 0;
     stack::pop(&stack, &var);
     //STACK__dump(stack));
     stack::pop(&stack);

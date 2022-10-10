@@ -14,11 +14,13 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#ifndef STACKLIBWORLD
 #include "logger\logger.h"
 #include "DebugInfo\DebugInfo.h"
 #include "hash\hash.h"
+#endif // STACKLIBWORLD
 
-typedef int Elem_t;
+typedef uint8_t Elem_t;
 
 #ifndef NDEBUG
 #ifdef STACK_DEBUG
@@ -84,7 +86,8 @@ enum StackVerifierError {
 };
 
 namespace stack {
-    stack_POISONDEF(Elem_t);
+    // stack_POISONDEF(Elem_t);
+    const Elem_t POISONElem_t = 0xD;
     stack_POISONDEF(size_t);
     stack_POISONDEF(Hash_t);
     stack_POISONDEF_PTR(Elem_t);

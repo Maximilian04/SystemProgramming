@@ -13,7 +13,9 @@
 
 #include <stdio.h>
 
+#ifndef STACKLIBWORLD
 #include "DebugInfo\DebugInfo.h"
+#endif // STACKLIBWORLD
 
 namespace logger {
     void setLogTarget(FILE* _logTarget);
@@ -51,6 +53,7 @@ const char* arrayName, fieldType* array, size_t size, fieldType*  POISON_CODEPTR
 
 #define LOGGER_LOGFIELDARRAY_DEF(fieldType) LOGGER_LOGFIELDARRAY_HDR(fieldType) = nullptr
     LOGGER_LOGFIELDARRAY_DEF(int));
+    LOGGER_LOGFIELDARRAY_DEF(uint8_t));
 
     void addBlock();
     void endBlock();

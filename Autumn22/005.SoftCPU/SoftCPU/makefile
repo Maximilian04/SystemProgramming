@@ -53,8 +53,17 @@ build\${NAME}.o: ${NAME}\${NAME}.cpp
 	${COMPILE_O}
 
 
+STACKLIB_O := ${STACKLIB_O} StackLibO\Stack.o
+STACKLIB_O := ${STACKLIB_O} StackLibO\logger.o
+STACKLIB_O := ${STACKLIB_O} StackLibO\loggerStack.o
+STACKLIB_O := ${STACKLIB_O} StackLibO\strFParser.o
+STACKLIB_O := ${STACKLIB_O} StackLibO\DebugInfo.o
+STACKLIB_O := ${STACKLIB_O} StackLibO\hash.o
+
 SoftCPU: ${OBJECTS}
-	@ g++ ${LINK_STACKLIB} $(COMPILE_FLAGS) $^ -o build\Asm
+#	@ g++ ${LINK_STACKLIB} $(COMPILE_FLAGS) $^ -o build\SoftCPU
+#	@ g++ -L. -lStackLib $(COMPILE_FLAGS) $^ -o build\SoftCPU
+	@ g++ $(COMPILE_FLAGS) $^ -o build\SoftCPU ${STACKLIB_O}
 
 clean:
 	@ del build\*.o build\*.exe
