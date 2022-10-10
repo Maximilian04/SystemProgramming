@@ -399,9 +399,9 @@ namespace stack {
         for (size_t elemI = 0; elemI < stack->capacity; ++elemI) {
             if (elemI < stack->size) {
                 if (stack->data[elemI] == stack_POISON(Elem_t)) {
-                    errorCode |= StackVerifierError::POISONE_LEAK;
-                    logger::emergencyLog(strFParser::parseF("Stack poison in data space[%p]: index[%d] poisoned!",
-                        &stack->data[elemI], elemI));
+//                    errorCode |= StackVerifierError::POISONE_LEAK;
+//                    logger::emergencyLog(strFParser::parseF("Stack poison in data space[%p]: index[%d] poisoned!",
+//                        &stack->data[elemI], elemI));
                 }
             } else { // elemI >= stack->size
                 if (stack->data[elemI] != stack_POISON(Elem_t)) {
