@@ -28,7 +28,7 @@ namespace fileIO {
         FILE* file = fopen(fileName, "wb");
         assert(file != nullptr);
 
-
+        fwrite(&asmCode->pc, sizeof(size_t), 1,  file);
         fwrite(asmCode->code, sizeof(uint8_t), asmCode->pc, file);
 
         fclose(file);
