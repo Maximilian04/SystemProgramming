@@ -21,8 +21,9 @@ typedef uint8_t AsmCode_t;
  *
  */
 struct AsmCode {
-    AsmCode_t* code; ///< Bytes sequence
-    size_t pc;     ///< Current program counter
+    AsmCode_t* code;       ///< Bytes sequence
+    size_t pc;             ///< Current program counter
+    size_t codeBufferSize; ///< Size of buffer
 };
 
 namespace asmCode {

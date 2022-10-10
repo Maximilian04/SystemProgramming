@@ -27,6 +27,7 @@ namespace asmCode {
 
         asmCode->code = (AsmCode_t*)calloc(size, sizeof(AsmCode_t));
         assert(asmCode->code != nullptr);
+        asmCode->codeBufferSize = size;
 
         return 0;
     }

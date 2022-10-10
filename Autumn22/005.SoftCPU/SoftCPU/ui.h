@@ -27,6 +27,7 @@ namespace ui {
         MEM_ERR,   ///< Some error with memory allocation
         SYNTAX,    ///< Syntax error in asm program file
         TRANS_ERR, ///< Some internal transletion error
+        CODE_SIZE, ///< Code size from file is more than CPU buffer size
 
         UNKNOWN_COMMAND, ///< Unknown command in CPU
     };

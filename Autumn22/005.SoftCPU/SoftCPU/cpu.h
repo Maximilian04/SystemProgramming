@@ -11,12 +11,24 @@
 #ifndef CPU_H
 #define CPU_H
 
+#include <..\..\004.Stack\StackLib\StackLibWorld.h>
 #include <..\AsmCode.h>
+
+#ifndef NDEBUG
+#ifdef CPU_DEBUG
+#else // !STACK_DEBUG
+#define CPU_DEBUG
+#endif // STACK_DEBUG
+#endif // NDEBUG
 
 struct CPU {
     AsmCode code;
-};
+    Stack stack;
 
+#ifdef CPU_DEBUG
+    DebugInfo debugInfo;
+#endif // CPU_DEBUG
+};
 
 namespace cpu {
     /**
@@ -31,6 +43,19 @@ namespace cpu {
     };
     Error run(CPU* mainCPU);
     Error runCommand(CPU* mainCPU);
+
+#ifdef CPU_DEBUG
+#define CPU__ctor(obj) cpu::ctor(&obj, DEBUGINFO_CTOR_ARGS_R(#obj)
+    Error ctor(CPU* const cpu, DEBUGINFO_CTOR_ARGS_H, size_t codeBufferSize = 0);
+#else // !STACK_DEBUG
+#define CPU__ctor(obj) cpu::ctor(&obj
+    Error ctor(CPU* const cpu, size_t codeBufferSize = 0);
+#endif // STACK_DEBUG
+
+    Error dtor(CPU* const cpu);
+
+#define CPU__dump(stackObj) cpu::dump(&stackObj, LOGFUNCHEAD_ARGS_R
+    Error dump(CPU* const cpu, LOGFUNCHEAD_ARGS_H);
 }
 
 #endif // CPU_H

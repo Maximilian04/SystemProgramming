@@ -52,6 +52,10 @@ namespace ui {
             printf("Incorrect file\n");
             return Error::FILE_ERR;
         }
+        if (freadRes > asmCodePtr->codeBufferSize) {
+            printf("Incompatible file and CPU\n");
+            return Error::CODE_SIZE;
+        }
         freadRes = fread(asmCodePtr->code, sizeof(uint8_t), asmCodePtr->pc, file);
         if (freadRes != asmCodePtr->pc) {
             printf("Incorrect file\n");
