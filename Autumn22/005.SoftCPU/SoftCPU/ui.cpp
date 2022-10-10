@@ -40,11 +40,6 @@ namespace ui {
             printf("Please enter program file name\n");
             return Error::FILE_ERR;
         }
-        //int uploadRes = listOfLines::uploadList(asmTextPtr, proccessFlagsPtrs.asmTextFileName, true);
-        //if (uploadRes != 0) {
-        //    printf("F*U*B uploadList error\n");
-        //    return Error::FILE_ERR;
-        //}
         FILE* file = fopen(proccessFlagsPtrs.asmCodeFileName, "rb");
         if (file == nullptr) {
             printf("Cannot open file\n");
@@ -57,7 +52,7 @@ namespace ui {
             printf("Incorrect file\n");
             return Error::FILE_ERR;
         }
-        fread(asmCodePtr->code, sizeof(uint8_t), asmCodePtr->pc, file);
+        freadRes = fread(asmCodePtr->code, sizeof(uint8_t), asmCodePtr->pc, file);
         if (freadRes != asmCodePtr->pc) {
             printf("Incorrect file\n");
             return Error::FILE_ERR;
@@ -65,6 +60,30 @@ namespace ui {
         asmCodePtr->pc = 0;
 
         fclose(file);
+
+        return Error::OK;
+    }
+
+    /**
+     * @brief Run program with CPU
+     *
+     * @param [in] mainCPU CPU object
+     * @return Error Error code
+     */
+    Error runProgram(CPU* mainCPU) {
+        switch (cpu::run(mainCPU)) {
+        case cpu::Error::OK:
+            break;
+        case cpu::Error::UNKNOWN_COMMAND:
+            printf("CPU Error: unknown command - program file is broken");
+            return Error::UNKNOWN_COMMAND;
+        case cpu::Error::UNREACHABLE_HLT:
+            assert(false && "cpu::run() returned UNREACHABLE_HLT ???");
+        case cpu::Error::OK_HALT:
+            assert(false && "cpu::run() returned OK_HALT ???");
+        default:
+            assert(false && "cpu::run()'s return is not a cpu::Error's member");
+        }
 
         return Error::OK;
     }

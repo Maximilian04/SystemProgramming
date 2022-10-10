@@ -19,7 +19,18 @@ struct CPU {
 
 
 namespace cpu {
-    void dodo();
+    /**
+     * @brief Codes for errors in returned values
+     *
+     */
+    enum Error {
+        OK = 0,          ///< No errors, program had to continue
+        OK_HALT,         ///< No errors, program had to stop
+        UNREACHABLE_HLT, ///< Unreacheble point in program is reached. !!! Sth. has gone VARY wrong
+        UNKNOWN_COMMAND, ///< Code error: unknown command
+    };
+    Error run(CPU* mainCPU);
+    Error runCommand(CPU* mainCPU);
 }
 
 #endif // CPU_H

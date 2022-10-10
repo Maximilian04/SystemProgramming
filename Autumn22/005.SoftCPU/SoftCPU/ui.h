@@ -18,7 +18,7 @@
 namespace ui {
     /**
      * @brief Codes for errors in returned values
-     * 
+     *
      */
     enum Error {
         OK = 0,    ///< No errors
@@ -27,8 +27,11 @@ namespace ui {
         MEM_ERR,   ///< Some error with memory allocation
         SYNTAX,    ///< Syntax error in asm program file
         TRANS_ERR, ///< Some internal transletion error
+
+        UNKNOWN_COMMAND, ///< Unknown command in CPU
     };
     Error handleFlags(const int argc, const char* const* const argv, AsmCode* asmCodePtr);
+    Error runProgram(CPU* mainCPU);
 }
 
 #endif // UI_H
