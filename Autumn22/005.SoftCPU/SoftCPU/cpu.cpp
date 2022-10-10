@@ -8,15 +8,17 @@
 
 namespace cpu {
 #ifdef CPU_DEBUG
-    Error ctor(CPU* const cpu, DEBUGINFO_CTOR_ARGS_H, size_t codeBufferSize) {
+    Error ctor(CPU* const cpu, DEBUGINFO_CTOR_ARGS_H, CPU::MODE mode, size_t codeBufferSize) {
 #else // !STACK_DEBUG
-    Error ctor(CPU* const cpu, size_t codeBufferSize) {
+    Error ctor(CPU* const cpu, CPU::MODE mode, size_t codeBufferSize) {
 #endif // STACK_DEBUG
         assert(cpu != nullptr);
 
         STACK__ctor(cpu->stack));
         cpu->code.codeBufferSize = codeBufferSize == 0 ? asmLang::MAX_CODE_SIZE : codeBufferSize;
         asmCode::createBuf(&cpu->code, cpu->code.codeBufferSize);
+
+        cpu->mode = mode;
 
 #ifdef STACK_DEBUG
         cpu->debugInfo.objName = objName;
@@ -43,25 +45,28 @@ namespace cpu {
     }
 
     Error runCommand(CPU* mainCPU) {
+        if (mainCPU->mode == CPU::MODE::DISASSEMBLER) {
+
+        }
         switch (mainCPU->code.code[mainCPU->code.pc]) {
         case asmLang::COMMAND_HALT_CODE:
-            printf("HALT\n");
+            printf("%s\n", asmLang::COMMAND_HALT_NAME);
             mainCPU->code.pc += 1;
             return Error::OK_HALT;
         case asmLang::COMMAND_PUSH_CODE:
-            printf("PUSH\n");
+            printf("%s\n", asmLang::COMMAND_PUSH_NAME);
             mainCPU->code.pc += 2;
             break;
         case asmLang::COMMAND_ADD_CODE:
-            printf("ADD\n");
+            printf("%s\n", asmLang::COMMAND_ADD_NAME);
             mainCPU->code.pc += 1;
             break;
         case asmLang::COMMAND_DIV_CODE:
-            printf("DIV\n");
+            printf("%s\n", asmLang::COMMAND_DIV_NAME);
             mainCPU->code.pc += 1;
             break;
         case asmLang::COMMAND_OUT_CODE:
-            printf("OUT\n");
+            printf("%s\n", asmLang::COMMAND_OUT_NAME);
             mainCPU->code.pc += 1;
             break;
         default:

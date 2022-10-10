@@ -25,6 +25,12 @@ struct CPU {
     AsmCode code;
     Stack stack;
 
+    enum MODE {
+        RUNCPU = 0,   ///< Normal mode
+        DISASSEMBLER, ///< Disassembler mode
+    };
+    MODE mode;
+
 #ifdef CPU_DEBUG
     DebugInfo debugInfo;
 #endif // CPU_DEBUG
@@ -46,10 +52,10 @@ namespace cpu {
 
 #ifdef CPU_DEBUG
 #define CPU__ctor(obj) cpu::ctor(&obj, DEBUGINFO_CTOR_ARGS_R(#obj)
-    Error ctor(CPU* const cpu, DEBUGINFO_CTOR_ARGS_H, size_t codeBufferSize = 0);
+    Error ctor(CPU* const cpu, DEBUGINFO_CTOR_ARGS_H, CPU::MODE mode = CPU::MODE::RUNCPU, size_t codeBufferSize = 0);
 #else // !STACK_DEBUG
 #define CPU__ctor(obj) cpu::ctor(&obj
-    Error ctor(CPU* const cpu, size_t codeBufferSize = 0);
+    Error ctor(CPU* const cpu, CPU::MODE mode, size_t codeBufferSize = 0);
 #endif // STACK_DEBUG
 
     Error dtor(CPU* const cpu);
