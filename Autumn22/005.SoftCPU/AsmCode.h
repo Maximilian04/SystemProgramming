@@ -14,8 +14,6 @@
 #include "asmLang.cpp"
 #include <stdint.h>
 
-typedef uint8_t AsmCode_t;
-
 /**
  * @brief Struct for translated asm code
  *
@@ -32,6 +30,7 @@ namespace asmCode {
     int freeBuf(AsmCode* asmCode);
 
     void add(AsmCode* asmCode, AsmCode_t byte);
+    void operator|=(AsmCode& asmCode, AsmCode_t byte);
 }
 
 #endif // ASMCODE_H
