@@ -31,7 +31,7 @@ namespace ui {
 
         UNKNOWN_COMMAND, ///< Unknown command in CPU
     };
-    Error handleFlags(const int argc, const char* const* const argv, AsmCode* asmCodePtr);
+    Error handleFlags(const int argc, const char* const* const argv, CPU* cpuPtr);
     Error runProgram(CPU* mainCPU);
 }
 

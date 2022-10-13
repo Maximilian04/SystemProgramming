@@ -71,6 +71,7 @@ namespace ui {
             printf("Incorrect file name (buffer was overflowed)\n");
             return Error::TRANS_ERR;
         case asmbler::Error::UNKNOWN_COMMAND:
+            // printf("Line: %d, :%s\n", lineI, asmText->lines[lineI].str);
             printf("Syntax error: unknown command\n");
             return Error::SYNTAX;
         case asmbler::Error::COMMAND_SYNTAX:

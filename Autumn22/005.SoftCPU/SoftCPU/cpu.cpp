@@ -45,29 +45,67 @@ namespace cpu {
     }
 
     Error runCommand(CPU* mainCPU) {
-        if (mainCPU->mode == CPU::MODE::DISASSEMBLER) {
+        assert(mainCPU != nullptr);
 
+        if (mainCPU->mode == CPU::MODE::DISASSEMBLER) {
+            switch (mainCPU->code.code[mainCPU->code.pc]) {
+            case asmLang::COMMAND_HALT_CODE:
+                printf("%s\n", asmLang::COMMAND_HALT_NAME);
+                mainCPU->code.pc += 1;
+                return Error::OK_HALT;
+            case asmLang::COMMAND_PUSH_CODE:
+                printf("%s\n", asmLang::COMMAND_PUSH_NAME);
+                mainCPU->code.pc += 2;
+                break;
+            case asmLang::COMMAND_ADD_CODE:
+                printf("%s\n", asmLang::COMMAND_ADD_NAME);
+                mainCPU->code.pc += 1;
+                break;
+            case asmLang::COMMAND_DIV_CODE:
+                printf("%s\n", asmLang::COMMAND_DIV_NAME);
+                mainCPU->code.pc += 1;
+                break;
+            case asmLang::COMMAND_OUT_CODE:
+                printf("%s\n", asmLang::COMMAND_OUT_NAME);
+                mainCPU->code.pc += 1;
+                break;
+            default:
+                return Error::UNKNOWN_COMMAND;
+            }
+
+            return Error::OK;
         }
+
         switch (mainCPU->code.code[mainCPU->code.pc]) {
         case asmLang::COMMAND_HALT_CODE:
-            printf("%s\n", asmLang::COMMAND_HALT_NAME);
             mainCPU->code.pc += 1;
             return Error::OK_HALT;
         case asmLang::COMMAND_PUSH_CODE:
-            printf("%s\n", asmLang::COMMAND_PUSH_NAME);
+            stack::push(&mainCPU->stack, mainCPU->code.code[mainCPU->code.pc + 1]);
             mainCPU->code.pc += 2;
             break;
-        case asmLang::COMMAND_ADD_CODE:
-            printf("%s\n", asmLang::COMMAND_ADD_NAME);
+        case asmLang::COMMAND_ADD_CODE: {
+            Elem_t a = 0, b = 0;
+            stack::pop(&mainCPU->stack, &b);
+            stack::pop(&mainCPU->stack, &a);
+            stack::push(&mainCPU->stack, a + b);
             mainCPU->code.pc += 1;
+            }
             break;
-        case asmLang::COMMAND_DIV_CODE:
-            printf("%s\n", asmLang::COMMAND_DIV_NAME);
+        case asmLang::COMMAND_DIV_CODE: {
+            Elem_t a = 0, b = 0;
+            stack::pop(&mainCPU->stack, &b);
+            stack::pop(&mainCPU->stack, &a);
+            stack::push(&mainCPU->stack, a / b);
             mainCPU->code.pc += 1;
+            }
             break;
-        case asmLang::COMMAND_OUT_CODE:
-            printf("%s\n", asmLang::COMMAND_OUT_NAME);
+        case asmLang::COMMAND_OUT_CODE: {
+            Elem_t a = 0;
+            stack::pop(&mainCPU->stack, &a);
+            printf("%u\n", a);
             mainCPU->code.pc += 1;
+            }
             break;
         default:
             return Error::UNKNOWN_COMMAND;

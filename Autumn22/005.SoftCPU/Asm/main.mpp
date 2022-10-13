@@ -1,0 +1,11 @@
+push 77
+out
+push 239
+push 3
+add
+out
+push 239
+push 3
+div
+out
+hlt

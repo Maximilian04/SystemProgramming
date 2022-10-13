@@ -12,7 +12,8 @@ namespace ui {
      *
      */
     typedef struct {
-        const char* asmCodeFileName;  ///< buffer with user's tests file's name
+        const char* asmCodeFileName; ///< buffer with user's tests file's name
+        CPU::MODE* cpuMode;          ///< cpu mode (cpu or disassembler)
     } ProccessFlagsPtrs;
 
     /**
@@ -23,8 +24,8 @@ namespace ui {
      * @param [out] asmTextPtr Asm text
      * @return Error Error code
      */
-    Error handleFlags(const int argc, const char* const* const argv, AsmCode* asmCodePtr) {
-        ProccessFlagsPtrs proccessFlagsPtrs = { nullptr };
+    Error handleFlags(const int argc, const char* const* const argv, CPU* cpuPtr) {
+        ProccessFlagsPtrs proccessFlagsPtrs = { nullptr, &cpuPtr->mode };
         switch (cmdParser::handleFlags(argc, argv, &reactToFlags, &proccessFlagsPtrs)) {
         case cmdParser::ParserResult::BAD_INPUT:
             printf("F*U*SB Input error\n");
@@ -47,21 +48,21 @@ namespace ui {
         }
 
 
-        size_t freadRes = fread(&asmCodePtr->pc, sizeof(size_t), 1, file);
-        if (freadRes != 1 || asmCodePtr->pc > asmLang::MAX_CODE_SIZE) {
+        size_t freadRes = fread(&cpuPtr->code.codeBufferSize, sizeof(size_t), 1, file);
+        if (freadRes != 1 || cpuPtr->code.codeBufferSize > asmLang::MAX_CODE_SIZE) {
             printf("Incorrect file\n");
             return Error::FILE_ERR;
         }
-        if (freadRes > asmCodePtr->codeBufferSize) {
+        if (freadRes > cpuPtr->code.codeBufferSize) {
             printf("Incompatible file and CPU\n");
             return Error::CODE_SIZE;
         }
-        freadRes = fread(asmCodePtr->code, sizeof(uint8_t), asmCodePtr->pc, file);
-        if (freadRes != asmCodePtr->pc) {
+        freadRes = fread(cpuPtr->code.code, sizeof(uint8_t), cpuPtr->code.codeBufferSize, file);
+        if (freadRes != cpuPtr->code.codeBufferSize) {
             printf("Incorrect file\n");
             return Error::FILE_ERR;
         }
-        asmCodePtr->pc = 0;
+        cpuPtr->code.pc = 0;
 
         fclose(file);
 
@@ -101,7 +102,8 @@ namespace ui {
             "Help message. Command list:\n"
             "-h\t\tshow help message\n"
             "-i [name]\tassamble code from [name] file\n"
-            "-c\t\tallow you to enter code via console (in future, f*u)\n");
+            "-c\t\tallow you to enter code via console (in future, f*u)\n"
+            "-d\t\tRun in deassembler mode\n");
     }
 
     /**
@@ -146,6 +148,9 @@ namespace ui {
             case 'c':
                 printf("F*U.\n");
                 return cmdParser::ParserResult::BAD_INPUT;
+                break;
+            case 'd':
+                *((ProccessFlagsPtrs*)userdata)->cpuMode = CPU::MODE::DISASSEMBLER;
                 break;
             default:
                 printf("Unknown flag '-%c'. Please use flags from list below.\n", cmdArguments[cmdFlagI].key);
