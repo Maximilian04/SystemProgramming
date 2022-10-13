@@ -59,3 +59,17 @@ namespace asmCode {
         asmCode->pc++;
     }
 }
+
+/**
+ * @brief Add bytes via |= to the last machine command
+ *
+ * @param [out] asmCode AsmCode object
+ * @param [in] byte Command to |=
+ */
+void operator|=(AsmCode& asmCode, AsmCode_t byte) {
+    //assert(asmCode != nullptr);
+    assert(asmCode.code != nullptr);
+    assert(asmCode.pc > 0);
+
+    asmCode.code[asmCode.pc - 1] |= byte;
+}

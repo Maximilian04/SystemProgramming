@@ -8,11 +8,13 @@
 #include "asm.h"
 
 using strAsmLang::getCommandName;
+using strAsmLang::classifyArg;
 
 namespace asmbler {
     const int BUFFER_SIZE = 64;
 
     Error translateLine(Line* asmTextLine, AsmCode* asmCode);
+    Error translateLineArgs(Line* asmTextLine, const int commandNameLength, AsmCode* asmCode);
 
     /**
      * @brief Translate asm text to asm code
@@ -50,6 +52,41 @@ namespace asmbler {
         return Error::OK;
     }
 
+    Error translateLineArgs(Line* asmTextLine, const int commandNameLength, AsmCode* asmCode) {
+        AsmCode_t gotArgs = null;
+
+        for (int strShift = commandNameLength; asmTextLine->str[strShift++] == '@';) {
+            AsmCode_t argCode = classifyArg(asmTextLine->str[strShift]);
+            AsmCode_t arg = 0;
+            int argScanRes = 0;
+
+            if ((gotArgs & argCode))
+                return Error::COMMAND_SYNTAX;
+            gotArgs |= argCode;
+            *asmCode |= argCode;
+            switch (argCode) {
+            case asmLang::COMMAND_ARG_HAS_I:
+                argScanRes = sscanf_s(asmTextLine->str + strShift, "%u", &arg);
+                break;
+            case asmLang::COMMAND_ARG_HAS_R:
+                printf("NO SO FAR");
+                break;
+            case asmLang::COMMAND_ARG_HAS_M:
+                printf("NO SO FAR");
+                break;
+            default:
+                assert(0 && "classifyArg()'s result is not a correct code");
+            }
+
+            if (argScanRes != 1)
+                return Error::COMMAND_SYNTAX;
+            asmCode::add(asmCode, arg);
+            break;
+        }
+
+        return Error::OK;
+    }
+
     Error translateLine(Line* asmTextLine, AsmCode* asmCode) {
         assert(asmTextLine != nullptr);
         assert(asmCode != nullptr);
@@ -72,20 +109,12 @@ namespace asmbler {
         }
 #pragma GCC diagnostic pop
 
+        Error argsTranslationRes = Error::OK;
         if (!strcmp(commandName, asmLang::COMMAND_HALT_NAME)) {
             asmCode::add(asmCode, asmLang::COMMAND_HALT_CODE);
         } else if (!strcmp(commandName, asmLang::COMMAND_PUSH_NAME)) {
             asmCode::add(asmCode, asmLang::COMMAND_PUSH_CODE);
-
-            if (asmTextLine->str[commandNameLength] != '@') {
-                return Error::COMMAND_SYNTAX;
-            }
-            AsmCode_t arg = 0;
-            AsmCode_t argRes = sscanf_s(asmTextLine->str + commandNameLength + 1, "%u", &arg);
-            if (argRes != 1) {
-                return Error::COMMAND_SYNTAX;
-            }
-            asmCode::add(asmCode, arg);
+            argsTranslationRes = translateLineArgs(asmTextLine, commandNameLength, asmCode);
         } else if (!strcmp(commandName, asmLang::COMMAND_ADD_NAME)) {
             asmCode::add(asmCode, asmLang::COMMAND_ADD_CODE);
         } else if (!strcmp(commandName, asmLang::COMMAND_DIV_NAME)) {
@@ -96,6 +125,6 @@ namespace asmbler {
             return Error::UNKNOWN_COMMAND;
         }
 
-        return Error::OK;
+        return argsTranslationRes;
     }
 }

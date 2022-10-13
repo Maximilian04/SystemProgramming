@@ -1,5 +1,6 @@
 #include <string.h>
 #include <assert.h>
+#include <ctype.h>
 
 #include "strAsmLang.h"
 
@@ -29,7 +30,7 @@ namespace strAsmLang {
 
             if (buffer[index] == '@')
                 buffer[index] = '\0';
-            
+
             if (buffer[index] == '\0')
                 break;
         } while (++index);
@@ -37,5 +38,22 @@ namespace strAsmLang {
         *length = index;
 
         return Error::OK;
+    }
+
+    /**
+     * @brief Returns code of the argument type
+     *
+     * @param [in] symb Symbol
+     * @return AsmCode_t Argument type code
+     */
+    AsmCode_t classifyArg(char symb) {
+        if (isdigit(symb))
+            return asmLang::COMMAND_ARG_HAS_I;
+        if (symb == 'r')
+            return asmLang::COMMAND_ARG_HAS_M;
+        if (symb == '[')
+            return asmLang::COMMAND_ARG_HAS_M;
+
+        return null;
     }
 }

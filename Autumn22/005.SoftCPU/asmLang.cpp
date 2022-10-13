@@ -35,9 +35,11 @@ namespace asmLang {
     static const AsmCode_t COMMAND_OUT_CODE = 0x04;
 
     static const AsmCode_t COMMAND_ARG_HAS_MASK = 0b11100000;
-    static const AsmCode_t COMMAND_ARG_HAS_I    = 0b10000000;
-    static const AsmCode_t COMMAND_ARG_HAS_R    = 0b01000000;
-    static const AsmCode_t COMMAND_ARG_HAS_M    = 0b00100000;
+    static const AsmCode_t COMMAND_ARG_HAS_I    = 0b10000000; ///< Immediate constant
+    static const AsmCode_t COMMAND_ARG_HAS_R    = 0b01000000; ///< Register name
+    static const AsmCode_t COMMAND_ARG_HAS_M    = 0b00100000; ///< Memory pointer
 }
+
+#define null (0)
 
 #endif // ASMLANG_CPP

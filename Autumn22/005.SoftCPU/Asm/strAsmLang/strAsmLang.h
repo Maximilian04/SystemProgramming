@@ -12,6 +12,7 @@
 #define ATRASMLANG_H
 
 #include <ListOfLines\ListOfLines.h>
+#include <..\AsmCode.h>
 
 namespace strAsmLang {
     /**
@@ -25,6 +26,7 @@ namespace strAsmLang {
     };
 
     Error getCommandName(const Line* line, char* buffer, int* length, int maxLength);
+    AsmCode_t classifyArg(char symb);
 }
 
 #endif // ATRASMLANG_H
