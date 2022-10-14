@@ -23,7 +23,6 @@ struct AsmCode {
     size_t pc;             ///< Current program counter
     size_t codeBufferSize; ///< Size of buffer
 };
-void operator|=(AsmCode& asmCode, AsmCode_t byte);
 
 namespace asmCode {
     int createBuf(AsmCode* asmCode);
@@ -31,6 +30,7 @@ namespace asmCode {
     int freeBuf(AsmCode* asmCode);
 
     void add(AsmCode* asmCode, AsmCode_t byte);
+    AsmCode_t* getCodePtr(AsmCode* asmCode);
 }
 
 #endif // ASMCODE_H

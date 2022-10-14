@@ -54,6 +54,7 @@ namespace asmbler {
 
     Error translateLineArgs(Line* asmTextLine, const int commandNameLength, AsmCode* asmCode) {
         AsmCode_t gotArgs = null;
+        AsmCode_t* commandPtr = asmCode::getCodePtr(asmCode);
 
         for (int strShift = commandNameLength; asmTextLine->str[strShift++] == '@';) {
             AsmCode_t argCode = classifyArg(asmTextLine->str[strShift]);
@@ -63,7 +64,7 @@ namespace asmbler {
             if ((gotArgs & argCode))
                 return Error::COMMAND_SYNTAX;
             gotArgs |= argCode;
-            *asmCode |= argCode;
+            *commandPtr |= argCode;
             switch (argCode) {
             case asmLang::COMMAND_ARG_HAS_I:
                 argScanRes = sscanf_s(asmTextLine->str + strShift, "%u", &arg);
@@ -81,7 +82,6 @@ namespace asmbler {
             if (argScanRes != 1)
                 return Error::COMMAND_SYNTAX;
             asmCode::add(asmCode, arg);
-            break;
         }
 
         return Error::OK;
