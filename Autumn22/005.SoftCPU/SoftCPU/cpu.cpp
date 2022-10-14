@@ -6,7 +6,40 @@
 #include "logger\loggerCPU.h"
 #include "cpu.h"
 
+struct CommandArgs {
+    AsmCode_t command;
+
+    AsmCode_t argI;
+    AsmCode_t argR;
+    AsmCode_t argM;
+
+    AsmCode_t argSum;
+};
+
 namespace cpu {
+    Error parseCommandArgs(CPU* cpu, CommandArgs* args) {
+        args->command = cpu->code.code[cpu->code.pc];
+        cpu->code.pc += 1;
+
+        if (args->command & asmLang::COMMAND_ARG_HAS_I) {
+            args->argI = cpu->code.code[cpu->code.pc];
+            cpu->code.pc += 1;
+        }
+        if (args->command & asmLang::COMMAND_ARG_HAS_R) {
+            args->argR = cpu->code.code[cpu->code.pc];
+            cpu->code.pc += 1;
+        }
+        if (args->command & asmLang::COMMAND_ARG_HAS_M) {
+            args->argM = cpu->code.code[cpu->code.pc];
+            cpu->code.pc += 1;
+        }
+
+        args->argSum = args->argI + args->argR + args->argM;
+        args->command &= (~asmLang::COMMAND_ARG_HAS_MASK);
+        return Error::OK;
+    }
+
+
 #ifdef CPU_DEBUG
     Error ctor(CPU* const cpu, DEBUGINFO_CTOR_ARGS_H, CPU::MODE mode, size_t codeBufferSize) {
 #else // !STACK_DEBUG
@@ -47,27 +80,25 @@ namespace cpu {
     Error runCommand(CPU* mainCPU) {
         assert(mainCPU != nullptr);
 
+        CommandArgs commandArgs = {};
+        parseCommandArgs(mainCPU, &commandArgs);
+
         if (mainCPU->mode == CPU::MODE::DISASSEMBLER) {
-            switch (mainCPU->code.code[mainCPU->code.pc]) {
+            switch (commandArgs.command) {
             case asmLang::COMMAND_HALT_CODE:
                 printf("%s\n", asmLang::COMMAND_HALT_NAME);
-                mainCPU->code.pc += 1;
                 return Error::OK_HALT;
             case asmLang::COMMAND_PUSH_CODE:
                 printf("%s\n", asmLang::COMMAND_PUSH_NAME);
-                mainCPU->code.pc += 2;
                 break;
             case asmLang::COMMAND_ADD_CODE:
                 printf("%s\n", asmLang::COMMAND_ADD_NAME);
-                mainCPU->code.pc += 1;
                 break;
             case asmLang::COMMAND_DIV_CODE:
                 printf("%s\n", asmLang::COMMAND_DIV_NAME);
-                mainCPU->code.pc += 1;
                 break;
             case asmLang::COMMAND_OUT_CODE:
                 printf("%s\n", asmLang::COMMAND_OUT_NAME);
-                mainCPU->code.pc += 1;
                 break;
             default:
                 return Error::UNKNOWN_COMMAND;
@@ -76,20 +107,17 @@ namespace cpu {
             return Error::OK;
         }
 
-        switch (mainCPU->code.code[mainCPU->code.pc]) {
+        switch (commandArgs.command) {
         case asmLang::COMMAND_HALT_CODE:
-            mainCPU->code.pc += 1;
             return Error::OK_HALT;
         case asmLang::COMMAND_PUSH_CODE:
-            stack::push(&mainCPU->stack, mainCPU->code.code[mainCPU->code.pc + 1]);
-            mainCPU->code.pc += 2;
+            stack::push(&mainCPU->stack, commandArgs.argSum);
             break;
         case asmLang::COMMAND_ADD_CODE: {
             Elem_t a = 0, b = 0;
             stack::pop(&mainCPU->stack, &b);
             stack::pop(&mainCPU->stack, &a);
             stack::push(&mainCPU->stack, a + b);
-            mainCPU->code.pc += 1;
             }
             break;
         case asmLang::COMMAND_DIV_CODE: {
@@ -97,14 +125,12 @@ namespace cpu {
             stack::pop(&mainCPU->stack, &b);
             stack::pop(&mainCPU->stack, &a);
             stack::push(&mainCPU->stack, a / b);
-            mainCPU->code.pc += 1;
             }
             break;
         case asmLang::COMMAND_OUT_CODE: {
             Elem_t a = 0;
             stack::pop(&mainCPU->stack, &a);
             printf("%u\n", a);
-            mainCPU->code.pc += 1;
             }
             break;
         default:
