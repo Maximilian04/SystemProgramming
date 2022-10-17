@@ -66,3 +66,14 @@ DESCRIPT_JMP_COMMAND("jbe", 0x0A, <= )
 DESCRIPT_JMP_COMMAND("je",  0x0B, == )
 DESCRIPT_JMP_COMMAND("jne", 0x0C, != )
 #undef DESCRIPT_JMP_COMMAND
+
+
+
+DESCRIPT_COMMAND("mul", 0x0F, {
+    AsmCode_t a = 0;
+    AsmCode_t b = 0;
+    stack::pop(&mainCPU->stack, &b);
+    stack::pop(&mainCPU->stack, &a);
+    stack::push(&mainCPU->stack, a * b);
+    }
+)

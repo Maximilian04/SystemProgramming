@@ -1,0 +1,12 @@
+push 0
+pop rax
+push 1+rax
+pop rax
+push rax
+push rax
+mul
+out
+push rax
+push 10
+jne 2
+hlt
