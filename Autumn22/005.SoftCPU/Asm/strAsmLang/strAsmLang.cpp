@@ -75,7 +75,7 @@ namespace strAsmLang {
      *
      * @param [in] symb Symbol
      */
-    bool isCorrectSymbIM(char symb) {
+    bool isCorrectSymbI(char symb) {
         return isdigit(symb);
     }
 
@@ -95,6 +95,17 @@ namespace strAsmLang {
     }
 
     /**
+     * @brief Classifier for **skipSymbols** for Memory brackets
+     *
+     * @param [in] symb Symbol
+     */
+    bool isCorrectSymbM(char symb) {
+        return (
+            symb == '[' ||
+            symb == ']');
+    }
+
+    /**
      * @brief Returns code of the argument type
      *
      * @param [in] symb Symbol
@@ -106,6 +117,8 @@ namespace strAsmLang {
         if (symb == 'r')
             return asmLang::COMMAND_ARG_HAS_R;
         if (symb == '[')
+            return asmLang::COMMAND_ARG_HAS_M;
+        if (symb == ']')
             return asmLang::COMMAND_ARG_HAS_M;
 
         return null;

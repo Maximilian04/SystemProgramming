@@ -1,4 +1,6 @@
+push [+9]
 push 9
+pop rax
 pop rax
 push 8+rax
 out

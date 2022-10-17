@@ -44,6 +44,7 @@ namespace asmbler {
             case Error::OVERFLOW_BY_NAME:
             case Error::UNKNOWN_COMMAND:
             case Error::COMMAND_SYNTAX:
+                printf("Line %d:", lineI);
                 return translationRes;
             case Error::OK:
                 break;
@@ -86,7 +87,7 @@ namespace asmbler {
             if (scanfRes != 1)
                 return Error::COMMAND_SYNTAX;
 
-            switch (strAsmLang::skipSymbols(line, shift, strAsmLang::isCorrectSymbIM)) {
+            switch (strAsmLang::skipSymbols(line, shift, strAsmLang::isCorrectSymbI)) {
             case strAsmLang::Error::OK:
                 break;
             case strAsmLang::Error::BROKEN_LINE:
@@ -106,7 +107,7 @@ namespace asmbler {
             break;
 
         case asmLang::COMMAND_ARG_HAS_M:
-            printf("NO SO FAR");
+            strAsmLang::skipSymbols(line, shift, strAsmLang::isCorrectSymbM);
             break;
 
         default:
@@ -135,11 +136,13 @@ namespace asmbler {
             if (getArgRes)
                 return getArgRes;
 
-            if ((gotArgs & argCode))
-                return Error::COMMAND_SYNTAX;
+            if (argCode != asmLang::COMMAND_ARG_HAS_M) {
+                if ((gotArgs & argCode))
+                    return Error::COMMAND_SYNTAX;
+                asmCode::add(asmCode, arg);
+            }
             gotArgs |= argCode;
             *commandPtr |= argCode;
-            asmCode::add(asmCode, arg);
         }
 
         return Error::OK;
