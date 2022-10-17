@@ -52,6 +52,7 @@ namespace cpu {
         UNREACHABLE_HLT,  ///< Unreacheble point in program is reached. !!! Sth. has gone VARY wrong
         UNKNOWN_COMMAND,  ///< Code error: unknown command
         UNKNOWN_REGISTER, ///< Code error: unknown command
+        UNKNOWN_MEMORY,   ///< Code error: out of memory (SEGMENTATION FAULT)
 
         CTOR_ERR,         ///< Error in ctor
     };

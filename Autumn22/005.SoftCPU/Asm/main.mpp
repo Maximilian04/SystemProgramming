@@ -1,8 +1,10 @@
-push [+9]
-push 9
-pop rax
+push 18
+pop [+81]
+push 18
 pop rax
 push 8+rax
+out
+push [+81]
 out
 push 33+rax
 out

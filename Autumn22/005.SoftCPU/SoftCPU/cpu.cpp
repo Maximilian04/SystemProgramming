@@ -11,9 +11,9 @@ struct CommandArgs {
 
     AsmCode_t argI;
     AsmCode_t argR;
-    AsmCode_t argM;
+    bool argM;
 
-    AsmCode_t* argRPtr;
+    AsmCode_t* argWritePtr;
 
     AsmCode_t argSum;
 };
@@ -30,18 +30,20 @@ namespace cpu {
             cpu->code.pc += 1;
         }
         if (args->command & asmLang::COMMAND_ARG_HAS_R) {
-            args->argRPtr = regs::getReg(&cpu->regs, cpu->code.code[cpu->code.pc]);
-            if (args->argRPtr == nullptr) return Error::UNKNOWN_REGISTER;
-            args->argR = *args->argRPtr;
-            cpu->code.pc += 1;
-        }
-        if (args->command & asmLang::COMMAND_ARG_HAS_M) {
-            args->argM = cpu->code.code[cpu->code.pc];
+            args->argWritePtr = regs::getReg(&cpu->regs, cpu->code.code[cpu->code.pc]);
+            if (args->argWritePtr == nullptr) return Error::UNKNOWN_REGISTER;
+            args->argR = *args->argWritePtr;
             cpu->code.pc += 1;
         }
 
-        args->argSum = args->argI + args->argR + args->argM;
+        args->argSum = args->argI + args->argR;
         args->command &= (~asmLang::COMMAND_ARG_HAS_MASK);
+
+        if (args->command & asmLang::COMMAND_ARG_HAS_M) {
+            args->argM = true;
+            args->argWritePtr = mem::getRAM(&cpu->mem, args->argSum);
+            if (args->argWritePtr == nullptr) return Error::UNKNOWN_MEMORY;
+        }
         return Error::OK;
     }
 
@@ -148,7 +150,7 @@ namespace cpu {
             }
             break;
         case asmLang::COMMAND_POP_CODE:
-            stack::pop(&mainCPU->stack, commandArgs.argRPtr);
+            stack::pop(&mainCPU->stack, commandArgs.argWritePtr);
             break;
         default:
             return Error::UNKNOWN_COMMAND;
