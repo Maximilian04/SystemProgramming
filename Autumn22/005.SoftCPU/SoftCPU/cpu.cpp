@@ -47,19 +47,21 @@ namespace cpu {
 
 
 #ifdef CPU_DEBUG
-    Error ctor(CPU* const cpu, DEBUGINFO_CTOR_ARGS_H, CPU::MODE mode, size_t codeBufferSize) {
+    Error ctor(CPU* const cpu, DEBUGINFO_CTOR_ARGS_H, size_t RAMsize, CPU::MODE mode, size_t codeBufferSize) {
 #else // !CPU_DEBUG
-    Error ctor(CPU* const cpu, CPU::MODE mode, size_t codeBufferSize) {
+    Error ctor(CPU* const cpu, size_t RAMsize, CPU::MODE mode, size_t codeBufferSize) {
 #endif // CPU_DEBUG
         assert(cpu != nullptr);
 
-        STACK__ctor(cpu->stack));
+        if (STACK__ctor(cpu->stack))) return Error::CTOR_ERR;
         cpu->code.codeBufferSize = codeBufferSize == 0 ? asmLang::MAX_CODE_SIZE : codeBufferSize;
         asmCode::createBuf(&cpu->code, cpu->code.codeBufferSize);
 
-        REGS__ctor(cpu->regs));
+        if (REGS__ctor(cpu->regs))) return Error::CTOR_ERR;
 
         cpu->mode = mode;
+
+        if (MEM__ctor(cpu->mem), RAMsize)) return Error::CTOR_ERR;
 
 #ifdef CPU_DEBUG
         cpu->debugInfo.objName = objName;

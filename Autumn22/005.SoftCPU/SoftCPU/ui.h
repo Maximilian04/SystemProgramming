@@ -31,6 +31,7 @@ namespace ui {
 
         UNKNOWN_COMMAND,  ///< Unknown command in CPU
         UNKNOWN_REGISTER, ///< Unknown register in CPU
+        CPU_CTOR_ERR,     ///< Internal CPU ctor err
     };
     Error handleFlags(const int argc, const char* const* const argv, CPU* cpuPtr);
     Error runProgram(CPU* mainCPU);

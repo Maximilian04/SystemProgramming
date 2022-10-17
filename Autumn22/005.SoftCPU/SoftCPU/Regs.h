@@ -32,7 +32,7 @@ struct Regs {
 namespace regs {
     AsmCode_t* getReg(Regs* regs, AsmCode_t code);
 
-    const Elem_t POISONAsmCode_t = 0xD;
+    const AsmCode_t POISONAsmCode_t = 0xD;
     /**
      * @brief Codes for errors in returned values
      *

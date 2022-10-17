@@ -14,6 +14,7 @@
 #include <..\..\004.Stack\StackLib\StackLibWorld.h>
 #include <..\AsmCode.h>
 #include "Regs.h"
+#include "Mem.h"
 
 #ifndef NDEBUG
 #ifdef CPU_DEBUG
@@ -33,6 +34,8 @@ struct CPU {
     };
     MODE mode;
 
+    Mem mem;
+
 #ifdef CPU_DEBUG
     DebugInfo debugInfo;
 #endif // CPU_DEBUG
@@ -49,16 +52,18 @@ namespace cpu {
         UNREACHABLE_HLT,  ///< Unreacheble point in program is reached. !!! Sth. has gone VARY wrong
         UNKNOWN_COMMAND,  ///< Code error: unknown command
         UNKNOWN_REGISTER, ///< Code error: unknown command
+
+        CTOR_ERR,         ///< Error in ctor
     };
     Error run(CPU* mainCPU);
     Error runCommand(CPU* mainCPU);
 
 #ifdef CPU_DEBUG
 #define CPU__ctor(obj) cpu::ctor(&obj, DEBUGINFO_CTOR_ARGS_R(#obj)
-    Error ctor(CPU* const cpu, DEBUGINFO_CTOR_ARGS_H, CPU::MODE mode = CPU::MODE::RUNCPU, size_t codeBufferSize = 0);
+    Error ctor(CPU* const cpu, DEBUGINFO_CTOR_ARGS_H, size_t RAMsize, CPU::MODE mode = CPU::MODE::RUNCPU, size_t codeBufferSize = 0);
 #else // !CPU_DEBUG
 #define CPU__ctor(obj) cpu::ctor(&obj
-    Error ctor(CPU* const cpu, CPU::MODE mode, size_t codeBufferSize = 0);
+    Error ctor(CPU* const cpu, size_t RAMsize, CPU::MODE mode, size_t codeBufferSize = 0);
 #endif // CPU_DEBUG
 
     Error dtor(CPU* const cpu);

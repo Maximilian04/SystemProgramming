@@ -2,12 +2,12 @@
 
 int main(const int argc, const char* const* const argv) {
     CPU mainCPU = {};
-    CPU__ctor(mainCPU));
+    CPU__ctor(mainCPU), 100);
 
     ui::Error result = ui::handleFlags(argc, argv, &mainCPU);
     if (!result)
         result = ui::runProgram(&mainCPU);
-    // CPU__dump(mainCPU));
+    CPU__dump(mainCPU));
     cpu::dtor(&mainCPU);
 
     if (result)

@@ -58,6 +58,16 @@ OBJECTS := ${OBJECTS} build\${NAME}.o
 build\${NAME}.o: logger\${NAME}.cpp
 	${COMPILE_O}
 
+NAME = Mem
+OBJECTS := ${OBJECTS} build\${NAME}.o
+build\${NAME}.o: ${NAME}.cpp
+	${COMPILE_O}
+
+NAME = loggerMem
+OBJECTS := ${OBJECTS} build\${NAME}.o
+build\${NAME}.o: logger\${NAME}.cpp
+	${COMPILE_O}
+
 #build\Stack.o: stack\Stack.cpp
 #	@ g++ $(COMPILE_FLAGS) -c stack\Stack.cpp
 #	@ move Stack.o build > NUL

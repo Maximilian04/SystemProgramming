@@ -29,7 +29,7 @@ namespace regs {
 #ifdef REGS_DEBUG
     Error ctor(Regs* const regs, DEBUGINFO_CTOR_ARGS_H) {
 #else // !REGS_DEBUG
-    Error ctor(Regs* const regs, Regs::MODE mode, size_t codeBufferSize) {
+    Error ctor(Regs* const regs) {
 #endif // REGS_DEBUG
         assert(regs != nullptr);
 
@@ -63,7 +63,7 @@ namespace regs {
         logger::logHtmlHead();
         logger__logFuncHead());
         if (regs == nullptr) {
-            logger::emergencyLog("CPU is nullptr");
+            logger::emergencyLog("Mem is nullptr");
             assert(false);
         } else {
 #ifdef REGS_DEBUG

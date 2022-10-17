@@ -1,15 +1,15 @@
 /**
- * @file loggerCPU.h
+ * @file loggerRegs.h
  * @author Maximilian (https://github.com/MaximilianYan)
- * @brief Logging system for CPU class
- * @date 2022-10-11
+ * @brief Logging system for Regs class
+ * @date 2022-10-17
  *
  * @copyright Copyright (c) 2022
  *
  */
 
-#ifndef LOGGERCPU_H
-#define LOGGERCPU_H
+#ifndef LOGGERREGS_H
+#define LOGGERREGS_H
 
 #include "Regs.h"
 
@@ -17,4 +17,4 @@ namespace logger {
     void logRegs(Regs* const regs);
 }
 
-#endif // LOGGERSTACK_H
+#endif // LOGGERREGS_H
