@@ -1,4 +1,4 @@
-#include "loggerCPU.h"
+#include "loggerRegs.h"
 
 #include <..\..\004.Stack\StackLib\StackLibWorld.h>
 //#include "logger\logger.h"
