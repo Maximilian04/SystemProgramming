@@ -1,3 +1,7 @@
+push 9
+pop rax
+push 8+rax
+out
 push 33+rax
 out
 push 239

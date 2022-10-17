@@ -172,16 +172,18 @@ namespace asmbler {
             asmCode::add(asmCode, asmLang::COMMAND_HALT_CODE);
         } else if (!strcmp(commandName, asmLang::COMMAND_PUSH_NAME)) {
             asmCode::add(asmCode, asmLang::COMMAND_PUSH_CODE);
-            argsTranslationRes = translateLineArgs(asmTextLine, commandNameLength, asmCode);
         } else if (!strcmp(commandName, asmLang::COMMAND_ADD_NAME)) {
             asmCode::add(asmCode, asmLang::COMMAND_ADD_CODE);
         } else if (!strcmp(commandName, asmLang::COMMAND_DIV_NAME)) {
             asmCode::add(asmCode, asmLang::COMMAND_DIV_CODE);
         } else if (!strcmp(commandName, asmLang::COMMAND_OUT_NAME)) {
             asmCode::add(asmCode, asmLang::COMMAND_OUT_CODE);
+        } else if (!strcmp(commandName, asmLang::COMMAND_POP_NAME)) {
+            asmCode::add(asmCode, asmLang::COMMAND_POP_CODE);
         } else {
             return Error::UNKNOWN_COMMAND;
         }
+        argsTranslationRes = translateLineArgs(asmTextLine, commandNameLength, asmCode);
 
         return argsTranslationRes;
     }

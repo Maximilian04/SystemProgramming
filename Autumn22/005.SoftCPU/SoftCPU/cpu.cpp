@@ -13,6 +13,8 @@ struct CommandArgs {
     AsmCode_t argR;
     AsmCode_t argM;
 
+    AsmCode_t* argRPtr;
+
     AsmCode_t argSum;
 };
 
@@ -28,9 +30,9 @@ namespace cpu {
             cpu->code.pc += 1;
         }
         if (args->command & asmLang::COMMAND_ARG_HAS_R) {
-            AsmCode_t* reg = regs::getReg(&cpu->regs, cpu->code.code[cpu->code.pc]);
-            if (reg == nullptr) return Error::UNKNOWN_REGISTER;
-            args->argR = *reg;
+            args->argRPtr = regs::getReg(&cpu->regs, cpu->code.code[cpu->code.pc]);
+            if (args->argRPtr == nullptr) return Error::UNKNOWN_REGISTER;
+            args->argR = *args->argRPtr;
             cpu->code.pc += 1;
         }
         if (args->command & asmLang::COMMAND_ARG_HAS_M) {
@@ -107,6 +109,9 @@ namespace cpu {
             case asmLang::COMMAND_OUT_CODE:
                 printf("%s\n", asmLang::COMMAND_OUT_NAME);
                 break;
+            case asmLang::COMMAND_POP_CODE:
+                printf("%s\n", asmLang::COMMAND_POP_NAME);
+                break;
             default:
                 return Error::UNKNOWN_COMMAND;
             }
@@ -139,6 +144,9 @@ namespace cpu {
             stack::pop(&mainCPU->stack, &a);
             printf("%u\n", a);
             }
+            break;
+        case asmLang::COMMAND_POP_CODE:
+            stack::pop(&mainCPU->stack, commandArgs.argRPtr);
             break;
         default:
             return Error::UNKNOWN_COMMAND;

@@ -37,6 +37,9 @@ namespace asmLang {
     static const char      COMMAND_OUT_NAME[] = "out";
     static const AsmCode_t COMMAND_OUT_CODE = 0x04;
 
+    static const char      COMMAND_POP_NAME[] = "pop";
+    static const AsmCode_t COMMAND_POP_CODE = 0x05;
+
     static const AsmCode_t COMMAND_ARG_HAS_MASK = 0b11100000;
     static const AsmCode_t COMMAND_ARG_HAS_I    = 0b10000000; ///< Immediate constant
     static const AsmCode_t COMMAND_ARG_HAS_R    = 0b01000000; ///< Register name
