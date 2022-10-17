@@ -22,7 +22,7 @@ typedef uint8_t AsmCode_t;
 namespace asmLang {
     static const size_t MAX_CODE_SIZE = 1024; ///< Size of buffers for machine code
 
-    static const char      COMMAND_HALT_NAME[] = "hlt";
+/*    static const char      COMMAND_HALT_NAME[] = "hlt";
     static const AsmCode_t COMMAND_HALT_CODE = 0x00;
 
     static const char      COMMAND_PUSH_NAME[] = "push";
@@ -38,7 +38,7 @@ namespace asmLang {
     static const AsmCode_t COMMAND_OUT_CODE = 0x04;
 
     static const char      COMMAND_POP_NAME[] = "pop";
-    static const AsmCode_t COMMAND_POP_CODE = 0x05;
+    static const AsmCode_t COMMAND_POP_CODE = 0x05;*/
 
     static const AsmCode_t COMMAND_ARG_HAS_MASK = 0b11100000;
     static const AsmCode_t COMMAND_ARG_HAS_I    = 0b10000000; ///< Immediate constant

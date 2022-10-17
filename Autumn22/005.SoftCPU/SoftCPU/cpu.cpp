@@ -81,7 +81,7 @@ namespace cpu {
         return Error::OK;
     }
 
-    Error run(CPU* mainCPU) {
+    Error run(CPU * mainCPU) {
         Error result = Error::OK;
 
         while (!(result = runCommand(mainCPU)));
@@ -89,7 +89,7 @@ namespace cpu {
         return result == Error::OK_HALT ? Error::OK : result == Error::OK ? Error::UNREACHABLE_HLT : result;
     }
 
-    Error runCommand(CPU* mainCPU) {
+    Error runCommand(CPU * mainCPU) {
         assert(mainCPU != nullptr);
 
         CommandArgs commandArgs = {};
@@ -97,64 +97,33 @@ namespace cpu {
         if (argsErr) return argsErr;
 
         if (mainCPU->mode == CPU::MODE::DISASSEMBLER) {
-            switch (commandArgs.command) {
-            case asmLang::COMMAND_HALT_CODE:
-                printf("%s\n", asmLang::COMMAND_HALT_NAME);
+            if (mainCPU->code.pc >= mainCPU->code.codeBufferSize)
                 return Error::OK_HALT;
-            case asmLang::COMMAND_PUSH_CODE:
-                printf("%s\n", asmLang::COMMAND_PUSH_NAME);
+
+            switch (commandArgs.command) {
+#define DESCRIPT_COMMAND(name, code, ...) \
+            case code:                     \
+                printf("%s\n", name);       \
                 break;
-            case asmLang::COMMAND_ADD_CODE:
-                printf("%s\n", asmLang::COMMAND_ADD_NAME);
-                break;
-            case asmLang::COMMAND_DIV_CODE:
-                printf("%s\n", asmLang::COMMAND_DIV_NAME);
-                break;
-            case asmLang::COMMAND_OUT_CODE:
-                printf("%s\n", asmLang::COMMAND_OUT_NAME);
-                break;
-            case asmLang::COMMAND_POP_CODE:
-                printf("%s\n", asmLang::COMMAND_POP_NAME);
-                break;
+#include <..\asmLangDSLInstructions.cpp>
             default:
                 return Error::UNKNOWN_COMMAND;
             }
+#undef DESCRIPT_COMMAND
 
             return Error::OK;
         }
 
         switch (commandArgs.command) {
-        case asmLang::COMMAND_HALT_CODE:
-            return Error::OK_HALT;
-        case asmLang::COMMAND_PUSH_CODE:
-            stack::push(&mainCPU->stack, commandArgs.argSum);
+#define DESCRIPT_COMMAND(name, code, runInstruction, ...) \
+        case code:                                         \
+            runInstruction                                  \
             break;
-        case asmLang::COMMAND_ADD_CODE: {
-            Elem_t a = 0, b = 0;
-            stack::pop(&mainCPU->stack, &b);
-            stack::pop(&mainCPU->stack, &a);
-            stack::push(&mainCPU->stack, a + b);
-            }
-            break;
-        case asmLang::COMMAND_DIV_CODE: {
-            Elem_t a = 0, b = 0;
-            stack::pop(&mainCPU->stack, &b);
-            stack::pop(&mainCPU->stack, &a);
-            stack::push(&mainCPU->stack, a / b);
-            }
-            break;
-        case asmLang::COMMAND_OUT_CODE: {
-            Elem_t a = 0;
-            stack::pop(&mainCPU->stack, &a);
-            printf("%u\n", a);
-            }
-            break;
-        case asmLang::COMMAND_POP_CODE:
-            stack::pop(&mainCPU->stack, commandArgs.argWritePtr);
-            break;
+#include <..\asmLangDSLInstructions.cpp>
         default:
             return Error::UNKNOWN_COMMAND;
         }
+#undef DESCRIPT_COMMAND
 
         return Error::OK;
     }

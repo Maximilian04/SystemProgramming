@@ -155,8 +155,8 @@ namespace asmbler {
         char commandName[BUFFER_SIZE] = {};
         int commandNameLength = 0;
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wswitch-enum"
+// #pragma GCC diagnostic push
+// #pragma GCC diagnostic ignored "-Wswitch-enum"
         strAsmLang::Error getCommandNameRes = getCommandName(asmTextLine, commandName, &commandNameLength, BUFFER_SIZE);
         switch (getCommandNameRes) {
         case strAsmLang::Error::BUF_OVERFLOW:
@@ -168,10 +168,19 @@ namespace asmbler {
         default:
             assert(0 && "getCommandNameRes's result is not a member of strAsmLang::Error");
         }
-#pragma GCC diagnostic pop
+// #pragma GCC diagnostic pop
 
         Error argsTranslationRes = Error::OK;
-        if (!strcmp(commandName, asmLang::COMMAND_HALT_NAME)) {
+#define DESCRIPT_COMMAND(name, code, ...) \
+        if (!strcmp(commandName, name)) {  \
+            asmCode::add(asmCode, code);    \
+        } else
+#include <..\asmLangDSLInstructions.cpp>
+        /* ...else */ {
+            return Error::UNKNOWN_COMMAND;
+        }
+#undef DESCRIPT_COMMAND
+        /*if (!strcmp(commandName, asmLang::COMMAND_HALT_NAME)) {
             asmCode::add(asmCode, asmLang::COMMAND_HALT_CODE);
         } else if (!strcmp(commandName, asmLang::COMMAND_PUSH_NAME)) {
             asmCode::add(asmCode, asmLang::COMMAND_PUSH_CODE);
@@ -185,7 +194,7 @@ namespace asmbler {
             asmCode::add(asmCode, asmLang::COMMAND_POP_CODE);
         } else {
             return Error::UNKNOWN_COMMAND;
-        }
+        }*/
         argsTranslationRes = translateLineArgs(asmTextLine, commandNameLength, asmCode);
 
         return argsTranslationRes;
