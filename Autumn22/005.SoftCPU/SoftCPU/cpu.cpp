@@ -17,6 +17,8 @@ struct CommandArgs {
 };
 
 namespace cpu {
+    Error parseCommandArgs(CPU* cpu, CommandArgs* args);
+
     Error parseCommandArgs(CPU* cpu, CommandArgs* args) {
         args->command = cpu->code.code[cpu->code.pc];
         cpu->code.pc += 1;
@@ -42,23 +44,25 @@ namespace cpu {
 
 #ifdef CPU_DEBUG
     Error ctor(CPU* const cpu, DEBUGINFO_CTOR_ARGS_H, CPU::MODE mode, size_t codeBufferSize) {
-#else // !STACK_DEBUG
+#else // !CPU_DEBUG
     Error ctor(CPU* const cpu, CPU::MODE mode, size_t codeBufferSize) {
-#endif // STACK_DEBUG
+#endif // CPU_DEBUG
         assert(cpu != nullptr);
 
         STACK__ctor(cpu->stack));
         cpu->code.codeBufferSize = codeBufferSize == 0 ? asmLang::MAX_CODE_SIZE : codeBufferSize;
         asmCode::createBuf(&cpu->code, cpu->code.codeBufferSize);
 
+        REGS__ctor(cpu->regs));
+
         cpu->mode = mode;
 
-#ifdef STACK_DEBUG
+#ifdef CPU_DEBUG
         cpu->debugInfo.objName = objName;
         cpu->debugInfo.ctorCallLine = ctorCallLine;
         cpu->debugInfo.ctorCallFile = ctorCallFile;
         cpu->debugInfo.ctorCallFunc = ctorCallFunc;
-#endif // STACK_DEBUG
+#endif // CPU_DEBUG
 
         return Error::OK;
     }

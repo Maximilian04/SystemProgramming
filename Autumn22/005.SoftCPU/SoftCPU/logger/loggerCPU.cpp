@@ -7,6 +7,7 @@ namespace logger {
     void logCPUCode(const CPU* const cpu);
     // void logCPUStack(const CPU* const cpu);
     void logCPUStack(CPU* const cpu);
+    void logCPURegs(CPU* const cpu);
 
     void logCPUCode(const CPU* const cpu) {
         if (cpu != nullptr) {
@@ -20,11 +21,17 @@ namespace logger {
         STACK__dump(cpu->stack));
     }
 
+    // void logCPURegs(const CPU* const cpu) {
+    void logCPURegs(CPU* const cpu) {
+        REGS__dump(cpu->regs));
+    }
+
     // void logCPU(const CPU* const cpu) {
     void logCPU(CPU* const cpu) {
         logger::addBlock();
         logCPUCode(cpu);
         logCPUStack(cpu);
+        logCPURegs(cpu);
         logger::openLogFile();
         logger::endBlock();
     }

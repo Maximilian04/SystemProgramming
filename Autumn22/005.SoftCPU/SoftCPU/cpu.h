@@ -13,6 +13,7 @@
 
 #include <..\..\004.Stack\StackLib\StackLibWorld.h>
 #include <..\AsmCode.h>
+#include "Regs.h"
 
 #ifndef NDEBUG
 #ifdef CPU_DEBUG
@@ -24,6 +25,7 @@
 struct CPU {
     AsmCode code;
     Stack stack;
+    Regs regs;
 
     enum MODE {
         RUNCPU = 0,   ///< Normal mode
@@ -53,10 +55,10 @@ namespace cpu {
 #ifdef CPU_DEBUG
 #define CPU__ctor(obj) cpu::ctor(&obj, DEBUGINFO_CTOR_ARGS_R(#obj)
     Error ctor(CPU* const cpu, DEBUGINFO_CTOR_ARGS_H, CPU::MODE mode = CPU::MODE::RUNCPU, size_t codeBufferSize = 0);
-#else // !STACK_DEBUG
+#else // !CPU_DEBUG
 #define CPU__ctor(obj) cpu::ctor(&obj
     Error ctor(CPU* const cpu, CPU::MODE mode, size_t codeBufferSize = 0);
-#endif // STACK_DEBUG
+#endif // CPU_DEBUG
 
     Error dtor(CPU* const cpu);
 
