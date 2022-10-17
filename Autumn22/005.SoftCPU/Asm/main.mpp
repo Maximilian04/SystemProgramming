@@ -12,6 +12,7 @@ push 239
 push 3
 add
 out
+jump 33
 push 239
 push 3
 div

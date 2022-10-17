@@ -43,3 +43,7 @@ DESCRIPT_COMMAND("pop", 0x05, {
     stack::pop(&mainCPU->stack, commandArgs.argWritePtr);
     }
 )
+DESCRIPT_COMMAND("jump", 0x06, {
+    mainCPU->code.pc = commandArgs.argSum;
+    }
+)
