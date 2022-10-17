@@ -82,6 +82,9 @@ namespace ui {
         case cpu::Error::UNKNOWN_COMMAND:
             printf("CPU Error: unknown command - program file is broken");
             return Error::UNKNOWN_COMMAND;
+        case cpu::Error::UNKNOWN_REGISTER:
+            printf("CPU Error: unknown register - program file is broken");
+            return Error::UNKNOWN_REGISTER;
         case cpu::Error::UNREACHABLE_HLT:
             assert(false && "cpu::run() returned UNREACHABLE_HLT ???");
         case cpu::Error::OK_HALT:

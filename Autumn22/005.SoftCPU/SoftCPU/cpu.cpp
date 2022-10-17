@@ -28,7 +28,9 @@ namespace cpu {
             cpu->code.pc += 1;
         }
         if (args->command & asmLang::COMMAND_ARG_HAS_R) {
-            args->argR = cpu->code.code[cpu->code.pc];
+            AsmCode_t* reg = regs::getReg(&cpu->regs, cpu->code.code[cpu->code.pc]);
+            if (reg == nullptr) return Error::UNKNOWN_REGISTER;
+            args->argR = *reg;
             cpu->code.pc += 1;
         }
         if (args->command & asmLang::COMMAND_ARG_HAS_M) {
@@ -85,7 +87,8 @@ namespace cpu {
         assert(mainCPU != nullptr);
 
         CommandArgs commandArgs = {};
-        parseCommandArgs(mainCPU, &commandArgs);
+        Error argsErr = parseCommandArgs(mainCPU, &commandArgs);
+        if (argsErr) return argsErr;
 
         if (mainCPU->mode == CPU::MODE::DISASSEMBLER) {
             switch (commandArgs.command) {

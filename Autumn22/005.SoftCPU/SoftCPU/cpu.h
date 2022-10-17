@@ -44,10 +44,11 @@ namespace cpu {
      *
      */
     enum Error {
-        OK = 0,          ///< No errors, program had to continue
-        OK_HALT,         ///< No errors, program had to stop
-        UNREACHABLE_HLT, ///< Unreacheble point in program is reached. !!! Sth. has gone VARY wrong
-        UNKNOWN_COMMAND, ///< Code error: unknown command
+        OK = 0,           ///< No errors, program had to continue
+        OK_HALT,          ///< No errors, program had to stop
+        UNREACHABLE_HLT,  ///< Unreacheble point in program is reached. !!! Sth. has gone VARY wrong
+        UNKNOWN_COMMAND,  ///< Code error: unknown command
+        UNKNOWN_REGISTER, ///< Code error: unknown command
     };
     Error run(CPU* mainCPU);
     Error runCommand(CPU* mainCPU);
