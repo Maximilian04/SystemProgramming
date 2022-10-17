@@ -85,6 +85,9 @@ namespace ui {
         case cpu::Error::UNKNOWN_REGISTER:
             printf("CPU Error: unknown register - program file is broken");
             return Error::UNKNOWN_REGISTER;
+        case cpu::Error::UNKNOWN_MEMORY:
+            printf("CPU Error: unknown memory pointer (SEGmentation FAULT) - program file is broken");
+            return Error::SEGFAULT;
         case cpu::Error::CTOR_ERR:
             printf("Kekw, I cannot create CPU object, heh");
             return Error::CPU_CTOR_ERR;
