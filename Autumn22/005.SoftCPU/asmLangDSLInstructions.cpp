@@ -43,7 +43,26 @@ DESCRIPT_COMMAND("pop", 0x05, {
     stack::pop(&mainCPU->stack, commandArgs.argWritePtr);
     }
 )
-DESCRIPT_COMMAND("jump", 0x06, {
+DESCRIPT_COMMAND("jmp", 0x06, {
     mainCPU->code.pc = commandArgs.argSum;
     }
 )
+#define DESCRIPT_JMP_COMMAND(name, bytecode, _) \
+DESCRIPT_COMMAND(name, bytecode, {               \
+    AsmCode_t a = 0;                              \
+    AsmCode_t b = 0;                               \
+    stack::pop(&mainCPU->stack, &b);                \
+    stack::pop(&mainCPU->stack, &a);                 \
+    if (a _ b) {                                      \
+        mainCPU->code.pc = commandArgs.argSum;         \
+        }                                               \
+    }                                                    \
+)
+
+DESCRIPT_JMP_COMMAND("ja",  0x07, >  )
+DESCRIPT_JMP_COMMAND("jae", 0x08, >= )
+DESCRIPT_JMP_COMMAND("jb",  0x09, <  )
+DESCRIPT_JMP_COMMAND("jbe", 0x0A, <= )
+DESCRIPT_JMP_COMMAND("je",  0x0B, == )
+DESCRIPT_JMP_COMMAND("jne", 0x0C, != )
+#undef DESCRIPT_JMP_COMMAND
