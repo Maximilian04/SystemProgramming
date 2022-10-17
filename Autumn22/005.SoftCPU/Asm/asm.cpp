@@ -9,11 +9,13 @@
 
 using strAsmLang::getCommandName;
 using strAsmLang::classifyArg;
+using strAsmLang::classifyReg;
 
 namespace asmbler {
     const int BUFFER_SIZE = 64;
 
     Error translateLine(Line* asmTextLine, AsmCode* asmCode);
+    Error getCommandArg(const Line* line, int* shift, AsmCode_t* argType, AsmCode_t* argValue);
     Error translateLineArgs(Line* asmTextLine, const int commandNameLength, AsmCode* asmCode);
 
     /**
@@ -52,35 +54,91 @@ namespace asmbler {
         return Error::OK;
     }
 
+    /**
+     * @brief Parse current command argument from line
+     *
+     * @param [in] line Line
+     * @param [out] shift Parser's position in line
+     * @param [out] argType Type of argument
+     * @param [out] argValue Value of argument
+     * @return Error Error code
+     */
+    Error getCommandArg(const Line* line, int* shift, AsmCode_t* argType, AsmCode_t* argValue) {
+        assert(line != nullptr);
+        assert(shift != nullptr);
+        assert(argType != nullptr);
+        assert(argValue != nullptr);
+        assert(argType != argValue);
+        if (*shift > line->lenght)
+            return Error::BROKEN_ASMTEXT;
+
+        *argType = classifyArg(line->str[*shift]);
+        if (*argType == null)
+            return Error::BROKEN_ASMTEXT;
+
+        int scanfRes = 0;
+        switch (*argType) {
+
+        case asmLang::COMMAND_ARG_HAS_I:
+            // scanfRes = sscanf_s(line->str + *shift, "%" SCNu8, argValue);
+            // scanfRes = sscanf_s(line->str + *shift, "%hhu", argValue);
+            scanfRes = strAsmLang::sscanAsmCode_t(line->str + *shift, argValue);
+            if (scanfRes != 1)
+                return Error::COMMAND_SYNTAX;
+
+            switch (strAsmLang::skipSymbols(line, shift, strAsmLang::isCorrectSymbIM)) {
+            case strAsmLang::Error::OK:
+                break;
+            case strAsmLang::Error::BROKEN_LINE:
+                return Error::BROKEN_ASMTEXT;
+            case strAsmLang::Error::BUF_OVERFLOW:
+            default:
+                assert(0 && "strAsmLang::skipSymbols()'s result is incorrect in this context");
+            }
+            break;
+
+        case asmLang::COMMAND_ARG_HAS_R:
+            *argValue = classifyReg(line->str[*shift + 1]);
+            if (*argValue == null)
+                return Error::COMMAND_SYNTAX;
+            else
+                scanfRes = 1;
+            break;
+
+        case asmLang::COMMAND_ARG_HAS_M:
+            printf("NO SO FAR");
+            break;
+
+        default:
+            assert(0 && "classifyArg()'s result is not a correct code");
+        }
+
+        return Error::OK;
+    }
+
     Error translateLineArgs(Line* asmTextLine, const int commandNameLength, AsmCode* asmCode) {
         AsmCode_t gotArgs = null;
         AsmCode_t* commandPtr = asmCode::getCodePtr(asmCode);
 
-        for (int strShift = commandNameLength; asmTextLine->str[strShift++] == '@';) {
-            AsmCode_t argCode = classifyArg(asmTextLine->str[strShift]);
+        for (int strShift = commandNameLength; true;) {
+            if (asmTextLine->str[strShift] == '@' ||
+                asmTextLine->str[strShift] == '+') {
+                strShift++;
+            } else {
+                break;
+            }
+
+            AsmCode_t argCode = null;
             AsmCode_t arg = 0;
-            int argScanRes = 0;
+            Error getArgRes = getCommandArg(asmTextLine, &strShift, &argCode, &arg);
+
+            if (getArgRes)
+                return getArgRes;
 
             if ((gotArgs & argCode))
                 return Error::COMMAND_SYNTAX;
             gotArgs |= argCode;
             *commandPtr |= argCode;
-            switch (argCode) {
-            case asmLang::COMMAND_ARG_HAS_I:
-                argScanRes = sscanf_s(asmTextLine->str + strShift, "%u", &arg);
-                break;
-            case asmLang::COMMAND_ARG_HAS_R:
-                printf("NO SO FAR");
-                break;
-            case asmLang::COMMAND_ARG_HAS_M:
-                printf("NO SO FAR");
-                break;
-            default:
-                assert(0 && "classifyArg()'s result is not a correct code");
-            }
-
-            if (argScanRes != 1)
-                return Error::COMMAND_SYNTAX;
             asmCode::add(asmCode, arg);
         }
 

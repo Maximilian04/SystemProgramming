@@ -1,4 +1,4 @@
-push 77
+push 77+rax
 out
 push 239
 push 3

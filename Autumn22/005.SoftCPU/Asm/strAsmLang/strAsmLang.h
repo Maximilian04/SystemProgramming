@@ -26,7 +26,13 @@ namespace strAsmLang {
     };
 
     Error getCommandName(const Line* line, char* buffer, int* length, int maxLength);
+    Error skipSymbols(const Line* line, int* shift, bool isCorrect(char symb));
+    bool isCorrectSymbIM(char symb);
+    bool isCorrectSymbR(char symb);
     AsmCode_t classifyArg(char symb);
+    AsmCode_t classifyReg(char key);
+
+    int sscanAsmCode_t(char const* str, AsmCode_t* const a);
 }
 
 #endif // ATRASMLANG_H
