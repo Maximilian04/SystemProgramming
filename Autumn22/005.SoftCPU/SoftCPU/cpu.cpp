@@ -36,8 +36,12 @@ namespace cpu {
             cpu->code.pc += 1;
         }
 
-        args->argSum = args->argI + args->argR;
+        args->argSum = (AsmCode_t)(args->argI + args->argR);
+        
+#pragma GCC diagnostic ignored "-Wconversion" // Warning about (~AsmCode_t) -> int -> AsmCode_t conversion
+#pragma GCC diagnostic push
         args->command &= (~asmLang::COMMAND_ARG_HAS_MASK);
+#pragma GCC diagnostic pop
 
         if (args->command & asmLang::COMMAND_ARG_HAS_M) {
             args->argM = true;
