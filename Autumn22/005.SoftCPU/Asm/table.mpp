@@ -1,4 +1,5 @@
 push 0
+:while
 pop rax
 push 1+rax
 pop rax
@@ -8,5 +9,5 @@ mul
 out
 push rax
 push 10
-jne 2
+jne :while
 hlt
