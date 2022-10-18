@@ -26,6 +26,7 @@
 struct CPU {
     AsmCode code;
     Stack stack;
+    Stack funcStack;
     Regs regs;
 
     enum MODE {

@@ -68,7 +68,17 @@ DESCRIPT_JMP_COMMAND("jne", 0x0C, != )
 #undef DESCRIPT_JMP_COMMAND
 
 
-
+DESCRIPT_COMMAND("call", 0x0D, {
+    mainCPU->code.pc = commandArgs.argSum;
+    stack::push(&mainCPU->stack, commandArgs.argSum);
+    }
+)
+DESCRIPT_COMMAND("ret", 0x0E, {
+    AsmCode_t a = 0;
+    stack::pop(&mainCPU->stack, &a);
+    mainCPU->code.pc = a;
+    }
+)
 DESCRIPT_COMMAND("mul", 0x0F, {
     AsmCode_t a = 0;
     AsmCode_t b = 0;

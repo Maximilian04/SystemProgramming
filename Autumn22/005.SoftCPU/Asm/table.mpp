@@ -1,8 +1,8 @@
 push 0
+pop rax
 :while
-pop rax
-push 1+rax
-pop rax
+jmp :::inca
+:::heh
 push rax
 push rax
 mul
@@ -11,3 +11,7 @@ push rax
 push 10
 jne :while
 hlt
+:::inca
+push 1+rax
+pop rax
+jmp :::heh

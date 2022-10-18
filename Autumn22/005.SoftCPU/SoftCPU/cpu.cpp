@@ -37,7 +37,7 @@ namespace cpu {
         }
 
         args->argSum = (AsmCode_t)(args->argI + args->argR);
-        
+
 #pragma GCC diagnostic ignored "-Wconversion" // Warning about (~AsmCode_t) -> int -> AsmCode_t conversion
 #pragma GCC diagnostic push
         args->command &= (~asmLang::COMMAND_ARG_HAS_MASK);
@@ -60,6 +60,8 @@ namespace cpu {
         assert(cpu != nullptr);
 
         if (STACK__ctor(cpu->stack))) return Error::CTOR_ERR;
+        if (STACK__ctor(cpu->funcStack))) return Error::CTOR_ERR;
+
         cpu->code.codeBufferSize = codeBufferSize == 0 ? asmLang::MAX_CODE_SIZE : codeBufferSize;
         asmCode::createBuf(&cpu->code, cpu->code.codeBufferSize);
 

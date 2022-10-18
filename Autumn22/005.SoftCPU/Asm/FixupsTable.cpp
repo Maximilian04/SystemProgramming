@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "FixupsTable.h"
 
@@ -75,6 +76,6 @@ namespace fixupsTable {
             if (strcmp(fixups->names[i], name) == 0)
                 return i;
         }
-        return -i;
+        return i;
     }
 }
