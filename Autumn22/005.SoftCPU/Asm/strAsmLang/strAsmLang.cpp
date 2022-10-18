@@ -41,6 +41,23 @@ namespace strAsmLang {
     }
 
     /**
+     * @brief If name is a label's name
+     *
+     * @param name Name string
+     * @param length Name string's length (excluding \0)
+     * @return true
+     * @return false
+     */
+    bool isNameLabel(char const* const name, const int length) {
+        assert(name != nullptr);
+        assert(length >= 0);
+        return (
+            name[0] == ':' ||
+            name[length - 1] == ':'
+            );
+    }
+
+    /**
      * @brief Skip correct symmbols
      *
      * @param [in] line Line

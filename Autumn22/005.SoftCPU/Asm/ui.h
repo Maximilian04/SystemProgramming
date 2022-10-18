@@ -15,6 +15,7 @@
 #include <ListOfLines\ListOfLines.h>
 
 #include "asm.h"
+#include "FixupsTable.h"
 
 namespace ui {
     /**
@@ -30,7 +31,7 @@ namespace ui {
         TRANS_ERR, ///< Some internal transletion error
     };
     Error handleFlags(const int argc, const char* const* const argv, ListOfLines* asmTextPtr);
-    Error translateAsm(ListOfLines* asmText, AsmCode* asmCode);
+    Error translateAsm(ListOfLines* asmText, AsmCode* asmCode, FixupsTable* fixupsTable);
     Error writeAsmCode2File(AsmCode* asmCode);
 }
 

@@ -26,6 +26,7 @@ namespace strAsmLang {
     };
 
     Error getCommandName(const Line* line, char* buffer, int* length, int maxLength);
+    bool isNameLabel(char const* const name, const int length);
     Error skipSymbols(const Line* line, int* shift, bool isCorrect(char symb));
     bool isCorrectSymbI(char symb);
     bool isCorrectSymbR(char symb);

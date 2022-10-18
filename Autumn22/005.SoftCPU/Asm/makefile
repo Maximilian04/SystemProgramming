@@ -43,6 +43,11 @@ OBJECTS := ${OBJECTS} build\${NAME}.o
 build\${NAME}.o: ${NAME}.cpp
 	${COMPILE_O}
 
+NAME = FixupsTable
+OBJECTS := ${OBJECTS} build\${NAME}.o
+build\${NAME}.o: ${NAME}.cpp
+	${COMPILE_O}
+
 
 NAME = ListOfLines
 OBJECTS := ${OBJECTS} build\${NAME}.o

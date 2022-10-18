@@ -10,11 +10,13 @@ int main(const int argc, const char* const* const argv) {
         return 1;
 
     AsmCode asmCode{};
-    if (ui::translateAsm(&asmText, &asmCode))
+    FixupsTable fixupsTable{};
+    if (ui::translateAsm(&asmText, &asmCode, &fixupsTable))
         return 1;
 
     ui::writeAsmCode2File(&asmCode);
     asmCode::freeBuf(&asmCode);
+    fixupsTable::freeTable(&fixupsTable);
 
     return 0;
 }

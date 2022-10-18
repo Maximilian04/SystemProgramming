@@ -8,13 +8,12 @@
 #include "asm.h"
 
 using strAsmLang::getCommandName;
+using strAsmLang::isNameLabel;
 using strAsmLang::classifyArg;
 using strAsmLang::classifyReg;
 
 namespace asmbler {
-    const int BUFFER_SIZE = 64;
-
-    Error translateLine(Line* asmTextLine, AsmCode* asmCode);
+    Error translateLine(Line* asmTextLine, AsmCode* asmCode, FixupsTable* fixupsTable);
     Error getCommandArg(const Line* line, int* shift, AsmCode_t* argType, AsmCode_t* argValue);
     Error translateLineArgs(Line* asmTextLine, const int commandNameLength, AsmCode* asmCode);
 
@@ -25,7 +24,7 @@ namespace asmbler {
      * @param [out] asmCode Asm code
      * @return Error Error code
      */
-    Error translate(ListOfLines* asmText, AsmCode* asmCode) {
+    Error translate(ListOfLines* asmText, AsmCode* asmCode, FixupsTable* fixupsTable) {
         assert(asmText != nullptr);
         assert(asmCode != nullptr);
         assert(asmText->size != 0);
@@ -38,7 +37,7 @@ namespace asmbler {
         for (int lineI = 0; lineI < asmText->size; ++lineI) {
             // printf("%s\n", asmText->lines[lineI].str);
 
-            Error translationRes = translateLine(&asmText->lines[lineI], asmCode);
+            Error translationRes = translateLine(&asmText->lines[lineI], asmCode, fixupsTable);
             switch (translationRes) {
             case Error::BROKEN_ASMTEXT:
             case Error::OVERFLOW_BY_NAME:
@@ -148,16 +147,14 @@ namespace asmbler {
         return Error::OK;
     }
 
-    Error translateLine(Line* asmTextLine, AsmCode* asmCode) {
+    Error translateLine(Line* asmTextLine, AsmCode* asmCode, FixupsTable* fixupsTable) {
         assert(asmTextLine != nullptr);
         assert(asmCode != nullptr);
 
-        char commandName[BUFFER_SIZE] = {};
+        char commandName[COMNAME_BUFFER_SIZE] = {};
         int commandNameLength = 0;
 
-// #pragma GCC diagnostic push
-// #pragma GCC diagnostic ignored "-Wswitch-enum"
-        strAsmLang::Error getCommandNameRes = getCommandName(asmTextLine, commandName, &commandNameLength, BUFFER_SIZE);
+        strAsmLang::Error getCommandNameRes = getCommandName(asmTextLine, commandName, &commandNameLength, COMNAME_BUFFER_SIZE);
         switch (getCommandNameRes) {
         case strAsmLang::Error::BUF_OVERFLOW:
             return Error::OVERFLOW_BY_NAME;
@@ -168,9 +165,13 @@ namespace asmbler {
         default:
             assert(0 && "getCommandNameRes's result is not a member of strAsmLang::Error");
         }
-// #pragma GCC diagnostic pop
 
-        Error argsTranslationRes = Error::OK;
+        if (isNameLabel(commandName, commandNameLength)) {
+            if (fixupsTable::setLabel(fixupsTable, commandName, commandNameLength, asmCode->pc))
+
+            return Error::OK;
+        }
+
 #define DESCRIPT_COMMAND(name, code, ...) \
         if (!strcmp(commandName, name)) {  \
             asmCode::add(asmCode, code);    \
@@ -195,6 +196,8 @@ namespace asmbler {
         } else {
             return Error::UNKNOWN_COMMAND;
         }*/
+
+        Error argsTranslationRes = Error::OK;
         argsTranslationRes = translateLineArgs(asmTextLine, commandNameLength, asmCode);
 
         return argsTranslationRes;
