@@ -17,7 +17,7 @@
 // #include <inttypes.h>
 // SCNu8
 
-typedef uint8_t AsmCode_t;
+typedef uint32_t AsmCode_t;
 
 namespace asmLang {
     static const size_t MAX_CODE_SIZE = 1024; ///< Size of buffers for machine code

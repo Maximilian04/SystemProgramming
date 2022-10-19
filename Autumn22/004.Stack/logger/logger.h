@@ -54,6 +54,7 @@ const char* arrayName, fieldType* array, size_t size, fieldType*  POISON_CODEPTR
 #define LOGGER_LOGFIELDARRAY_DEF(fieldType) LOGGER_LOGFIELDARRAY_HDR(fieldType) = nullptr
     LOGGER_LOGFIELDARRAY_DEF(int));
     LOGGER_LOGFIELDARRAY_DEF(uint8_t));
+    LOGGER_LOGFIELDARRAY_DEF(uint32_t));
 
     void addBlock();
     void endBlock();

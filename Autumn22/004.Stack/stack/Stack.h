@@ -20,7 +20,7 @@
 #include "hash\hash.h"
 #endif // STACKLIBWORLD
 
-typedef uint8_t Elem_t;
+typedef uint32_t Elem_t;
 
 #ifndef NDEBUG
 #ifdef STACK_DEBUG

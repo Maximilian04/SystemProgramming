@@ -80,7 +80,7 @@ namespace test {
         struct {
             char command[MAX_FUNC_NAME_LENGTH];
             int resultAns;
-            int varAns;
+            Elem_t varAns;
             int sizeAns;
         } params = {};
 
@@ -98,7 +98,8 @@ namespace test {
         // test function
 
         // int var = 0;
-        uint8_t var = 0;
+        // uint8_t var = 0;
+        Elem_t var = 0;
         int size = 0;
         int result = 0; //strLib::strlen(params.str);
 

@@ -155,6 +155,7 @@ namespace logger {
     }
     LOGGER_LOGFIELDARRAY_IMPL(int, d);
     LOGGER_LOGFIELDARRAY_IMPL(uint8_t, u);
+    LOGGER_LOGFIELDARRAY_IMPL(uint32_t, u);
 
     void addBlock() {
         assert(logTarget != nullptr);
