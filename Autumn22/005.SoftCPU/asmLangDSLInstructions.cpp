@@ -12,38 +12,30 @@ DESCRIPT_COMMAND("hlt", 0x00, {
     return Error::OK_HALT;
     }
 )
-DESCRIPT_COMMAND("push", 0x01,
-    {
-    stack::push(&mainCPU->stack, commandArgs.argSum);
-    }
-)
-DESCRIPT_COMMAND("add", 0x02, {
-    AsmCode_t a = 0;
-    AsmCode_t b = 0;
-    stack::pop(&mainCPU->stack, &b);
-    stack::pop(&mainCPU->stack, &a);
-    stack::push(&mainCPU->stack, (AsmCode_t)(a + b));
-    }
-)
-DESCRIPT_COMMAND("div", 0x03, {
-    AsmCode_t a = 0;
-    AsmCode_t b = 0;
-    stack::pop(&mainCPU->stack, &b);
-    stack::pop(&mainCPU->stack, &a);
-    stack::push(&mainCPU->stack, a / b);
-    }
-)
-DESCRIPT_COMMAND("out", 0x04, {
+DESCRIPT_COMMAND("out", 0x01, {
     AsmCode_t a = 0;
     stack::pop(&mainCPU->stack, &a);
     printf("%u\n", a);
     }
 )
-DESCRIPT_COMMAND("pop", 0x05, {
+DESCRIPT_COMMAND("in", 0x02, {
+    AsmCode_t a = 0;
+    int b = 0;
+    scanf("%d", &b);
+    a = (AsmCode_t)b;
+    stack::push(&mainCPU->stack, a);
+    }
+)
+DESCRIPT_COMMAND("push", 0x03,
+    {
+    stack::push(&mainCPU->stack, commandArgs.argSum);
+    }
+)
+DESCRIPT_COMMAND("pop", 0x04, {
     stack::pop(&mainCPU->stack, commandArgs.argWritePtr);
     }
 )
-DESCRIPT_COMMAND("jmp", 0x06, {
+DESCRIPT_COMMAND("jmp", 0x05, {
     mainCPU->code.pc = commandArgs.argSum;
     }
 )
@@ -59,31 +51,55 @@ DESCRIPT_COMMAND(name, bytecode, {               \
     }                                                    \
 )
 
-DESCRIPT_JMP_COMMAND("ja",  0x07, >  )
-DESCRIPT_JMP_COMMAND("jae", 0x08, >= )
-DESCRIPT_JMP_COMMAND("jb",  0x09, <  )
-DESCRIPT_JMP_COMMAND("jbe", 0x0A, <= )
-DESCRIPT_JMP_COMMAND("je",  0x0B, == )
-DESCRIPT_JMP_COMMAND("jne", 0x0C, != )
+DESCRIPT_JMP_COMMAND("ja",  0x06, >  )
+DESCRIPT_JMP_COMMAND("jae", 0x07, >= )
+DESCRIPT_JMP_COMMAND("jb",  0x08, <  )
+DESCRIPT_JMP_COMMAND("jbe", 0x09, <= )
+DESCRIPT_JMP_COMMAND("je",  0x0A, == )
+DESCRIPT_JMP_COMMAND("jne", 0x0B, != )
 #undef DESCRIPT_JMP_COMMAND
 
 
-DESCRIPT_COMMAND("call", 0x0D, {
+DESCRIPT_COMMAND("call", 0x0C, {
     stack::push(&mainCPU->funcStack, mainCPU->code.pc);
     mainCPU->code.pc = commandArgs.argSum;
     }
 )
-DESCRIPT_COMMAND("ret", 0x0E, {
+DESCRIPT_COMMAND("ret", 0x0D, {
     AsmCode_t a = 0;
     stack::pop(&mainCPU->funcStack, &a);
     mainCPU->code.pc = a;
     }
 )
-DESCRIPT_COMMAND("mul", 0x0F, {
+DESCRIPT_COMMAND("add", 0x0E, {
+    AsmCode_t a = 0;
+    AsmCode_t b = 0;
+    stack::pop(&mainCPU->stack, &b);
+    stack::pop(&mainCPU->stack, &a);
+    stack::push(&mainCPU->stack, (AsmCode_t)(a + b));
+    }
+)
+DESCRIPT_COMMAND("sub", 0x0F, {
+    AsmCode_t a = 0;
+    AsmCode_t b = 0;
+    stack::pop(&mainCPU->stack, &b);
+    stack::pop(&mainCPU->stack, &a);
+    stack::push(&mainCPU->stack, (AsmCode_t)(a - b));
+    }
+)
+DESCRIPT_COMMAND("mul", 0x10, {
     AsmCode_t a = 0;
     AsmCode_t b = 0;
     stack::pop(&mainCPU->stack, &b);
     stack::pop(&mainCPU->stack, &a);
     stack::push(&mainCPU->stack, a * b);
+    }
+)
+DESCRIPT_COMMAND("div", 0x11, {
+    AsmCode_t a = 0;
+    AsmCode_t b = 0;
+    stack::pop(&mainCPU->stack, &b);
+    stack::pop(&mainCPU->stack, &a);
+    stack::push(&mainCPU->stack, a / b);
     }
 )
