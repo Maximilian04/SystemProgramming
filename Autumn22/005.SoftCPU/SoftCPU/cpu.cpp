@@ -38,16 +38,17 @@ namespace cpu {
 
         args->argSum = (AsmCode_t)(args->argI + args->argR);
 
+        if (args->command & asmLang::COMMAND_ARG_HAS_M) {
+            args->argM = true;
+            args->argWritePtr = mem::getRAM(&cpu->mem, args->argSum);
+            // printf("memory access: %u\n", args->argSum);
+            if (args->argWritePtr == nullptr) return Error::UNKNOWN_MEMORY;
+        }
+
 #pragma GCC diagnostic ignored "-Wconversion" // Warning about (~AsmCode_t) -> int -> AsmCode_t conversion
 #pragma GCC diagnostic push
         args->command &= (~asmLang::COMMAND_ARG_HAS_MASK);
 #pragma GCC diagnostic pop
-
-        if (args->command & asmLang::COMMAND_ARG_HAS_M) {
-            args->argM = true;
-            args->argWritePtr = mem::getRAM(&cpu->mem, args->argSum);
-            if (args->argWritePtr == nullptr) return Error::UNKNOWN_MEMORY;
-        }
         return Error::OK;
     }
 
