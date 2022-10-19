@@ -1,0 +1,25 @@
+in
+pop rcx
+call :::recursive
+hlt
+:::writeRCX
+push rcx
+out
+ret
+::::::::::::::::::::::::::::::::::::::::
+:::recursive
+call :::decreaseRCX
+call :::writeRCX
+push 1
+push rcx
+ja :end
+call :::recursive
+:end
+ret
+::::::::::::::::::::::::::::::::::::::::
+:::decreaseRCX
+push rcx
+push 1
+sub
+pop rcx
+ret
