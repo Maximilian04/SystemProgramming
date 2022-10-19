@@ -1,25 +1,43 @@
 in
-pop rcx
+pop rdx
 call :::recursive
+out
 hlt
-:::writeRCX
-push rcx
+:::writeRDX
+push rdx
 out
 ret
 ::::::::::::::::::::::::::::::::::::::::
 :::recursive
-call :::decreaseRCX
-call :::writeRCX
-push 1
-push rcx
-ja :end
+::::::::::::::::::call :::decreaseRCX
+::::::::::::::::::call :::writeRCX
+push 2
+push rdx
+jae :end
+call :::decreaseRDX
 call :::recursive
+call :::decreaseRDX
+call :::recursive
+call :::increaseRDX
+call :::increaseRDX
+add
+ret
+::::
 :end
+push 1
 ret
 ::::::::::::::::::::::::::::::::::::::::
-:::decreaseRCX
-push rcx
+:::decreaseRDX
+push rdx
 push 1
 sub
-pop rcx
+pop rdx
 ret
+::::::::::::::::::::::::::::::::::::::::
+:::increaseRDX
+push rdx
+push 1
+add
+pop rdx
+ret
+::::::::::::::::::::::::::::::::::::::::
