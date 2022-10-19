@@ -1,20 +1,5 @@
-push 18
-pop [+81]
-push 18
-pop rax
-push 8+rax
-out
-push [+81]
-out
-push 33+rax
-out
 push 239
-push 3
-add
-out
-jmp 33
-push 239
-push 3
-div
+push 240
+pop
 out
 hlt

@@ -29,7 +29,7 @@ namespace fileIO {
         assert(file != nullptr);
 
         fwrite(&asmCode->pc, sizeof(size_t), 1,  file);
-        fwrite(asmCode->code, sizeof(uint8_t), asmCode->pc, file);
+        fwrite(asmCode->code, sizeof(AsmCode_t), asmCode->pc, file);
 
         fclose(file);
 

@@ -57,7 +57,7 @@ namespace ui {
             printf("Incompatible file and CPU\n");
             return Error::CODE_SIZE;
         }
-        freadRes = fread(cpuPtr->code.code, sizeof(uint8_t), cpuPtr->code.codeBufferSize, file);
+        freadRes = fread(cpuPtr->code.code, sizeof(AsmCode_t), cpuPtr->code.codeBufferSize, file);
         if (freadRes != cpuPtr->code.codeBufferSize) {
             printf("Incorrect file\n");
             return Error::FILE_ERR;
