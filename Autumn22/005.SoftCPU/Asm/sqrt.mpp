@@ -1,0 +1,112 @@
+in
+pop rdx
+push 3
+pop [+1]
+call :::sqrt
+out
+hlt
+::::::::::::::::::::::::::::::::::::::::
+:::writeRDX
+push rdx
+out
+ret
+::::::::::::::::::::::::::::::::::::::::
+:::writeRAX
+push rax
+out
+ret
+::::::::::::::::::::::::::::::::::::::::
+:::writeRBX
+push rbx
+out
+ret
+::::::::::::::::::::::::::::::::::::::::
+:::sqrt
+push 0
+push rdx
+call :::regress
+ret
+::::::::::::::::::::::::::::::::::::::::
+:::regress
+pop rbx
+pop rax
+::::::call :::writeRAX
+::::::call :::writeRBX
+:::::::::::
+push rbx
+push rax
+sub
+push [+1]
+ja :else
+push rax
+ret
+:else
+:::::::::::
+:::::::::::
+push rbx
+push rax
+sub
+push 2
+jbe :alternative
+push rax
+push 1
+add
+jmp :alternativeEnd
+:alternative
+push rax
+push 2
+div
+push rbx
+push 2
+div
+add
+:alternativeEnd
+pop rcx
+push rcx
+push rcx
+mul
+push rdx
+ja ::newElse
+push rcx
+push rbx
+call :::regress
+ret
+::newElse
+push rax
+push rcx
+call :::regress
+ret
+::::::::::::::::::::::::::::::::::::::::
+:::recursive
+::::::::::::::::::call :::decreaseRCX
+::::::::::::::::::call :::writeRCX
+push 2
+push rdx
+jae :end
+call :::decreaseRDX
+call :::recursive
+call :::decreaseRDX
+call :::recursive
+call :::increaseRDX
+call :::increaseRDX
+add
+ret
+::::
+:end
+push 1
+ret
+::::::::::::::::::::::::::::::::::::::::
+:::decreaseRDX
+push rdx
+push 1
+sub
+pop rdx
+ret
+::::::::::::::::::::::::::::::::::::::::
+:::increaseRDX
+push rdx
+push 1
+add
+pop rdx
+ret
+::::::::::::::::::::::::::::::::::::::::
