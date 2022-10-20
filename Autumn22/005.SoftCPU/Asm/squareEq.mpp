@@ -1,20 +1,59 @@
-in
-push 1
+push 100
 pop rfx
-call :::sqrt
+call :::readFactors
+call :::calcDiscr
+push rex
 out
 hlt
+::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::
+:::::::::::calcDiscr calcs discriminant from rbx, rcx, rdx & write to rex in stack zero, or one-zero, or one-one about roots number
+::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::
+:::calcDiscr
+push rcx
+push rcx
+call :::multiply
+push rbx
+push rdx
+call :::multiply
+push 4
+mul
+sub
+pop rex
+ret
+:
+::::::::::::::::::::::::::::::::::::::::
+:::multiply
+mul
+push rfx
+div
+ret
+::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::
+:::::::::::readFactors use rfx as point-factor & write it to rbx, rcx, rdx
+::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::
+:::readFactors
+in
+push rfx
+mul
+pop rbx
+in
+push rfx
+mul
+pop rcx
+in
+push rfx
+mul
+pop rdx
+ret
+:
 ::::::::::::::::::::::::::::::::::::::::
 :::writeRDX
 push rdx
 out
 ret
-::::::::::::::::::::::::::::::::::::::::
-::::::::::::::::::::::::::::::::::::::::
-:::::::::::
-::::::::::::::::::::::::::::::::::::::::
-::::::::::::::::::::::::::::::::::::::::
-:
 ::::::::::::::::::::::::::::::::::::::::
 :::writeRAX
 push rax
@@ -48,7 +87,7 @@ pop rbx
 ret
 ::::::::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::::::::
-:::::::::::SQRT function (ruin rax) use rfx as accuracy
+:::::::::::SQRT function (ruin rax)
 ::::::::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::::::::
 :::sqrt
@@ -73,7 +112,7 @@ pop rax
 push rbx
 push rax
 sub
-push rfx
+push 1
 ja :else
 push rax
 ret
