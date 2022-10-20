@@ -91,4 +91,8 @@ DESCRIPT_COMMAND("div", 0x11, {
     PUSH(a / b);
     }
 )
+DESCRIPT_COMMAND("dump", 0x12, {
+    cpu::dump(&(*mainCPU), __PRETTY_FUNCTION__, "./..\\asmLangDSLInstructions.cpp", 96);
+    }
+)
 #undef GET_ARITHMETIC_ARGS
