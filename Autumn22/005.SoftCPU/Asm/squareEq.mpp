@@ -2,12 +2,13 @@ push 100
 pop rfx
 call :::readFactors
 call :::calcDiscr
+dump
 push rex
 out
 hlt
 ::::::::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::::::::
-:::::::::::calcDiscr calcs discriminant from rbx, rcx, rdx & write to rex in stack zero, or one-zero, or one-one about roots number
+:::::::::::calcDiscr calcs discriminant from rbx, rcx, rdx & write to rex in stack zero, or one-zero, or one-one about roots number (ruin rax)
 ::::::::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::::::::
 :::calcDiscr
@@ -19,7 +20,36 @@ push rdx
 call :::multiply
 push 4
 mul
+pop rex
+pop rax
+::::::: now in rax b^2, in rex 4*a*c
+push rax
+push rex
+jne :discrIsntZero
+push 0
+push 1
+push 0
+pop rex
+ret
+:discrIsntZero
+push rax
+push rex
+jb :discrIsNegative
+push 1
+push 1
+push rax
+push rex
 sub
+pop rex
+push rex
+push rfx
+mul
+call :::sqrt
+pop rex
+ret
+:discrIsNegative
+push 0
+push 0
 pop rex
 ret
 :
