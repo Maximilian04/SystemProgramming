@@ -7,10 +7,10 @@ namespace logger {
     // void logCPU(const CPU* const cpu) {
     void logRegs(Regs* const regs) {
         logger::addBlock();
-        logger__logField(regs, a, AsmCode_t));
-        logger__logField(regs, b, AsmCode_t));
-        logger__logField(regs, c, AsmCode_t));
-        logger__logField(regs, d, AsmCode_t));
+#define PR_REGISTER(name, ...) \
+        logger__logField(regs, name, AsmCode_t));
+#include <..\asmLangDSLRegisters.cpp>
+#undef PR_REGISTER
         logger::openLogFile();
         logger::endBlock();
     }
