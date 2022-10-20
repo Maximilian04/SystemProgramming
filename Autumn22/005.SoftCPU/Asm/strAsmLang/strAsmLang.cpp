@@ -149,17 +149,14 @@ namespace strAsmLang {
      */
     AsmCode_t classifyReg(char symb) {
         switch (symb) {
-        case 'a':
-            return asmLang::RAX_CODE;
-        case 'b':
-            return asmLang::RBX_CODE;
-        case 'c':
-            return asmLang::RCX_CODE;
-        case 'd':
-            return asmLang::RDX_CODE;
+#define PR_REGISTER(name, code, letter, ...) \
+        case letter:                          \
+            return code;
+#include <..\asmLangDSLRegisters.cpp>
         default:
             return null;
         }
+#undef PR_REGISTER
     }
 
     int sscanAsmCode_t(char const* str, AsmCode_t* const a) {

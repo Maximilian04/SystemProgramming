@@ -13,17 +13,14 @@ namespace regs {
      */
     AsmCode_t* getReg(Regs* regs, AsmCode_t code) {
         switch (code) {
-        case asmLang::RAX_CODE:
-            return &regs->a;
-        case asmLang::RBX_CODE:
-            return &regs->b;
-        case asmLang::RCX_CODE:
-            return &regs->c;
-        case asmLang::RDX_CODE:
-            return &regs->d;
+#define PR_REGISTER(letter, code, ...) \
+        case code:                      \
+            return &regs->letter;
+#include <..\asmLangDSLRegisters.cpp>
         default:
             return nullptr;
         }
+#undef PR_REGISTER
     }
 
 #ifdef REGS_DEBUG
@@ -50,7 +47,7 @@ namespace regs {
 
     Error dtor(Regs* const regs) {
         assert(regs != nullptr);
-        
+
         return Error::OK;
     }
 

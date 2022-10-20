@@ -45,10 +45,10 @@ namespace asmLang {
     static const AsmCode_t COMMAND_ARG_HAS_R    = 0b01000000; ///< Register name
     static const AsmCode_t COMMAND_ARG_HAS_M    = 0b00100000; ///< Memory pointer
 
-    static const AsmCode_t RAX_CODE = 0x01;
+/*    static const AsmCode_t RAX_CODE = 0x01;
     static const AsmCode_t RBX_CODE = 0x02;
     static const AsmCode_t RCX_CODE = 0x03;
-    static const AsmCode_t RDX_CODE = 0x04;
+    static const AsmCode_t RDX_CODE = 0x04;*/
 }
 
 #define null (0)

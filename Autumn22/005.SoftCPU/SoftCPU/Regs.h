@@ -22,7 +22,10 @@
 #endif // NDEBUG
 
 struct Regs {
-    AsmCode_t a, b, c, d;
+#define PR_REGISTER(name, ...) \
+    AsmCode_t name;
+#include <..\asmLangDSLRegisters.cpp>
+#undef PR_REGISTER
 
 #ifdef REGS_DEBUG
     DebugInfo debugInfo;
