@@ -1,6 +1,6 @@
 in
-push 3
-pop [+1]
+push 1
+pop rfx
 call :::sqrt
 out
 hlt
@@ -35,16 +35,20 @@ ret
 push rbx
 push rcx
 push rdx
+push rex
+push rfx
 ret
 :
 :::restoreRegsExceptA
+push rfx
+push rex
 pop rdx
 pop rcx
 pop rbx
 ret
 ::::::::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::::::::
-:::::::::::SQRT function (ruin rax)
+:::::::::::SQRT function (ruin rax) use rfx as accuracy
 ::::::::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::::::::
 :::sqrt
@@ -69,7 +73,7 @@ pop rax
 push rbx
 push rax
 sub
-push [+1]
+push rfx
 ja :else
 push rax
 ret
@@ -79,10 +83,6 @@ ret
 push rbx
 push rax
 sub
-push rbx
-push rax
-sub
-out
 push 3
 jae :alternative
 push rax
