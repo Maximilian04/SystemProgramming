@@ -9,46 +9,46 @@
  */
 
 DESCRIPT_COMMAND("hlt", 0x00, {
-    return Error::OK_HALT;
+    HAULT;
     }
 )
 DESCRIPT_COMMAND("out", 0x01, {
-    AsmCode_t a = 0;
-    stack::pop(&mainCPU->stack, &a);
+    GET_VAR(a);
     printf("%u\n", a);
     }
 )
 DESCRIPT_COMMAND("in", 0x02, {
-    AsmCode_t a = 0;
+    VAR(a);
     int b = 0;
     scanf("%d", &b);
-    a = (AsmCode_t)b;
-    stack::push(&mainCPU->stack, a);
+    a = TO_ASM_TYPE(b);
+    PUSH(a);
     }
 )
-DESCRIPT_COMMAND("push", 0x03,
-    {
-    stack::push(&mainCPU->stack, commandArgs.argSum);
+DESCRIPT_COMMAND("push", 0x03, {
+    PUSH(commandArgs.argSum);
     }
 )
 DESCRIPT_COMMAND("pop", 0x04, {
-    stack::pop(&mainCPU->stack, commandArgs.argWritePtr);
+    POP(commandArgs.argWritePtr);
     }
 )
 DESCRIPT_COMMAND("jmp", 0x05, {
-    mainCPU->code.pc = commandArgs.argSum;
+    CHANGE_PC;
     }
 )
+
+#define GET_ARITHMETIC_ARGS \
+    GET_VAR(b);              \
+    GET_VAR(a);
+
 #define DESCRIPT_JMP_COMMAND(name, bytecode, _) \
 DESCRIPT_COMMAND(name, bytecode, {               \
-    AsmCode_t a = 0;                              \
-    AsmCode_t b = 0;                               \
-    stack::pop(&mainCPU->stack, &b);                \
-    stack::pop(&mainCPU->stack, &a);                 \
-    if (a _ b) {                                      \
-        mainCPU->code.pc = commandArgs.argSum;         \
-        }                                               \
-    }                                                    \
+    GET_ARITHMETIC_ARGS                           \
+    if (a _ b) {                                   \
+        CHANGE_PC;                                  \
+        }                                            \
+    }                                                 \
 )
 
 DESCRIPT_JMP_COMMAND("ja",  0x06, >  )
@@ -61,45 +61,34 @@ DESCRIPT_JMP_COMMAND("jne", 0x0B, != )
 
 
 DESCRIPT_COMMAND("call", 0x0C, {
-    stack::push(&mainCPU->funcStack, mainCPU->code.pc);
-    mainCPU->code.pc = commandArgs.argSum;
+    PUSH_FUNCSTACK(mainCPU->code.pc);
+    CHANGE_PC;
     }
 )
 DESCRIPT_COMMAND("ret", 0x0D, {
-    AsmCode_t a = 0;
-    stack::pop(&mainCPU->funcStack, &a);
-    mainCPU->code.pc = a;
+    VAR(a);
+    POP_FUNCSTACK(&a);
+    SET_PC(a);
     }
 )
 DESCRIPT_COMMAND("add", 0x0E, {
-    AsmCode_t a = 0;
-    AsmCode_t b = 0;
-    stack::pop(&mainCPU->stack, &b);
-    stack::pop(&mainCPU->stack, &a);
-    stack::push(&mainCPU->stack, (AsmCode_t)(a + b));
+    GET_ARITHMETIC_ARGS
+    PUSH(TO_ASM_TYPE(a + b));
     }
 )
 DESCRIPT_COMMAND("sub", 0x0F, {
-    AsmCode_t a = 0;
-    AsmCode_t b = 0;
-    stack::pop(&mainCPU->stack, &b);
-    stack::pop(&mainCPU->stack, &a);
-    stack::push(&mainCPU->stack, (AsmCode_t)(a - b));
+    GET_ARITHMETIC_ARGS
+    PUSH(TO_ASM_TYPE(a - b));
     }
 )
 DESCRIPT_COMMAND("mul", 0x10, {
-    AsmCode_t a = 0;
-    AsmCode_t b = 0;
-    stack::pop(&mainCPU->stack, &b);
-    stack::pop(&mainCPU->stack, &a);
-    stack::push(&mainCPU->stack, a * b);
+    GET_ARITHMETIC_ARGS
+    PUSH(a * b);
     }
 )
 DESCRIPT_COMMAND("div", 0x11, {
-    AsmCode_t a = 0;
-    AsmCode_t b = 0;
-    stack::pop(&mainCPU->stack, &b);
-    stack::pop(&mainCPU->stack, &a);
-    stack::push(&mainCPU->stack, a / b);
+    GET_ARITHMETIC_ARGS
+    PUSH(a / b);
     }
 )
+#undef GET_ARITHMETIC_ARGS

@@ -126,10 +126,32 @@ namespace cpu {
         case code:                                         \
             runInstruction                                  \
             break;
+#define  POP(ptr)             stack::pop( &mainCPU->stack,       ptr)
+#define PUSH(value)           stack::push(&mainCPU->stack,     value)
+#define  POP_FUNCSTACK(ptr)   stack::pop( &mainCPU->funcStack,   ptr)
+#define PUSH_FUNCSTACK(value) stack::push(&mainCPU->funcStack, value)
+#define VAR(name) AsmCode_t name = 0
+#define GET_VAR(name) \
+    VAR(name);         \
+    POP(&name);
+#define SET_PC(value) mainCPU->code.pc = value
+#define CHANGE_PC SET_PC(commandArgs.argSum)
+#define TO_ASM_TYPE(value) (AsmCode_t)value
+#define HAULT return Error::OK_HALT;
 #include <..\asmLangDSLInstructions.cpp>
         default:
             return Error::UNKNOWN_COMMAND;
         }
+#undef  POP
+#undef PUSH
+#undef  POP_FUNCSTACK
+#undef PUSH_FUNCSTACK
+#undef VAR
+#undef GET_VAR
+#undef SET_PC
+#undef CHANGE_PC
+#undef TO_ASM_TYPE
+#undef HAULT
 #undef DESCRIPT_COMMAND
 
         return Error::OK;
