@@ -2,8 +2,18 @@ push 100
 pop rfx
 call :::readFactors
 call :::calcDiscr
+push 0
+je :IveGotNoRootsButMyHomeWasNeverOnTheGround
 dump
 push rex
+out
+hlt
+:IveGotNoRootsButMyHomeWasNeverOnTheGround
+push 0
+out
+push 0
+out
+push 0
 out
 hlt
 ::::::::::::::::::::::::::::::::::::::::
