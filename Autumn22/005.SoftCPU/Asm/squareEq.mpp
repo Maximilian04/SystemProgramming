@@ -1,6 +1,14 @@
 push 100
 pop rfx
 call :::readFactors
+call :::quadro
+hlt
+::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::
+:::::::::::Real quadratic equation
+::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::
+:::quadro
 call :::calcDiscr
 push 0
 je :IveGotNoRootsButMyHomeWasNeverOnTheGround
@@ -21,12 +29,12 @@ push rex
 sub
 out
 out
-hlt
+ret
 :DuppledRoot
 push rcx
 call :::div2A
 out
-hlt
+ret
 :IveGotNoRootsButMyHomeWasNeverOnTheGround
 push 0
 out
@@ -34,7 +42,7 @@ push 0
 out
 push 0
 out
-hlt
+ret
 ::::::::::::::::::::::::::::::::::::::::
 :::div2A
 push rbx
