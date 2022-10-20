@@ -149,8 +149,8 @@ namespace strAsmLang {
      */
     AsmCode_t classifyReg(char symb) {
         switch (symb) {
-#define PR_REGISTER(name, code, letter, ...) \
-        case letter:                          \
+#define PR_REGISTER(name, code, ...) \
+        case #name[0]:                \
             return code;
 #include <..\asmLangDSLRegisters.cpp>
         default:

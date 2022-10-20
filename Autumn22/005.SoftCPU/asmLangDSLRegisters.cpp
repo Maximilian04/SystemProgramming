@@ -8,27 +8,9 @@
  *
  */
 
-PR_REGISTER(a, 0x01, 'a', {
-    break;
-    }
-)
-PR_REGISTER(b, 0x02, 'b', {
-    break;
-    }
-)
-PR_REGISTER(c, 0x03, 'c', {
-    break;
-    }
-)
-PR_REGISTER(d, 0x04, 'd', {
-    break;
-    }
-)
-PR_REGISTER(e, 0x05, 'e', {
-    break;
-    }
-)
-PR_REGISTER(f, 0x06, 'f', {
-    break;
-    }
-)
+PR_REGISTER(a, 0x01)
+PR_REGISTER(b, 0x02)
+PR_REGISTER(c, 0x03)
+PR_REGISTER(d, 0x04)
+PR_REGISTER(e, 0x05)
+PR_REGISTER(f, 0x06)
