@@ -4,8 +4,27 @@ call :::readFactors
 call :::calcDiscr
 push 0
 je :IveGotNoRootsButMyHomeWasNeverOnTheGround
-dump
+push 0
+je :DuppledRoot
+push rcx
+call :::div2A
+pop rcx
 push rex
+call :::div2A
+pop rex
+::::::::::rcx(+-)rex - roots
+push rcx
+push rex
+add
+push rcx
+push rex
+sub
+out
+out
+hlt
+:DuppledRoot
+push rcx
+call :::div2A
 out
 hlt
 :IveGotNoRootsButMyHomeWasNeverOnTheGround
@@ -16,6 +35,13 @@ out
 push 0
 out
 hlt
+::::::::::::::::::::::::::::::::::::::::
+:::div2A
+push rbx
+call :::divide
+push 2
+div
+ret
 ::::::::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::::::::
 :::::::::::calcDiscr calcs discriminant from rbx, rcx, rdx & write to rex in stack zero, or one-zero, or one-one about roots number (ruin rax)
@@ -69,6 +95,14 @@ mul
 push rfx
 div
 ret
+::::::::::::::::::::::::::::::::::::::::!!!DIVISION RUINS rax
+:::divide
+pop rax
+push rfx
+mul
+push rax
+div
+ret
 ::::::::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::::::::
 :::::::::::readFactors use rfx as point-factor & write it to rbx, rcx, rdx
@@ -119,8 +153,8 @@ push rfx
 ret
 :
 :::restoreRegsExceptA
-push rfx
-push rex
+pop rfx
+pop rex
 pop rdx
 pop rcx
 pop rbx
