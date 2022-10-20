@@ -32,15 +32,15 @@ ret
 :
 ::::::::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::::::::
-:::::::::::SQRT function (sets rax)
+:::::::::::SQRT function (ruin rax)
 ::::::::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::::::::
 :::sqrt
 pop rax
 ::::::::
-:push rbx
-:push rcx
-:push rdx
+push rbx
+push rcx
+push rdx
 ::::::::
 push rax
 push 0
@@ -48,14 +48,14 @@ push rax
 call :::regress
 pop rax
 pop
+::::::::
+pop rdx
+pop rcx
+pop rbx
+::::::::
 push rax
-::::::::
-:pop rdx
-:pop rcx
-:pop rbx
-::::::::
 ret
-::::::::::::::::::::::::::::::::::::::::3
+::::::::::::::::::::::::::::::::::::::::
 :::regress
 pop rbx
 pop rax
