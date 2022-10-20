@@ -41,6 +41,7 @@ namespace cpu {
         if (args->command & asmLang::COMMAND_ARG_HAS_M) {
             args->argM = true;
             args->argWritePtr = mem::getRAM(&cpu->mem, args->argSum);
+            args->argSum = *(args->argWritePtr);
             // printf("memory access: %u\n", args->argSum);
             if (args->argWritePtr == nullptr) return Error::UNKNOWN_MEMORY;
         }

@@ -1,5 +1,5 @@
 push 239
-push 240
-pop
+pop [+5]
+push [+5]
 out
 hlt
