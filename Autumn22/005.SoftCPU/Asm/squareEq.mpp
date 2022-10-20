@@ -1,7 +1,40 @@
 push 100
 pop rfx
 call :::readFactors
+push rbx
+push 0
+je :zeroA
 call :::quadro
+hlt
+:zeroA
+push rcx
+push 0
+je :zeroAB
+push rdx
+push rcx
+call :::divide
+out
+hlt
+:zeroAB
+push rdx
+push 0
+je :alwaysTrue
+push 0
+out
+push 0
+out
+push 0
+out
+hlt
+:alwaysTrue
+push 9999
+out
+push 9999
+out
+push 9999
+out
+push 9999
+out
 hlt
 ::::::::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::::::::
