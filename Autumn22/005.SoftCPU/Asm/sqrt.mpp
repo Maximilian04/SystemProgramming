@@ -47,7 +47,7 @@ push rbx
 push rax
 sub
 push 2
-jbe :alternative
+jae :alternative
 push rax
 push 1
 add
