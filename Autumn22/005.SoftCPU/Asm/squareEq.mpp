@@ -20,6 +20,11 @@ push rbx
 out
 ret
 ::::::::::::::::::::::::::::::::::::::::
+:::writeRCX
+push rcx
+out
+ret
+::::::::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::::::::
 :::::::::::
 ::::::::::::::::::::::::::::::::::::::::
@@ -27,17 +32,30 @@ ret
 :
 ::::::::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::::::::
-:::::::::::SQRT function sets rax, rbx & brokes rcx, rdx
+:::::::::::SQRT function (sets rax)
 ::::::::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::::::::
 :::sqrt
 pop rax
+::::::::
+:push rbx
+:push rcx
+:push rdx
+::::::::
 push rax
 push 0
 push rax
 call :::regress
+pop rax
+pop
+push rax
+::::::::
+:pop rdx
+:pop rcx
+:pop rbx
+::::::::
 ret
-::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::3
 :::regress
 pop rbx
 pop rax
@@ -57,8 +75,12 @@ ret
 push rbx
 push rax
 sub
-push 2
-jbe :alternative
+push rbx
+push rax
+sub
+out
+push 3
+jae :alternative
 push rax
 push 1
 add
