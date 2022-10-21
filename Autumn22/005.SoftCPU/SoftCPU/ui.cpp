@@ -48,8 +48,8 @@ namespace ui {
         }
 
         size_t freadRes = 0;
-        AsmCode_t signature[2] = {};
-        freadRes = fread(signature, sizeof(AsmCode_t), 2, file);
+        Signature_t signature[2] = {};
+        freadRes = fread(signature, sizeof(Signature_t), 2, file);
         if (freadRes != 2 ||
             signature[0] != asmLang::SIGNATURE ||
             signature[1] != asmLang::VERSION) {

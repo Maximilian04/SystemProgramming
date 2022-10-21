@@ -18,6 +18,7 @@
 // SCNu8
 
 typedef uint32_t AsmCode_t;
+typedef uint16_t Signature_t;
 
 namespace asmLang {
     static const size_t MAX_CODE_SIZE = 1024; ///< Size of buffers for machine code
@@ -45,8 +46,8 @@ namespace asmLang {
     static const AsmCode_t COMMAND_ARG_HAS_R    = 0b01000000; ///< Register name
     static const AsmCode_t COMMAND_ARG_HAS_M    = 0b00100000; ///< Memory pointer
 
-    static const AsmCode_t SIGNATURE = 0xED;
-    static const AsmCode_t VERSION = 0x03;
+    static const Signature_t SIGNATURE = 0x3A53;
+    static const Signature_t VERSION = 0x03;
 
 /*    static const AsmCode_t RAX_CODE = 0x01;
     static const AsmCode_t RBX_CODE = 0x02;
