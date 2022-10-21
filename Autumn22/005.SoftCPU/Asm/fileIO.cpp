@@ -28,6 +28,8 @@ namespace fileIO {
         FILE* file = fopen(fileName, "wb");
         assert(file != nullptr);
 
+        fwrite(&asmLang::SIGNATURE, sizeof(AsmCode_t), 1,  file);
+        fwrite(&asmLang::VERSION, sizeof(AsmCode_t), 1,  file);
         fwrite(&asmCode->pc, sizeof(size_t), 1,  file);
         fwrite(asmCode->code, sizeof(AsmCode_t), asmCode->pc, file);
 

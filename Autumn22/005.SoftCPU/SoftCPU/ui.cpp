@@ -47,8 +47,16 @@ namespace ui {
             return Error::FILE_ERR;
         }
 
-
-        size_t freadRes = fread(&cpuPtr->code.codeBufferSize, sizeof(size_t), 1, file);
+        size_t freadRes = 0;
+        AsmCode_t signature[2] = {};
+        freadRes = fread(signature, sizeof(AsmCode_t), 2, file);
+        if (freadRes != 2 ||
+            signature[0] != asmLang::SIGNATURE ||
+            signature[1] != asmLang::VERSION) {
+            printf("Incorrect file\n");
+            return Error::FILE_ERR;
+        }
+        freadRes = fread(&cpuPtr->code.codeBufferSize, sizeof(size_t), 1, file);
         if (freadRes != 1 || cpuPtr->code.codeBufferSize > asmLang::MAX_CODE_SIZE) {
             printf("Incorrect file\n");
             return Error::FILE_ERR;
