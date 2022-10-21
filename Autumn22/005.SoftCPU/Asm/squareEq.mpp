@@ -71,19 +71,49 @@ pop rcx
 push rex
 call :::div2A
 pop rex
-::::::::::rcx(+-)rex - roots
+::::::::::(signed)rcx(+-)rex - roots
+:::: one signed rcx rex
 push rcx
 push rex
 add
+out
+call :::invert12
+push [+12]
+out
+:::: dif signed rcx rex
+push rcx
+push rex
+je :zeroRoot
+push rcx
+push rex
+ja :normalRootSign
+push rex
+push rcx
+sub
+out
+call :::invert12
+push [+12]
+out
+ret
+:normalRootSign
 push rcx
 push rex
 sub
 out
+push [+12]
 out
 ret
+:zeroRoot
+push 0
+out
+push 0
+out
 :DuppledRoot
 push rcx
 call :::div2A
+out
+call :::invert12
+push [+12]
 out
 ret
 :IveGotNoRootsButMyHomeWasNeverOnTheGround
@@ -118,6 +148,9 @@ mul
 pop rex
 pop rax
 ::::::: now in rax b^2, in rex 4*a*c
+push [+13]
+push 0
+jne :discrIsPositive
 push rax
 push rex
 jne :discrIsntZero
@@ -130,11 +163,19 @@ ret
 push rax
 push rex
 jb :discrIsNegative
+:discrIsPositive
 push 1
 push 1
 push rax
 push rex
+push [+13]
+push 0
+je :DiscrDivide
+add
+jmp :DiscrDivAddEnd
+:DiscrDivide
 sub
+:DiscrDivAddEnd
 pop rex
 push rex
 push rfx
@@ -192,16 +233,7 @@ push 1
 jne :endReading
 push 0
 pop [+11]
-push [+12]
-push 0
-je :set12to1
-push 0
-pop [+12]
-jmp :set12End
-:set12to1
-push 1
-pop [+12]
-:set12End
+call :::invert12
 push [+12]
 push 0
 je :set13to1
@@ -216,6 +248,19 @@ ret
 :endReading
 ret
 :
+::::::::::::::::::::::::::::::::::::::::
+:::invert12
+push [+12]
+push 0
+je :set12to1
+push 0
+pop [+12]
+jmp :set12End
+:set12to1
+push 1
+pop [+12]
+:set12End
+ret
 ::::::::::::::::::::::::::::::::::::::::
 :::writeRDX
 push rdx
