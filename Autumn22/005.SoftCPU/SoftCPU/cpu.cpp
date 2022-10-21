@@ -8,10 +8,10 @@
 
 struct CommandArgs {
     AsmCode_t command;
+    AsmCode_t rawCommand;
 
     AsmCode_t argI;
     AsmCode_t argR;
-    bool argM;
 
     AsmCode_t* argWritePtr;
 
@@ -20,6 +20,7 @@ struct CommandArgs {
 
 namespace cpu {
     Error parseCommandArgs(CPU* cpu, CommandArgs* args);
+    void printArgs(CommandArgs* args);
 
     Error parseCommandArgs(CPU* cpu, CommandArgs* args) {
         args->command = cpu->code.code[cpu->code.pc];
@@ -39,7 +40,6 @@ namespace cpu {
         args->argSum = (AsmCode_t)(args->argI + args->argR);
 
         if (args->command & asmLang::COMMAND_ARG_HAS_M) {
-            args->argM = true;
             args->argWritePtr = mem::getRAM(&cpu->mem, args->argSum);
             args->argSum = *(args->argWritePtr);
             // printf("memory access: %u\n", args->argSum);
@@ -48,9 +48,26 @@ namespace cpu {
 
 #pragma GCC diagnostic ignored "-Wconversion" // Warning about (~AsmCode_t) -> int -> AsmCode_t conversion
 #pragma GCC diagnostic push
+        args->rawCommand = args->command;
         args->command &= (~asmLang::COMMAND_ARG_HAS_MASK);
 #pragma GCC diagnostic pop
         return Error::OK;
+    }
+
+    void printArgs(CommandArgs* args) {
+        if (args->rawCommand & asmLang::COMMAND_ARG_HAS_M) {
+            printf("[");
+        }
+        if (args->rawCommand & asmLang::COMMAND_ARG_HAS_R) {
+            char letter = 'a' + args->argR;
+            printf("r%cx", letter);
+        }
+        if (args->rawCommand & asmLang::COMMAND_ARG_HAS_I) {
+            printf("+%u", args->argI);
+        }
+        if (args->rawCommand & asmLang::COMMAND_ARG_HAS_M) {
+            printf("]");
+        }
     }
 
 
@@ -111,7 +128,9 @@ namespace cpu {
             switch (commandArgs.command) {
 #define DESCRIPT_COMMAND(name, code, ...) \
             case code:                     \
-                printf("%s\n", name);       \
+                printf("%s ", name);        \
+                printArgs(&commandArgs);     \
+                printf("\n");                 \
                 break;
 #include <..\asmLangDSLInstructions.cpp>
             default:

@@ -34,6 +34,7 @@ struct Regs {
 
 namespace regs {
     AsmCode_t* getReg(Regs* regs, AsmCode_t code);
+    // char getRegName(Regs* regs, AsmCode_t* ptr);
 
     const AsmCode_t POISONAsmCode_t = 0xD;
     /**
