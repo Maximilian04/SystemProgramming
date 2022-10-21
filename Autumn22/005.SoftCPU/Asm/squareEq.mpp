@@ -186,6 +186,34 @@ mul
 pop rdx
 in
 pop [+13]
+:::::::::
+push [+11]
+push 1
+jne :endReading
+push 0
+pop [+11]
+push [+12]
+push 0
+je :set12to1
+push 0
+pop [+12]
+jmp :set12End
+:set12to1
+push 1
+pop [+12]
+:set12End
+push [+12]
+push 0
+je :set13to1
+push 0
+pop [+13]
+jmp :set13End
+:set13to1
+push 1
+pop [+13]
+:set13End
+ret
+:endReading
 ret
 :
 ::::::::::::::::::::::::::::::::::::::::
