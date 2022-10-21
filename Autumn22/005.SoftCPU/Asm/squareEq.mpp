@@ -7,6 +7,14 @@ je :zeroA
 call :::quadro
 hlt
 :zeroA
+call :::linear
+hlt
+::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::
+:::::::::::Linear equation
+::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::
+:::linear
 push rcx
 push 0
 je :zeroAB
@@ -14,7 +22,16 @@ push rdx
 push rcx
 call :::divide
 out
-hlt
+push [+12]
+push [+13]
+je :LinePositive
+push 1
+out
+ret
+:LinePositive
+push 0
+out
+ret
 :zeroAB
 push rdx
 push 0
@@ -25,7 +42,7 @@ push 0
 out
 push 0
 out
-hlt
+ret
 :alwaysTrue
 push 9999
 out
@@ -35,7 +52,8 @@ push 9999
 out
 push 9999
 out
-hlt
+ret
+:
 ::::::::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::::::::
 :::::::::::Real quadratic equation
@@ -146,7 +164,7 @@ div
 ret
 ::::::::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::::::::
-:::::::::::readFactors use rfx as point-factor & write it to rbx, rcx, rdx
+:::::::::::readFactors use rfx as point-factor & write it to rbx, rcx, rdx & write signes to [+11]~[+13] (0+ 1-)
 ::::::::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::::::::
 :::readFactors
@@ -155,13 +173,19 @@ push rfx
 mul
 pop rbx
 in
+pop [+11]
+in
 push rfx
 mul
 pop rcx
 in
+pop [+12]
+in
 push rfx
 mul
 pop rdx
+in
+pop [+13]
 ret
 :
 ::::::::::::::::::::::::::::::::::::::::
