@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <Windows.h>
 
 #include "logger\loggerMem.h"
 #include "Mem.h"
@@ -12,6 +13,7 @@ namespace mem {
      * @return AsmCode_t* Pointer to register or **nullptr** if it is incorrect
      */
     AsmCode_t* getRAM(Mem* mem, size_t addr) {
+        Sleep(200);
         if (addr > mem->size)
             return nullptr;
         return mem->RAM + addr;
