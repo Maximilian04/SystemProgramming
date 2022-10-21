@@ -13,7 +13,7 @@
 
 #include <ListOfLines\ListOfLines.h>
 #include <..\AsmCode.h>
-#include "FixupsTable.h"
+#include "LabelsTable.h"
 
 namespace asmbler {
     /**
@@ -28,7 +28,7 @@ namespace asmbler {
         COMMAND_SYNTAX,   ///< Syntax error: invalid command syntax
     };
 
-    Error translate(ListOfLines* asmText, AsmCode* asmCode, FixupsTable* fixupsTable);
+    Error translate(ListOfLines* asmText, AsmCode* asmCode, LabelsTable* labelsTable);
 }
 
 #endif // ASM_H

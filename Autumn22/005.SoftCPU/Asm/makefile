@@ -43,7 +43,7 @@ OBJECTS := ${OBJECTS} build\${NAME}.o
 build\${NAME}.o: ${NAME}.cpp
 	${COMPILE_O}
 
-NAME = FixupsTable
+NAME = LabelsTable
 OBJECTS := ${OBJECTS} build\${NAME}.o
 build\${NAME}.o: ${NAME}.cpp
 	${COMPILE_O}

@@ -60,8 +60,8 @@ namespace ui {
      * @param [out] asmCode Asm code
      * @return Error Error code
      */
-    Error translateAsm(ListOfLines* asmText, AsmCode* asmCode, FixupsTable* fixupsTable) {
-        switch (asmbler::translate(asmText, asmCode, fixupsTable)) {
+    Error translateAsm(ListOfLines* asmText, AsmCode* asmCode, LabelsTable* labelsTable) {
+        switch (asmbler::translate(asmText, asmCode, labelsTable)) {
         case asmbler::Error::OK:
             break;
         case asmbler::Error::BROKEN_ASMTEXT:

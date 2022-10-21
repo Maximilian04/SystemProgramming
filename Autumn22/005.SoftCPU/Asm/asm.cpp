@@ -13,9 +13,9 @@ using strAsmLang::classifyArg;
 using strAsmLang::classifyReg;
 
 namespace asmbler {
-    Error translateLine(Line* asmTextLine, AsmCode* asmCode, FixupsTable* fixupsTable);
-    Error getCommandArg(const Line* line, int* shift, AsmCode_t* argType, AsmCode_t* argValue, FixupsTable* fixupsTable);
-    Error translateLineArgs(Line* asmTextLine, const int commandNameLength, AsmCode* asmCode, FixupsTable* fixupsTable);
+    Error translateLine(Line* asmTextLine, AsmCode* asmCode, LabelsTable* labelsTable);
+    Error getCommandArg(const Line* line, int* shift, AsmCode_t* argType, AsmCode_t* argValue, LabelsTable* labelsTable);
+    Error translateLineArgs(Line* asmTextLine, const int commandNameLength, AsmCode* asmCode, LabelsTable* labelsTable);
 
     /**
      * @brief Translate asm text to asm code
@@ -24,7 +24,7 @@ namespace asmbler {
      * @param [out] asmCode Asm code
      * @return Error Error code
      */
-    Error translate(ListOfLines* asmText, AsmCode* asmCode, FixupsTable* fixupsTable) {
+    Error translate(ListOfLines* asmText, AsmCode* asmCode, LabelsTable* labelsTable) {
         assert(asmText != nullptr);
         assert(asmCode != nullptr);
         assert(asmText->size != 0);
@@ -37,7 +37,7 @@ namespace asmbler {
         for (int lineI = 0; lineI < asmText->size; ++lineI) {
             // printf("%s\n", asmText->lines[lineI].str);
 
-            Error translationRes = translateLine(&asmText->lines[lineI], asmCode, fixupsTable);
+            Error translationRes = translateLine(&asmText->lines[lineI], asmCode, labelsTable);
             switch (translationRes) {
             case Error::BROKEN_ASMTEXT:
             case Error::OVERFLOW_BY_NAME:
@@ -63,7 +63,7 @@ namespace asmbler {
      * @param [out] argValue Value of argument
      * @return Error Error code
      */
-    Error getCommandArg(const Line* line, int* shift, AsmCode_t* argType, AsmCode_t* argValue, FixupsTable* fixupsTable) {
+    Error getCommandArg(const Line* line, int* shift, AsmCode_t* argType, AsmCode_t* argValue, LabelsTable* labelsTable) {
         assert(line != nullptr);
         assert(shift != nullptr);
         assert(argType != nullptr);
@@ -111,7 +111,7 @@ namespace asmbler {
 
         case null: // LABEL
             *argType = asmLang::COMMAND_ARG_HAS_I;
-            *argValue = (AsmCode_t) fixupsTable::getLabelPC(fixupsTable, line->str + *shift, line->lenght - *shift);
+            *argValue = (AsmCode_t) labelsTable::getLabelPC(labelsTable, line->str + *shift, line->lenght - *shift);
             break;
 
         default:
@@ -121,7 +121,7 @@ namespace asmbler {
         return Error::OK;
     }
 
-    Error translateLineArgs(Line* asmTextLine, const int commandNameLength, AsmCode* asmCode, FixupsTable* fixupsTable) {
+    Error translateLineArgs(Line* asmTextLine, const int commandNameLength, AsmCode* asmCode, LabelsTable* labelsTable) {
         AsmCode_t gotArgs = null;
         AsmCode_t* commandPtr = asmCode::getCodePtr(asmCode);
 
@@ -135,7 +135,7 @@ namespace asmbler {
 
             AsmCode_t argCode = null;
             AsmCode_t arg = 0;
-            Error getArgRes = getCommandArg(asmTextLine, &strShift, &argCode, &arg, fixupsTable);
+            Error getArgRes = getCommandArg(asmTextLine, &strShift, &argCode, &arg, labelsTable);
 
             if (getArgRes)
                 return getArgRes;
@@ -152,7 +152,7 @@ namespace asmbler {
         return Error::OK;
     }
 
-    Error translateLine(Line* asmTextLine, AsmCode* asmCode, FixupsTable* fixupsTable) {
+    Error translateLine(Line* asmTextLine, AsmCode* asmCode, LabelsTable* labelsTable) {
         assert(asmTextLine != nullptr);
         assert(asmCode != nullptr);
 
@@ -172,7 +172,7 @@ namespace asmbler {
         }
 
         if (isNameLabel(commandName, commandNameLength)) {
-            fixupsTable::setLabel(fixupsTable, commandName, commandNameLength, asmCode->pc);
+            labelsTable::setLabel(labelsTable, commandName, commandNameLength, asmCode->pc);
 
             return Error::OK;
         }
@@ -203,7 +203,7 @@ namespace asmbler {
         }*/
 
         Error argsTranslationRes = Error::OK;
-        argsTranslationRes = translateLineArgs(asmTextLine, commandNameLength, asmCode, fixupsTable);
+        argsTranslationRes = translateLineArgs(asmTextLine, commandNameLength, asmCode, labelsTable);
 
         return argsTranslationRes;
     }

@@ -10,15 +10,15 @@ int main(const int argc, const char* const* const argv) {
         return 1;
 
     AsmCode asmCode{};
-    FixupsTable fixupsTable{};
-    if (ui::translateAsm(&asmText, &asmCode, &fixupsTable))
+    LabelsTable labelsTable{};
+    if (ui::translateAsm(&asmText, &asmCode, &labelsTable))
         return 1;
-    if (ui::translateAsm(&asmText, &asmCode, &fixupsTable))
+    if (ui::translateAsm(&asmText, &asmCode, &labelsTable))
         return 1;
 
     ui::writeAsmCode2File(&asmCode);
     asmCode::freeBuf(&asmCode);
-    fixupsTable::freeTable(&fixupsTable);
+    labelsTable::freeTable(&labelsTable);
 
     return 0;
 }
