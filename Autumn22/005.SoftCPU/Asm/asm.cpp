@@ -27,11 +27,9 @@ namespace asmbler {
     Error translate(ListOfLines* asmText, AsmCode* asmCode, LabelsTable* labelsTable) {
         assert(asmText != nullptr);
         assert(asmCode != nullptr);
+        assert(asmCode->code != nullptr);
         assert(asmText->size != 0);
 
-        if (asmCode->code == nullptr) {
-            asmCode::createBuf(asmCode);
-        }
         asmCode->pc = 0;
 
         for (int lineI = 0; lineI < asmText->size; ++lineI) {

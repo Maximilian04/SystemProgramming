@@ -10,6 +10,7 @@ int main(const int argc, const char* const* const argv) {
         return 1;
 
     AsmCode asmCode{};
+    asmCode::createBuf(&asmCode);
     LabelsTable labelsTable{};
     if (ui::translateAsm(&asmText, &asmCode, &labelsTable))
         return 1;
