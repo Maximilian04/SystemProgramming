@@ -76,7 +76,7 @@ namespace cmdParser {
 
     cmdParser::ParserResult standartReactToFlags(int cmdFlagC, cmdParser::CmdArgument* cmdArguments,
         void* userdata, void printHelpMessage(void),
-        cmdParser::ParserResult handleFlag(cmdParser::CmdArgument cmdArgument, void* userdata)) {
+        cmdParser::handleFlagResult handleFlag(cmdParser::CmdArgument cmdArgument, void* userdata)) {
 
         assert(cmdArguments != nullptr);
         assert(printHelpMessage != nullptr);
@@ -97,13 +97,12 @@ namespace cmdParser {
                 break;
             default:
                 switch (handleFlag(cmdArguments[cmdFlagI], userdata)) {
-                case ParserResult::BAD_INPUT:
+                case handleFlagResult::INCORRECT_INPUT:
                     return ParserResult::BAD_INPUT;
-                case ParserResult::UNKNOWN_FLAG:
+                case handleFlagResult::UNKNOWN:
                     break;
-                case ParserResult::FLAG_IS_HANDLED:
+                case handleFlagResult::KNOWN:
                     return ParserResult::GOOD_INPUT;
-                case ParserResult::GOOD_INPUT:
                 default:
                     assert(0 && "handleFlag's result is not an allowed member of cmdParser::ParserResult");
                 }
