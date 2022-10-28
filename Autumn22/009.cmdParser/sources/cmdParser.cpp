@@ -43,7 +43,7 @@ namespace cmdParser {
     }
 
     /**
-     * @brief Handle flags and react to it with your function
+     * @brief Handle flags and react to its with your function
      *
      * @param [in] argc Cmd arguments
      * @param [in] argv Cmd arguments
