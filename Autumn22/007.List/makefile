@@ -7,11 +7,6 @@ COMPILE_FLAGS = $(COMPILE_DEFAULT_FLAGS) -D_DEBUG
 
 COMPILE_O = @ g++ $(COMPILE_FLAGS) -c $^ -o $@
 
-#STACKLIB_PATH = "..\..\004.Stack"
-#LINK_STACKLIB = -L$(STACKLIB_PATH) -lStackLib
-# include ..\..\004.Stack\makefile-StackLib
-# OBJECTS := ${OBJECTS} build\StackLib.a
-
 NAME = List
 OBJECTS := ${OBJECTS} build\${NAME}.o
 build\${NAME}.o: sources\${NAME}.cpp
