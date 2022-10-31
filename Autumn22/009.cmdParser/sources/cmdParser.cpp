@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <assert.h>
 
+#include "..\headers\cmdParser.h"
 #include "cmdParser.h"
 
 namespace cmdParser {
@@ -53,7 +54,7 @@ namespace cmdParser {
      */
     ParserResult handleFlags(int argc, const char* const* const argv,
         cmdParser::ParserResult(*reactToFlags)(int, cmdParser::CmdArgument*, void*),
-        void* userdata = nullptr) {
+        void* userdata) {
         assert(argv != nullptr);
         assert(reactToFlags != nullptr);
 

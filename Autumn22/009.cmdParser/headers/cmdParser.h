@@ -33,8 +33,6 @@ namespace cmdParser {
     enum ParserResult {
         BAD_INPUT = -1,  ///< Input cannot be recognized
         GOOD_INPUT,      ///< Input was recognized
-        UNKNOWN_FLAG,    ///< ONLY FOR USER'S handleFlag(): flag wasn't handled (like incorrect or -h)
-        FLAG_IS_HANDLED, ///< ONLY FOR USER'S handleFlag(): flag was handled
     };
 
     /**
@@ -48,7 +46,7 @@ namespace cmdParser {
 
     ParserResult handleFlags(int argc, const char* const* const argv,
         cmdParser::ParserResult(*reactToFlags)(int, cmdParser::CmdArgument*, void*),
-        void* userdata);
+        void* userdata = nullptr);
 
     cmdParser::ParserResult standartReactToFlags(int cmdFlagC, cmdParser::CmdArgument* cmdArguments,
         void* userdata, void printHelpMessage(void),
