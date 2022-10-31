@@ -13,9 +13,9 @@ namespace labelsTable {
      * @param [out] labels Fixups table
      */
     void freeTable(LabelsTable* labels) {
-        for (int i = 0; labels->names[i] != nullptr; ++i) {
-            free(labels->names[i]);
-            labels->names[i] = nullptr;
+        for (int i = 0; labels->labels[i].name != nullptr; ++i) {
+            free(labels->labels[i].name);
+            labels->labels[i].name = nullptr;
         }
     }
 
@@ -30,16 +30,16 @@ namespace labelsTable {
      */
     Error setLabel(LabelsTable* labels, char* name, int length, size_t pc) {
         int index = getLabelIndex(labels, name);
-        if (labels->names[index]) {
+        if (labels->labels[index].name) {
         } else {
-            labels->names[index] = (char*)calloc(length + 1, sizeof(char));
+            labels->labels[index].name = (char*)calloc(length + 1, sizeof(char));
             for (int i = 0; i < length; ++i) {
-                labels->names[index][i] = name[i];
+                labels->labels[index].name[i] = name[i];
             }
-            labels->names[index][length] = '\0';
+            labels->labels[index].name[length] = '\0';
         }
 
-        labels->pcTable[index] = pc;
+        labels->labels[index].pc = pc;
 
         return Error::OK;
     }
@@ -55,8 +55,8 @@ namespace labelsTable {
     size_t getLabelPC(LabelsTable* labels, char* name, int length) {
         int index = getLabelIndex(labels, name);
 
-        if (labels->names[index]) {
-            return labels->pcTable[index];
+        if (labels->labels[index].name) {
+            return labels->labels[index].pc;
         } else {
             return 0;
         }
@@ -72,8 +72,8 @@ namespace labelsTable {
      */
     int getLabelIndex(LabelsTable* labels, char* name) {
         int i = 0;
-        for (; labels->names[i] != nullptr; ++i) {
-            if (strcmp(labels->names[i], name) == 0)
+        for (; labels->labels[i].name != nullptr; ++i) {
+            if (strcmp(labels->labels[i].name, name) == 0)
                 return i;
         }
         return i;

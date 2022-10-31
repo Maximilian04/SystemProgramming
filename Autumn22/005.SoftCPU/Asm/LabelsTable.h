@@ -18,9 +18,13 @@
 #endif // LABEL_TABLE_SIZE
 static const int COMNAME_BUFFER_SIZE = 64;
 
+struct Label {
+    char* name;
+    size_t pc;
+};
+
 struct LabelsTable {
-    char* names[LABEL_TABLE_SIZE];
-    size_t pcTable[LABEL_TABLE_SIZE];
+    Label labels[LABEL_TABLE_SIZE];
 };
 
 namespace labelsTable {
