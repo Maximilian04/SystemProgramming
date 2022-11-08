@@ -28,6 +28,11 @@ OBJECTS := ${OBJECTS} build\${NAME}.o
 build\${NAME}.o: sources\${NAME}.cpp
 	${COMPILE_O}
 
+NAME = ListIterator
+OBJECTS := ${OBJECTS} build\${NAME}.o
+build\${NAME}.o: sources\${NAME}.cpp
+	${COMPILE_O}
+
 NAME = loggerList
 OBJECTS := ${OBJECTS} build\${NAME}.o
 build\${NAME}.o: sources\${NAME}.cpp

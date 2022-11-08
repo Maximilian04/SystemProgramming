@@ -14,6 +14,7 @@
 #include <logger.h>
 
 #include "ListElem.h"
+#include "ListIterator.h"
 
 class List {
 public:
