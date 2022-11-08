@@ -15,23 +15,14 @@
 
 #include "ListElem.h"
 
-#ifndef NDEBUG
-
-#ifdef LIST_DEBUG
-#else // !LIST_DEBUG
-#define LIST_DEBUG
-#endif // LIST_DEBUG
-
-#endif // LIST_DEBUG
-
 class List {
 public:
     ListElem* head;
     ListElem* tail;
 
-#ifdef LIST_DEBUG
+    size_t elemSize;
+
     DebugInfo debugInfo;
-#endif // LIST_DEBUG
 
     enum Error {
         OK = 0,      ///< No errors
@@ -39,7 +30,11 @@ public:
         NULLPTR_ERR, ///< Nullptr is occured
     };
 
-    static Error pushBack(List* const list, size_t const size, void const* const src = nullptr);
+#define List__ctor(obj, ...) List::ctor(&obj, DEBUGINFO_CTOR_ARGS_R(#obj) __VA_OPT__(, __VA_ARGS__))
+    static Error ctor(List* const list, DEBUGINFO_CTOR_ARGS_H, size_t const elemSize);
+    static Error dtor(List* const list);
+
+    static Error pushBack(List* const list, void const* const src = nullptr);
 
 #define List__dump(stackObj) List::dump(&stackObj, LOGFUNCHEAD_ARGS_R)
     static Error dump(List* const list, LOGFUNCHEAD_ARGS_H);

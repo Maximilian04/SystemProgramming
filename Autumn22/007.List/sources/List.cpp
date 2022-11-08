@@ -9,16 +9,47 @@
 #define VERIFY(obj) if (verify(obj)) { LIST__dump(*obj)); return Error::VERIFIER_ERR; }
 
 /**
+ * @brief List constructor
+ *
+ * @param [out] list List
+ * @param [in] elemSize Size of an element
+ * @return List::Error Error code
+ */
+List::Error List::ctor(List* const list, DEBUGINFO_CTOR_ARGS_H, size_t const elemSize) {
+    assert(list != nullptr);
+
+    list->debugInfo.objName = objName;
+    list->debugInfo.ctorCallLine = ctorCallLine;
+    list->debugInfo.ctorCallFile = ctorCallFile;
+    list->debugInfo.ctorCallFunc = ctorCallFunc;
+
+    list->elemSize = elemSize;
+
+    // VERIFY(list);
+    return Error::OK;
+}
+
+/**
+ * @brief List destructor
+ *
+ * @param [out] list List
+ * @return List::Error Error code
+ */
+List::Error List::dtor(List* const list) {
+    list->debugInfo.ctorCallLine = -1;
+
+    return Error::OK;
+}
+
+/**
  * @brief Push new element to the back of the list
  *
  * @param [out] list List
- * @param [in] size Size of the element
  * @param [in] src Pointer to the new element
  * @return List::Error
  */
-List::Error List::pushBack(List* const list, size_t const size, void const* const src) {
+List::Error List::pushBack(List* const list, void const* const src) {
     assert(list != nullptr);
-    // assert(src != nullptr);
 
     ListElem* newElem = (ListElem*)calloc(sizeof(ListElem), 1);
     if (!newElem) return Error::MEM_ERR;
@@ -31,9 +62,12 @@ List::Error List::pushBack(List* const list, size_t const size, void const* cons
         list->head = newElem;
     }
 
-    list->head->valuePtr = calloc(size, 1);
+    list->head->valuePtr = calloc(list->elemSize, 1);
     if (!list->head->valuePtr) return Error::MEM_ERR;
-    memcpy(list->head->valuePtr, src, size);
+    if (src)
+        memcpy(list->head->valuePtr, src, list->elemSize);
+    else
+        memset(list->head->valuePtr, 0, list->elemSize);
 
     return Error::OK;
 }
@@ -59,11 +93,7 @@ List::Error List::dump(List* const list, LOGFUNCHEAD_ARGS_H) {
         err = Error::NULLPTR_ERR;
     } else {
 
-#ifdef LIST_DEBUG
         logger::logStructHeadDebug("List", list, &list->debugInfo);
-#else // !LIST_DEBUG
-        logger::logStructHead("List", list);
-#endif // LIST_DEBUG
 
         logList(list);
     }
