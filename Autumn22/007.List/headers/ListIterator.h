@@ -11,6 +11,8 @@
 #ifndef LISTITERATOR_H
 #define LISTITERATOR_H
 
+class ListIterator;
+
 #include "List.h"
 
 class ListIterator {

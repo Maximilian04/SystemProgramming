@@ -37,6 +37,9 @@ public:
 
     static Error pushBack(List* const list, void const* const src = nullptr);
 
+    static Error begin(List const* const list, ListIterator* const iterator);
+    static Error rbegin(List const* const list, ListIterator* const iterator);
+
 #define List__dump(stackObj) List::dump(&stackObj, LOGFUNCHEAD_ARGS_R)
     static Error dump(List* const list, LOGFUNCHEAD_ARGS_H);
 };

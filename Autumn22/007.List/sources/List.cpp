@@ -16,7 +16,7 @@
  * @return List::Error Error code
  */
 List::Error List::ctor(List* const list, DEBUGINFO_CTOR_ARGS_H, size_t const elemSize) {
-    assert(list != nullptr);
+    assert(list);
 
     list->debugInfo.objName = objName;
     list->debugInfo.ctorCallLine = ctorCallLine;
@@ -36,6 +36,8 @@ List::Error List::ctor(List* const list, DEBUGINFO_CTOR_ARGS_H, size_t const ele
  * @return List::Error Error code
  */
 List::Error List::dtor(List* const list) {
+    assert(list);
+
     list->debugInfo.ctorCallLine = -1;
 
     return Error::OK;
@@ -49,7 +51,7 @@ List::Error List::dtor(List* const list) {
  * @return List::Error
  */
 List::Error List::pushBack(List* const list, void const* const src) {
-    assert(list != nullptr);
+    assert(list);
 
     ListElem* const newElem = (ListElem*)calloc(sizeof(ListElem), 1);
     if (!newElem) return Error::MEM_ERR;
@@ -77,14 +79,46 @@ List::Error List::pushBack(List* const list, void const* const src) {
 }
 
 /**
+ * @brief Get the first element of the list
+ *
+ * @param [in] list List
+ * @param [out] iterator Iterator to the first element
+ * @return Error Error code
+ */
+List::Error List::begin(List const* const list, ListIterator* const iterator) {
+    assert(list);
+    assert(iterator);
+
+    iterator->ptr = list->tail;
+
+    return Error::OK;
+}
+
+/**
+ * @brief Get the last element of the list
+ *
+ * @param [in] list List
+ * @param [out] iterator Iterator to the last element
+ * @return Error Error code
+ */
+List::Error List::rbegin(List const* const list, ListIterator* const iterator) {
+    assert(list);
+    assert(iterator);
+
+    iterator->ptr = list->head;
+
+    return Error::OK;
+}
+
+/**
  * @brief Dump List info
  *
  * @param [in] list List
  * @return List::Error Error code
  */
 List::Error List::dump(List* const list, LOGFUNCHEAD_ARGS_H) {
-    assert(funcName != nullptr);
-    assert(fileName != nullptr);
+    assert(funcName);
+    assert(fileName);
 
     Error err = Error::OK;
 
