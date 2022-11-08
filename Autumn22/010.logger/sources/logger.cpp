@@ -1,6 +1,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <assert.h>
 
 #include "logger.h"
@@ -112,41 +113,38 @@ namespace logger {
         logger::logLine(fieldName);
 
         logger::logStr(valueStr, (int)strlen(fieldName) + 1 + shift);
+
+        strFParser::freeCalloc();
     }
 
-    /*
-#define LOGGER_LOGFIELDARRAY_IMPL(fieldType, flag)                                                           \
-    LOGGER_LOGFIELDARRAY_HDR(fieldType)) {                                                                    \
-        assert(arrayName != nullptr);                                                                          \
-        assert(array != nullptr);                                                                               \
-        assert(size < SIZE_MAX);                                                                                 \
-                                                                                                                  \
-        if (array == POISON_CODEPTR) {                                                                             \
-            logger::logLine(strFParser::parseF("%s[" COLORED_TEXT("cyan", "%p") "] (POISON)", arrayName, array));   \
-            return;                                                                                                  \
-        }                                                                                                             \
-                                                                                                                       \
-        logger::logLine(strFParser::parseF("%s[" COLORED_TEXT("cyan", "%p") "]:", arrayName, array));                   \
-        logger::addBlock();                                                                                              \
-        int digitsNumber = numberOfDigits(size - 1);                                                                      \
-        int parseBufferNum = strFParser::addCallocBuf();                                                                   \
-        for (size_t elemI = 0; elemI < size; ++elemI) {                                                                     \
-                logger::logLine(strFParser::parseF(strFParser::parseFNBuf(parseBufferNum, "[%%%dd]", digitsNumber), elemI)); \
-                if (array[elemI] == POISON_CODE) {                                                                            \
-                    logger::logStr(strFParser::parseF(POISONED_STR(flag, array[elemI])), 3 + digitsNumber);                    \
-                } else {                                                                                                        \
-                    logger::logStr(strFParser::parseF(GOODDATA_STR(flag, array[elemI])), 3 + digitsNumber);                      \
-                }                                                                                                                 \
-                if (labels == nullptr || labels[elemI] == nullptr) continue;                                                       \
-                logger::logStr(labels[elemI], -(int)strlen(labels[elemI]));                                                         \
-        }                                                                                                                            \
-        strFParser::freeCalloc();                                                                                                     \
-        logger::endBlock();                                                                                                            \
+    void logFieldArray(const char* fieldName, void* arrayPtr, size_t size, size_t elemSize,
+        const char* (*outFunc)(void* elemPtr, size_t parseBufferNum, int digitNumber), const char** labels) {
+
+        assert(fieldName != nullptr);
+        assert(arrayPtr != nullptr);
+        assert(outFunc != nullptr);
+
+        logger::logLine(fieldName);
+        logger::addBlock();
+        int digitsNumber = numberOfDigits(size - 1);
+        size_t parseBufferNum =/**/strFParser::addCallocBuf();
+        size_t parseBufferNumAdd = strFParser::addCallocBuf();
+
+        uint8_t* elemPtr = (uint8_t*)arrayPtr;
+        for (size_t elemI = 0; elemI < size; ++elemI, elemPtr += elemSize) {
+            logger::logLine(strFParser::parseFNBuf(parseBufferNumAdd,
+                strFParser::parseFNBuf(parseBufferNum, "[%%%dd]", digitsNumber), elemI));
+
+            outFunc(elemPtr, parseBufferNum, digitsNumber);
+
+            if (labels == nullptr || labels[elemI] == nullptr) continue;
+            logger::logStr(labels[elemI], -(int)strlen(labels[elemI]));
+        }
+
+        strFParser::freeCalloc();
+        logger::endBlock();
     }
-    LOGGER_LOGFIELDARRAY_IMPL(int, d);
-    LOGGER_LOGFIELDARRAY_IMPL(uint8_t, u);
-    LOGGER_LOGFIELDARRAY_IMPL(uint32_t, u);
-*/
+
     void addBlock() {
         assert(logTarget != nullptr);
         addInvisibleBlock();

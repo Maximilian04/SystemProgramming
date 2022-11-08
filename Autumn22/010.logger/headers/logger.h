@@ -47,14 +47,23 @@ namespace logger {
 
     void logField(const char* fieldName, const char* valueStr, int shift = 0);
 
-    /*
-#define logger__logFieldArray(fieldClass, fieldName, size, fieldType) logger::logFieldArray(\
-           #fieldName, fieldClass->fieldName,   size, fieldClass::POISON##fieldType##PTR, fieldClass::POISON##fieldType
-#define LOGGER_LOGFIELDARRAY_HDR(fieldType) void logFieldArray(\
-const char* arrayName, fieldType* array, size_t size, fieldType*  POISON_CODEPTR,         fieldType   POISON_CODE, const char** labels
+#define LOGGER__LOGFIELDARRAY_COLORED_ELEM(cmm) logger::logStr(strFParser::parseFNBuf(parseBufferNum, cmm(flag, array[elemI])), 3 + digitsNumber)
 
-#define LOGGER_LOGFIELDARRAY_DEF(fieldType) LOGGER_LOGFIELDARRAY_HDR(fieldType) = nullptr
-*/
+#define logger__logFieldArray(fieldClass, fieldName, size, elemSize, printfFlag, fieldPoison, ...)             \
+    logger::logFieldArray(#fieldName,                                                                           \
+        (void*)fieldClass->fieldName, [](void* elemPtr, size_t parseBufferNum, int digitNumber) -> const char* { \
+                                                                                                                  \
+            if (*elemPtr == fieldPoison) {                                                                         \
+                LOGGER__LOGFIELDARRAY_COLORED_ELEM(LOGGER__LOGFIELD_COLORED_POISONED);                              \
+            } else {                                                                                                 \
+                LOGGER__LOGFIELDARRAY_COLORED_ELEM(LOGGER__LOGFIELD_COLORED_GOODDATA);                                \
+            }                                                                                                          \
+        }                                                                                                               \
+        __VA_OPT__(, __VA_ARGS__))
+
+    void logFieldArray(const char* fieldName, void* arrayPtr, size_t size, size_t elemSize,
+        const char* (*outFunc)(void*, size_t, int), const char** labels = nullptr);
+
     void addBlock();
     void endBlock();
     void addInvisibleBlock();
