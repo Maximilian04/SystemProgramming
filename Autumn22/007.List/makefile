@@ -28,6 +28,12 @@ OBJECTS := ${OBJECTS} build\${NAME}.o
 build\${NAME}.o: sources\${NAME}.cpp
 	${COMPILE_O}
 
+NAME = loggerList
+OBJECTS := ${OBJECTS} build\${NAME}.o
+build\${NAME}.o: sources\${NAME}.cpp
+	${COMPILE_O}
+
+
 libList: ${OBJECTS}
 	@ ar r build\List.lib "build\*.o"
 
