@@ -5,7 +5,6 @@
 #include <assert.h>
 
 #include "logger.h"
-#include "loggerIncludeConsts.h"
 
 static int numberOfDigits(size_t n) {
     int number = 0;
