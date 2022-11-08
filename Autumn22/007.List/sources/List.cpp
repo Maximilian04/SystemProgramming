@@ -51,23 +51,27 @@ List::Error List::dtor(List* const list) {
 List::Error List::pushBack(List* const list, void const* const src) {
     assert(list != nullptr);
 
-    ListElem* newElem = (ListElem*)calloc(sizeof(ListElem), 1);
+    ListElem* const newElem = (ListElem*)calloc(sizeof(ListElem), 1);
     if (!newElem) return Error::MEM_ERR;
 
     if (list->head) {
+        assert(list->tail);
         assert(list->head->next == nullptr);
 
         list->head->next = newElem;
         newElem->prev = list->head;
-        list->head = newElem;
+    } else {
+        assert(!list->tail);
+        list->tail = newElem;
     }
+    list->head = newElem;
 
-    list->head->valuePtr = calloc(list->elemSize, 1);
-    if (!list->head->valuePtr) return Error::MEM_ERR;
+    newElem->valuePtr = calloc(list->elemSize, 1);
+    if (!newElem->valuePtr) return Error::MEM_ERR;
     if (src)
-        memcpy(list->head->valuePtr, src, list->elemSize);
+        memcpy(newElem->valuePtr, src, list->elemSize);
     else
-        memset(list->head->valuePtr, 0, list->elemSize);
+        memset(newElem->valuePtr, 0, list->elemSize);
 
     return Error::OK;
 }
