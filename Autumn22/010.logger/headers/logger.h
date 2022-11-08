@@ -37,8 +37,8 @@ namespace logger {
     void logStructHeadDebug(const char* structName, const void* objPtr, const DebugInfo* debugPtr);
 
 
-#define LOGGER__LOGFIELD_COLORED_GOODDATA(flag, obj) "= %s%"#flag" (POISON)%s", htmlCrimsonColorStart, obj, htmlCrimsonColorStop
-#define LOGGER__LOGFIELD_COLORED_POISONED(flag, obj) "= %"#flag, obj
+#define LOGGER__LOGFIELD_COLORED_POISONED(flag, obj) "= %s%"#flag" (POISON)%s", htmlCrimsonColorStart, obj, htmlCrimsonColorStop
+#define LOGGER__LOGFIELD_COLORED_GOODDATA(flag, obj) "= %"#flag, obj
 
 #define logger__logField(fieldClass, fieldName, printfFlag, fieldPoison, ...)                          \
     logger::logField(#fieldName,  (fieldClass->fieldName == fieldPoison) ?                              \

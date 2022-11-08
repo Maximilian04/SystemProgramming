@@ -7,6 +7,8 @@ void logList(const List* const list) {
     // logger__logField(list, size, size_t, 4);
     // logger__logField(stack, capacity, size_t);
     logger__logField(list, head, p, nullptr);
+    logger__logField(list, tail, p, nullptr);
+    logger__logField(list, elemSize, u, 0);
 
     /*if (stack->data == nullptr) {
         logger__logField(stack, data, Elem_tPTR));
@@ -19,7 +21,7 @@ void logList(const List* const list) {
         labels[labelI] = labelI < stack->size ? nullptr : starPtr;
     }
     logger__logFieldArray(stack, data, stack->capacity, Elem_t), labels);
-    free(labels);
+    free(labels);*/
 
-    logger::endBlock();*/
+    logger::endBlock();
 }
