@@ -14,9 +14,13 @@ int main(int argc, const char* const* const argv) {
 
     ListIterator elem{};
     List::begin(&list, &elem);
-    printf("1: %d\n", *(int*)ListIterator::getValue(&elem));
+    if (*(int*)ListIterator::getValue(&elem) != 0) {
+        printf("ATATA!!! 1: %d\n", *(int*)ListIterator::getValue(&elem));
+    }
     ListIterator::next(&elem);
-    printf("2: %d\n", *(int*)ListIterator::getValue(&elem));
+    if (*(int*)ListIterator::getValue(&elem) != 239) {
+        printf("ATATA!!! 2: %d\n", *(int*)ListIterator::getValue(&elem));
+    }
 
     return 0;
 }

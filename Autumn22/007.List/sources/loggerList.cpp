@@ -10,6 +10,18 @@ void logList(const List* const list) {
     logger__logField(list, tail, p, nullptr);
     logger__logField(list, elemSize, u, 0);
 
+    logger::logLine("Elements: ");
+    logger::addBlock();
+
+    if (!List::isEmpty(list)) {
+        ListIterator elem;
+        List::begin(list, &elem);
+        do {
+            size_t bufN = strFParser::addCallocBuf();
+            logger::logField(">", strFParser::parseFNBuf(bufN, htmlCyanPointer, ListIterator::getValue(&elem)));
+        } while (!ListIterator::next(&elem));
+    }
+    logger::endBlock();
     /*if (stack->data == nullptr) {
         logger__logField(stack, data, Elem_tPTR));
 

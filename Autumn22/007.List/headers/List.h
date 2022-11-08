@@ -37,6 +37,8 @@ public:
 
     static Error pushBack(List* const list, void const* const src = nullptr);
 
+    static bool isEmpty(List const* const list);
+
     static Error begin(List const* const list, ListIterator* const iterator);
     static Error rbegin(List const* const list, ListIterator* const iterator);
 

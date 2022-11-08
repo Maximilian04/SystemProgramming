@@ -79,6 +79,16 @@ List::Error List::pushBack(List* const list, void const* const src) {
 }
 
 /**
+ * @brief Is list empty
+ *
+ * @param [in] list List
+ */
+bool List::isEmpty(List const* const list) {
+    assert(list);
+    return !list->head;
+}
+
+/**
  * @brief Get the first element of the list
  *
  * @param [in] list List
