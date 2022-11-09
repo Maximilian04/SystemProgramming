@@ -64,8 +64,8 @@ List::Error List::dtor(List* const list) {
  * @brief Push new element to the back of the list
  *
  * @param [out] list List
- * @param [in] src Pointer to the new element
- * @return List::Error
+ * @param [in] src Pointer to the new element value
+ * @return List::Error Error code
  */
 List::Error List::pushBack(List* const list, void const* const src) {
     assert(list);
@@ -93,8 +93,8 @@ List::Error List::pushBack(List* const list, void const* const src) {
  * @brief Push new element to the front of the list
  *
  * @param [out] list List
- * @param [in] src Pointer to the new element
- * @return List::Error
+ * @param [in] src Pointer to the new element value
+ * @return List::Error Error code
  */
 List::Error List::pushFront(List* const list, void const* const src) {
     assert(list);
@@ -122,7 +122,7 @@ List::Error List::pushFront(List* const list, void const* const src) {
  * @brief Pop an element from the back of the list
  *
  * @param [out] list List
- * @return List::Error
+ * @return List::Error Error code
  */
 List::Error List::popBack(List* const list) {
     assert(list);
@@ -156,7 +156,7 @@ List::Error List::popBack(List* const list) {
  * @brief Pop an element from the front of the list
  *
  * @param [out] list List
- * @return List::Error
+ * @return List::Error Error code
  */
 List::Error List::popFront(List* const list) {
     assert(list);
@@ -182,6 +182,109 @@ List::Error List::popFront(List* const list) {
         list->tail = nullptr;
     }
     free(elem);
+
+    return Error::OK;
+}
+
+/**
+ * @brief Add new element after the element of list
+ *
+ * @param [out] list List
+ * @param [in] iterator Iterator to the element
+ * @param [in] src Pointer to the new element value
+ * @return List::Error Error code
+ */
+List::Error List::emplaceAfter(List* const list, ListIterator const* const iterator, void const* const src) {
+    assert(list);
+    assert(iterator);
+
+    Error err = OK;
+    if (iterator->ptr->next == nullptr) {
+        err = pushBack(list, src);
+        return err;
+    }
+
+    MAKE_NEW_ELEMENT;
+
+    assert(iterator->ptr->next->prev == iterator->ptr);
+
+    newElem->prev = iterator->ptr;
+    newElem->next = iterator->ptr->next;
+
+    iterator->ptr->next->prev = newElem;
+    iterator->ptr->next = newElem;
+
+    SET_NEW_ELEMENT_VALUE;
+
+    return Error::OK;
+}
+
+/**
+ * @brief Add new element before the element of list
+ *
+ * @param [out] list List
+ * @param [in] iterator Iterator to the element
+ * @param [in] src Pointer to the new element value
+ * @return List::Error Error code
+ */
+List::Error List::emplaceBefore(List* const list, ListIterator const* const iterator, void const* const src) {
+    assert(list);
+    assert(iterator);
+
+    Error err = OK;
+    if (iterator->ptr->prev == nullptr) {
+        err = pushFront(list, src);
+        return err;
+    }
+
+    MAKE_NEW_ELEMENT;
+
+
+    assert(iterator->ptr->prev->next == iterator->ptr);
+
+    newElem->next = iterator->ptr;
+    newElem->prev = iterator->ptr->prev;
+
+    iterator->ptr->prev->next = newElem;
+    iterator->ptr->prev = newElem;
+
+    SET_NEW_ELEMENT_VALUE;
+
+    return Error::OK;
+}
+
+/**
+ * @brief Erase element from the list
+ *
+ * @param [out] list List
+ * @param [out] iterator Iterator to the element
+ * @return List::Error Error code
+ */
+List::Error List::erase(List* const list, ListIterator* const iterator) {
+    assert(list);
+    assert(iterator);
+
+    Error err = OK;
+    if (iterator->ptr->next == nullptr) {
+        err = popBack(list);
+        iterator->ptr = nullptr;
+        return err;
+    }
+    if (iterator->ptr->prev == nullptr) {
+        err = popFront(list);
+        iterator->ptr = nullptr;
+        return err;
+    }
+
+
+    assert(iterator->ptr->prev->next == iterator->ptr);
+    assert(iterator->ptr->next->prev == iterator->ptr);
+    iterator->ptr->prev->next = iterator->ptr->next;
+    iterator->ptr->next->prev = iterator->ptr->prev;
+
+    free(iterator->ptr->valuePtr);
+    iterator->ptr->valuePtr = nullptr;
+    free(iterator->ptr);
 
     return Error::OK;
 }

@@ -47,6 +47,10 @@ public:
     static Error popBack(List* const list);
     static Error popFront(List* const list);
 
+    static Error emplaceAfter(List* const list, ListIterator const* const iterator, void const* const src = nullptr);
+    static Error emplaceBefore(List* const list, ListIterator const* const iterator, void const* const src = nullptr);
+    static Error erase(List* const list, ListIterator* const iterator);
+
     static bool isEmpty(List const* const list);
 
     static Error begin(List const* const list, ListIterator* const iterator);

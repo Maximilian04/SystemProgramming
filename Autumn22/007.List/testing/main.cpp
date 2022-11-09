@@ -8,12 +8,20 @@ int main(int argc, const char* const* const argv) {
     List list;
     List__ctor(list, int, "%d");
     List__dump(list);
-    int i = 239;
+    int i = 1;
     List::pushBack(&list);
     List::pushBack(&list, &i);
-    i = -127;
+    i = -1;
     List::pushFront(&list, &i);
-    i = -239;
+    i = -2;
+    List::pushFront(&list, &i);
+    i = -3;
+    List::pushFront(&list, &i);
+    i = -4;
+    List::pushFront(&list, &i);
+    i = -5;
+    List::pushFront(&list, &i);
+    i = -6;
     List::pushFront(&list, &i);
     List__dump(list);
     List::popBack(&list);
@@ -23,13 +31,16 @@ int main(int argc, const char* const* const argv) {
 
     ListIterator elem{};
     List::begin(&list, &elem);
-    if (*(int*)ListIterator::getValue(&elem) != -127) {
-        printf("ATATA!!! 1: %d\n", *(int*)ListIterator::getValue(&elem));
-    }
+    List::erase(&list, &elem);
+    List__dump(list);
+    List::begin(&list, &elem);
     ListIterator::next(&elem);
-    if (*(int*)ListIterator::getValue(&elem) != 0) {
-        printf("ATATA!!! 2: %d\n", *(int*)ListIterator::getValue(&elem));
-    }
+    ListIterator::next(&elem);
+    ListIterator::next(&elem);
+    ListIterator::next(&elem);
+    ListIterator::prev(&elem);
+    List::erase(&list, &elem);
+    List__dump(list);
 
     return 0;
 }
