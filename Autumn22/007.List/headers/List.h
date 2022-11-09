@@ -47,9 +47,14 @@ public:
     static Error popBack(List* const list);
     static Error popFront(List* const list);
 
-    static Error emplaceAfter(List* const list, ListIterator const* const iterator, void const* const src = nullptr);
-    static Error emplaceBefore(List* const list, ListIterator const* const iterator, void const* const src = nullptr);
-    static Error erase(List* const list, ListIterator* const iterator);
+    enum Direction {
+        FORWARD = 1,
+        BACKWARD = 0,
+    };
+    static Error emplaceAfter (List* const list, ListIterator const* const iterator,                      void const* const src = nullptr);
+    static Error emplaceBefore(List* const list, ListIterator const* const iterator,                      void const* const src = nullptr);
+    static Error emplace      (List* const list, ListIterator const* const iterator, Direction direction, void const* const src = nullptr);
+    static Error erase        (List* const list, ListIterator      * const iterator, Direction direction = Direction::FORWARD);
 
     static bool isEmpty(List const* const list);
 

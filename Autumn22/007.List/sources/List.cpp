@@ -254,25 +254,72 @@ List::Error List::emplaceBefore(List* const list, ListIterator const* const iter
 }
 
 /**
+ * @brief Add new element to the list
+ *
+ * @param [out] list List
+ * @param [in] iterator Iterator to the element
+ * @param [in] direction Does need emplace BEFORE or AFTER the element
+ * @param [in] src Pointer to the new element value
+ * @return List::Error Error code
+ */
+List::Error List::emplace(List* const list, ListIterator const* const iterator, Direction direction, void const* const src) {
+    switch (direction) {
+    case Direction::FORWARD:
+        return emplaceAfter(list, iterator, src);
+    case Direction::BACKWARD:
+        return emplaceBefore(list, iterator, src);
+    default:
+        assert(0);
+    }
+
+    return Error::OK;
+}
+
+
+/**
  * @brief Erase element from the list
  *
  * @param [out] list List
  * @param [out] iterator Iterator to the element
+ * @param [in] direction If iterator will be set to the next or previous element (**nullptr** if there is no such an element)
  * @return List::Error Error code
  */
-List::Error List::erase(List* const list, ListIterator* const iterator) {
+List::Error List::erase(List* const list, ListIterator* const iterator, Direction direction) {
     assert(list);
     assert(iterator);
 
     Error err = OK;
     if (iterator->ptr->next == nullptr) {
         err = popBack(list);
-        iterator->ptr = nullptr;
+
+        switch (direction) {
+        case Direction::FORWARD:
+            iterator->ptr = nullptr;
+            break;
+        case Direction::BACKWARD:
+            List::rbegin(list, iterator);
+            break;
+        default:
+            assert(0);
+        }
+
         return err;
     }
     if (iterator->ptr->prev == nullptr) {
         err = popFront(list);
         iterator->ptr = nullptr;
+
+        switch (direction) {
+        case Direction::FORWARD:
+            List::begin(list, iterator);
+            break;
+        case Direction::BACKWARD:
+            iterator->ptr = nullptr;
+            break;
+        default:
+            assert(0);
+        }
+
         return err;
     }
 
@@ -282,9 +329,23 @@ List::Error List::erase(List* const list, ListIterator* const iterator) {
     iterator->ptr->prev->next = iterator->ptr->next;
     iterator->ptr->next->prev = iterator->ptr->prev;
 
+    ListElem* elemToSet;
+    switch (direction) {
+    case Direction::FORWARD:
+        elemToSet = iterator->ptr->next;
+        break;
+    case Direction::BACKWARD:
+        elemToSet = iterator->ptr->prev;
+        break;
+    default:
+        assert(0);
+    }
+
     free(iterator->ptr->valuePtr);
     iterator->ptr->valuePtr = nullptr;
     free(iterator->ptr);
+
+    iterator->ptr = elemToSet;
 
     return Error::OK;
 }
