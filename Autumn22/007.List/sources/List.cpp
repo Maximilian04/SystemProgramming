@@ -48,6 +48,18 @@ List::Error List::dtor(List* const list) {
     return Error::OK;
 }
 
+#define MAKE_NEW_ELEMENT                                             \
+    ListElem* const newElem = (ListElem*)calloc(sizeof(ListElem), 1); \
+    if (!newElem) return Error::MEM_ERR;
+
+#define SET_NEW_ELEMENT_VALUE                       \
+    newElem->valuePtr = calloc(list->elemSize, 1);   \
+    if (!newElem->valuePtr) return Error::MEM_ERR;    \
+    if (src)                                           \
+        memcpy(newElem->valuePtr, src, list->elemSize); \
+    else                                                 \
+        memset(newElem->valuePtr, 0, list->elemSize);
+
 /**
  * @brief Push new element to the back of the list
  *
@@ -58,8 +70,7 @@ List::Error List::dtor(List* const list) {
 List::Error List::pushBack(List* const list, void const* const src) {
     assert(list);
 
-    ListElem* const newElem = (ListElem*)calloc(sizeof(ListElem), 1);
-    if (!newElem) return Error::MEM_ERR;
+    MAKE_NEW_ELEMENT;
 
     if (list->head) {
         assert(list->tail);
@@ -73,15 +84,110 @@ List::Error List::pushBack(List* const list, void const* const src) {
     }
     list->head = newElem;
 
-    newElem->valuePtr = calloc(list->elemSize, 1);
-    if (!newElem->valuePtr) return Error::MEM_ERR;
-    if (src)
-        memcpy(newElem->valuePtr, src, list->elemSize);
-    else
-        memset(newElem->valuePtr, 0, list->elemSize);
+    SET_NEW_ELEMENT_VALUE;
 
     return Error::OK;
 }
+
+/**
+ * @brief Push new element to the front of the list
+ *
+ * @param [out] list List
+ * @param [in] src Pointer to the new element
+ * @return List::Error
+ */
+List::Error List::pushFront(List* const list, void const* const src) {
+    assert(list);
+
+    MAKE_NEW_ELEMENT;
+
+    if (list->tail) {
+        assert(list->head);
+        assert(list->tail->prev == nullptr);
+
+        list->tail->prev = newElem;
+        newElem->next = list->tail;
+    } else {
+        assert(!list->head);
+        list->head = newElem;
+    }
+    list->tail = newElem;
+
+    SET_NEW_ELEMENT_VALUE;
+
+    return Error::OK;
+}
+
+/**
+ * @brief Pop an element from the back of the list
+ *
+ * @param [out] list List
+ * @return List::Error
+ */
+List::Error List::popBack(List* const list) {
+    assert(list);
+
+    if (!list->head) {
+        assert(!list->tail);
+        return Error::EMPTY;
+    }
+    assert(list->tail);
+
+    assert(!list->head->next);
+    ListElem* elem = list->head;
+
+    free(elem->valuePtr);
+    elem->valuePtr = nullptr;
+
+    if (elem->prev) {
+        list->head = elem->prev;
+        list->head->next = nullptr;
+    } else {
+        assert(list->head == list->tail);
+        list->head = nullptr;
+        list->tail = nullptr;
+    }
+    free(elem);
+
+    return Error::OK;
+}
+
+/**
+ * @brief Pop an element from the front of the list
+ *
+ * @param [out] list List
+ * @return List::Error
+ */
+List::Error List::popFront(List* const list) {
+    assert(list);
+
+    if (!list->head) {
+        assert(!list->tail);
+        return Error::EMPTY;
+    }
+    assert(list->tail);
+
+    assert(!list->tail->prev);
+    ListElem* elem = list->tail;
+
+    free(elem->valuePtr);
+    elem->valuePtr = nullptr;
+
+    if (elem->next) {
+        list->tail = elem->next;
+        list->tail->prev = nullptr;
+    } else {
+        assert(list->head == list->tail);
+        list->head = nullptr;
+        list->tail = nullptr;
+    }
+    free(elem);
+
+    return Error::OK;
+}
+
+#undef MAKE_NEW_ELEMENT
+#undef SET_NEW_ELEMENT_VALUE
 
 /**
  * @brief Is list empty

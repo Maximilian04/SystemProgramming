@@ -11,15 +11,23 @@ int main(int argc, const char* const* const argv) {
     int i = 239;
     List::pushBack(&list);
     List::pushBack(&list, &i);
+    i = -127;
+    List::pushFront(&list, &i);
+    i = -239;
+    List::pushFront(&list, &i);
+    List__dump(list);
+    List::popBack(&list);
+    List__dump(list);
+    List::popFront(&list);
     List__dump(list);
 
     ListIterator elem{};
     List::begin(&list, &elem);
-    if (*(int*)ListIterator::getValue(&elem) != 0) {
+    if (*(int*)ListIterator::getValue(&elem) != -127) {
         printf("ATATA!!! 1: %d\n", *(int*)ListIterator::getValue(&elem));
     }
     ListIterator::next(&elem);
-    if (*(int*)ListIterator::getValue(&elem) != 239) {
+    if (*(int*)ListIterator::getValue(&elem) != 0) {
         printf("ATATA!!! 2: %d\n", *(int*)ListIterator::getValue(&elem));
     }
 

@@ -32,6 +32,7 @@ public:
         OK = 0,      ///< No errors
         MEM_ERR,     ///< Error in memory allocation
         NULLPTR_ERR, ///< Nullptr is occured
+        EMPTY,       ///< No elements in list
     };
 
 #define List__ctor(obj, type, printfTemplate) List::ctor(&obj, DEBUGINFO_CTOR_ARGS_R(#obj), sizeof(type), \
@@ -42,6 +43,9 @@ public:
     static Error dtor(List* const list);
 
     static Error pushBack(List* const list, void const* const src = nullptr);
+    static Error pushFront(List* const list, void const* const src = nullptr);
+    static Error popBack(List* const list);
+    static Error popFront(List* const list);
 
     static bool isEmpty(List const* const list);
 
