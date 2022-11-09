@@ -43,7 +43,11 @@ List::Error List::ctor(List* const list, DEBUGINFO_CTOR_ARGS_H, size_t const ele
 List::Error List::dtor(List* const list) {
     assert(list);
 
-    list->debugInfo.ctorCallLine = -1;
+    while (!List::isEmpty(list)) {
+        popBack(list);
+    }
+
+    list->debugInfo.objName = "zzzombie";
 
     return Error::OK;
 }

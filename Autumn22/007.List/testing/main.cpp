@@ -42,5 +42,8 @@ int main(int argc, const char* const* const argv) {
     List::erase(&list, &elem);
     List__dump(list);
 
+    List::dtor(&list);
+    List__dump(list);
+
     return 0;
 }
