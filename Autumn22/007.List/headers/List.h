@@ -16,12 +16,15 @@
 #include "ListElem.h"
 #include "ListIterator.h"
 
+typedef char const* (*ListOutFunction_t)(size_t, void*);
+
 class List {
 public:
     ListElem* head;
     ListElem* tail;
 
     size_t elemSize;
+    ListOutFunction_t outFunc;
 
     DebugInfo debugInfo;
 
@@ -31,8 +34,11 @@ public:
         NULLPTR_ERR, ///< Nullptr is occured
     };
 
-#define List__ctor(obj, ...) List::ctor(&obj, DEBUGINFO_CTOR_ARGS_R(#obj) __VA_OPT__(, __VA_ARGS__))
-    static Error ctor(List* const list, DEBUGINFO_CTOR_ARGS_H, size_t const elemSize);
+#define List__ctor(obj, type, printfTemplate) List::ctor(&obj, DEBUGINFO_CTOR_ARGS_R(#obj), sizeof(type), \
+    [](size_t bufN, void* valuePtr) -> char const* {                                                       \
+        return strFParser::parseFNBuf(bufN, printfTemplate, *(type*)valuePtr);                              \
+    })
+    static Error ctor(List* const list, DEBUGINFO_CTOR_ARGS_H, size_t const elemSize, ListOutFunction_t outFunc);
     static Error dtor(List* const list);
 
     static Error pushBack(List* const list, void const* const src = nullptr);

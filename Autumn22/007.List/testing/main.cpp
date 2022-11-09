@@ -6,7 +6,8 @@
 int main(int argc, const char* const* const argv) {
     testingSystem::main(argc, argv);
     List list;
-    List__ctor(list, sizeof(int));
+    List__ctor(list, int, "%d");
+    List__dump(list);
     int i = 239;
     List::pushBack(&list);
     List::pushBack(&list, &i);

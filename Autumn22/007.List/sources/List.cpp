@@ -13,9 +13,10 @@
  *
  * @param [out] list List
  * @param [in] elemSize Size of an element
+ * @param [in] outFunc Pointer to a function for printing elements'es value
  * @return List::Error Error code
  */
-List::Error List::ctor(List* const list, DEBUGINFO_CTOR_ARGS_H, size_t const elemSize) {
+List::Error List::ctor(List* const list, DEBUGINFO_CTOR_ARGS_H, size_t const elemSize, ListOutFunction_t outFunc) {
     assert(list);
 
     list->debugInfo.objName = objName;
@@ -23,7 +24,11 @@ List::Error List::ctor(List* const list, DEBUGINFO_CTOR_ARGS_H, size_t const ele
     list->debugInfo.ctorCallFile = ctorCallFile;
     list->debugInfo.ctorCallFunc = ctorCallFunc;
 
+    list->head = nullptr;
+    list->tail = nullptr;
+
     list->elemSize = elemSize;
+    list->outFunc = outFunc;
 
     // VERIFY(list);
     return Error::OK;

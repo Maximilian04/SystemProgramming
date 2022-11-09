@@ -14,12 +14,23 @@ void logList(const List* const list) {
     logger::addBlock();
 
     if (!List::isEmpty(list)) {
+        size_t bufN1 = strFParser::addCallocBuf();
+        size_t bufN2 = strFParser::addCallocBuf();
+        size_t bufN3 = strFParser::addCallocBuf();
+
         ListIterator elem;
         List::begin(list, &elem);
         do {
-            size_t bufN = strFParser::addCallocBuf();
-            logger::logField(">", strFParser::parseFNBuf(bufN, htmlCyanPointer, ListIterator::getValue(&elem)));
+            char const* ptrStr = strFParser::parseFNBuf(bufN1, htmlCyanPointer, ListIterator::getValue(&elem));
+            char const* valueStr = list->outFunc(bufN2, ListIterator::getValue(&elem));
+            logger::logLine(strFParser::parseFNBuf(bufN3, "[%s] > %s", ptrStr, valueStr));
+
+            // logger::logStr(strFParser::parseFNBuf(bufN, "", ListIterator::getValue(&elem)), 0);
+
+            // logger::logField(">", strFParser::parseFNBuf(bufN, htmlCyanPointer, ListIterator::getValue(&elem)), -1);
         } while (!ListIterator::next(&elem));
+
+        strFParser::freeCalloc();
     }
     logger::endBlock();
     /*if (stack->data == nullptr) {
