@@ -31,3 +31,24 @@ void* ListIterator::getValue(ListIterator const* const iterator) {
     return nullptr;
 }
 
+
+ListElem const* ListIterator::getElemPtr(ListIterator* const iterator) {
+    assert(iterator);
+    assert(iterator->ptr);
+
+    return iterator->ptr;
+}
+
+ListElem const* ListIterator::getNextPtr(ListIterator* const iterator) {
+    assert(iterator);
+    assert(iterator->ptr);
+
+    return iterator->ptr->next;
+}
+
+ListElem const* ListIterator::getPrevPtr(ListIterator* const iterator) {
+    assert(iterator);
+    assert(iterator->ptr);
+
+    return iterator->ptr->prev;
+}

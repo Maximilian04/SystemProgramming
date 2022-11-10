@@ -1,6 +1,9 @@
 #include <logger.h>
+#include <graphviz.h>
 
 #include "loggerList.h"
+
+static void logGraphList(const List* const list);
 
 void logList(const List* const list) {
     logger::addBlock();
@@ -32,4 +35,34 @@ void logList(const List* const list) {
     logger::endBlock();
 
     logger::endBlock();
+
+    logGraphList(list);
+}
+
+#define LOG_GRAPH_FILE_NAME_TEMPLATE "stuff/log_list_graph_%d.gv"
+
+static void logGraphList(const List* const list) {
+    static int logToken = 0;
+    ++logToken;
+    size_t bufN = strFParser::addCallocBuf();
+    if (graphviz::openLogFile(strFParser::parseFNBuf(bufN, LOG_GRAPH_FILE_NAME_TEMPLATE, logToken))) {
+        printf("Cannot create graphviz file\n");
+        return;
+    }
+
+    graphviz::logGraphHead();
+
+    if (!List::isEmpty(list)) {
+        ListIterator elem;
+        List::begin(list, &elem);
+        do {
+            graphviz::logElem(ListIterator::getElemPtr(&elem), ListIterator::getNextPtr(&elem), ListIterator::getPrevPtr(&elem));
+        } while (!ListIterator::next(&elem));
+
+    }
+
+    graphviz::logGraphTail();
+
+    graphviz::closeLogFile();
+    strFParser::freeCalloc();
 }

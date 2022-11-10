@@ -28,6 +28,10 @@ public:
     static Error next(ListIterator* const iterator);
     static Error prev(ListIterator* const iterator);
     static void* getValue(ListIterator const* const iterator);
+
+    static ListElem const* getElemPtr(ListIterator* const iterator);
+    static ListElem const* getNextPtr(ListIterator* const iterator);
+    static ListElem const* getPrevPtr(ListIterator* const iterator);
 };
 
 #endif // LISTITERATOR_H
