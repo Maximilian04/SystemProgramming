@@ -11,6 +11,8 @@
 #ifndef GRAPHVIZ_H
 #define GRAPHVIZ_H
 
+#include "ValueOutFunction_t.h"
+
 namespace graphviz {
     enum Error {
         OK = 0,         ///< No errors
@@ -24,7 +26,8 @@ namespace graphviz {
     void logGraphHead();
     void logGraphTail();
 
-    void logElem(void const* const elemPtr, void const* const nextPtr, void const* const prevPtr);
+    void logElem(void const* const elemPtr, void const* const nextPtr, void const* const prevPtr,
+        ValueOutFunction_t const outFunc, size_t const bufN, void const* const valuePtr);
 }
 
 #endif // GRAPHVIZ_H

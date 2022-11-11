@@ -58,8 +58,10 @@ namespace graphviz {
         printLog(logTarget, L"%s", graphTail);
     }
 
-    void logElem(void const* const elemPtr, void const* const nextPtr, void const* const prevPtr) {
+    void logElem(void const* const elemPtr, void const* const nextPtr, void const* const prevPtr,
+        ValueOutFunction_t const outFunc, size_t const bufN, void const* const valuePtr) {
+
         assert(logTarget != nullptr);
-        printLog(logTarget, GRAPH_ELEM_BODY(elemPtr, nextPtr, prevPtr));
+        printLog(logTarget, GRAPH_ELEM_BODY(elemPtr, nextPtr, prevPtr, elemPtr, outFunc(bufN, valuePtr)));
     }
 }

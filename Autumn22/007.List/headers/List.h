@@ -35,8 +35,8 @@ public:
     };
 
 #define List__ctor(obj, type, printfTemplate) List::ctor(&obj, DEBUGINFO_CTOR_ARGS_R(#obj), sizeof(type), \
-    [](size_t bufN, void* valuePtr) -> char const* {                                                       \
-        return strFParser::parseFNBuf(bufN, printfTemplate, *(type*)valuePtr);                              \
+    [](ValueOutFunction_t_PARAMS) -> char const* {                                                         \
+        return strFParser::parseFNBuf(bufN, printfTemplate, *(type const*)valuePtr);                        \
     })
     static Error ctor(List* const list, DEBUGINFO_CTOR_ARGS_H, size_t const elemSize, ValueOutFunction_t outFunc);
     static Error dtor(List* const list);
