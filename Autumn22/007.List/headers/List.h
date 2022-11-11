@@ -11,12 +11,11 @@
 #ifndef LIST_H
 #define LIST_H
 
+#include <ValueOutFunction_t.h>
 #include <logger.h>
 
 #include "ListElem.h"
 #include "ListIterator.h"
-
-typedef char const* (*ListOutFunction_t)(size_t, void*);
 
 class List {
 public:
@@ -24,7 +23,7 @@ public:
     ListElem* tail;
 
     size_t elemSize;
-    ListOutFunction_t outFunc;
+    ValueOutFunction_t outFunc;
 
     DebugInfo debugInfo;
 
@@ -39,7 +38,7 @@ public:
     [](size_t bufN, void* valuePtr) -> char const* {                                                       \
         return strFParser::parseFNBuf(bufN, printfTemplate, *(type*)valuePtr);                              \
     })
-    static Error ctor(List* const list, DEBUGINFO_CTOR_ARGS_H, size_t const elemSize, ListOutFunction_t outFunc);
+    static Error ctor(List* const list, DEBUGINFO_CTOR_ARGS_H, size_t const elemSize, ValueOutFunction_t outFunc);
     static Error dtor(List* const list);
 
     static Error pushBack(List* const list, void const* const src = nullptr);
@@ -60,6 +59,8 @@ public:
 
     static Error begin(List const* const list, ListIterator* const iterator);
     static Error rbegin(List const* const list, ListIterator* const iterator);
+
+    static ValueOutFunction_t getOutFunc(List const* const list);
 
 #define List__dump(stackObj) List::dump(&stackObj, LOGFUNCHEAD_ARGS_R)
     static Error dump(List* const list, LOGFUNCHEAD_ARGS_H);

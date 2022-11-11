@@ -16,7 +16,7 @@
  * @param [in] outFunc Pointer to a function for printing elements'es value
  * @return List::Error Error code
  */
-List::Error List::ctor(List* const list, DEBUGINFO_CTOR_ARGS_H, size_t const elemSize, ListOutFunction_t outFunc) {
+List::Error List::ctor(List* const list, DEBUGINFO_CTOR_ARGS_H, size_t const elemSize, ValueOutFunction_t outFunc) {
     assert(list);
 
     list->debugInfo.objName = objName;
@@ -397,6 +397,18 @@ List::Error List::rbegin(List const* const list, ListIterator* const iterator) {
     iterator->ptr = list->head;
 
     return Error::OK;
+}
+
+/**
+ * @brief Get list's outFunc
+ *
+ * @param [in] list List
+ * @return ValueOutFunction_t outFunc
+ */
+ValueOutFunction_t List::getOutFunc(List const* const list) {
+    assert(list);
+
+    return list->outFunc;
 }
 
 /**

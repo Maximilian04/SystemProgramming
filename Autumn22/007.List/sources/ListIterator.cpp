@@ -32,21 +32,21 @@ void* ListIterator::getValue(ListIterator const* const iterator) {
 }
 
 
-ListElem const* ListIterator::getElemPtr(ListIterator* const iterator) {
+ListElem const* ListIterator::getElemPtr(ListIterator const* const iterator) {
     assert(iterator);
     assert(iterator->ptr);
 
     return iterator->ptr;
 }
 
-ListElem const* ListIterator::getNextPtr(ListIterator* const iterator) {
+ListElem const* ListIterator::getNextPtr(ListIterator const* const iterator) {
     assert(iterator);
     assert(iterator->ptr);
 
     return iterator->ptr->next;
 }
 
-ListElem const* ListIterator::getPrevPtr(ListIterator* const iterator) {
+ListElem const* ListIterator::getPrevPtr(ListIterator const* const iterator) {
     assert(iterator);
     assert(iterator->ptr);
 
