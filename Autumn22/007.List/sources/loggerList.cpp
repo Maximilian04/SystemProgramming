@@ -60,8 +60,9 @@ static void logGraphList(const List* const list) {
     if (!List::isEmpty(list)) {
         ListIterator elem;
         List::begin(list, &elem);
+        size_t elemIndex = 0;
         do {
-            graphviz::logElem(ListIterator::getElemPtr(&elem), ListIterator::getNextPtr(&elem), ListIterator::getPrevPtr(&elem),
+            graphviz::logElem(elemIndex++, ListIterator::getElemPtr(&elem), ListIterator::getNextPtr(&elem), ListIterator::getPrevPtr(&elem),
                 List::getOutFunc(list), bufN, ListIterator::getValue(&elem));
         } while (!ListIterator::next(&elem));
 

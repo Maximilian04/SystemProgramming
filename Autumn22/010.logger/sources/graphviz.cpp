@@ -70,13 +70,13 @@ namespace graphviz {
         printLog(logTarget, L"%s", graphTail);
     }
 
-    void logElem(void const* const elemPtr, void const* const nextPtr, void const* const prevPtr,
+    void logElem(size_t const elemIndex, void const* const elemPtr, void const* const nextPtr, void const* const prevPtr,
         ValueOutFunction_t const outFunc, size_t const bufN, void const* const valuePtr) {
 
         assert(logTarget != nullptr);
 
 #define PRINTLOG_GRAPH_ELEM_BODY(NPtoken, ...) \
-printLog(logTarget, GRAPH_ELEM_BODY(NPtoken, elemPtr, elemPtr, outFunc(bufN, valuePtr) __VA_OPT__(, __VA_ARGS__)))
+printLog(logTarget, GRAPH_ELEM_BODY(NPtoken, elemPtr, elemIndex, elemPtr, outFunc(bufN, valuePtr) __VA_OPT__(, __VA_ARGS__)))
 
         if (nextPtr) {
             if (prevPtr) {

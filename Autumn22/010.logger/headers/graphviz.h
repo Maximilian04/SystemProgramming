@@ -29,7 +29,7 @@ namespace graphviz {
     void logGraphHead();
     void logGraphTail();
 
-    void logElem(void const* const elemPtr, void const* const nextPtr, void const* const prevPtr,
+    void logElem(size_t const elemIndex, void const* const elemPtr, void const* const nextPtr, void const* const prevPtr,
         ValueOutFunction_t const outFunc, size_t const bufN, void const* const valuePtr);
 }
 

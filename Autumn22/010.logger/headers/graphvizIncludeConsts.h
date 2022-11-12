@@ -20,13 +20,13 @@ static const char graphRunCommandTemplate[] =
 "    element_%p [label = <<table border=\"0\" cellborder=\"1\" cellspacing=\"0\">\n"
 
 #define ELEM_PTR_SECTION(name, ...) \
-"        <tr><td port=\"" #name "\">" __VA_OPT__("[") "<FONT COLOR=\"cyan\">%p</FONT>" __VA_OPT__("]") "</td></tr>\n"
+"        <tr><td port=\"" #name "\" colspan=\"2\">" __VA_OPT__("[") "<FONT COLOR=\"cyan\">%p</FONT>" __VA_OPT__("]") "</td></tr>\n"
 
 #define ELEM_NULLPTR_SECTION(name, ...) \
-"        <tr><td port=\"" #name "\">" __VA_OPT__("[") "<FONT COLOR=\"indianRed\">0 (nullptr)</FONT>" __VA_OPT__("]") "</td></tr>\n"
+"        <tr><td port=\"" #name "\" colspan=\"2\">" __VA_OPT__("[") "<FONT COLOR=\"indianRed\">0 (nullptr)</FONT>" __VA_OPT__("]") "</td></tr>\n"
 
 #define ELEM_VALUE_SECTION(name) \
-"        <tr><td port=\"" #name "\">%S</td></tr>\n"
+"        <tr><td port=\"" #name "_1\">[%u]</td><td port=\"" #name "_2\">%S</td></tr>\n"
 
 #define ELEM_NODE_END \
 "        </table>>;shape = \"none\";margin = \"0\";fillcolor = \"MistyRose\";color = \"RosyBrown\";];\n"
@@ -54,11 +54,11 @@ graphElemBody__TemplateDEF(NN, ELEM_NULLPTR_SECTION, ELEM_NULLPTR_SECTION);
 
 #undef graphElemBody__TemplateDEF
 
-#define GRAPH_ELEM_BODY(NPtoken, token, header, valueStr, ...) \
-    /* wString */ graphElemBody##NPtoken##Template,             \
-    /* DEF */ token,                                             \
-    /* PTR */ header,                                             \
-    /* VALUE */ valueStr                                           \
+#define GRAPH_ELEM_BODY(NPtoken, token, index, header, valueStr, ...) \
+    /* wString */ graphElemBody##NPtoken##Template,                    \
+    /* DEF */ token,                                                    \
+    /* PTR */ header,                                                    \
+    /* INDEX | VALUE */ index, valueStr                                   \
     /* PTR-s */ __VA_OPT__(, __VA_ARGS__)
 
 static const wchar_t graphElemOrderTemplate[] = L""
