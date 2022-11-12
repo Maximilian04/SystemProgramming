@@ -74,7 +74,26 @@ namespace graphviz {
         ValueOutFunction_t const outFunc, size_t const bufN, void const* const valuePtr) {
 
         assert(logTarget != nullptr);
-        printLog(logTarget, GRAPH_ELEM_BODY(elemPtr, nextPtr, prevPtr, elemPtr, outFunc(bufN, valuePtr)));
+
+#define PRINTLOG_GRAPH_ELEM_BODY(NPtoken, ...) \
+printLog(logTarget, GRAPH_ELEM_BODY(NPtoken, elemPtr, elemPtr, outFunc(bufN, valuePtr) __VA_OPT__(, __VA_ARGS__)))
+
+        if (nextPtr) {
+            if (prevPtr) {
+                PRINTLOG_GRAPH_ELEM_BODY(PP, nextPtr, prevPtr);
+            } else {
+                PRINTLOG_GRAPH_ELEM_BODY(PN, nextPtr);
+            }
+        } else {
+            if (prevPtr) {
+                PRINTLOG_GRAPH_ELEM_BODY(NP, prevPtr);
+            } else {
+                PRINTLOG_GRAPH_ELEM_BODY(NN);
+            }
+        }
+
+#undef PRINTLOG_GRAPH_ELEM_BODY
+
         if (nextPtr)
             printLog(logTarget, GRAPH_ELEM_ORDER(elemPtr, nextPtr));
         if (nextPtr)
