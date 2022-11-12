@@ -41,10 +41,10 @@ public:
     static Error ctor(List* const list, DEBUGINFO_CTOR_ARGS_H, size_t const elemSize, ValueOutFunction_t outFunc);
     static Error dtor(List* const list);
 
-    static Error pushBack(List* const list, void const* const src = nullptr);
+    static Error pushBack (List* const list, void const* const src = nullptr);
     static Error pushFront(List* const list, void const* const src = nullptr);
-    static Error popBack(List* const list);
-    static Error popFront(List* const list);
+    static Error popBack  (List* const list);
+    static Error popFront (List* const list);
 
     enum Direction {
         FORWARD = 1,
@@ -57,7 +57,7 @@ public:
 
     static bool isEmpty(List const* const list);
 
-    static Error begin(List const* const list, ListIterator* const iterator);
+    static Error begin (List const* const list, ListIterator* const iterator);
     static Error rbegin(List const* const list, ListIterator* const iterator);
 
     static ValueOutFunction_t getOutFunc(List const* const list);

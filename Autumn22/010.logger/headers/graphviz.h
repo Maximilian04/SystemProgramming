@@ -18,10 +18,13 @@ namespace graphviz {
         OK = 0,         ///< No errors
         OPEN_FILE_ERR,  ///< Cannot open file
         CLOSE_FILE_ERR, ///< Cannot close file
+        GRAPHVIZ_ERR,   ///< Error in graphviz (usually .gv syntax)
     };
 
     Error openLogFile(const char* fileName);
     Error closeLogFile();
+
+    Error run(size_t bufN, const char* fileGVName, const char* filePNGName);
 
     void logGraphHead();
     void logGraphTail();

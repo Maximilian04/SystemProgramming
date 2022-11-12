@@ -214,4 +214,11 @@ namespace logger {
         logger::logHtmlTail();
         logger::closeLogFile();
     }
+
+    void logImg(const char* const file) {
+        assert(file != nullptr);
+        logger::printLog(logTarget, htmlImageHead);
+        logger::printLog(logTarget, file);
+        logger::printLog(logTarget, htmlImageTail);
+    }
 }

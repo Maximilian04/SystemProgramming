@@ -39,13 +39,18 @@ void logList(const List* const list) {
     logGraphList(list);
 }
 
-#define LOG_GRAPH_FILE_NAME_TEMPLATE "stuff/log_list_graph_%d.gv"
+#define LOG_GRAPH_FILENAME_TEMPLATE "stuff/log_list_graph_%d.gv"
+#define LOG_GRAPH_IMG_FILENAME_TEMPLATE "stuff/log_list_graph_%d.png"
+#define LOG_FILENAME     strFParser::parseFNBuf(bufN1, LOG_GRAPH_FILENAME_TEMPLATE, logToken)
+#define LOG_IMG_FILENAME strFParser::parseFNBuf(bufN2, LOG_GRAPH_IMG_FILENAME_TEMPLATE, logToken)
 
 static void logGraphList(const List* const list) {
     static int logToken = 0;
     ++logToken;
-    size_t bufN = strFParser::addCallocBuf();
-    if (graphviz::openLogFile(strFParser::parseFNBuf(bufN, LOG_GRAPH_FILE_NAME_TEMPLATE, logToken))) {
+    size_t bufN  = strFParser::addCallocBuf();
+    size_t bufN1 = strFParser::addCallocBuf();
+    size_t bufN2 = strFParser::addCallocBuf();
+    if (graphviz::openLogFile(LOG_FILENAME)) {
         printf("Cannot create graphviz file\n");
         return;
     }
@@ -65,5 +70,14 @@ static void logGraphList(const List* const list) {
     graphviz::logGraphTail();
 
     graphviz::closeLogFile();
+
+    graphviz::run(bufN, LOG_FILENAME, LOG_IMG_FILENAME);
+    logger::logImg(LOG_IMG_FILENAME);
+
     strFParser::freeCalloc();
 }
+
+#undef LOG_GRAPH_FILENAME_TEMPLATE
+#undef LOG_GRAPH_IMG_FILENAME_TEMPLATE
+#undef LOG_FILENAME
+#undef LOG_IMG_FILENAME

@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <assert.h>
 
+#include <strFParser.h>
+
 #include "graphvizIncludeConsts.h"
 
 #include "graphviz.h"
@@ -38,6 +40,16 @@ namespace graphviz {
         return fcloseRes ? Error::CLOSE_FILE_ERR : Error::OK;
     }
 
+    Error run(size_t bufN, const char* fileGVName, const char* filePNGName) {
+        assert(fileGVName != nullptr);
+        assert(filePNGName != nullptr);
+        assert(logTarget == nullptr && "Close file before processing");
+
+        // printf("!'%s'\n", strFParser::parseFNBuf(bufN, graphRunCommandTemplate, fileGVName, filePNGName));
+        return system(strFParser::parseFNBuf(bufN, graphRunCommandTemplate, fileGVName, filePNGName)) ?
+            Error::GRAPHVIZ_ERR : Error::OK;
+    }
+
     static void printLog(FILE* stream, const wchar_t* format, ...) {
         assert(stream != nullptr);
         assert(format != nullptr);
@@ -63,5 +75,11 @@ namespace graphviz {
 
         assert(logTarget != nullptr);
         printLog(logTarget, GRAPH_ELEM_BODY(elemPtr, nextPtr, prevPtr, elemPtr, outFunc(bufN, valuePtr)));
+        if (nextPtr)
+            printLog(logTarget, GRAPH_ELEM_ORDER(elemPtr, nextPtr));
+        if (nextPtr)
+            printLog(logTarget, GRAPH_ARROW_2NEXT(elemPtr, nextPtr));
+        if (prevPtr)
+            printLog(logTarget, GRAPH_ARROW_2PREV(elemPtr, prevPtr));
     }
 }

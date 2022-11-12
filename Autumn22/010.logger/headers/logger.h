@@ -77,6 +77,8 @@ namespace logger {
 
     void emergencyLog(const char* const str);
     void logMsg(const char* const str);
+
+    void logImg(const char* const file);
 }
 
 #define COLORED_TEXT(color, text) "<font color=\"" color "\">" text "</font>"

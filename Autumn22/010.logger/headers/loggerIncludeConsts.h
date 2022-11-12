@@ -57,3 +57,11 @@ static const char htmlEmergencyColorStart[] =
 static const char htmlEmergencyColorStop[] =
 "</font>"
 ;
+
+static const char htmlImageHead[] =
+"<img src=\""
+;
+
+static const char htmlImageTail[] =
+"\" style=\"margin-top:0.5em; margin-bottom:-0.5em\" alt=\"Я не могу понять, где мне искать обман. Страницы прочь - читаю только по губам. Три, две, одна, ноль строк, как безупречен слог! Ещё одна глава из жизни за порог...\">\n"
+;
