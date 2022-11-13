@@ -31,6 +31,8 @@ namespace graphviz {
 
     void logElem(size_t const elemIndex, void const* const elemPtr, void const* const nextPtr, void const* const prevPtr,
         ValueOutFunction_t const outFunc, size_t const bufN, void const* const valuePtr);
+
+    void logHeadTailEgg(void const* const headPtr, void const* const tailPtr);
 }
 
 #endif // GRAPHVIZ_H

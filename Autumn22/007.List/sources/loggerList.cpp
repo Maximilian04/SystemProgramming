@@ -66,6 +66,7 @@ static void logGraphList(const List* const list) {
                 List::getOutFunc(list), bufN, ListIterator::getValue(&elem));
         } while (!ListIterator::next(&elem));
 
+        graphviz::logHeadTailEgg(list->head, list->tail);
     }
 
     graphviz::logGraphTail();

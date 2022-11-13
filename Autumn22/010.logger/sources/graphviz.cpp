@@ -101,4 +101,10 @@ printLog(logTarget, GRAPH_ELEM_BODY(NPtoken, elemPtr, elemIndex, elemPtr, outFun
         if (prevPtr)
             printLog(logTarget, GRAPH_ARROW_2PREV(elemPtr, prevPtr));
     }
+
+    void logHeadTailEgg(void const* const headPtr, void const* const tailPtr) {
+        assert(logTarget != nullptr);
+
+        printLog(logTarget, GRAPH_HEADTAIL_EGG(headPtr, tailPtr));
+    }
 }

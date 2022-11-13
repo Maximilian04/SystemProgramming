@@ -33,7 +33,7 @@ static const char graphRunCommandTemplate[] =
 // "        </table>>;shape = \"none\";margin = \"0\";fillcolor = \"MistyRose\";color = \"green\";];\n"
 
 #define ELEM_ARROW(nameSrc, nameDst, color) \
-"    element_%p:" #nameSrc " -> element_%p:" #nameDst " [color = \"" #color "\";  constraint = false;];\n"
+"    element_%p:" #nameSrc " -> element_%p:" #nameDst " [color = \"" #color "\"; constraint = false;];\n"
 
 #define ELEM_WEIGTH_ARROW \
 "    element_%p -> element_%p [style = invis; weight = 100;];\n"
@@ -47,8 +47,8 @@ static const char graphRunCommandTemplate[] =
         cmd2(prev)                                                   \
         ELEM_NODE_END
 
-graphElemBody__TemplateDEF(PP, ELEM_PTR_SECTION,     ELEM_PTR_SECTION);
-graphElemBody__TemplateDEF(PN, ELEM_PTR_SECTION,     ELEM_NULLPTR_SECTION);
+graphElemBody__TemplateDEF(PP, ELEM_PTR_SECTION, ELEM_PTR_SECTION);
+graphElemBody__TemplateDEF(PN, ELEM_PTR_SECTION, ELEM_NULLPTR_SECTION);
 graphElemBody__TemplateDEF(NP, ELEM_NULLPTR_SECTION, ELEM_PTR_SECTION);
 graphElemBody__TemplateDEF(NN, ELEM_NULLPTR_SECTION, ELEM_NULLPTR_SECTION);
 
@@ -62,13 +62,13 @@ graphElemBody__TemplateDEF(NN, ELEM_NULLPTR_SECTION, ELEM_NULLPTR_SECTION);
     /* PTR-s */ __VA_OPT__(, __VA_ARGS__)
 
 static const wchar_t graphElemOrderTemplate[] = L""
-    ELEM_WEIGTH_ARROW
+ELEM_WEIGTH_ARROW
 ;
 static const wchar_t graphArrow2NextTemplate[] = L""
-    ELEM_ARROW(next:e, head:w, coral)
+ELEM_ARROW(next:e, head:w, coral)
 ;
 static const wchar_t graphArrow2PrevTemplate[] = L""
-    ELEM_ARROW(prev:w, head:e, indigo)
+ELEM_ARROW(prev:w, head:e, indigo)
 ;
 
 #define GRAPH_ELEM_ORDER(token, nextToken) \
@@ -90,3 +90,20 @@ static const wchar_t graphArrow2PrevTemplate[] = L""
 #undef ELEM_NODE_END
 #undef ELEM_ARROW
 #undef ELEM_WEIGTH_ARROW
+
+static const wchar_t graphHeadTailEgg[] = L""
+"    element_tail [label = <tail>;shape = \"egg\";margin = \"0\";fillcolor = \"white\";color = \"black\";];\n"
+"    element_head [label = <head>;shape = \"egg\";margin = \"0\";fillcolor = \"white\";color = \"black\";];\n"
+"    element_tail -> element_head [style = invis; weight = 100;];\n"
+"\n"
+"    { rank=same; element_tail; element_%p; }\n"
+"    { rank=same; element_head; element_%p; }\n"
+"\n"
+"    element_tail:s -> element_%p:head:n [color = \"indigo\"; weigth = 200;];\n"
+"    element_head:s -> element_%p:head:n [color = \"coral\"; weigth = 200;];\n"
+;
+
+#define GRAPH_HEADTAIL_EGG(headToken, tailToken) \
+    /* wString */ graphHeadTailEgg,               \
+    /* ranking */ tailToken, headToken,            \
+    /* arrows */ tailToken, headToken
