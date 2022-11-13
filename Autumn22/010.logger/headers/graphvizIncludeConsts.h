@@ -99,8 +99,8 @@ static const wchar_t graphHeadTailEgg[] = L""
 "    { rank=same; element_tail; element_%p; }\n"
 "    { rank=same; element_head; element_%p; }\n"
 "\n"
-"    element_tail:s -> element_%p:head:n [color = \"indigo\"; weigth = 200;];\n"
-"    element_head:s -> element_%p:head:n [color = \"coral\"; weigth = 200;];\n"
+"    element_tail:s -> element_%p:head:n [color = \"coral\"; weigth = 200;];\n"
+"    element_head:s -> element_%p:head:n [color = \"indigo\"; weigth = 200;];\n"
 ;
 
 #define GRAPH_HEADTAIL_EGG(headToken, tailToken) \
