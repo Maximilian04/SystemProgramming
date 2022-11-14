@@ -435,10 +435,9 @@ List::Error List::erase(List* const list, ListIterator* const iterator, Directio
  *
  * @param [in] list List
  */
-bool List::isEmpty(List const* const list) {/*
+bool List::isEmpty(List const* const list) {
     assert(list);
-    return !list->head;*/
-    return 0;
+    return !list->size;
 }
 
 /**
@@ -448,11 +447,11 @@ bool List::isEmpty(List const* const list) {/*
  * @param [out] iterator Iterator to the first element
  * @return Error Error code
  */
-List::Error List::begin(List const* const list, ListIterator* const iterator) {/*
+List::Error List::begin(List const* const list, ListIterator* const iterator) {
     assert(list);
     assert(iterator);
 
-    iterator->ptr = list->tail;*/
+    iterator->ptr = list->bufferElem[0].next;
 
     return Error::OK;
 }
@@ -464,11 +463,11 @@ List::Error List::begin(List const* const list, ListIterator* const iterator) {/
  * @param [out] iterator Iterator to the last element
  * @return Error Error code
  */
-List::Error List::rbegin(List const* const list, ListIterator* const iterator) {/*
+List::Error List::rbegin(List const* const list, ListIterator* const iterator) {
     assert(list);
     assert(iterator);
 
-    iterator->ptr = list->head;*/
+    iterator->ptr = list->bufferElem[0].prev;
 
     return Error::OK;
 }
