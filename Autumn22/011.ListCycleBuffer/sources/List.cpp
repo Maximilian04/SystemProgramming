@@ -51,9 +51,18 @@ List::Error List::ctor(List* const list, DEBUGINFO_CTOR_ARGS_H, size_t const ele
 List::Error List::dtor(List* const list) {
     assert(list);
 
-    while (!List::isEmpty(list)) {
+    list->freeTail = 0;
+    list->size = 0;
+    list->capacity = 0;
+
+    /*while (!List::isEmpty(list)) {
         popBack(list);
-    }
+    }*/
+    free(list->bufferElem);
+    free(list->bufferValue);
+
+    list->bufferElem = nullptr;
+    list->bufferValue = nullptr;
 
     list->debugInfo.objName = "ZZZOMBIE";
 
@@ -63,8 +72,6 @@ List::Error List::dtor(List* const list) {
 /**
  * @brief Resize list's buffer
  *
- * @note Can only **increase** buffer size
- *
  * @param [out] list List
  * @param [int] newCapacity New capacity of list
  * @return List::Error Error code
@@ -72,8 +79,8 @@ List::Error List::dtor(List* const list) {
 List::Error List::resize(List* const list, size_t newCapacity) {
     assert(list);
 
-    if (newCapacity <= list->capacity)
-        return Error::OK;
+    if (newCapacity < list->size)
+        newCapacity = list->size;
 
     ListElem* newBufferElem = (ListElem*)calloc(newCapacity + 1, sizeof(ListElem));
     void* newBufferValue = calloc(newCapacity + 1, list->elemSize);
@@ -120,15 +127,12 @@ List::Error List::resize(List* const list, size_t newCapacity) {
     free(list->bufferValue);
     list->bufferElem = newBufferElem;
     list->bufferValue = newBufferValue;
+    list->capacity = newCapacity;
 
     return Error::OK;
 }
 
-#define MAKE_NEW_ELEMENT                                             \
-    ListElem* const newElem = (ListElem*)calloc(sizeof(ListElem), 1); \
-    if (!newElem) return Error::MEM_ERR;
-
-#define SET_NEW_ELEMENT_VALUE                       \
+#define SET_NEW_ELEMENT                             \
     newElem->valuePtr = calloc(list->elemSize, 1);   \
     if (!newElem->valuePtr) return Error::MEM_ERR;    \
     if (src)                                           \
@@ -143,25 +147,35 @@ List::Error List::resize(List* const list, size_t newCapacity) {
  * @param [in] src Pointer to the new element value
  * @return List::Error Error code
  */
-List::Error List::pushBack(List* const list, void const* const src) {/*
+List::Error List::pushBack(List* const list, void const* const src) {
     assert(list);
 
-    MAKE_NEW_ELEMENT;
+    size_t newElem = list->freeTail;
 
     if (list->size) {
         assert(list->bufferElem[0].prev);
         assert(list->bufferElem[0].next);
         assert(list->bufferElem[list->bufferElem[0].prev].next == 0);
 
-        list->head->next = newElem;
-        newElem->prev = list->head;
+        list->bufferElem[list->bufferElem[0].prev].next = newElem;
+        list->bufferElem[newElem].prev = list->bufferElem[0].prev;
     } else {
-        assert(!list->tail);
-        list->tail = newElem;
+        assert(!list->bufferElem[0].prev);
+        assert(!list->bufferElem[0].next);
+        list->bufferElem[0].next = newElem;
+        list->bufferElem[newElem].prev = 0;
     }
-    list->head = newElem;
+    list->bufferElem[0].prev = newElem;
+    list->freeTail = list->bufferElem[newElem].next;
+    list->bufferElem[list->freeTail].prev = 0;
+    list->bufferElem[newElem].next = 0;
+    list->size++;
 
-    SET_NEW_ELEMENT_VALUE;*/
+    // SET_NEW_ELEMENT;
+    if (src)
+        memcpy((uint8_t*)list->bufferValue + list->elemSize * newElem, src, list->elemSize);
+    else
+        memset((uint8_t*)list->bufferValue + list->elemSize * newElem, 0, list->elemSize);
 
     return Error::OK;
 }

@@ -40,14 +40,15 @@ public:
         EMPTY,       ///< No elements in list
     };
 
-#define List__ctor(obj, type, printfTemplate) List::ctor(&obj, DEBUGINFO_CTOR_ARGS_R(#obj), sizeof(type), \
-    [](ValueOutFunction_t_PARAMS) -> char const* {                                                         \
-        return strFParser::parseFNBuf(bufN, printfTemplate, *(type const*)valuePtr);                        \
-    })
+#define List__ctor(obj, type, printfTemplate, ...) List::ctor(&obj, DEBUGINFO_CTOR_ARGS_R(#obj), sizeof(type), \
+    [](ValueOutFunction_t_PARAMS) -> char const* {                                                              \
+        return strFParser::parseFNBuf(bufN, printfTemplate, *(type const*)valuePtr);                             \
+    }                                                                                                             \
+    __VA_OPT__(, __VA_ARGS__))
     static Error ctor(List* const list, DEBUGINFO_CTOR_ARGS_H, size_t const elemSize, ValueOutFunction_t outFunc, size_t capacity = 0);
     static Error dtor(List* const list);
 
-    static Error resize(List* const list, size_t newCapacity);
+    static Error resize(List* const list, size_t newCapacity = 0);
 
     static Error pushBack (List* const list, void const* const src = nullptr);
     static Error pushFront(List* const list, void const* const src = nullptr);
