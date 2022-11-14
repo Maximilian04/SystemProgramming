@@ -11,11 +11,12 @@
 #ifndef LISTELEM_H
 #define LISTELEM_H
 
+#include <stdint.h>
+
 class ListElem {
 public:
-    void* valuePtr;
-    ListElem* prev;
-    ListElem* next;
+    size_t prev;
+    size_t next;
 };
 
 #endif // LISTELEM_H

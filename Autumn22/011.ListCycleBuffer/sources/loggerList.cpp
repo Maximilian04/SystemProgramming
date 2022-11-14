@@ -8,8 +8,14 @@ static void logGraphList(const List* const list);
 void logList(const List* const list) {
     logger::addBlock();
 
-    logger__logField(list, head, p, nullptr);
-    logger__logField(list, tail, p, nullptr);
+    // logger__logField(list, head, p, nullptr);
+    // logger__logField(list, tail, p, nullptr);
+    logger__logField(list, freeTail, u, 0);
+    logger__logField(list, size, u, 0);
+    logger__logField(list, capacity, u, 0);
+
+    logger__logField(list, bufferElem, p, 0);
+    logger__logField(list, bufferValue, p, 0);
     logger__logField(list, elemSize, u, 0);
 
     logger::logLine("Elements: ");
@@ -22,12 +28,12 @@ void logList(const List* const list) {
 
         ListIterator elem;
         List::begin(list, &elem);
-        do {
-            char const* ptrStr = strFParser::parseFNBuf(bufN1, htmlCyanPointer, ListIterator::getValue(&elem));
-            char const* valueStr = list->outFunc(bufN2, ListIterator::getValue(&elem));
-            logger::logLine(strFParser::parseFNBuf(bufN3, "[%s] > %s", ptrStr, valueStr));
+        // do {
+            // char const* ptrStr = strFParser::parseFNBuf(bufN1, htmlCyanPointer, ListIterator::getValue(list, &elem));
+            // char const* valueStr = list->outFunc(bufN2, ListIterator::getValue(list, &elem));
+            // logger::logLine(strFParser::parseFNBuf(bufN3, "[%s] > %s", ptrStr, valueStr));
 
-        } while (!ListIterator::next(&elem));
+        // } while (!ListIterator::next(list, &elem));
 
         strFParser::freeCalloc();
     }
@@ -61,12 +67,12 @@ static void logGraphList(const List* const list) {
         ListIterator elem;
         List::begin(list, &elem);
         size_t elemIndex = 0;
-        do {
-            graphviz::logElem(elemIndex++, ListIterator::getElemPtr(&elem), ListIterator::getNextPtr(&elem), ListIterator::getPrevPtr(&elem),
-                List::getOutFunc(list), bufN, ListIterator::getValue(&elem));
-        } while (!ListIterator::next(&elem));
+        // do {
+            // graphviz::logElem(elemIndex++, ListIterator::getElemPtr(list, &elem), ListIterator::getNextPtr(list, &elem),
+                // ListIterator::getPrevPtr(list, &elem), List::getOutFunc(list), bufN, ListIterator::getValue(list, &elem));
+        // } while (!ListIterator::next(list, &elem));
 
-        graphviz::logHeadTailEgg(list->head, list->tail);
+        // graphviz::logHeadTailEgg(list->head, list->tail);
     }
 
     graphviz::logGraphTail();

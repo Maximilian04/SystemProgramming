@@ -2,53 +2,51 @@
 
 #include "ListIterator.h"
 
-ListIterator::Error ListIterator::next(ListIterator* const iterator) {
+ListIterator::Error ListIterator::next(List const* const list, ListIterator* const iterator) {
     assert(iterator);
     assert(iterator->ptr);
 
-    if (!iterator->ptr->next) return Error::LAST_ELEM;
-    iterator->ptr = iterator->ptr->next;
+    if (!(list->bufferElem[iterator->ptr].next)) return Error::LAST_ELEM;
+    iterator->ptr = list->bufferElem[iterator->ptr].next;
 
     return Error::OK;
 }
 
-ListIterator::Error ListIterator::prev(ListIterator* const iterator) {
+ListIterator::Error ListIterator::prev(List const* const list, ListIterator* const iterator) {
     assert(iterator);
     assert(iterator->ptr);
 
-    if (!iterator->ptr->prev) return Error::FIRST_ELEM;
-    iterator->ptr = iterator->ptr->prev;
+    if (!(list->bufferElem[iterator->ptr].prev)) return Error::FIRST_ELEM;
+    iterator->ptr = list->bufferElem[iterator->ptr].prev;
 
     return Error::OK;
 }
 
-void* ListIterator::getValue(ListIterator const* const iterator) {
+void* ListIterator::getValue(List const* const list, ListIterator const* const iterator) {
     assert(iterator);
     assert(iterator->ptr);
 
-    return iterator->ptr->valuePtr;
-
-    return nullptr;
+    return (uint8_t*)list->bufferValue + list->elemSize * iterator->ptr;
 }
 
 
-ListElem const* ListIterator::getElemPtr(ListIterator const* const iterator) {
+size_t ListIterator::getElemPtr(List const* const list, ListIterator const* const iterator) {
     assert(iterator);
     assert(iterator->ptr);
 
     return iterator->ptr;
 }
 
-ListElem const* ListIterator::getNextPtr(ListIterator const* const iterator) {
+size_t ListIterator::getNextPtr(List const* const list, ListIterator const* const iterator) {
     assert(iterator);
     assert(iterator->ptr);
 
-    return iterator->ptr->next;
+    return list->bufferElem[iterator->ptr].next;
 }
 
-ListElem const* ListIterator::getPrevPtr(ListIterator const* const iterator) {
+size_t ListIterator::getPrevPtr(List const* const list, ListIterator const* const iterator) {
     assert(iterator);
     assert(iterator->ptr);
 
-    return iterator->ptr->prev;
+    return list->bufferElem[iterator->ptr].prev;
 }

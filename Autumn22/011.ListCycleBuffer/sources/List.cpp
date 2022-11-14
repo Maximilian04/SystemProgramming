@@ -16,7 +16,7 @@
  * @param [in] outFunc Pointer to a function for printing elements'es value
  * @return List::Error Error code
  */
-List::Error List::ctor(List* const list, DEBUGINFO_CTOR_ARGS_H, size_t const elemSize, ValueOutFunction_t outFunc) {
+List::Error List::ctor(List* const list, DEBUGINFO_CTOR_ARGS_H, size_t const elemSize, ValueOutFunction_t outFunc, size_t capacity) {
     assert(list);
 
     list->debugInfo.objName = objName;
@@ -24,11 +24,19 @@ List::Error List::ctor(List* const list, DEBUGINFO_CTOR_ARGS_H, size_t const ele
     list->debugInfo.ctorCallFile = ctorCallFile;
     list->debugInfo.ctorCallFunc = ctorCallFunc;
 
-    list->head = nullptr;
-    list->tail = nullptr;
+    list->freeTail = 0;
+    list->size = 0;
+    list->capacity = 0;
 
     list->elemSize = elemSize;
     list->outFunc = outFunc;
+
+    list->bufferElem = (ListElem*)calloc(1, sizeof(ListElem));
+    list->bufferValue = calloc(1, list->elemSize);
+    if (!list->bufferElem) return Error::MEM_ERR;
+    if (!list->bufferValue) return Error::MEM_ERR;
+
+    resize(list, capacity);
 
     // VERIFY(list);
     return Error::OK;
@@ -47,7 +55,71 @@ List::Error List::dtor(List* const list) {
         popBack(list);
     }
 
-    list->debugInfo.objName = "zzzombie";
+    list->debugInfo.objName = "ZZZOMBIE";
+
+    return Error::OK;
+}
+
+/**
+ * @brief Resize list's buffer
+ *
+ * @note Can only **increase** buffer size
+ *
+ * @param [out] list List
+ * @param [int] newCapacity New capacity of list
+ * @return List::Error Error code
+ */
+List::Error List::resize(List* const list, size_t newCapacity) {
+    assert(list);
+
+    if (newCapacity <= list->capacity)
+        return Error::OK;
+
+    ListElem* newBufferElem = (ListElem*)calloc(newCapacity + 1, sizeof(ListElem));
+    void* newBufferValue = calloc(newCapacity + 1, list->elemSize);
+
+    for (size_t index = 1; index < newCapacity + 1; ++index) {
+        ListElem* elem = &newBufferElem[index];
+
+        if (index > 1)
+            elem->prev = index - 1;
+        else
+            elem->prev = 0;
+        if (index != newCapacity)
+            elem->next = index + 1;
+        else
+            elem->next = 0;
+    }
+
+    if (list->size) {
+        assert(list->size <= list->capacity);
+
+        ListIterator iterator;
+        List::begin(list, &iterator);
+        uint8_t* elemValue = (uint8_t*)newBufferValue;
+        do {
+            elemValue += list->elemSize;
+            memcpy(elemValue, ListIterator::getValue(list, &iterator), list->elemSize);
+        } while (!ListIterator::next(list, &iterator));
+
+        newBufferElem[list->size].next = 0;
+        newBufferElem[list->size + 1].prev = list->size;
+
+        if (list->size < list->capacity) {
+            list->freeTail = list->size + 1;
+        } else {
+            list->freeTail = 0;
+        }
+    } else {
+        list->freeTail = 1;
+        newBufferElem[0].prev = 0;
+        newBufferElem[0].next = 0;
+    }
+
+    free(list->bufferElem);
+    free(list->bufferValue);
+    list->bufferElem = newBufferElem;
+    list->bufferValue = newBufferValue;
 
     return Error::OK;
 }
@@ -71,14 +143,15 @@ List::Error List::dtor(List* const list) {
  * @param [in] src Pointer to the new element value
  * @return List::Error Error code
  */
-List::Error List::pushBack(List* const list, void const* const src) {
+List::Error List::pushBack(List* const list, void const* const src) {/*
     assert(list);
 
     MAKE_NEW_ELEMENT;
 
-    if (list->head) {
-        assert(list->tail);
-        assert(list->head->next == nullptr);
+    if (list->size) {
+        assert(list->bufferElem[0].prev);
+        assert(list->bufferElem[0].next);
+        assert(list->bufferElem[list->bufferElem[0].prev].next == 0);
 
         list->head->next = newElem;
         newElem->prev = list->head;
@@ -88,7 +161,7 @@ List::Error List::pushBack(List* const list, void const* const src) {
     }
     list->head = newElem;
 
-    SET_NEW_ELEMENT_VALUE;
+    SET_NEW_ELEMENT_VALUE;*/
 
     return Error::OK;
 }
@@ -100,7 +173,7 @@ List::Error List::pushBack(List* const list, void const* const src) {
  * @param [in] src Pointer to the new element value
  * @return List::Error Error code
  */
-List::Error List::pushFront(List* const list, void const* const src) {
+List::Error List::pushFront(List* const list, void const* const src) { /*
     assert(list);
 
     MAKE_NEW_ELEMENT;
@@ -117,7 +190,7 @@ List::Error List::pushFront(List* const list, void const* const src) {
     }
     list->tail = newElem;
 
-    SET_NEW_ELEMENT_VALUE;
+    SET_NEW_ELEMENT_VALUE;*/
 
     return Error::OK;
 }
@@ -128,7 +201,7 @@ List::Error List::pushFront(List* const list, void const* const src) {
  * @param [out] list List
  * @return List::Error Error code
  */
-List::Error List::popBack(List* const list) {
+List::Error List::popBack(List* const list) {/*
     assert(list);
 
     if (!list->head) {
@@ -151,7 +224,7 @@ List::Error List::popBack(List* const list) {
         list->head = nullptr;
         list->tail = nullptr;
     }
-    free(elem);
+    free(elem);*/
 
     return Error::OK;
 }
@@ -162,7 +235,7 @@ List::Error List::popBack(List* const list) {
  * @param [out] list List
  * @return List::Error Error code
  */
-List::Error List::popFront(List* const list) {
+List::Error List::popFront(List* const list) {/*
     assert(list);
 
     if (!list->head) {
@@ -185,7 +258,7 @@ List::Error List::popFront(List* const list) {
         list->head = nullptr;
         list->tail = nullptr;
     }
-    free(elem);
+    free(elem);*/
 
     return Error::OK;
 }
@@ -198,7 +271,7 @@ List::Error List::popFront(List* const list) {
  * @param [in] src Pointer to the new element value
  * @return List::Error Error code
  */
-List::Error List::emplaceAfter(List* const list, ListIterator const* const iterator, void const* const src) {
+List::Error List::emplaceAfter(List* const list, ListIterator const* const iterator, void const* const src) {/*
     assert(list);
     assert(iterator);
 
@@ -218,7 +291,7 @@ List::Error List::emplaceAfter(List* const list, ListIterator const* const itera
     iterator->ptr->next->prev = newElem;
     iterator->ptr->next = newElem;
 
-    SET_NEW_ELEMENT_VALUE;
+    SET_NEW_ELEMENT_VALUE;*/
 
     return Error::OK;
 }
@@ -231,7 +304,7 @@ List::Error List::emplaceAfter(List* const list, ListIterator const* const itera
  * @param [in] src Pointer to the new element value
  * @return List::Error Error code
  */
-List::Error List::emplaceBefore(List* const list, ListIterator const* const iterator, void const* const src) {
+List::Error List::emplaceBefore(List* const list, ListIterator const* const iterator, void const* const src) {/*
     assert(list);
     assert(iterator);
 
@@ -252,7 +325,7 @@ List::Error List::emplaceBefore(List* const list, ListIterator const* const iter
     iterator->ptr->prev->next = newElem;
     iterator->ptr->prev = newElem;
 
-    SET_NEW_ELEMENT_VALUE;
+    SET_NEW_ELEMENT_VALUE;*/
 
     return Error::OK;
 }
@@ -288,7 +361,7 @@ List::Error List::emplace(List* const list, ListIterator const* const iterator, 
  * @param [in] direction If iterator will be set to the next or previous element (**nullptr** if there is no such an element)
  * @return List::Error Error code
  */
-List::Error List::erase(List* const list, ListIterator* const iterator, Direction direction) {
+List::Error List::erase(List* const list, ListIterator* const iterator, Direction direction) {/*
     assert(list);
     assert(iterator);
 
@@ -349,7 +422,7 @@ List::Error List::erase(List* const list, ListIterator* const iterator, Directio
     iterator->ptr->valuePtr = nullptr;
     free(iterator->ptr);
 
-    iterator->ptr = elemToSet;
+    iterator->ptr = elemToSet;*/
 
     return Error::OK;
 }
@@ -362,9 +435,10 @@ List::Error List::erase(List* const list, ListIterator* const iterator, Directio
  *
  * @param [in] list List
  */
-bool List::isEmpty(List const* const list) {
+bool List::isEmpty(List const* const list) {/*
     assert(list);
-    return !list->head;
+    return !list->head;*/
+    return 0;
 }
 
 /**
@@ -374,11 +448,11 @@ bool List::isEmpty(List const* const list) {
  * @param [out] iterator Iterator to the first element
  * @return Error Error code
  */
-List::Error List::begin(List const* const list, ListIterator* const iterator) {
+List::Error List::begin(List const* const list, ListIterator* const iterator) {/*
     assert(list);
     assert(iterator);
 
-    iterator->ptr = list->tail;
+    iterator->ptr = list->tail;*/
 
     return Error::OK;
 }
@@ -390,11 +464,11 @@ List::Error List::begin(List const* const list, ListIterator* const iterator) {
  * @param [out] iterator Iterator to the last element
  * @return Error Error code
  */
-List::Error List::rbegin(List const* const list, ListIterator* const iterator) {
+List::Error List::rbegin(List const* const list, ListIterator* const iterator) {/*
     assert(list);
     assert(iterator);
 
-    iterator->ptr = list->head;
+    iterator->ptr = list->head;*/
 
     return Error::OK;
 }

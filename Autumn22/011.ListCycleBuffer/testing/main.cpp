@@ -34,11 +34,11 @@ int main(int argc, const char* const* const argv) {
     List::erase(&list, &elem);
     List__dump(list);
     List::begin(&list, &elem);
-    ListIterator::next(&elem);
-    ListIterator::next(&elem);
-    ListIterator::next(&elem);
-    ListIterator::next(&elem);
-    ListIterator::prev(&elem);
+    ListIterator::next(&list, &elem);
+    ListIterator::next(&list, &elem);
+    ListIterator::next(&list, &elem);
+    ListIterator::next(&list, &elem);
+    ListIterator::prev(&list, &elem);
     List::erase(&list, &elem);
     List__dump(list);
 

@@ -8,6 +8,8 @@
  *
  */
 
+#include "ListIterator.h"
+
 #ifndef LIST_H
 #define LIST_H
 
@@ -15,12 +17,16 @@
 #include <logger.h>
 
 #include "ListElem.h"
-#include "ListIterator.h"
 
 class List {
 public:
-    ListElem* head;
-    ListElem* tail;
+    size_t freeTail;
+    size_t size;
+
+    size_t capacity;
+
+    ListElem* bufferElem;
+    void* bufferValue;
 
     size_t elemSize;
     ValueOutFunction_t outFunc;
@@ -38,8 +44,10 @@ public:
     [](ValueOutFunction_t_PARAMS) -> char const* {                                                         \
         return strFParser::parseFNBuf(bufN, printfTemplate, *(type const*)valuePtr);                        \
     })
-    static Error ctor(List* const list, DEBUGINFO_CTOR_ARGS_H, size_t const elemSize, ValueOutFunction_t outFunc);
+    static Error ctor(List* const list, DEBUGINFO_CTOR_ARGS_H, size_t const elemSize, ValueOutFunction_t outFunc, size_t capacity = 0);
     static Error dtor(List* const list);
+
+    static Error resize(List* const list, size_t newCapacity);
 
     static Error pushBack (List* const list, void const* const src = nullptr);
     static Error pushFront(List* const list, void const* const src = nullptr);

@@ -17,7 +17,7 @@ class ListIterator;
 
 class ListIterator {
 public:
-    ListElem* ptr;
+    size_t ptr;
 
     enum Error {
         OK = 0,     ///< No errors
@@ -25,13 +25,13 @@ public:
         LAST_ELEM,  ///< The last element is reached
     };
 
-    static Error next(ListIterator* const iterator);
-    static Error prev(ListIterator* const iterator);
-    static void* getValue(ListIterator const* const iterator);
+    static Error next(List const* const list, ListIterator* const iterator);
+    static Error prev(List const* const list, ListIterator* const iterator);
+    static void* getValue(List const* const list, ListIterator const* const iterator);
 
-    static ListElem const* getElemPtr(ListIterator const* const iterator);
-    static ListElem const* getNextPtr(ListIterator const* const iterator);
-    static ListElem const* getPrevPtr(ListIterator const* const iterator);
+    static size_t getElemPtr(List const* const list, ListIterator const* const iterator);
+    static size_t getNextPtr(List const* const list, ListIterator const* const iterator);
+    static size_t getPrevPtr(List const* const list, ListIterator const* const iterator);
 };
 
 #endif // LISTITERATOR_H
