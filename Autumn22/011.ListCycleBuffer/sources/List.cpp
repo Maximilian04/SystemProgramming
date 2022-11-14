@@ -70,13 +70,13 @@ List::Error List::dtor(List* const list) {
 }
 
 /**
- * @brief Resize list's buffer
+ * @brief Linearise (& resize) buffer
  *
- * @param [out] list List
- * @param [int] newCapacity New capacity of list
+ * @param [out] list
+ * @param [in] newCapacity New capacity
  * @return List::Error Error code
  */
-List::Error List::resize(List* const list, size_t newCapacity) {
+List::Error List::linearize(List* const list, size_t newCapacity) {
     assert(list);
 
     if (newCapacity < list->size)
@@ -120,7 +120,7 @@ List::Error List::resize(List* const list, size_t newCapacity) {
         newBufferElem[0].prev = list->size;
         newBufferElem[0].next = 1;
 
-        if (list->size < list->capacity) {
+        if (list->size < newCapacity) {
             newBufferElem[list->size + 1].prev = 0;
             list->freeTail = list->size + 1;
         } else {
@@ -136,6 +136,51 @@ List::Error List::resize(List* const list, size_t newCapacity) {
     free(list->bufferValue);
     list->bufferElem = newBufferElem;
     list->bufferValue = newBufferValue;
+    list->capacity = newCapacity;
+
+    return Error::OK;
+}
+
+/**
+ * @brief Resize list's buffer (could only **increase** capacity)
+ *
+ * @param [out] list List
+ * @param [int] newCapacity New capacity of list
+ * @return List::Error Error code
+ */
+List::Error List::resize(List* const list, size_t newCapacity) {
+    assert(list);
+
+    if (newCapacity < list->capacity)
+        return Error::BUF_OVERFLOW;
+
+    list->bufferElem = (ListElem*)realloc(list->bufferElem, (newCapacity + 1) * sizeof(ListElem));
+    list->bufferValue = realloc(list->bufferValue, (newCapacity + 1) * list->elemSize);
+
+    if (!list->bufferElem)  return Error::MEM_ERR;
+    if (!list->bufferValue) return Error::MEM_ERR;
+
+    for (size_t index = list->capacity + 1; index < newCapacity + 1; ++index) {
+        ListElem* elem = &list->bufferElem[index];
+        memset((uint8_t*)list->bufferValue + list->elemSize * index, 0, list->elemSize);
+
+        if (index > list->capacity + 1)
+            elem->prev = index - 1;
+        else
+            elem->prev = 0;
+        if (index != newCapacity)
+            elem->next = index + 1;
+        else
+            elem->next = 0;
+    }
+
+    if (list->freeTail) {
+        assert(!list->bufferElem[list->freeTail].prev);
+        list->bufferElem[list->freeTail].prev = newCapacity;
+        list->bufferElem[newCapacity].next = list->freeTail;
+    } else {
+    }
+    list->freeTail = list->capacity + 1;
     list->capacity = newCapacity;
 
     return Error::OK;

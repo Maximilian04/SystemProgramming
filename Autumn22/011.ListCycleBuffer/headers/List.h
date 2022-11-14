@@ -49,7 +49,8 @@ public:
     static Error ctor(List* const list, DEBUGINFO_CTOR_ARGS_H, size_t const elemSize, ValueOutFunction_t outFunc, size_t capacity = 0);
     static Error dtor(List* const list);
 
-    static Error resize(List* const list, size_t newCapacity = 0);
+    static Error linearize(List* const list, size_t newCapacity = 0);
+    static Error resize(List* const list, size_t newCapacity);
 
     static Error pushBack (List* const list, void const* const src = nullptr);
     static Error pushFront(List* const list, void const* const src = nullptr);

@@ -28,6 +28,8 @@ int main(int argc, const char* const* const argv) {
     List::pushBack(&list, &i);
     // List::popBack(&list);
     List__dump(list);
+    List::resize(&list, 20);
+    List__dump(list);
     List::pushBack(&list, &i);
     // List::popFront(&list);
     List__dump(list);
@@ -44,7 +46,7 @@ int main(int argc, const char* const* const argv) {
     ListIterator::prev(&list, &elem);
     // List::erase(&list, &elem);
     List__dump(list);
-    List::resize(&list);
+    List::linearize(&list);
     List__dump(list);
 
     List::dtor(&list);
