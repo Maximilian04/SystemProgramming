@@ -13,11 +13,6 @@ OBJECTS := ${OBJECTS} build\${NAME}.o
 build\${NAME}.o: sources\${NAME}.cpp
 	${COMPILE_O}
 
-NAME = graphviz
-OBJECTS := ${OBJECTS} build\${NAME}.o
-build\${NAME}.o: sources\${NAME}.cpp
-	${COMPILE_O}
-
 NAME = strFParser
 OBJECTS := ${OBJECTS} build\${NAME}.o
 build\${NAME}.o: sources\${NAME}.cpp
