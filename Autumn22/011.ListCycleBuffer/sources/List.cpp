@@ -132,13 +132,18 @@ List::Error List::resize(List* const list, size_t newCapacity) {
     return Error::OK;
 }
 
-#define SET_NEW_ELEMENT                             \
-    newElem->valuePtr = calloc(list->elemSize, 1);   \
-    if (!newElem->valuePtr) return Error::MEM_ERR;    \
-    if (src)                                           \
-        memcpy(newElem->valuePtr, src, list->elemSize); \
-    else                                                 \
-        memset(newElem->valuePtr, 0, list->elemSize);
+#define HEAD (list->bufferElem[0].prev)
+#define TAIL (list->bufferElem[0].next)
+#define FREETAIL (list->freeTail)
+#define _NEXT(elem) (list->bufferElem[elem].next)
+#define _PREV(elem) (list->bufferElem[elem].prev)
+
+#define SET_NEW_ELEMENT                                                                   \
+    list->size++;                                                                          \
+    if (src)                                                                                \
+        memcpy((uint8_t*)list->bufferValue + list->elemSize * newElem, src, list->elemSize); \
+    else                                                                                      \
+        memset((uint8_t*)list->bufferValue + list->elemSize * newElem, 0, list->elemSize);     \
 
 /**
  * @brief Push new element to the back of the list
@@ -150,32 +155,27 @@ List::Error List::resize(List* const list, size_t newCapacity) {
 List::Error List::pushBack(List* const list, void const* const src) {
     assert(list);
 
-    size_t newElem = list->freeTail;
+    size_t newElem = FREETAIL;
+    FREETAIL = _NEXT(FREETAIL);
+    _PREV(FREETAIL) = 0;
 
     if (list->size) {
-        assert(list->bufferElem[0].prev);
-        assert(list->bufferElem[0].next);
-        assert(list->bufferElem[list->bufferElem[0].prev].next == 0);
+        assert(HEAD);
+        assert(TAIL);
+        assert(_NEXT(HEAD) == 0);
 
-        list->bufferElem[list->bufferElem[0].prev].next = newElem;
-        list->bufferElem[newElem].prev = list->bufferElem[0].prev;
+        _NEXT(HEAD) = newElem;
+        _PREV(newElem) = HEAD;
     } else {
-        assert(!list->bufferElem[0].prev);
-        assert(!list->bufferElem[0].next);
-        list->bufferElem[0].next = newElem;
-        list->bufferElem[newElem].prev = 0;
+        assert(!HEAD);
+        assert(!TAIL);
+        TAIL = newElem;
+        _PREV(TAIL) = 0;
     }
-    list->bufferElem[0].prev = newElem;
-    list->freeTail = list->bufferElem[newElem].next;
-    list->bufferElem[list->freeTail].prev = 0;
-    list->bufferElem[newElem].next = 0;
-    list->size++;
+    HEAD = newElem;
+    _NEXT(newElem) = 0;
 
-    // SET_NEW_ELEMENT;
-    if (src)
-        memcpy((uint8_t*)list->bufferValue + list->elemSize * newElem, src, list->elemSize);
-    else
-        memset((uint8_t*)list->bufferValue + list->elemSize * newElem, 0, list->elemSize);
+    SET_NEW_ELEMENT;
 
     return Error::OK;
 }
@@ -190,11 +190,12 @@ List::Error List::pushBack(List* const list, void const* const src) {
 List::Error List::pushFront(List* const list, void const* const src) { /*
     assert(list);
 
-    MAKE_NEW_ELEMENT;
+    size_t newElem = list->freeTail;
 
-    if (list->tail) {
-        assert(list->head);
-        assert(list->tail->prev == nullptr);
+    if (list->size) {
+        assert(list->bufferElem[0].prev);
+        assert(list->bufferElem[0].next);
+        assert(list->bufferElem[list->bufferElem[0].next].prev == 0);
 
         list->tail->prev = newElem;
         newElem->next = list->tail;
@@ -441,8 +442,12 @@ List::Error List::erase(List* const list, ListIterator* const iterator, Directio
     return Error::OK;
 }
 
-#undef MAKE_NEW_ELEMENT
-#undef SET_NEW_ELEMENT_VALUE
+#undef HEAD
+#undef TAIL
+#undef FREETAIL
+#undef _NEXT
+#undef _PREV
+#undef SET_NEW_ELEMENT
 
 /**
  * @brief Is list empty
