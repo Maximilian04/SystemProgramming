@@ -119,6 +119,7 @@ static const wchar_t graphHeadTailEgg[] = L""
 
 static const wchar_t graphEgg[] = L""
 "    element_%S [label = <%S>;shape = \"egg\";margin = \"0\";fillcolor = \"white\";color = \"black\";];\n"
+"    element_%S -> element_tail [style = invis; weight = 100;];\n"
 "    element_%S -> element_head [style = invis; weight = 100;];\n"
 "\n"
 "    { rank=same; element_%S; element_%p; }\n"
@@ -126,8 +127,8 @@ static const wchar_t graphEgg[] = L""
 "    element_%S:s -> element_%p:head:n [color = \"coral\"; weigth = 200;];\n"
 ;
 
-#define GRAPH_EGG(tailToken, name) \
-    /* wString */ graphEgg,         \
-    /* */ #name, #name, #name,       \
-    /* ranking */ #name, tailToken,   \
+#define GRAPH_EGG(tailToken, name)  \
+    /* wString */ graphEgg,          \
+    /* */ #name, #name, #name, #name, \
+    /* ranking */ #name, tailToken,    \
     /* arrow */ #name, tailToken
