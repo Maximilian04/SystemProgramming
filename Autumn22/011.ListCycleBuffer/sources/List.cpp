@@ -85,6 +85,9 @@ List::Error List::resize(List* const list, size_t newCapacity) {
     ListElem* newBufferElem = (ListElem*)calloc(newCapacity + 1, sizeof(ListElem));
     void* newBufferValue = calloc(newCapacity + 1, list->elemSize);
 
+    if (!newBufferElem)  return Error::MEM_ERR;
+    if (!newBufferValue) return Error::MEM_ERR;
+
     for (size_t index = 1; index < newCapacity + 1; ++index) {
         ListElem* elem = &newBufferElem[index];
 
@@ -102,17 +105,23 @@ List::Error List::resize(List* const list, size_t newCapacity) {
         assert(list->size <= list->capacity);
 
         ListIterator iterator;
-        List::begin(list, &iterator);
+        List::Error err = List::begin(list, &iterator);
+        assert(!err);
+
         uint8_t* elemValue = (uint8_t*)newBufferValue;
+
         do {
             elemValue += list->elemSize;
             memcpy(elemValue, ListIterator::getValue(list, &iterator), list->elemSize);
         } while (!ListIterator::next(list, &iterator));
 
         newBufferElem[list->size].next = 0;
-        newBufferElem[list->size + 1].prev = list->size;
+
+        newBufferElem[0].prev = list->size;
+        newBufferElem[0].next = 1;
 
         if (list->size < list->capacity) {
+            newBufferElem[list->size + 1].prev = 0;
             list->freeTail = list->size + 1;
         } else {
             list->freeTail = 0;
@@ -489,8 +498,9 @@ bool List::isEmpty(List const* const list) {
 List::Error List::begin(List const* const list, ListIterator* const iterator) {
     assert(list);
     assert(iterator);
+    assert(list->bufferElem);
 
-    iterator->ptr = list->bufferElem[0].next;
+    iterator->ptr = list->bufferElem->next;
 
     return Error::OK;
 }
@@ -505,8 +515,9 @@ List::Error List::begin(List const* const list, ListIterator* const iterator) {
 List::Error List::rbegin(List const* const list, ListIterator* const iterator) {
     assert(list);
     assert(iterator);
+    assert(list->bufferElem);
 
-    iterator->ptr = list->bufferElem[0].prev;
+    iterator->ptr = list->bufferElem->prev;
 
     return Error::OK;
 }
