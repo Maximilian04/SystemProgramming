@@ -42,6 +42,10 @@ static const char htmlCyanPointer[] =
 "<font color=\"cyan\">%p</font>"
 ;
 
+static const char htmlLogicalPointer[] =
+"<font color=\"RosyBrown\">%u</font>"
+;
+
 static const char htmlCrimsonColorStart[] =
 "<font color=\"indianRed\">"
 ;

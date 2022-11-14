@@ -1,6 +1,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <assert.h>
+#include <stdlib.h>
 
 #include <strFParser.h>
 
@@ -70,13 +71,16 @@ namespace graphviz {
         printLog(logTarget, L"%s", graphTail);
     }
 
-    void logElem(size_t const elemIndex, void const* const elemPtr, void const* const nextPtr, void const* const prevPtr,
-        ValueOutFunction_t const outFunc, size_t const bufN, void const* const valuePtr) {
+    void logElem(size_t const elemIndex, size_t const elemPtr, size_t const nextPtr, size_t const prevPtr,
+        ValueOutFunction_t const outFunc, size_t const bufN, void const* const valuePtr, size_t const prevOrder) {
 
         assert(logTarget != nullptr);
 
-#define PRINTLOG_GRAPH_ELEM_BODY(NPtoken, ...) \
-printLog(logTarget, GRAPH_ELEM_BODY(NPtoken, elemPtr, elemIndex, elemPtr, outFunc(bufN, valuePtr) __VA_OPT__(, __VA_ARGS__)))
+#define PRINTLOG_GRAPH_ELEM_BODY(NPtoken, ...)                                                                                           \
+if (elemPtr)                                                                                                                              \
+    printLog(logTarget, GRAPH_ELEM_BODY(NPtoken, elemPtr, elemIndex, elemPtr, outFunc(bufN, valuePtr) __VA_OPT__(, __VA_ARGS__)));         \
+else                                                                                                                                        \
+    printLog(logTarget, GRAPH_ELEM_BODY(NPtoken##Managing, elemPtr, elemIndex, elemPtr, outFunc(bufN, valuePtr) __VA_OPT__(, __VA_ARGS__))); \
 
         if (nextPtr) {
             if (prevPtr) {
@@ -94,17 +98,18 @@ printLog(logTarget, GRAPH_ELEM_BODY(NPtoken, elemPtr, elemIndex, elemPtr, outFun
 
 #undef PRINTLOG_GRAPH_ELEM_BODY
 
-        if (nextPtr)
-            printLog(logTarget, GRAPH_ELEM_ORDER(elemPtr, nextPtr));
+        if (elemPtr)
+            printLog(logTarget, GRAPH_ELEM_ORDER(prevOrder, elemPtr));
         if (nextPtr)
             printLog(logTarget, GRAPH_ARROW_2NEXT(elemPtr, nextPtr));
         if (prevPtr)
             printLog(logTarget, GRAPH_ARROW_2PREV(elemPtr, prevPtr));
     }
 
-    void logHeadTailEgg(void const* const headPtr, void const* const tailPtr) {
+    void logHeadTailEgg(size_t const headPtr, size_t const tailPtr, size_t const freeTailPtr) {
         assert(logTarget != nullptr);
 
         printLog(logTarget, GRAPH_HEADTAIL_EGG(headPtr, tailPtr));
+        printLog(logTarget, GRAPH_EGG(freeTailPtr, free));
     }
 }

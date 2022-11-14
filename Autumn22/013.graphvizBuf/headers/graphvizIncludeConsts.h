@@ -5,7 +5,8 @@ static const wchar_t graphHead[] = L""
 "    rankdir = LR;\n"
 // "    fontname = \"Mono\"\n"
 "    node [shape = record; style = \"filled\";];\n"
-"    // splines = ortho;\n"
+// "    splines = ortho;\n"
+"    splines = spline;\n"
 ;
 
 static const wchar_t graphTail[] = L""
@@ -20,7 +21,7 @@ static const char graphRunCommandTemplate[] =
 "    element_%p [label = <<table border=\"0\" cellborder=\"1\" cellspacing=\"0\">\n"
 
 #define ELEM_PTR_SECTION(name, ...) \
-"        <tr><td port=\"" #name "\" colspan=\"2\">" __VA_OPT__("[") "<FONT COLOR=\"cyan\">%p</FONT>" __VA_OPT__("]") "</td></tr>\n"
+"        <tr><td port=\"" #name "\" colspan=\"2\"><FONT COLOR=\"RosyBrown\">" __VA_OPT__("[") "%u" __VA_OPT__("]") "</FONT></td></tr>\n"
 
 #define ELEM_NULLPTR_SECTION(name, ...) \
 "        <tr><td port=\"" #name "\" colspan=\"2\">" __VA_OPT__("[") "<FONT COLOR=\"indianRed\">0 (nullptr)</FONT>" __VA_OPT__("]") "</td></tr>\n"
@@ -32,25 +33,33 @@ static const char graphRunCommandTemplate[] =
 "        </table>>;shape = \"none\";margin = \"0\";fillcolor = \"MistyRose\";color = \"RosyBrown\";];\n"
 // "        </table>>;shape = \"none\";margin = \"0\";fillcolor = \"MistyRose\";color = \"green\";];\n"
 
+#define ELEM_MANAGINGNODE_END \
+"        </table>>;shape = \"none\";margin = \"0\";fillcolor = \"Honeydew\";color = \"DarkSeaGreen\";];\n"
+
 #define ELEM_ARROW(nameSrc, nameDst, color) \
 "    element_%p:" #nameSrc " -> element_%p:" #nameDst " [color = \"" #color "\"; constraint = false;];\n"
 
 #define ELEM_WEIGTH_ARROW \
 "    element_%p -> element_%p [style = invis; weight = 100;];\n"
 
-#define graphElemBody__TemplateDEF(token, cmd1, cmd2)          \
+#define graphElemBody__TemplateDEF(token, cmd0, cmd1, cmd2)    \
     static const wchar_t graphElemBody##token##Template[] = L"" \
         ELEM_NODE_DEF                                            \
         ELEM_PTR_SECTION(head, yesplease)                         \
         ELEM_VALUE_SECTION(value)                                  \
         cmd1(next)                                                  \
         cmd2(prev)                                                   \
-        ELEM_NODE_END
+        cmd0
 
-graphElemBody__TemplateDEF(PP, ELEM_PTR_SECTION, ELEM_PTR_SECTION);
-graphElemBody__TemplateDEF(PN, ELEM_PTR_SECTION, ELEM_NULLPTR_SECTION);
-graphElemBody__TemplateDEF(NP, ELEM_NULLPTR_SECTION, ELEM_PTR_SECTION);
-graphElemBody__TemplateDEF(NN, ELEM_NULLPTR_SECTION, ELEM_NULLPTR_SECTION);
+graphElemBody__TemplateDEF(PP,         ELEM_NODE_END,         ELEM_PTR_SECTION,     ELEM_PTR_SECTION);
+graphElemBody__TemplateDEF(PN,         ELEM_NODE_END,         ELEM_PTR_SECTION,     ELEM_NULLPTR_SECTION);
+graphElemBody__TemplateDEF(NP,         ELEM_NODE_END,         ELEM_NULLPTR_SECTION, ELEM_PTR_SECTION);
+graphElemBody__TemplateDEF(NN,         ELEM_NODE_END,         ELEM_NULLPTR_SECTION, ELEM_NULLPTR_SECTION);
+
+graphElemBody__TemplateDEF(PPManaging, ELEM_MANAGINGNODE_END, ELEM_PTR_SECTION,     ELEM_PTR_SECTION);
+graphElemBody__TemplateDEF(PNManaging, ELEM_MANAGINGNODE_END, ELEM_PTR_SECTION,     ELEM_NULLPTR_SECTION);
+graphElemBody__TemplateDEF(NPManaging, ELEM_MANAGINGNODE_END, ELEM_NULLPTR_SECTION, ELEM_PTR_SECTION);
+graphElemBody__TemplateDEF(NNManaging, ELEM_MANAGINGNODE_END, ELEM_NULLPTR_SECTION, ELEM_NULLPTR_SECTION);
 
 #undef graphElemBody__TemplateDEF
 
@@ -107,3 +116,18 @@ static const wchar_t graphHeadTailEgg[] = L""
     /* wString */ graphHeadTailEgg,               \
     /* ranking */ tailToken, headToken,            \
     /* arrows */ tailToken, headToken
+
+static const wchar_t graphEgg[] = L""
+"    element_%S [label = <%S>;shape = \"egg\";margin = \"0\";fillcolor = \"white\";color = \"black\";];\n"
+"    element_%S -> element_head [style = invis; weight = 100;];\n"
+"\n"
+"    { rank=same; element_%S; element_%p; }\n"
+"\n"
+"    element_%S:s -> element_%p:head:n [color = \"coral\"; weigth = 200;];\n"
+;
+
+#define GRAPH_EGG(tailToken, name) \
+    /* wString */ graphEgg,         \
+    /* */ #name, #name, #name,       \
+    /* ranking */ #name, tailToken,   \
+    /* arrow */ #name, tailToken

@@ -29,10 +29,10 @@ namespace graphviz {
     void logGraphHead();
     void logGraphTail();
 
-    void logElem(size_t const elemIndex, void const* const elemPtr, void const* const nextPtr, void const* const prevPtr,
-        ValueOutFunction_t const outFunc, size_t const bufN, void const* const valuePtr);
+    void logElem(size_t const elemIndex, size_t const elemPtr, size_t const nextPtr, size_t const prevPtr,
+        ValueOutFunction_t const outFunc, size_t const bufN, void const* const valuePtr, size_t const prevOrder);
 
-    void logHeadTailEgg(void const* const headPtr, void const* const tailPtr);
+    void logHeadTailEgg(size_t const headPtr, size_t const tailPtr, size_t const freeTailPtr = 0);
 }
 
 #endif // GRAPHVIZ_H
