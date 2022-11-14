@@ -71,7 +71,7 @@ List::Error List::dtor(List* const list) {
  * @param [in] src Pointer to the new element value
  * @return List::Error Error code
  */
-List::Error List::pushBack(List* const list, void const* const src) {
+List::Error List::pushBack(List* const list, void const* const src) { //TODO переписать, там в дальнейших ошибочки могут быть
     assert(list);
 
     MAKE_NEW_ELEMENT;

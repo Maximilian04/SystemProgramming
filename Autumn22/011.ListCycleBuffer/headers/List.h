@@ -34,10 +34,11 @@ public:
     DebugInfo debugInfo;
 
     enum Error {
-        OK = 0,      ///< No errors
-        MEM_ERR,     ///< Error in memory allocation
-        NULLPTR_ERR, ///< Nullptr is occured
-        EMPTY,       ///< No elements in list
+        OK = 0,       ///< No errors
+        MEM_ERR,      ///< Error in memory allocation
+        NULLPTR_ERR,  ///< Nullptr is occured
+        EMPTY,        ///< No elements in list
+        BUF_OVERFLOW, ///< Capacity has already beem fulled
     };
 
 #define List__ctor(obj, type, printfTemplate, ...) List::ctor(&obj, DEBUGINFO_CTOR_ARGS_R(#obj), sizeof(type), \

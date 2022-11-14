@@ -137,6 +137,18 @@ List::Error List::resize(List* const list, size_t newCapacity) {
 #define FREETAIL (list->freeTail)
 #define _NEXT(elem) (list->bufferElem[elem].next)
 #define _PREV(elem) (list->bufferElem[elem].prev)
+#define IT (iterator->ptr)
+
+#define MAKE_NEW_ELEMENT                    \
+    if (!FREETAIL) {                         \
+        assert(list->size == list->capacity); \
+        return Error::BUF_OVERFLOW;            \
+    }                                           \
+    assert(list->size < list->capacity);         \
+    size_t newElem = FREETAIL;                    \
+    FREETAIL = _NEXT(FREETAIL);                    \
+    if (FREETAIL)                                   \
+        _PREV(FREETAIL) = 0;
 
 #define SET_NEW_ELEMENT                                                                   \
     list->size++;                                                                          \
@@ -155,9 +167,7 @@ List::Error List::resize(List* const list, size_t newCapacity) {
 List::Error List::pushBack(List* const list, void const* const src) {
     assert(list);
 
-    size_t newElem = FREETAIL;
-    FREETAIL = _NEXT(FREETAIL);
-    _PREV(FREETAIL) = 0;
+    MAKE_NEW_ELEMENT;
 
     if (list->size) {
         assert(HEAD);
@@ -173,7 +183,7 @@ List::Error List::pushBack(List* const list, void const* const src) {
         _PREV(TAIL) = 0;
     }
     HEAD = newElem;
-    _NEXT(newElem) = 0;
+    _NEXT(HEAD) = 0;
 
     SET_NEW_ELEMENT;
 
@@ -187,25 +197,28 @@ List::Error List::pushBack(List* const list, void const* const src) {
  * @param [in] src Pointer to the new element value
  * @return List::Error Error code
  */
-List::Error List::pushFront(List* const list, void const* const src) { /*
+List::Error List::pushFront(List* const list, void const* const src) {
     assert(list);
 
-    size_t newElem = list->freeTail;
+    MAKE_NEW_ELEMENT;
 
     if (list->size) {
-        assert(list->bufferElem[0].prev);
-        assert(list->bufferElem[0].next);
-        assert(list->bufferElem[list->bufferElem[0].next].prev == 0);
+        assert(HEAD);
+        assert(TAIL);
+        assert(_PREV(TAIL) == 0);
 
-        list->tail->prev = newElem;
-        newElem->next = list->tail;
+        _PREV(TAIL) = newElem;
+        _NEXT(newElem) = TAIL;
     } else {
-        assert(!list->head);
-        list->head = newElem;
+        assert(!HEAD);
+        assert(!TAIL);
+        HEAD = newElem;
+        _PREV(HEAD) = 0;
     }
-    list->tail = newElem;
+    TAIL = newElem;
+    _PREV(TAIL) = 0;
 
-    SET_NEW_ELEMENT_VALUE;*/
+    SET_NEW_ELEMENT;
 
     return Error::OK;
 }
@@ -286,27 +299,28 @@ List::Error List::popFront(List* const list) {/*
  * @param [in] src Pointer to the new element value
  * @return List::Error Error code
  */
-List::Error List::emplaceAfter(List* const list, ListIterator const* const iterator, void const* const src) {/*
+List::Error List::emplaceAfter(List* const list, ListIterator const* const iterator, void const* const src) {
     assert(list);
     assert(iterator);
+    assert(IT);
 
     Error err = OK;
-    if (iterator->ptr->next == nullptr) {
+    if (_NEXT(IT) == 0) {
         err = pushBack(list, src);
         return err;
     }
 
     MAKE_NEW_ELEMENT;
 
-    assert(iterator->ptr->next->prev == iterator->ptr);
+    assert(_PREV(_NEXT(IT)) == IT);
 
-    newElem->prev = iterator->ptr;
-    newElem->next = iterator->ptr->next;
+    _PREV(newElem) = IT;
+    _NEXT(newElem) = _NEXT(IT);
 
-    iterator->ptr->next->prev = newElem;
-    iterator->ptr->next = newElem;
+    _PREV(_NEXT(IT)) = newElem;
+    _NEXT(IT) = newElem;
 
-    SET_NEW_ELEMENT_VALUE;*/
+    SET_NEW_ELEMENT;
 
     return Error::OK;
 }
@@ -319,28 +333,28 @@ List::Error List::emplaceAfter(List* const list, ListIterator const* const itera
  * @param [in] src Pointer to the new element value
  * @return List::Error Error code
  */
-List::Error List::emplaceBefore(List* const list, ListIterator const* const iterator, void const* const src) {/*
+List::Error List::emplaceBefore(List* const list, ListIterator const* const iterator, void const* const src) {
     assert(list);
     assert(iterator);
+    assert(IT);
 
     Error err = OK;
-    if (iterator->ptr->prev == nullptr) {
+    if (_PREV(IT) == 0) {
         err = pushFront(list, src);
         return err;
     }
 
     MAKE_NEW_ELEMENT;
 
+    assert(_NEXT(_PREV(IT)) == IT);
 
-    assert(iterator->ptr->prev->next == iterator->ptr);
+    _NEXT(newElem) = IT;
+    _PREV(newElem) = _PREV(IT);
 
-    newElem->next = iterator->ptr;
-    newElem->prev = iterator->ptr->prev;
+    _NEXT(_PREV(IT)) = newElem;
+    _PREV(IT) = newElem;
 
-    iterator->ptr->prev->next = newElem;
-    iterator->ptr->prev = newElem;
-
-    SET_NEW_ELEMENT_VALUE;*/
+    SET_NEW_ELEMENT;
 
     return Error::OK;
 }
@@ -355,6 +369,10 @@ List::Error List::emplaceBefore(List* const list, ListIterator const* const iter
  * @return List::Error Error code
  */
 List::Error List::emplace(List* const list, ListIterator const* const iterator, Direction direction, void const* const src) {
+    assert(list);
+    assert(iterator);
+    assert(IT);
+
     switch (direction) {
     case Direction::FORWARD:
         return emplaceAfter(list, iterator, src);
@@ -447,7 +465,9 @@ List::Error List::erase(List* const list, ListIterator* const iterator, Directio
 #undef FREETAIL
 #undef _NEXT
 #undef _PREV
+#undef IT
 #undef SET_NEW_ELEMENT
+#undef MAKE_NEW_ELEMENT
 
 /**
  * @brief Is list empty
