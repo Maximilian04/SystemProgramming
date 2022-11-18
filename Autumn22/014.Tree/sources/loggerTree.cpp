@@ -1,5 +1,5 @@
 #include <logger.h>
-#include <graphviz.h>
+#include <graphviz\graphvizTree.h>>
 
 #include "loggerTree.h"
 
