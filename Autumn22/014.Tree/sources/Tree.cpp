@@ -49,6 +49,7 @@ Tree::Error Tree::dtor(Tree* const tree) {
     }
 
     tree->debugInfo.objName = "ZZZOMBIE";
+    tree->elemSize = 0;
 
     return Error::OK;
 }
@@ -65,17 +66,19 @@ Tree::Error Tree::destroySubtree(Tree* const tree, TreeIterator* const iterator)
     TreeIterator child;
 
     child.ptr = iterator->ptr;
-    TreeIterator::left(&child);
-    destroySubtree(tree, &child);
+    if (!TreeIterator::left(&child))
+        destroySubtree(tree, &child);
 
     child.ptr = iterator->ptr;
-    TreeIterator::right(&child);
-    destroySubtree(tree, &child);
+    if (!TreeIterator::right(&child))
+        destroySubtree(tree, &child);
 
     if (tree->root == iterator->ptr) {
         tree->root = nullptr;
     }
 
+    free(iterator->ptr->valuePtr);
+    iterator->ptr->valuePtr = nullptr;
     free(iterator->ptr);
     iterator->ptr = nullptr;
 

@@ -1,19 +1,18 @@
 #include <logger.h>
-#include <graphviz\graphvizTree.h>>
+#include <graphviz\graphvizTree.h>
 
 #include "loggerTree.h"
 
 static void logGraphTree(const Tree* const tree);
 
 void logTree(const Tree* const tree) {
-    // logger::addBlock();
+    logger::addBlock();
 
-    // logger__logField(tree, head, p, nullptr);
-    // logger__logField(tree, tail, p, nullptr);
-    // logger__logField(tree, elemSize, u, 0);
+    logger__logField(tree, root, p, nullptr);
+    logger__logField(tree, elemSize, u, 0);
 
-    // logger::logLine("Elements: ");
-    // logger::addBlock();
+    logger::logLine("Elements: ");
+    logger::addBlock();
 
     // if (!Tree::isEmpty(tree)) {
     //     size_t bufN1 = strFParser::addCallocBuf();
@@ -32,9 +31,9 @@ void logTree(const Tree* const tree) {
     //     strFParser::freeCalloc();
     // }
 
-    // logger::endBlock();
+    logger::endBlock();
 
-    // logger::endBlock();
+    logger::endBlock();
 
     // logGraphTree(tree);
 }
@@ -45,19 +44,19 @@ void logTree(const Tree* const tree) {
 #define LOG_IMG_FILENAME strFParser::parseFNBuf(bufN2, LOG_GRAPH_IMG_FILENAME_TEMPLATE, logToken)
 
 static void logGraphTree(const Tree* const tree) {
-    // static int logToken = 0;
-    // ++logToken;
-    // size_t bufN  = strFParser::addCallocBuf();
-    // size_t bufN1 = strFParser::addCallocBuf();
-    // size_t bufN2 = strFParser::addCallocBuf();
-    // if (graphviz::openLogFile(LOG_FILENAME)) {
-    //     printf("Cannot create graphviz file\n");
-    //     return;
-    // }
+    static int logToken = 0;
+    ++logToken;
+    size_t bufN  = strFParser::addCallocBuf();
+    size_t bufN1 = strFParser::addCallocBuf();
+    size_t bufN2 = strFParser::addCallocBuf();
+    if (graphviz::openLogFile(LOG_FILENAME)) {
+        printf("Cannot create graphviz file\n");
+        return;
+    }
 
-    // graphviz::logGraphHead();
+    graphviz::logGraphHead();
 
-    // if (!Tree::isEmpty(tree)) {
+    if (!Tree::isEmpty(tree)) {
     //     TreeIterator elem;
     //     Tree::begin(tree, &elem);
     //     size_t elemIndex = 0;
@@ -67,16 +66,16 @@ static void logGraphTree(const Tree* const tree) {
     //     } while (!TreeIterator::next(&elem));
 
     //     graphviz::logHeadTailEgg(tree->head, tree->tail);
-    // }
+    }
 
-    // graphviz::logGraphTail();
+    graphviz::logGraphTail();
 
-    // graphviz::closeLogFile();
+    graphviz::closeLogFile();
 
-    // graphviz::run(bufN, LOG_FILENAME, LOG_IMG_FILENAME);
-    // logger::logImg(LOG_IMG_FILENAME);
+    graphviz::run(bufN, LOG_FILENAME, LOG_IMG_FILENAME);
+    logger::logImg(LOG_IMG_FILENAME);
 
-    // strFParser::freeCalloc();
+    strFParser::freeCalloc();
 }
 
 #undef LOG_GRAPH_FILENAME_TEMPLATE

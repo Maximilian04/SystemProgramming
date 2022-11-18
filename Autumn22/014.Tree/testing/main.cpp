@@ -7,7 +7,7 @@ int main(int argc, const char* const* const argv) {
     testingSystem::main(argc, argv);
     Tree tree{};
     Tree__ctor(tree, int, "%d");
-    // Tree__dump(tree);
+    Tree__dump(tree);
     int i = 1;
     Tree::addRoot(&tree, &i);
     
@@ -16,6 +16,7 @@ int main(int argc, const char* const* const argv) {
 
     Tree::addLeft(&tree, &node);
     Tree::addRight(&tree, &node, &i);
+    Tree__dump(tree);
     // i = -1;
     // Tree::pushFront(&tree, &i);
     // i = -2;
@@ -47,8 +48,8 @@ int main(int argc, const char* const* const argv) {
     // Tree::erase(&tree, &elem);
     // Tree__dump(tree);
 
-    // Tree::dtor(&tree);
-    // Tree__dump(tree);
+    Tree::dtor(&tree);
+    Tree__dump(tree);
 
     return 0;
 }
