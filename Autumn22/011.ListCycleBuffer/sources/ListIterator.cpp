@@ -3,6 +3,7 @@
 #include "ListIterator.h"
 
 ListIterator::Error ListIterator::next(List const* const list, ListIterator* const iterator) {
+    assert(list);
     assert(iterator);
     assert(iterator->ptr);
 
@@ -13,6 +14,7 @@ ListIterator::Error ListIterator::next(List const* const list, ListIterator* con
 }
 
 ListIterator::Error ListIterator::prev(List const* const list, ListIterator* const iterator) {
+    assert(list);
     assert(iterator);
     assert(iterator->ptr);
 
@@ -23,6 +25,7 @@ ListIterator::Error ListIterator::prev(List const* const list, ListIterator* con
 }
 
 void* ListIterator::getValue(List const* const list, ListIterator const* const iterator) {
+    assert(list);
     assert(iterator);
     assert(iterator->ptr);
 
@@ -31,6 +34,7 @@ void* ListIterator::getValue(List const* const list, ListIterator const* const i
 
 
 size_t ListIterator::getElemPtr(List const* const list, ListIterator const* const iterator) {
+    assert(list);
     assert(iterator);
     assert(iterator->ptr);
 
@@ -38,6 +42,7 @@ size_t ListIterator::getElemPtr(List const* const list, ListIterator const* cons
 }
 
 size_t ListIterator::getNextPtr(List const* const list, ListIterator const* const iterator) {
+    assert(list);
     assert(iterator);
     assert(iterator->ptr);
 
@@ -45,6 +50,7 @@ size_t ListIterator::getNextPtr(List const* const list, ListIterator const* cons
 }
 
 size_t ListIterator::getPrevPtr(List const* const list, ListIterator const* const iterator) {
+    assert(list);
     assert(iterator);
     assert(iterator->ptr);
 

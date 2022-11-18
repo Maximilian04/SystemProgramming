@@ -204,12 +204,15 @@ List::Error List::resize(List* const list, size_t newCapacity) {
     if (FREETAIL)                                   \
         _PREV(FREETAIL) = 0;
 
-#define SET_NEW_ELEMENT                                                                   \
-    list->size++;                                                                          \
-    if (src)                                                                                \
-        memcpy((uint8_t*)list->bufferValue + list->elemSize * newElem, src, list->elemSize); \
-    else                                                                                      \
-        memset((uint8_t*)list->bufferValue + list->elemSize * newElem, 0, list->elemSize);     \
+#define SET_ELEM_VALUE(it, func, src) \
+    mem##func((uint8_t*)list->bufferValue + list->elemSize * it, src, list->elemSize)
+
+#define SET_NEW_ELEMENT                 \
+    list->size++;                        \
+    if (src)                              \
+        SET_ELEM_VALUE(newElem, cpy, src); \
+    else                                    \
+        SET_ELEM_VALUE(newElem, set, 0);
 
 /**
  * @brief Push new element to the back of the list
@@ -249,32 +252,13 @@ List::Error List::pushFront(List* const list, void const* const src) {
  * @param [out] list List
  * @return List::Error Error code
  */
-List::Error List::popBack(List* const list) {/*
+List::Error List::popBack(List* const list) {
     assert(list);
 
-    if (!list->head) {
-        assert(!list->tail);
-        return Error::EMPTY;
-    }
-    assert(list->tail);
+    ListIterator it;
+    it.ptr = HEAD;
 
-    assert(!list->head->next);
-    ListElem* elem = list->head;
-
-    free(elem->valuePtr);
-    elem->valuePtr = nullptr;
-
-    if (elem->prev) {
-        list->head = elem->prev;
-        list->head->next = nullptr;
-    } else {
-        assert(list->head == list->tail);
-        list->head = nullptr;
-        list->tail = nullptr;
-    }
-    free(elem);*/
-
-    return Error::OK;
+    return erase(list, &it, Direction::BACKWARD);
 }
 
 /**
@@ -283,32 +267,13 @@ List::Error List::popBack(List* const list) {/*
  * @param [out] list List
  * @return List::Error Error code
  */
-List::Error List::popFront(List* const list) {/*
+List::Error List::popFront(List* const list) {
     assert(list);
 
-    if (!list->head) {
-        assert(!list->tail);
-        return Error::EMPTY;
-    }
-    assert(list->tail);
+    ListIterator it;
+    it.ptr = TAIL;
 
-    assert(!list->tail->prev);
-    ListElem* elem = list->tail;
-
-    free(elem->valuePtr);
-    elem->valuePtr = nullptr;
-
-    if (elem->next) {
-        list->tail = elem->next;
-        list->tail->prev = nullptr;
-    } else {
-        assert(list->head == list->tail);
-        list->head = nullptr;
-        list->tail = nullptr;
-    }
-    free(elem);*/
-
-    return Error::OK;
+    return erase(list, &it, Direction::FORWARD);
 }
 
 /**
@@ -322,12 +287,6 @@ List::Error List::popFront(List* const list) {/*
 List::Error List::emplaceAfter(List* const list, ListIterator const* const iterator, void const* const src) {
     assert(list);
     assert(iterator);
-
-    Error err = OK;
-    if (_NEXT(IT) == 0) {
-        err = pushBack(list, src);
-        return err;
-    }
 
     MAKE_NEW_ELEMENT;
 
@@ -397,68 +356,32 @@ List::Error List::emplace(List* const list, ListIterator const* const iterator, 
  * @param [in] direction If iterator will be set to the next or previous element (**nullptr** if there is no such an element)
  * @return List::Error Error code
  */
-List::Error List::erase(List* const list, ListIterator* const iterator, Direction direction) {/*
+List::Error List::erase(List* const list, ListIterator* const iterator, Direction direction) {
     assert(list);
     assert(iterator);
 
-    Error err = OK;
-    if (iterator->ptr->next == nullptr) {
-        err = popBack(list);
+    assert(_NEXT(_PREV(IT)) == IT);
+    assert(_PREV(_NEXT(IT)) == IT);
 
-        switch (direction) {
-        case Direction::FORWARD:
-            iterator->ptr = nullptr;
-            break;
-        case Direction::BACKWARD:
-            List::rbegin(list, iterator);
-            break;
-        default:
-            assert(0);
-        }
-
-        return err;
-    }
-    if (iterator->ptr->prev == nullptr) {
-        err = popFront(list);
-        iterator->ptr = nullptr;
-
-        switch (direction) {
-        case Direction::FORWARD:
-            List::begin(list, iterator);
-            break;
-        case Direction::BACKWARD:
-            iterator->ptr = nullptr;
-            break;
-        default:
-            assert(0);
-        }
-
-        return err;
-    }
-
-
-    assert(iterator->ptr->prev->next == iterator->ptr);
-    assert(iterator->ptr->next->prev == iterator->ptr);
-    iterator->ptr->prev->next = iterator->ptr->next;
-    iterator->ptr->next->prev = iterator->ptr->prev;
-
-    ListElem* elemToSet;
+    size_t elemToSet;
     switch (direction) {
     case Direction::FORWARD:
-        elemToSet = iterator->ptr->next;
+        elemToSet = _NEXT(IT);
         break;
     case Direction::BACKWARD:
-        elemToSet = iterator->ptr->prev;
+        elemToSet = _PREV(IT);
         break;
     default:
         assert(0);
     }
 
-    free(iterator->ptr->valuePtr);
-    iterator->ptr->valuePtr = nullptr;
-    free(iterator->ptr);
+    SET_ELEM_VALUE(IT, set, 0);
+    _PREV(FREETAIL) = IT;
+    _NEXT(IT) = FREETAIL;
+    _PREV(IT) = 0;
+    FREETAIL = IT;
 
-    iterator->ptr = elemToSet;*/
+    IT = elemToSet;
 
     return Error::OK;
 }
@@ -469,6 +392,7 @@ List::Error List::erase(List* const list, ListIterator* const iterator, Directio
 #undef _NEXT
 #undef _PREV
 #undef IT
+#undef SET_ELEM_VALUE
 #undef SET_NEW_ELEMENT
 #undef MAKE_NEW_ELEMENT
 
