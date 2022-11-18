@@ -5,45 +5,50 @@
 
 int main(int argc, const char* const* const argv) {
     testingSystem::main(argc, argv);
-    // Tree list;
-    // Tree__ctor(list, int, "%d");
-    // Tree__dump(list);
-    // int i = 1;
-    // Tree::pushBack(&list);
-    // Tree::pushBack(&list, &i);
+    Tree tree{};
+    Tree__ctor(tree, int, "%d");
+    // Tree__dump(tree);
+    int i = 1;
+    Tree::addRoot(&tree, &i);
+    
+    TreeIterator node{};
+    Tree::set2Root(&tree, &node);
+
+    Tree::addLeft(&tree, &node);
+    Tree::addRight(&tree, &node, &i);
     // i = -1;
-    // Tree::pushFront(&list, &i);
+    // Tree::pushFront(&tree, &i);
     // i = -2;
-    // Tree::pushFront(&list, &i);
+    // Tree::pushFront(&tree, &i);
     // i = -3;
-    // Tree::pushFront(&list, &i);
+    // Tree::pushFront(&tree, &i);
     // i = -4;
-    // Tree::pushFront(&list, &i);
+    // Tree::pushFront(&tree, &i);
     // i = -5;
-    // Tree::pushFront(&list, &i);
+    // Tree::pushFront(&tree, &i);
     // i = -6;
-    // Tree::pushFront(&list, &i);
-    // Tree__dump(list);
-    // Tree::popBack(&list);
-    // Tree__dump(list);
-    // Tree::popFront(&list);
-    // Tree__dump(list);
+    // Tree::pushFront(&tree, &i);
+    // Tree__dump(tree);
+    // Tree::popBack(&tree);
+    // Tree__dump(tree);
+    // Tree::popFront(&tree);
+    // Tree__dump(tree);
 
     // TreeIterator elem{};
-    // Tree::begin(&list, &elem);
-    // Tree::erase(&list, &elem);
-    // Tree__dump(list);
-    // Tree::begin(&list, &elem);
+    // Tree::begin(&tree, &elem);
+    // Tree::erase(&tree, &elem);
+    // Tree__dump(tree);
+    // Tree::begin(&tree, &elem);
     // TreeIterator::next(&elem);
     // TreeIterator::next(&elem);
     // TreeIterator::next(&elem);
     // TreeIterator::next(&elem);
     // TreeIterator::prev(&elem);
-    // Tree::erase(&list, &elem);
-    // Tree__dump(list);
+    // Tree::erase(&tree, &elem);
+    // Tree__dump(tree);
 
-    // Tree::dtor(&list);
-    // Tree__dump(list);
+    // Tree::dtor(&tree);
+    // Tree__dump(tree);
 
     return 0;
 }

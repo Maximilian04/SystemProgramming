@@ -413,18 +413,53 @@ Tree::Error Tree::set2Root(Tree const* const tree, TreeIterator* const iterator)
 
 /**
  * @brief Add root node
- * 
+ *
  * @param [out] tree Tree
  * @param [in] src Data to root
- * @return Tree::Error 
+ * @return Tree::Error
  */
 Tree::Error Tree::addRoot(Tree* const tree, void const* const src) {
     assert(tree);
 
     MAKE_NEW_ELEMENT;
-
     tree->root = newElem;
+    SET_NEW_ELEMENT_VALUE;
 
+    return Error::OK;
+}
+
+#define _LEFT(src)  src->ptr->left
+#define _RIGHT(src) src->ptr->right
+
+/**
+ * @brief Add left child to node
+ *
+ * @param [out] iterator Iterator to node
+ * @param [in] src Data
+ * @return Tree::Error Error code
+ */
+Tree::Error Tree::addLeft(Tree* const tree, TreeIterator* const iterator, void const* const src) {
+    assert(iterator);
+
+    MAKE_NEW_ELEMENT;
+    _LEFT(iterator) = newElem;
+    SET_NEW_ELEMENT_VALUE;
+
+    return Error::OK;
+}
+
+/**
+ * @brief Add right child to node
+ *
+ * @param [out] iterator Iterator to node
+ * @param [in] src Data
+ * @return Tree::Error Error code
+ */
+Tree::Error Tree::addRight(Tree* const tree, TreeIterator* const iterator, void const* const src) {
+    assert(iterator);
+
+    MAKE_NEW_ELEMENT;
+    _RIGHT(iterator) = newElem;
     SET_NEW_ELEMENT_VALUE;
 
     return Error::OK;
