@@ -221,27 +221,10 @@ List::Error List::resize(List* const list, size_t newCapacity) {
 List::Error List::pushBack(List* const list, void const* const src) {
     assert(list);
 
-    MAKE_NEW_ELEMENT;
+    ListIterator it;
+    it.ptr = 0;
 
-    if (list->size) {
-        assert(HEAD);
-        assert(TAIL);
-        assert(_NEXT(HEAD) == 0);
-
-        _NEXT(HEAD) = newElem;
-        _PREV(newElem) = HEAD;
-    } else {
-        assert(!HEAD);
-        assert(!TAIL);
-        TAIL = newElem;
-        _PREV(TAIL) = 0;
-    }
-    HEAD = newElem;
-    _NEXT(HEAD) = 0;
-
-    SET_NEW_ELEMENT;
-
-    return Error::OK;
+    return emplaceBefore(list, &it, src);
 }
 
 /**
@@ -254,27 +237,10 @@ List::Error List::pushBack(List* const list, void const* const src) {
 List::Error List::pushFront(List* const list, void const* const src) {
     assert(list);
 
-    MAKE_NEW_ELEMENT;
+    ListIterator it;
+    it.ptr = 0;
 
-    if (list->size) {
-        assert(HEAD);
-        assert(TAIL);
-        assert(_PREV(TAIL) == 0);
-
-        _PREV(TAIL) = newElem;
-        _NEXT(newElem) = TAIL;
-    } else {
-        assert(!HEAD);
-        assert(!TAIL);
-        HEAD = newElem;
-        _PREV(HEAD) = 0;
-    }
-    TAIL = newElem;
-    _PREV(TAIL) = 0;
-
-    SET_NEW_ELEMENT;
-
-    return Error::OK;
+    return emplaceAfter(list, &it, src);
 }
 
 /**
@@ -356,7 +322,6 @@ List::Error List::popFront(List* const list) {/*
 List::Error List::emplaceAfter(List* const list, ListIterator const* const iterator, void const* const src) {
     assert(list);
     assert(iterator);
-    assert(IT);
 
     Error err = OK;
     if (_NEXT(IT) == 0) {
@@ -390,27 +355,11 @@ List::Error List::emplaceAfter(List* const list, ListIterator const* const itera
 List::Error List::emplaceBefore(List* const list, ListIterator const* const iterator, void const* const src) {
     assert(list);
     assert(iterator);
-    assert(IT);
 
-    Error err = OK;
-    if (_PREV(IT) == 0) {
-        err = pushFront(list, src);
-        return err;
-    }
+    ListIterator it;
+    it.ptr = _PREV(iterator->ptr);
 
-    MAKE_NEW_ELEMENT;
-
-    assert(_NEXT(_PREV(IT)) == IT);
-
-    _NEXT(newElem) = IT;
-    _PREV(newElem) = _PREV(IT);
-
-    _NEXT(_PREV(IT)) = newElem;
-    _PREV(IT) = newElem;
-
-    SET_NEW_ELEMENT;
-
-    return Error::OK;
+    return emplaceAfter(list, &it, src);
 }
 
 /**
