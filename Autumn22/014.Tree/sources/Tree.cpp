@@ -484,6 +484,48 @@ ValueOutFunction_t Tree::getOutFunc(Tree const* const tree) {
 }
 
 /**
+ * @brief DFS on tree
+ *
+ * @param [in]  preorderCallback Callback function for preorder
+ * @param [in]   inorderCallback Callback function for inorder
+ * @param [in] postorderCallback Callback function for postorder
+ * @return Tree::Error
+ */
+Tree::Error Tree::dfs(Tree* const tree, DFSCALLBACKLIST_PARAMS, void* userdata, TreeIterator const* const rootNode) {
+    assert(tree);
+
+    TreeIterator nextNode{};
+
+    if (!rootNode) {
+        Tree::set2Root(tree, &nextNode);
+        return dfs(tree, DFSCALLBACKLIST, &nextNode);
+    }
+
+    if (!rootNode->ptr)
+        return Error::OK;
+
+    Error err = Error::OK;
+
+    preorderCallback(tree, rootNode, userdata);
+    
+    nextNode.ptr = rootNode->ptr;
+    TreeIterator::left(&nextNode);
+    err = dfs(tree, DFSCALLBACKLIST, userdata, &nextNode);
+    if (err) return err;
+
+    inorderCallback(tree, rootNode, userdata);
+    
+    nextNode.ptr = rootNode->ptr;
+    TreeIterator::right(&nextNode);
+    err = dfs(tree, DFSCALLBACKLIST, userdata, &nextNode);
+    if (err) return err;
+
+    postorderCallback(tree, rootNode, userdata);
+    
+    return Error::OK;
+}
+
+/**
  * @brief Dump Tree info
  *
  * @param [in] tree Tree

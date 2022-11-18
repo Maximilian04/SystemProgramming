@@ -60,11 +60,21 @@ public:
 
     static Error set2Root(Tree const* const tree, TreeIterator* const iterator);
 
-    static Error addRoot (Tree* const tree,                               void const* const src = nullptr);
-    static Error addLeft (Tree* const tree, TreeIterator* const iterator, void const* const src = nullptr);
+    static Error addRoot( Tree* const tree,                               void const* const src = nullptr);
+    static Error addLeft( Tree* const tree, TreeIterator* const iterator, void const* const src = nullptr);
     static Error addRight(Tree* const tree, TreeIterator* const iterator, void const* const src = nullptr);
 
     static ValueOutFunction_t getOutFunc(Tree const* const tree);
+
+#define DfsCallbackFunction_t_PARAMS Tree const* const tree, TreeIterator const* const iterator, void* userdata
+typedef void (*DfsCallbackFunction_t)(DfsCallbackFunction_t_PARAMS);
+
+#define DFSCALLBACKLIST_PARAMS              \
+    DfsCallbackFunction_t  preorderCallback, \
+    DfsCallbackFunction_t   inorderCallback,  \
+    DfsCallbackFunction_t postorderCallback
+#define DFSCALLBACKLIST preorderCallback, inorderCallback, postorderCallback
+    static Error dfs(Tree* const tree, DFSCALLBACKLIST_PARAMS, void* userdata = nullptr, TreeIterator const* const rootNode = nullptr);
 
 #define Tree__dump(stackObj) Tree::dump(&stackObj, LOGFUNCHEAD_ARGS_R)
     static Error dump(Tree* const tree, LOGFUNCHEAD_ARGS_H);
