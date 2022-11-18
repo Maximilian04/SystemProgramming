@@ -384,8 +384,6 @@ Tree::Error Tree::destroySubtree(Tree* const tree, TreeIterator* const iterator)
 //     return Error::OK;
 // }
 
-// #undef MAKE_NEW_ELEMENT
-// #undef SET_NEW_ELEMENT_VALUE
 
 /**
  * @brief Is tree empty
@@ -412,6 +410,28 @@ Tree::Error Tree::set2Root(Tree const* const tree, TreeIterator* const iterator)
 
     return Error::OK;
 }
+
+/**
+ * @brief Add root node
+ * 
+ * @param [out] tree Tree
+ * @param [in] src Data to root
+ * @return Tree::Error 
+ */
+Tree::Error Tree::addRoot(Tree* const tree, void const* const src) {
+    assert(tree);
+
+    MAKE_NEW_ELEMENT;
+
+    tree->root = newElem;
+
+    SET_NEW_ELEMENT_VALUE;
+
+    return Error::OK;
+}
+
+#undef MAKE_NEW_ELEMENT
+#undef SET_NEW_ELEMENT_VALUE
 
 /**
  * @brief Get tree's outFunc

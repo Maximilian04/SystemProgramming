@@ -60,6 +60,8 @@ public:
 
     static Error set2Root(Tree const* const tree, TreeIterator* const iterator);
 
+    static Error addRoot(Tree* const tree, void const* const src = nullptr);
+
     static ValueOutFunction_t getOutFunc(Tree const* const tree);
 
 #define Tree__dump(stackObj) Tree::dump(&stackObj, LOGFUNCHEAD_ARGS_R)
