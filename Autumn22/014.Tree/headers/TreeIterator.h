@@ -25,8 +25,8 @@ public:
         LAST_ELEM,  ///< The last element is reached
     };
 
-    // static Error next(TreeIterator* const iterator);
-    // static Error prev(TreeIterator* const iterator);
+    static Error left(TreeIterator* const iterator);
+    static Error right(TreeIterator* const iterator);
     static void* getValue(TreeIterator const* const iterator);
 
     // static TreeElem const* getElemPtr(TreeIterator const* const iterator);

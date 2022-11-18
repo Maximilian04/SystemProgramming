@@ -42,24 +42,44 @@ Tree::Error Tree::ctor(Tree* const tree, DEBUGINFO_CTOR_ARGS_H, size_t const ele
 Tree::Error Tree::dtor(Tree* const tree) {
     assert(tree);
 
-    while (!Tree::isEmpty(tree)) {
-        // popBack(tree);
+    if (!Tree::isEmpty(tree)) {
+        TreeIterator treeRoot;
+        Tree::set2Root(tree, &treeRoot);
+        destroySubtree(tree, &treeRoot);
     }
 
-    tree->debugInfo.objName = "zzzombie";
+    tree->debugInfo.objName = "ZZZOMBIE";
 
     return Error::OK;
 }
 
 /**
  * @brief Destroy subtree
- * 
+ *
  * @param [out] tree Tree
  * @param [in] iterator Iterator to subtree's root
- * @return Tree::Error Error code   
+ * @return Tree::Error Error code
  */
 Tree::Error Tree::destroySubtree(Tree* const tree, TreeIterator* const iterator) {
+    if (!iterator->ptr) return Error::OK;
+    TreeIterator child;
 
+    child.ptr = iterator->ptr;
+    TreeIterator::left(&child);
+    destroySubtree(tree, &child);
+
+    child.ptr = iterator->ptr;
+    TreeIterator::right(&child);
+    destroySubtree(tree, &child);
+
+    if (tree->root == iterator->ptr) {
+        tree->root = nullptr;
+    }
+
+    free(iterator->ptr);
+    iterator->ptr = nullptr;
+
+    return Error::OK;
 }
 
 #define MAKE_NEW_ELEMENT                                             \
@@ -377,37 +397,21 @@ bool Tree::isEmpty(Tree const* const tree) {
     return !tree->root;
 }
 
-// /**
-//  * @brief Get the first element of the tree
-//  *
-//  * @param [in] tree Tree
-//  * @param [out] iterator Iterator to the first element
-//  * @return Error Error code
-//  */
-// Tree::Error Tree::begin(Tree const* const tree, TreeIterator* const iterator) {
-//     assert(tree);
-//     assert(iterator);
+/**
+ * @brief Get the root element of the tree
+ *
+ * @param [in] tree Tree
+ * @param [out] iterator Iterator to the first element
+ * @return Error Error code
+ */
+Tree::Error Tree::set2Root(Tree const* const tree, TreeIterator* const iterator) {
+    assert(tree);
+    assert(iterator);
 
-//     iterator->ptr = tree->tail;
+    iterator->ptr = tree->root;
 
-//     return Error::OK;
-// }
-
-// /**
-//  * @brief Get the last element of the tree
-//  *
-//  * @param [in] tree Tree
-//  * @param [out] iterator Iterator to the last element
-//  * @return Error Error code
-//  */
-// Tree::Error Tree::rbegin(Tree const* const tree, TreeIterator* const iterator) {
-//     assert(tree);
-//     assert(iterator);
-
-//     iterator->ptr = tree->head;
-
-//     return Error::OK;
-// }
+    return Error::OK;
+}
 
 /**
  * @brief Get tree's outFunc

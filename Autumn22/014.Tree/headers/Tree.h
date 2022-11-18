@@ -58,8 +58,7 @@ public:
 
     static bool isEmpty(Tree const* const tree);
 
-    // static Error begin (Tree const* const tree, TreeIterator* const iterator);
-    // static Error rbegin(Tree const* const tree, TreeIterator* const iterator);
+    static Error set2Root(Tree const* const tree, TreeIterator* const iterator);
 
     static ValueOutFunction_t getOutFunc(Tree const* const tree);
 

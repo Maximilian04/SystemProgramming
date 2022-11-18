@@ -2,25 +2,25 @@
 
 #include "TreeIterator.h"
 
-// TreeIterator::Error TreeIterator::next(TreeIterator* const iterator) {
-//     assert(iterator);
-//     assert(iterator->ptr);
+TreeIterator::Error TreeIterator::left(TreeIterator* const iterator) {
+    assert(iterator);
+    assert(iterator->ptr);
 
-//     if (!iterator->ptr->next) return Error::LAST_ELEM;
-//     iterator->ptr = iterator->ptr->next;
+    if (!iterator->ptr->left) return Error::LAST_ELEM;
+    iterator->ptr = iterator->ptr->left;
 
-//     return Error::OK;
-// }
+    return Error::OK;
+}
 
-// TreeIterator::Error TreeIterator::prev(TreeIterator* const iterator) {
-//     assert(iterator);
-//     assert(iterator->ptr);
+TreeIterator::Error TreeIterator::right(TreeIterator* const iterator) {
+    assert(iterator);
+    assert(iterator->ptr);
 
-//     if (!iterator->ptr->prev) return Error::FIRST_ELEM;
-//     iterator->ptr = iterator->ptr->prev;
+    if (!iterator->ptr->right) return Error::FIRST_ELEM;
+    iterator->ptr = iterator->ptr->right;
 
-//     return Error::OK;
-// }
+    return Error::OK;
+}
 
 void* TreeIterator::getValue(TreeIterator const* const iterator) {
     assert(iterator);
