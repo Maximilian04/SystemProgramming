@@ -91,7 +91,7 @@ static void logGraphList(const List* const list) {
 
         for (elemIndex = 1; elemIndex <= list->capacity; ++elemIndex) {
             elem.ptr = elemIndex;
-            if (logicInfo[elemIndex].isUsed);
+            // if (logicInfo[elemIndex].isUsed);
             graphviz::logElem(logicInfo[elemIndex].logicIndex, ListIterator::getElemPtr(list, &elem), ListIterator::getNextPtr(list, &elem),
                 ListIterator::getPrevPtr(list, &elem), List::getOutFunc(list), bufN, ListIterator::getValue(list, &elem), elemIndex - 1);
         }
