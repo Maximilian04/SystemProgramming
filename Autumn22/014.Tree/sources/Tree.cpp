@@ -488,7 +488,7 @@ ValueOutFunction_t Tree::getOutFunc(Tree const* const tree) {
  * @param [in] postorderCallback Callback function for postorder
  * @return Tree::Error
  */
-Tree::Error Tree::dfs(Tree* const tree, DFSCALLBACKLIST_PARAMS, void* userdata, TreeIterator const* const rootNode) {
+Tree::Error Tree::dfs(Tree const* const tree, DFSCALLBACKLIST_PARAMS, void* userdata, TreeIterator const* const rootNode) {
     assert(tree);
 
     TreeIterator nextNode{};

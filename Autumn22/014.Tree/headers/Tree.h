@@ -74,7 +74,8 @@ typedef void (*DfsCallbackFunction_t)(DfsCallbackFunction_t_PARAMS);
     DfsCallbackFunction_t   inorderCallback,  \
     DfsCallbackFunction_t postorderCallback
 #define DFSCALLBACKLIST preorderCallback, inorderCallback, postorderCallback
-    static Error dfs(Tree* const tree, DFSCALLBACKLIST_PARAMS, void* userdata = nullptr, TreeIterator const* const rootNode = nullptr);
+
+    static Error dfs(Tree const* const tree, DFSCALLBACKLIST_PARAMS, void* userdata = nullptr, TreeIterator const* const rootNode = nullptr);
 
 #define Tree__dump(stackObj) Tree::dump(&stackObj, LOGFUNCHEAD_ARGS_R)
     static Error dump(Tree* const tree, LOGFUNCHEAD_ARGS_H);
