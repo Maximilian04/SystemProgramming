@@ -488,7 +488,7 @@ ValueOutFunction_t Tree::getOutFunc(Tree const* const tree) {
  * @param [in] postorderCallback Callback function for postorder
  * @return Tree::Error
  */
-Tree::Error Tree::dfs(Tree const* const tree, DFSCALLBACKLIST_PARAMS, void* userdata, TreeIterator const* const rootNode) {
+Tree::Error Tree::dfs(Tree const* const tree, DFSCALLBACKLIST_PARAMS, TreeIterator const* const rootNode) {
     assert(tree);
 
     TreeIterator nextNode{};
@@ -503,22 +503,28 @@ Tree::Error Tree::dfs(Tree const* const tree, DFSCALLBACKLIST_PARAMS, void* user
 
     Error err = Error::OK;
 
-    preorderCallback(tree, rootNode, userdata);
-    
-    nextNode.ptr = rootNode->ptr;
-    TreeIterator::left(&nextNode);
-    err = dfs(tree, DFSCALLBACKLIST, userdata, &nextNode);
-    if (err) return err;
+    // logger::logMsg(strFParser::parseFCalloc(COLORED_TEXT(COLORS_SETTINGS_NOTE_TEXTCOLOR, "1I'm inside the %p-cave"), rootNode->ptr));
+    if (preorderCallback)
+        preorderCallback(tree, rootNode, userdata);
 
-    inorderCallback(tree, rootNode, userdata);
-    
     nextNode.ptr = rootNode->ptr;
-    TreeIterator::right(&nextNode);
-    err = dfs(tree, DFSCALLBACKLIST, userdata, &nextNode);
-    if (err) return err;
+    if (!TreeIterator::left(&nextNode)) {
+        err = dfs(tree, DFSCALLBACKLIST, &nextNode);
+        if (err) return err;
+    }
 
-    postorderCallback(tree, rootNode, userdata);
-    
+    if (inorderCallback)
+        inorderCallback(tree, rootNode, userdata);
+
+    nextNode.ptr = rootNode->ptr;
+    if (!TreeIterator::right(&nextNode)) {
+        err = dfs(tree, DFSCALLBACKLIST, &nextNode);
+        if (err) return err;
+    }
+
+    if (postorderCallback)
+        postorderCallback(tree, rootNode, userdata);
+
     return Error::OK;
 }
 

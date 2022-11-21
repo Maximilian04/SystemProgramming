@@ -31,24 +31,30 @@ void* TreeIterator::getValue(TreeIterator const* const iterator) {
     return nullptr;
 }
 
+bool TreeIterator::isValid(TreeIterator const* const iterator) {
+    assert(iterator);
 
-// TreeElem const* TreeIterator::getElemPtr(TreeIterator const* const iterator) {
-//     assert(iterator);
-//     assert(iterator->ptr);
+    return iterator->ptr;
+}
 
-//     return iterator->ptr;
-// }
 
-// TreeElem const* TreeIterator::getNextPtr(TreeIterator const* const iterator) {
-//     assert(iterator);
-//     assert(iterator->ptr);
+TreeElem const* TreeIterator::getElemPtr(TreeIterator const* const iterator) {
+    assert(iterator);
+    assert(iterator->ptr);
 
-//     return iterator->ptr->next;
-// }
+    return iterator->ptr;
+}
 
-// TreeElem const* TreeIterator::getPrevPtr(TreeIterator const* const iterator) {
-//     assert(iterator);
-//     assert(iterator->ptr);
+TreeElem const* TreeIterator::getLeftPtr(TreeIterator const* const iterator) {
+    assert(iterator);
+    assert(iterator->ptr);
 
-//     return iterator->ptr->prev;
-// }
+    return iterator->ptr->left;
+}
+
+TreeElem const* TreeIterator::getRightPtr(TreeIterator const* const iterator) {
+    assert(iterator);
+    assert(iterator->ptr);
+
+    return iterator->ptr->right;
+}

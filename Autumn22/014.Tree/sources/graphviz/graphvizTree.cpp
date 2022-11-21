@@ -102,6 +102,31 @@ printLog(logTarget, GRAPH_ELEM_BODY(NPtoken, elemPtr, elemIndex, elemPtr, outFun
             printLog(logTarget, GRAPH_ARROW_2PREV(elemPtr, prevPtr));
     }
 
+    void logNode(void const* const elemPtr, void const* const leftPtr, void const* const rightPtr,
+        ValueOutFunction_t const outFunc, size_t const bufN, void const* const valuePtr) {
+
+        assert(logTarget != nullptr);
+
+#define PRINTLOG_GRAPH_NODE_BODY(NPtoken, ...) \
+printLog(logTarget, GRAPH_NODE_BODY(NPtoken, elemPtr, elemPtr, outFunc(bufN, valuePtr) __VA_OPT__(, __VA_ARGS__)))
+
+        if (leftPtr) {
+            if (rightPtr) {
+                PRINTLOG_GRAPH_NODE_BODY(PP, leftPtr, rightPtr);
+            } else {
+                PRINTLOG_GRAPH_NODE_BODY(PN, leftPtr);
+            }
+        } else {
+            if (rightPtr) {
+                PRINTLOG_GRAPH_NODE_BODY(NP, rightPtr);
+            } else {
+                PRINTLOG_GRAPH_NODE_BODY(NN);
+            }
+        }
+
+#undef PRINTLOG_GRAPH_ELEM_BODY
+    }
+
     void logHeadTailEgg(void const* const headPtr, void const* const tailPtr) {
         assert(logTarget != nullptr);
 

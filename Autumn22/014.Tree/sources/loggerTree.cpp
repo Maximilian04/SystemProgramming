@@ -35,7 +35,7 @@ void logTree(const Tree* const tree) {
 
     logger::endBlock();
 
-    // logGraphTree(tree);
+    logGraphTree(tree);
 }
 
 #define LOG_GRAPH_FILENAME_TEMPLATE "stuff/log_tree_graph_%d.gv"
@@ -57,6 +57,19 @@ static void logGraphTree(const Tree* const tree) {
     graphviz::logGraphHead();
 
     if (!Tree::isEmpty(tree)) {
+        struct DfsInfo {
+            size_t bufN;
+        } dfsInfo{ bufN };
+
+        Tree::dfs(tree,
+            [](DfsCallbackFunction_t_PARAMS) -> void {
+            graphviz::logNode(TreeIterator::getElemPtr(iterator), TreeIterator::getLeftPtr(iterator), TreeIterator::getRightPtr(iterator),
+                Tree::getOutFunc(tree), ((DfsInfo*)userdata)->bufN, TreeIterator::getValue(iterator));
+            }, 
+            nullptr,
+            nullptr,
+            &dfsInfo
+            );
     //     TreeIterator elem;
     //     Tree::begin(tree, &elem);
     //     size_t elemIndex = 0;

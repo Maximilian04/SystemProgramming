@@ -29,9 +29,11 @@ public:
     static Error right(TreeIterator* const iterator);
     static void* getValue(TreeIterator const* const iterator);
 
-    // static TreeElem const* getElemPtr(TreeIterator const* const iterator);
-    // static TreeElem const* getNextPtr(TreeIterator const* const iterator);
-    // static TreeElem const* getPrevPtr(TreeIterator const* const iterator);
+    static bool isValid(TreeIterator const* const iterator);
+
+    static TreeElem const* getElemPtr(TreeIterator const* const iterator);
+    static TreeElem const* getLeftPtr(TreeIterator const* const iterator);
+    static TreeElem const* getRightPtr(TreeIterator const* const iterator);
 };
 
 #endif // TREEITERATOR_H
