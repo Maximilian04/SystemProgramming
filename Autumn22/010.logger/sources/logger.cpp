@@ -92,14 +92,14 @@ namespace logger {
     void logStructHead(const char* structName, const void* objPtr) {
         assert(structName != nullptr);
 
-        logger::logLine(strFParser::parseFCalloc("%s[" COLORED_TEXT("cyan", "%p") "]:",
+        logger::logLine(strFParser::parseFCalloc("%s[" COLORED_TEXT(COLORS_SETTINGS_ADDRPOINTER_TEXTCOLOR, "%p") "]:",
             structName, objPtr));
     }
 
     void logStructHeadDebug(const char* structName, const void* objPtr, const DebugInfo* debugPtr) {
         assert(structName != nullptr);
 
-        logger::logLine(strFParser::parseFCalloc("%s[" COLORED_TEXT("cyan", "%p") "] "
+        logger::logLine(strFParser::parseFCalloc("%s[" COLORED_TEXT(COLORS_SETTINGS_ADDRPOINTER_TEXTCOLOR, "%p") "] "
             "\"%s\" at %s at %s (%d line):",
             structName, objPtr,
             debugPtr->objName, debugPtr->ctorCallFunc, debugPtr->ctorCallFile, debugPtr->ctorCallLine));

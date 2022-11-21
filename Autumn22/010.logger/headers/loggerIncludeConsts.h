@@ -1,3 +1,5 @@
+#include <colors.settings.h>
+
 static const char logFileName[] =
 "log1.html"
 ;
@@ -31,7 +33,7 @@ static const char htmlStrTemplate[] =
 ;
 
 static const char htmlCyanColorStart[] =
-"<font color=\"cyan\">"
+"<font color=\"" COLORS_SETTINGS_ADDRPOINTER_TEXTCOLOR "\">"
 ;
 
 static const char htmlCyanColorStop[] =
@@ -39,15 +41,15 @@ static const char htmlCyanColorStop[] =
 ;
 
 static const char htmlCyanPointer[] =
-"<font color=\"cyan\">%p</font>"
+"<font color=\"" COLORS_SETTINGS_ADDRPOINTER_TEXTCOLOR "\">%p</font>"
 ;
 
 static const char htmlLogicalPointer[] =
-"<font color=\"RosyBrown\">%u</font>"
+"<font color=\"" COLORS_SETTINGS_LOGICPOINTER_TEXTCOLOR "\">%u</font>"
 ;
 
 static const char htmlCrimsonColorStart[] =
-"<font color=\"indianRed\">"
+"<font color=\"" COLORS_SETTINGS_BADDATA_TEXTCOLOR "\">"
 ;
 
 static const char htmlCrimsonColorStop[] =
@@ -55,7 +57,7 @@ static const char htmlCrimsonColorStop[] =
 ;
 
 static const char htmlEmergencyColorStart[] =
-"<font color=\"orangeRed\">"
+"<font color=\"" COLORS_SETTINGS_EMERGANCYMSG_TEXTCOLOR "\">"
 ;
 
 static const char htmlEmergencyColorStop[] =
