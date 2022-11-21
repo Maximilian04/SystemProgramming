@@ -39,6 +39,7 @@ public:
         NULLPTR_ERR,  ///< Nullptr is occured
         EMPTY,        ///< No elements in list
         BUF_OVERFLOW, ///< Capacity has already beem fulled
+        OUT_OF_SIZE, ///< Wanted index is out of list
     };
 
 #define List__ctor(obj, type, printfTemplate, ...) List::ctor(&obj, DEBUGINFO_CTOR_ARGS_R(#obj), sizeof(type), \
@@ -70,6 +71,8 @@ public:
 
     static Error begin (List const* const list, ListIterator* const iterator);
     static Error rbegin(List const* const list, ListIterator* const iterator);
+
+    static Error set2index(List const* const list, ListIterator* const iterator, size_t const index);
 
     static ValueOutFunction_t getOutFunc(List const* const list);
 
