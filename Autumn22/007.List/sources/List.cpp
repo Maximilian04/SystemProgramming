@@ -19,10 +19,7 @@
 List::Error List::ctor(List* const list, DEBUGINFO_CTOR_ARGS_H, size_t const elemSize, ValueOutFunction_t outFunc) {
     assert(list);
 
-    list->debugInfo.objName = objName;
-    list->debugInfo.ctorCallLine = ctorCallLine;
-    list->debugInfo.ctorCallFile = ctorCallFile;
-    list->debugInfo.ctorCallFunc = ctorCallFunc;
+    DEBUGINFO_CTOR_ARGS_INITIALIZE(list);
 
     list->head = nullptr;
     list->tail = nullptr;
@@ -198,7 +195,7 @@ List::Error List::popFront(List* const list) {
  * @param [in] src Pointer to the new element value
  * @return List::Error Error code
  */
-List::Error List::emplaceAfter(List* const list, ListIterator const* const iterator, void const* const src) {
+List::Error List::insertAfter(List* const list, ListIterator const* const iterator, void const* const src) {
     assert(list);
     assert(iterator);
 
@@ -231,7 +228,7 @@ List::Error List::emplaceAfter(List* const list, ListIterator const* const itera
  * @param [in] src Pointer to the new element value
  * @return List::Error Error code
  */
-List::Error List::emplaceBefore(List* const list, ListIterator const* const iterator, void const* const src) {
+List::Error List::insertBefore(List* const list, ListIterator const* const iterator, void const* const src) {
     assert(list);
     assert(iterator);
 
@@ -262,16 +259,16 @@ List::Error List::emplaceBefore(List* const list, ListIterator const* const iter
  *
  * @param [out] list List
  * @param [in] iterator Iterator to the element
- * @param [in] direction Does need emplace BEFORE or AFTER the element
+ * @param [in] direction Does need insert BEFORE or AFTER the element
  * @param [in] src Pointer to the new element value
  * @return List::Error Error code
  */
-List::Error List::emplace(List* const list, ListIterator const* const iterator, Direction direction, void const* const src) {
+List::Error List::insert(List* const list, ListIterator const* const iterator, Direction direction, void const* const src) {
     switch (direction) {
     case Direction::FORWARD:
-        return emplaceAfter(list, iterator, src);
+        return insertAfter(list, iterator, src);
     case Direction::BACKWARD:
-        return emplaceBefore(list, iterator, src);
+        return insertBefore(list, iterator, src);
     default:
         assert(0);
     }

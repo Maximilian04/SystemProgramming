@@ -19,10 +19,7 @@
 Tree::Error Tree::ctor(Tree* const tree, DEBUGINFO_CTOR_ARGS_H, size_t const elemSize, ValueOutFunction_t outFunc) {
     assert(tree);
 
-    tree->debugInfo.objName = objName;
-    tree->debugInfo.ctorCallLine = ctorCallLine;
-    tree->debugInfo.ctorCallFile = ctorCallFile;
-    tree->debugInfo.ctorCallFunc = ctorCallFunc;
+    DEBUGINFO_CTOR_ARGS_INITIALIZE(tree);
 
     tree->root = nullptr;
 
@@ -231,7 +228,7 @@ Tree::Error Tree::destroySubtree(Tree* const tree, TreeIterator* const iterator)
 //  * @param [in] src Pointer to the new element value
 //  * @return Tree::Error Error code
 //  */
-// Tree::Error Tree::emplaceAfter(Tree* const tree, TreeIterator const* const iterator, void const* const src) {
+// Tree::Error Tree::insertAfter(Tree* const tree, TreeIterator const* const iterator, void const* const src) {
 //     assert(tree);
 //     assert(iterator);
 
@@ -264,7 +261,7 @@ Tree::Error Tree::destroySubtree(Tree* const tree, TreeIterator* const iterator)
 //  * @param [in] src Pointer to the new element value
 //  * @return Tree::Error Error code
 //  */
-// Tree::Error Tree::emplaceBefore(Tree* const tree, TreeIterator const* const iterator, void const* const src) {
+// Tree::Error Tree::insertBefore(Tree* const tree, TreeIterator const* const iterator, void const* const src) {
 //     assert(tree);
 //     assert(iterator);
 
@@ -295,16 +292,16 @@ Tree::Error Tree::destroySubtree(Tree* const tree, TreeIterator* const iterator)
 //  *
 //  * @param [out] tree Tree
 //  * @param [in] iterator Iterator to the element
-//  * @param [in] direction Does need emplace BEFORE or AFTER the element
+//  * @param [in] direction Does need insert BEFORE or AFTER the element
 //  * @param [in] src Pointer to the new element value
 //  * @return Tree::Error Error code
 //  */
-// Tree::Error Tree::emplace(Tree* const tree, TreeIterator const* const iterator, Direction direction, void const* const src) {
+// Tree::Error Tree::insert(Tree* const tree, TreeIterator const* const iterator, Direction direction, void const* const src) {
 //     switch (direction) {
 //     case Direction::FORWARD:
-//         return emplaceAfter(tree, iterator, src);
+//         return insertAfter(tree, iterator, src);
 //     case Direction::BACKWARD:
-//         return emplaceBefore(tree, iterator, src);
+//         return insertBefore(tree, iterator, src);
 //     default:
 //         assert(0);
 //     }

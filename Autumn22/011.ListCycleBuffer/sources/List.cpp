@@ -19,10 +19,7 @@
 List::Error List::ctor(List* const list, DEBUGINFO_CTOR_ARGS_H, size_t const elemSize, ValueOutFunction_t outFunc, size_t capacity) {
     assert(list);
 
-    list->debugInfo.objName = objName;
-    list->debugInfo.ctorCallLine = ctorCallLine;
-    list->debugInfo.ctorCallFile = ctorCallFile;
-    list->debugInfo.ctorCallFunc = ctorCallFunc;
+    DEBUGINFO_CTOR_ARGS_INITIALIZE(list);
 
     list->freeTail = 0;
     list->size = 0;
@@ -104,7 +101,7 @@ List::Error List::linearize(List* const list, size_t newCapacity) {
     if (list->size) {
         assert(list->size <= list->capacity);
 
-        ListIterator iterator;
+        ListIterator iterator{};
         List::Error err = List::begin(list, &iterator);
         assert(!err);
 
@@ -227,7 +224,7 @@ List::Error List::pushBack(List* const list, void const* const src) {
     ListIterator it;
     it.ptr = 0;
 
-    return emplaceBefore(list, &it, src);
+    return insertBefore(list, &it, src);
 }
 
 /**
@@ -243,7 +240,7 @@ List::Error List::pushFront(List* const list, void const* const src) {
     ListIterator it;
     it.ptr = 0;
 
-    return emplaceAfter(list, &it, src);
+    return insertAfter(list, &it, src);
 }
 
 /**
@@ -284,7 +281,7 @@ List::Error List::popFront(List* const list) {
  * @param [in] src Pointer to the new element value
  * @return List::Error Error code
  */
-List::Error List::emplaceAfter(List* const list, ListIterator const* const iterator, void const* const src) {
+List::Error List::insertAfter(List* const list, ListIterator const* const iterator, void const* const src) {
     assert(list);
     assert(iterator);
 
@@ -311,14 +308,14 @@ List::Error List::emplaceAfter(List* const list, ListIterator const* const itera
  * @param [in] src Pointer to the new element value
  * @return List::Error Error code
  */
-List::Error List::emplaceBefore(List* const list, ListIterator const* const iterator, void const* const src) {
+List::Error List::insertBefore(List* const list, ListIterator const* const iterator, void const* const src) {
     assert(list);
     assert(iterator);
 
-    ListIterator it;
+    ListIterator it{};
     it.ptr = _PREV(iterator->ptr);
 
-    return emplaceAfter(list, &it, src);
+    return insertAfter(list, &it, src);
 }
 
 /**
@@ -326,20 +323,20 @@ List::Error List::emplaceBefore(List* const list, ListIterator const* const iter
  *
  * @param [out] list List
  * @param [in] iterator Iterator to the element
- * @param [in] direction Does need emplace BEFORE or AFTER the element
+ * @param [in] direction Does need insert BEFORE or AFTER the element
  * @param [in] src Pointer to the new element value
  * @return List::Error Error code
  */
-List::Error List::emplace(List* const list, ListIterator const* const iterator, Direction direction, void const* const src) {
+List::Error List::insert(List* const list, ListIterator const* const iterator, Direction direction, void const* const src) {
     assert(list);
     assert(iterator);
     assert(IT);
 
     switch (direction) {
     case Direction::FORWARD:
-        return emplaceAfter(list, iterator, src);
+        return insertAfter(list, iterator, src);
     case Direction::BACKWARD:
-        return emplaceBefore(list, iterator, src);
+        return insertBefore(list, iterator, src);
     default:
         assert(0);
     }
@@ -363,7 +360,7 @@ List::Error List::erase(List* const list, ListIterator* const iterator, Directio
     assert(_NEXT(_PREV(IT)) == IT);
     assert(_PREV(_NEXT(IT)) == IT);
 
-    size_t elemToSet;
+    size_t elemToSet = 0;
     switch (direction) {
     case Direction::FORWARD:
         elemToSet = _NEXT(IT);

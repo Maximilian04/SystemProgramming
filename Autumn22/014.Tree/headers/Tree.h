@@ -51,9 +51,9 @@ public:
     //     FORWARD = 1,
     //     BACKWARD = 0,
     // };
-    // static Error emplaceAfter (Tree* const tree, TreeIterator const* const iterator,                      void const* const src = nullptr);
-    // static Error emplaceBefore(Tree* const tree, TreeIterator const* const iterator,                      void const* const src = nullptr);
-    // static Error emplace      (Tree* const tree, TreeIterator const* const iterator, Direction direction, void const* const src = nullptr);
+    // static Error insertAfter (Tree* const tree, TreeIterator const* const iterator,                      void const* const src = nullptr);
+    // static Error insertBefore(Tree* const tree, TreeIterator const* const iterator,                      void const* const src = nullptr);
+    // static Error insert      (Tree* const tree, TreeIterator const* const iterator, Direction direction, void const* const src = nullptr);
     // static Error erase        (Tree* const tree, TreeIterator      * const iterator, Direction direction = Direction::FORWARD);
 
     static bool isEmpty(Tree const* const tree);

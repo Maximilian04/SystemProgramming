@@ -61,9 +61,9 @@ public:
         FORWARD = 1,
         BACKWARD = 0,
     };
-    static Error emplaceAfter (List* const list, ListIterator const* const iterator,                      void const* const src = nullptr);
-    static Error emplaceBefore(List* const list, ListIterator const* const iterator,                      void const* const src = nullptr);
-    static Error emplace      (List* const list, ListIterator const* const iterator, Direction direction, void const* const src = nullptr);
+    static Error insertAfter (List* const list, ListIterator const* const iterator,                      void const* const src = nullptr);
+    static Error insertBefore(List* const list, ListIterator const* const iterator,                      void const* const src = nullptr);
+    static Error insert      (List* const list, ListIterator const* const iterator, Direction direction, void const* const src = nullptr);
     static Error erase        (List* const list, ListIterator      * const iterator, Direction direction = Direction::FORWARD);
 
     static bool isEmpty(List const* const list);
