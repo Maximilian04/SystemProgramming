@@ -221,7 +221,7 @@ List::Error List::resize(List* const list, size_t newCapacity) {
 List::Error List::pushBack(List* const list, void const* const src) {
     assert(list);
 
-    ListIterator it;
+    ListIterator it{};
     it.ptr = 0;
 
     return insertBefore(list, &it, src);
@@ -237,7 +237,7 @@ List::Error List::pushBack(List* const list, void const* const src) {
 List::Error List::pushFront(List* const list, void const* const src) {
     assert(list);
 
-    ListIterator it;
+    ListIterator it{};
     it.ptr = 0;
 
     return insertAfter(list, &it, src);
@@ -252,7 +252,7 @@ List::Error List::pushFront(List* const list, void const* const src) {
 List::Error List::popBack(List* const list) {
     assert(list);
 
-    ListIterator it;
+    ListIterator it{};
     it.ptr = HEAD;
 
     return erase(list, &it, Direction::BACKWARD);
@@ -267,7 +267,7 @@ List::Error List::popBack(List* const list) {
 List::Error List::popFront(List* const list) {
     assert(list);
 
-    ListIterator it;
+    ListIterator it{};
     it.ptr = TAIL;
 
     return erase(list, &it, Direction::FORWARD);
