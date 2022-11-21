@@ -416,8 +416,10 @@ List::Error List::set2index(List const* const list, ListIterator* const iterator
         counter++;
     }
 
-    if (counter != index)
+    if (counter != index) {
+        IT = nullptr;
         return Error::OUT_OF_SIZE;
+    }
 
     return Error::OK;
 }

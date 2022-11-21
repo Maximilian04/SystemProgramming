@@ -383,16 +383,6 @@ List::Error List::erase(List* const list, ListIterator* const iterator, Directio
     return Error::OK;
 }
 
-#undef HEAD
-#undef TAIL
-#undef FREETAIL
-#undef _NEXT
-#undef _PREV
-#undef IT
-#undef SET_ELEM_VALUE
-#undef SET_NEW_ELEMENT
-#undef MAKE_NEW_ELEMENT
-
 /**
  * @brief Is list empty
  *
@@ -415,7 +405,7 @@ List::Error List::begin(List const* const list, ListIterator* const iterator) {
     assert(iterator);
     assert(list->bufferElem);
 
-    iterator->ptr = list->bufferElem->next;
+    IT = TAIL;
 
     return Error::OK;
 }
@@ -432,7 +422,7 @@ List::Error List::rbegin(List const* const list, ListIterator* const iterator) {
     assert(iterator);
     assert(list->bufferElem);
 
-    iterator->ptr = list->bufferElem->prev;
+    IT = HEAD;
 
     return Error::OK;
 }
@@ -455,11 +445,23 @@ List::Error List::set2index(List const* const list, ListIterator* const iterator
         counter++;
     }
 
-    if (counter != index)
+    if (counter != index) {
+        IT = 0;
         return Error::OUT_OF_SIZE;
+    }
 
     return Error::OK;
 }
+
+#undef HEAD
+#undef TAIL
+#undef FREETAIL
+#undef _NEXT
+#undef _PREV
+#undef IT
+#undef SET_ELEM_VALUE
+#undef SET_NEW_ELEMENT
+#undef MAKE_NEW_ELEMENT
 
 /**
  * @brief Get list's outFunc
