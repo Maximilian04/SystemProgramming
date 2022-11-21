@@ -410,6 +410,8 @@ List::Error List::set2index(List const* const list, ListIterator* const iterator
     assert(list);
     assert(iterator);
 
+    logger::logMsg(COLORED_TEXT(COLORS_SETTINGS_CRINGE_TEXTCOLOR, "Чел, ты................................."));
+
     List::begin(list, iterator);
     size_t counter = 0;
     while (counter < index && !ListIterator::next(iterator)) {
