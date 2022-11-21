@@ -398,6 +398,30 @@ List::Error List::rbegin(List const* const list, ListIterator* const iterator) {
     return Error::OK;
 }
 
+/**
+ * @brief Set iterator to element with logic **index**
+ * 
+ * @param [in] list List
+ * @param [out] iterator Iterator for writing to
+ * @param [in] index Wanted index
+ * @return List::Error Error code
+ */
+List::Error List::set2index(List const* const list, ListIterator* const iterator, size_t const index) {
+    assert(list);
+    assert(iterator);
+
+    List::begin(list, iterator);
+    size_t counter = 0;
+    while (counter < index && !ListIterator::next(iterator)) {
+        counter++;
+    }
+
+    if (counter != index)
+        return Error::OUT_OF_SIZE;
+
+    return Error::OK;
+}
+
 #undef IT
 
 /**

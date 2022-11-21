@@ -32,6 +32,7 @@ public:
         MEM_ERR,     ///< Error in memory allocation
         NULLPTR_ERR, ///< Nullptr is occured
         EMPTY,       ///< No elements in list
+        OUT_OF_SIZE, ///< Wanted index is out of list
     };
 
 #define List__ctor(obj, type, printfTemplate) List::ctor(&obj, DEBUGINFO_CTOR_ARGS_R(#obj), sizeof(type), \
@@ -53,12 +54,14 @@ public:
     static Error insertAfter (List* const list, ListIterator const* const iterator,                      void const* const src = nullptr);
     static Error insertBefore(List* const list, ListIterator const* const iterator,                      void const* const src = nullptr);
     static Error insert      (List* const list, ListIterator const* const iterator, Direction direction, void const* const src = nullptr);
-    static Error erase        (List* const list, ListIterator      * const iterator, Direction direction = Direction::FORWARD);
+    static Error erase       (List* const list, ListIterator      * const iterator, Direction direction = Direction::FORWARD);
 
     static bool isEmpty(List const* const list);
 
     static Error begin (List const* const list, ListIterator* const iterator);
     static Error rbegin(List const* const list, ListIterator* const iterator);
+
+    static Error set2index(List const* const list, ListIterator* const iterator, size_t const index);
 
     static ValueOutFunction_t getOutFunc(List const* const list);
 

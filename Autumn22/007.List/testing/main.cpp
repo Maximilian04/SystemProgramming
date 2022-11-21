@@ -24,6 +24,11 @@ int main(int argc, const char* const* const argv) {
     i = -6;
     List::pushFront(&list, &i);
     List__dump(list);
+
+    ListIterator getter{};
+    List::set2index(&list, &getter, 3);
+    logger::logMsg(strFParser::parseFCalloc(COLORED_TEXT("lime", "element №3 : '%d'"), *(int*)ListIterator::getValue(&getter)));
+
     List::popBack(&list);
     List__dump(list);
     List::popFront(&list);
