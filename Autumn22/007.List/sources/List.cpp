@@ -44,7 +44,7 @@ List::Error List::dtor(List* const list) {
         popBack(list);
     }
 
-    list->debugInfo.objName = "zzzombie";
+    list->debugInfo.objName = "ZZZOMBIE";
 
     return Error::OK;
 }
@@ -187,6 +187,8 @@ List::Error List::popFront(List* const list) {
     return Error::OK;
 }
 
+#define IT (iterator->ptr)
+
 /**
  * @brief Add new element after the element of list
  *
@@ -200,20 +202,20 @@ List::Error List::insertAfter(List* const list, ListIterator const* const iterat
     assert(iterator);
 
     Error err = OK;
-    if (iterator->ptr->next == nullptr) {
+    if (IT->next == nullptr) {
         err = pushBack(list, src);
         return err;
     }
 
     MAKE_NEW_ELEMENT;
 
-    assert(iterator->ptr->next->prev == iterator->ptr);
+    assert(IT->next->prev == IT);
 
-    newElem->prev = iterator->ptr;
-    newElem->next = iterator->ptr->next;
+    newElem->prev = IT;
+    newElem->next = IT->next;
 
-    iterator->ptr->next->prev = newElem;
-    iterator->ptr->next = newElem;
+    IT->next->prev = newElem;
+    IT->next = newElem;
 
     SET_NEW_ELEMENT_VALUE;
 
@@ -233,7 +235,7 @@ List::Error List::insertBefore(List* const list, ListIterator const* const itera
     assert(iterator);
 
     Error err = OK;
-    if (iterator->ptr->prev == nullptr) {
+    if (IT->prev == nullptr) {
         err = pushFront(list, src);
         return err;
     }
@@ -241,13 +243,13 @@ List::Error List::insertBefore(List* const list, ListIterator const* const itera
     MAKE_NEW_ELEMENT;
 
 
-    assert(iterator->ptr->prev->next == iterator->ptr);
+    assert(IT->prev->next == IT);
 
-    newElem->next = iterator->ptr;
-    newElem->prev = iterator->ptr->prev;
+    newElem->next = IT;
+    newElem->prev = IT->prev;
 
-    iterator->ptr->prev->next = newElem;
-    iterator->ptr->prev = newElem;
+    IT->prev->next = newElem;
+    IT->prev = newElem;
 
     SET_NEW_ELEMENT_VALUE;
 
@@ -290,12 +292,12 @@ List::Error List::erase(List* const list, ListIterator* const iterator, Directio
     assert(iterator);
 
     Error err = OK;
-    if (iterator->ptr->next == nullptr) {
+    if (IT->next == nullptr) {
         err = popBack(list);
 
         switch (direction) {
         case Direction::FORWARD:
-            iterator->ptr = nullptr;
+            IT = nullptr;
             break;
         case Direction::BACKWARD:
             List::rbegin(list, iterator);
@@ -306,16 +308,16 @@ List::Error List::erase(List* const list, ListIterator* const iterator, Directio
 
         return err;
     }
-    if (iterator->ptr->prev == nullptr) {
+    if (IT->prev == nullptr) {
         err = popFront(list);
-        iterator->ptr = nullptr;
+        IT = nullptr;
 
         switch (direction) {
         case Direction::FORWARD:
             List::begin(list, iterator);
             break;
         case Direction::BACKWARD:
-            iterator->ptr = nullptr;
+            IT = nullptr;
             break;
         default:
             assert(0);
@@ -325,28 +327,28 @@ List::Error List::erase(List* const list, ListIterator* const iterator, Directio
     }
 
 
-    assert(iterator->ptr->prev->next == iterator->ptr);
-    assert(iterator->ptr->next->prev == iterator->ptr);
-    iterator->ptr->prev->next = iterator->ptr->next;
-    iterator->ptr->next->prev = iterator->ptr->prev;
+    assert(IT->prev->next == IT);
+    assert(IT->next->prev == IT);
+    IT->prev->next = IT->next;
+    IT->next->prev = IT->prev;
 
     ListElem* elemToSet;
     switch (direction) {
     case Direction::FORWARD:
-        elemToSet = iterator->ptr->next;
+        elemToSet = IT->next;
         break;
     case Direction::BACKWARD:
-        elemToSet = iterator->ptr->prev;
+        elemToSet = IT->prev;
         break;
     default:
         assert(0);
     }
 
-    free(iterator->ptr->valuePtr);
-    iterator->ptr->valuePtr = nullptr;
-    free(iterator->ptr);
+    free(IT->valuePtr);
+    IT->valuePtr = nullptr;
+    free(IT);
 
-    iterator->ptr = elemToSet;
+    IT = elemToSet;
 
     return Error::OK;
 }
@@ -375,7 +377,7 @@ List::Error List::begin(List const* const list, ListIterator* const iterator) {
     assert(list);
     assert(iterator);
 
-    iterator->ptr = list->tail;
+    IT = list->tail;
 
     return Error::OK;
 }
@@ -391,10 +393,12 @@ List::Error List::rbegin(List const* const list, ListIterator* const iterator) {
     assert(list);
     assert(iterator);
 
-    iterator->ptr = list->head;
+    IT = list->head;
 
     return Error::OK;
 }
+
+#undef IT
 
 /**
  * @brief Get list's outFunc
