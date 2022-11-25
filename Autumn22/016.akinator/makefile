@@ -7,7 +7,7 @@ COMPILE_FLAGS = $(COMPILE_DEFAULT_FLAGS) -D_DEBUG
 
 COMPILE_O = @ g++ $(COMPILE_FLAGS) -c $^ -o $@
 
-LIBCMDPARSER_PATH := .\..\009.cmdParser\build
+LIBCMDPARSER_PATH := .\..\014.Tree\build
 LIBCMDPARSER_HEADERS := $(LIBCMDPARSER_PATH)\..\headers
 LIBCMDPARSER_NAME := cmdParser
 LIBCMDPARSER_LINK := -L$(LIBCMDPARSER_PATH) -l$(LIBCMDPARSER_NAME)
@@ -23,7 +23,7 @@ OBJECTS := ${OBJECTS} build\${NAME}.o
 build\${NAME}.o: sources\${NAME}.cpp
 	${COMPILE_O}
 
-NAME = akinator
+NAME = Akinator
 OBJECTS := ${OBJECTS} build\${NAME}.o
 build\${NAME}.o: sources\${NAME}.cpp
 	${COMPILE_O}

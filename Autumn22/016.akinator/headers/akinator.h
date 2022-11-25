@@ -1,5 +1,5 @@
 /**
- * @file akinator.h
+ * @file Akinator.h
  * @author Maximilian (https://github.com/Maximilian04)
  * @brief
  * @date 2022-11-25
@@ -11,7 +11,7 @@
 #ifndef AKINATOR_H
 #define AKINATOR_H
 
-namespace akinator {
-}
+class Akinator {
+};
 
 #endif // AKINATOR_H

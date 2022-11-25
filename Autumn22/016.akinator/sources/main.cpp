@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-#include "akinator.h"
+#include "Akinator.h"
 
 int main(int argc, const char* const* const argv) {
 
