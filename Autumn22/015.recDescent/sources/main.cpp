@@ -1,13 +1,12 @@
 #include <assert.h>
-#include <stdio.h>
 
 #include "cmdParsing.h"
 
 int main(int argc, const char* const* const argv) {
-    FILE* testFile = nullptr;
+    FILE* inputFile = nullptr;
 
     cmdParser::ProccessFlagsPtrs proccessFlagsPtrs = {
-        &testFile
+        &inputFile
     };
 
     switch (cmdParser::handleFlags(argc, argv, cmdParser::reactToFlags, &proccessFlagsPtrs)) {
@@ -21,6 +20,7 @@ int main(int argc, const char* const* const argv) {
         break;
     }
 
+    cmdParser::closeFile(inputFile);
     printf("Program finished 0\n");
 
     return 0;

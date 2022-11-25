@@ -10,6 +10,8 @@
 #ifndef CMDPARSING_H
 #define CMDPARSING_H
 
+#include <stdio.h>
+
 #include <cmdParser.h>
 
 namespace cmdParser {
@@ -22,6 +24,9 @@ namespace cmdParser {
     } ProccessFlagsPtrs;
 
     void printHelpMessage();
+
+    void openFile(ProccessFlagsPtrs* const proccessFlagsPtrs, char const* const fileName);
+    void closeFile(FILE* file);
 
     cmdParser::handleFlagResult handleFlag(cmdParser::CmdArgument cmdArgument, void* userdata);
 

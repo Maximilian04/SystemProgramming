@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <stdio.h>
 
 #include "cmdParsing.h"
 
@@ -16,6 +15,33 @@ namespace cmdParser {
             "-c\t\tallow you to enter code via console (in future, f*u)\n");
     }
 
+    /**
+     * @brief Open file
+     *
+     * @param [out] proccessFlagsPtrs
+     * @param [in] fileName
+     */
+    void openFile(ProccessFlagsPtrs* const proccessFlagsPtrs, char const* const fileName) {
+        assert(fileName != nullptr);
+
+        FILE* file = fopen(fileName, "rt");
+
+        if (file != NULL) {
+            *proccessFlagsPtrs->testFilePtr = file;
+            return;
+        }
+        printf("Cannot open file\n");
+    }
+
+    /**
+     * @brief Close file
+     * 
+     * @param [out] file 
+     */
+    void closeFile(FILE* file) {
+        fclose(file);
+    }
+
     cmdParser::handleFlagResult handleFlag(cmdParser::CmdArgument cmdArgument, void* userdata) {
         assert(userdata != nullptr);
 
@@ -27,7 +53,7 @@ namespace cmdParser {
                 return cmdParser::handleFlagResult::INCORRECT_INPUT;
             }
 
-            // *((ProccessFlagsPtrs*)userdata)->testFilePtr = autoTest::openTestFile(true, cmdArgument.argument);
+            openFile((ProccessFlagsPtrs*)userdata, cmdArgument.argument);
             break;
         case 'i':
             *((ProccessFlagsPtrs*)userdata)->testFilePtr = stdin;
@@ -43,8 +69,9 @@ namespace cmdParser {
         cmdParser::ParserResult res = cmdParser::standartReactToFlags(cmdFlagC, cmdArguments, userdata, printHelpMessage, handleFlag);
         if (res) return res;
 
-
-
-        return cmdParser::ParserResult::GOOD_INPUT;
+        if (*((ProccessFlagsPtrs*)userdata)->testFilePtr)
+            return cmdParser::ParserResult::GOOD_INPUT;
+        else
+            return cmdParser::ParserResult::BAD_INPUT;
     }
 }
