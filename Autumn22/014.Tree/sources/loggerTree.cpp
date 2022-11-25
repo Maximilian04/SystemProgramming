@@ -61,6 +61,8 @@ static void logGraphTree(const Tree* const tree) {
             size_t bufN;
         } dfsInfo{ bufN };
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshadow"
         Tree::dfs(tree,
             [](DfsCallbackFunction_t_PARAMS) -> void {
             graphviz::logNode(TreeIterator::getElemPtr(iterator), TreeIterator::getLeftPtr(iterator), TreeIterator::getRightPtr(iterator),
@@ -70,6 +72,7 @@ static void logGraphTree(const Tree* const tree) {
             nullptr,
             &dfsInfo
             );
+#pragma GCC diagnostic pop
     //     TreeIterator elem;
     //     Tree::begin(tree, &elem);
     //     size_t elemIndex = 0;

@@ -36,7 +36,7 @@ static const char graphRunCommandTemplate[] =
 "        <tr><td port=\"" #name "_1\">[%u]</td><td port=\"" #name "_2\">%S</td></tr>\n"
 
 #define NODE_VALUE_SECTION(name) \
-"        <tr><td port=\"" #name "\" colspan=\"2\"\>%S</td></tr>\n"
+"        <tr><td port=\"" #name "\" colspan=\"2\">%S</td></tr>\n"
 
 #define ELEM_NODE_END                               \
 "        </table>>;shape = \"none\";margin = \"0\";" \
