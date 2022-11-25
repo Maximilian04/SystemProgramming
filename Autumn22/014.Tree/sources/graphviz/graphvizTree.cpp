@@ -130,8 +130,11 @@ printLog(logTarget, GRAPH_NODE_BODY(NPtoken, elemPtr, elemPtr, outFunc(bufN, val
             printLog(logTarget, GRAPH_ARROW_2LEFT(elemPtr, leftPtr));
         if (rightPtr)
             printLog(logTarget, GRAPH_ARROW_2RIGHT(elemPtr, rightPtr));
-        if (leftPtr && rightPtr)
+        if (leftPtr && rightPtr) {
             printLog(logTarget, GRAPH_ELEM_ORDER_SIBLINGS(leftPtr, rightPtr));
+            printLog(logTarget, GRAPH_ELEM_ORDER(elemPtr, leftPtr));
+            printLog(logTarget, GRAPH_ELEM_ORDER(elemPtr, rightPtr));
+        }
     }
 
     void logHeadTailEgg(void const* const headPtr, void const* const tailPtr) {

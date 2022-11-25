@@ -7,7 +7,7 @@ static const wchar_t graphHead[] = L""
 "// negate UTF-8 BOM effect: Я не могу понять, где прекратится круг. Мне не хватает сил, и только сердца стук мне говорит о том, что мир ещё живой, что он не проклят и давно спасён тобой!\n"
 "digraph {\n"
 // "    dpi = 200;\n"
-"    rankdir = LR;\n"
+"    rankdir = TB;\n"
 // "    fontname = \"Mono\"\n"
 "    node [shape = record; style = \"filled\";];\n"
 "    // splines = ortho;\n"
@@ -47,6 +47,9 @@ static const char graphRunCommandTemplate[] =
 
 #define ELEM_WEIGTH_ARROW \
 "    element_%p -> element_%p [style = invis; weight = " WEIGTH_ORDER_ARROWS ";];\n"
+
+#define ELEM_RANK_THESAME \
+"    { rank=same; element_%p; element_%p; }\n"
 
 #define graphElemBody__TemplateDEF(token, cmd1, cmd2)          \
     static const wchar_t graphElemBody##token##Template[] = L"" \
@@ -108,6 +111,9 @@ ELEM_ARROW(left:w, head:n, COLORS_SETTINGS_GRAHARROW_FORWARD)
 static const wchar_t graphArrow2RightTemplate[] = L""
 ELEM_ARROW(right:e, head:n, COLORS_SETTINGS_GRAHARROW_BACKWARD)
 ;
+static const wchar_t graphElemOrderBesideTemplate[] = L""
+ELEM_RANK_THESAME
+;
 
 #define GRAPH_ELEM_ORDER(token, nextToken) \
     /* wString */ graphElemOrderTemplate,   \
@@ -130,7 +136,7 @@ ELEM_ARROW(right:e, head:n, COLORS_SETTINGS_GRAHARROW_BACKWARD)
     /* ARROW        */ token, prevToken
 
 #define GRAPH_ELEM_ORDER_SIBLINGS(tokenFrom, tokenTo) \
-    /* wString */ graphElemOrderTemplate,   \
+    /* wString */ graphElemOrderBesideTemplate,        \
     /* WEIGTH_ARROW */ tokenFrom, tokenTo
 
 #undef ELEM_NODE_DEF
