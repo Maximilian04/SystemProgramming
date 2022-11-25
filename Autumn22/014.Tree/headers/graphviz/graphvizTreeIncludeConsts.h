@@ -102,6 +102,12 @@ ELEM_ARROW(next:e, head:w, COLORS_SETTINGS_GRAHARROW_FORWARD)
 static const wchar_t graphArrow2PrevTemplate[] = L""
 ELEM_ARROW(prev:w, head:e, COLORS_SETTINGS_GRAHARROW_BACKWARD)
 ;
+static const wchar_t graphArrow2LeftTemplate[] = L""
+ELEM_ARROW(left:w, head:n, COLORS_SETTINGS_GRAHARROW_FORWARD)
+;
+static const wchar_t graphArrow2RightTemplate[] = L""
+ELEM_ARROW(right:e, head:n, COLORS_SETTINGS_GRAHARROW_BACKWARD)
+;
 
 #define GRAPH_ELEM_ORDER(token, nextToken) \
     /* wString */ graphElemOrderTemplate,   \
@@ -114,6 +120,18 @@ ELEM_ARROW(prev:w, head:e, COLORS_SETTINGS_GRAHARROW_BACKWARD)
 #define GRAPH_ARROW_2PREV(token, prevToken) \
     /* wString */ graphArrow2PrevTemplate,   \
     /* ARROW        */ token, prevToken
+
+#define GRAPH_ARROW_2LEFT(token, nextToken) \
+    /* wString */ graphArrow2LeftTemplate,   \
+    /* ARROW        */ token, nextToken
+
+#define GRAPH_ARROW_2RIGHT(token, prevToken) \
+    /* wString */ graphArrow2RightTemplate,   \
+    /* ARROW        */ token, prevToken
+
+#define GRAPH_ELEM_ORDER_SIBLINGS(tokenFrom, tokenTo) \
+    /* wString */ graphElemOrderTemplate,   \
+    /* WEIGTH_ARROW */ tokenFrom, tokenTo
 
 #undef ELEM_NODE_DEF
 #undef ELEM_PTR_SECTION

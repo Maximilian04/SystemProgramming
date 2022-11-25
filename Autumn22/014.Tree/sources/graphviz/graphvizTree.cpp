@@ -125,6 +125,13 @@ printLog(logTarget, GRAPH_NODE_BODY(NPtoken, elemPtr, elemPtr, outFunc(bufN, val
         }
 
 #undef PRINTLOG_GRAPH_ELEM_BODY
+
+        if (leftPtr)
+            printLog(logTarget, GRAPH_ARROW_2LEFT(elemPtr, leftPtr));
+        if (rightPtr)
+            printLog(logTarget, GRAPH_ARROW_2RIGHT(elemPtr, rightPtr));
+        if (leftPtr && rightPtr)
+            printLog(logTarget, GRAPH_ELEM_ORDER_SIBLINGS(leftPtr, rightPtr));
     }
 
     void logHeadTailEgg(void const* const headPtr, void const* const tailPtr) {

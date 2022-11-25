@@ -17,6 +17,22 @@ int main(int argc, const char* const* const argv) {
     Tree::addLeft(&tree, &node);
     Tree::addRight(&tree, &node, &i);
     Tree__dump(tree);
+
+    TreeIterator::left(&node);
+    i = 237;
+    Tree::addLeft(&tree, &node);
+    i = 239;
+    Tree::addRight(&tree, &node, &i);
+    Tree__dump(tree);
+
+    Tree::set2Root(&tree, &node);
+    TreeIterator::right(&node);
+    i = -237;
+    Tree::addLeft(&tree, &node);
+    i = -239;
+    Tree::addRight(&tree, &node, &i);
+    Tree__dump(tree);
+
     // i = -1;
     // Tree::pushFront(&tree, &i);
     // i = -2;
