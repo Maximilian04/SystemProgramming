@@ -24,9 +24,14 @@ public:
         MEM_ERR,     ///< Error in memory allocation
         NULLPTR_ERR, ///< Nullptr is occured
         EMPTY,       ///< No elements in tree
+        FILE_ERR,    ///< Error with file writing
     };
 
+#define Akinator__ctor(obj) Akinator::ctor(&obj, DEBUGINFO_CTOR_ARGS_R(#obj))
     static Error ctor(Akinator* const akinator, DEBUGINFO_CTOR_ARGS_H);
+
+    static Error save(Akinator const* const akinator, char const* const fileName);
+    static Error upload(Akinator* const akinator, char const* const fileName);
 };
 
 #endif // AKINATOR_H
