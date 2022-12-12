@@ -1,3 +1,4 @@
+#include <string.h>
 #include <assert.h>
 
 #include "akinatorIO.h"
@@ -34,7 +35,7 @@ namespace akinatorIO {
             assert(iterator);
             assert(userdata);
 
-            fprintf((FILE*)userdata, "'%s'\n{", (char*)TreeIterator::getValue(iterator));
+            fprintf((FILE*)userdata, "%d:%s\n{", strlen((char*)TreeIterator::getValue(iterator)) ,(char*)TreeIterator::getValue(iterator));
         },
             [](DfsCallbackFunction_t_PARAMS) -> void {
             assert(tree);
@@ -81,7 +82,12 @@ namespace akinatorIO {
             return Error::FILE_ERR;
         }
 
+        size_t strLength = 0;
+        if (fscanf(file, "%d:", &strLength) != 1) {
+            return Error::FILE_FORMAT_ERR;
+        }
 
+        
 
         if (fclose(file)) {
             return Error::FILE_ERR;

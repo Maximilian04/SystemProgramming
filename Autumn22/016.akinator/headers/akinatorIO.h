@@ -15,9 +15,10 @@
 
 namespace akinatorIO {
     enum Error {
-        OK = 0,      ///< No errors
-        FILE_ERR,    ///< Error with file writing
-        ISNOT_EMPTY, ///< Object to write is not empty
+        OK = 0,          ///< No errors
+        FILE_ERR,        ///< Error with file writing or reading
+        FILE_FORMAT_ERR, ///< Error with file format
+        ISNOT_EMPTY,     ///< Object to write is not empty
     };
 
     Error save(Tree const* const data, char const* const fileName);
