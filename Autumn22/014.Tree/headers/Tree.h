@@ -12,6 +12,7 @@
 #define TREE_H
 
 #include <ValueOutFunction_t.h>
+#include "ValueDtorFunction_t.h"
 #include <logger.h>
 
 #include "TreeElem.h"
@@ -23,6 +24,7 @@ public:
 
     size_t elemSize;
     ValueOutFunction_t outFunc;
+    ValueDtorFunction_t dtorFunc;
 
     DebugInfo debugInfo;
 
@@ -31,13 +33,16 @@ public:
         MEM_ERR,     ///< Error in memory allocation
         NULLPTR_ERR, ///< Nullptr is occured
         EMPTY,       ///< No elements in tree
+        DTOR_ERR,    ///< Error in element dtor
     };
 
-#define Tree__ctor(obj, type, printfTemplate) Tree::ctor(&obj, DEBUGINFO_CTOR_ARGS_R(#obj), sizeof(type), \
-    [](ValueOutFunction_t_PARAMS) -> char const* {                                                         \
-        return strFParser::parseFNBuf(bufN, printfTemplate, *(type const*)valuePtr);                        \
-    })
-    static Error ctor(Tree* const tree, DEBUGINFO_CTOR_ARGS_H, size_t const elemSize, ValueOutFunction_t outFunc);
+#define Tree__ctor(obj, type, printfTemplate, ...) Tree::ctor(&obj, DEBUGINFO_CTOR_ARGS_R(#obj), sizeof(type), \
+    [](ValueOutFunction_t_PARAMS) -> char const* {                                                              \
+        return strFParser::parseFNBuf(bufN, printfTemplate, *(type const*)valuePtr);                             \
+    }                                                                                                             \
+    __VA_OPT__(, __VA_ARGS__))
+    static Error ctor(Tree* const tree, DEBUGINFO_CTOR_ARGS_H, 
+        size_t const elemSize, ValueOutFunction_t outFunc, ValueDtorFunction_t dtorFunc = nullptr);
     static Error dtor(Tree* const tree);
 
     static Error destroySubtree(Tree* const tree, TreeIterator* const iterator);

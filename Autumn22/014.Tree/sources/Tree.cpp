@@ -16,7 +16,7 @@
  * @param [in] outFunc Pointer to a function for printing elements'es value
  * @return Tree::Error Error code
  */
-Tree::Error Tree::ctor(Tree* const tree, DEBUGINFO_CTOR_ARGS_H, size_t const elemSize, ValueOutFunction_t outFunc) {
+Tree::Error Tree::ctor(Tree* const tree, DEBUGINFO_CTOR_ARGS_H, size_t const elemSize, ValueOutFunction_t outFunc, ValueDtorFunction_t dtorFunc) {
     assert(tree);
 
     DEBUGINFO_CTOR_ARGS_INITIALIZE(tree);
@@ -25,6 +25,7 @@ Tree::Error Tree::ctor(Tree* const tree, DEBUGINFO_CTOR_ARGS_H, size_t const ele
 
     tree->elemSize = elemSize;
     tree->outFunc = outFunc;
+    tree->dtorFunc = dtorFunc;
 
     // VERIFY(tree);
     return Error::OK;
@@ -51,6 +52,12 @@ Tree::Error Tree::dtor(Tree* const tree) {
     return Error::OK;
 }
 
+static Tree::Error max(Tree::Error a, Tree::Error b) {
+    if (a > b)
+        return a;
+    return b;
+}
+
 /**
  * @brief Destroy subtree
  *
@@ -61,14 +68,25 @@ Tree::Error Tree::dtor(Tree* const tree) {
 Tree::Error Tree::destroySubtree(Tree* const tree, TreeIterator* const iterator) {
     if (!iterator->ptr) return Error::OK;
     TreeIterator child;
+    Error err = Error::OK;
+    Error errChild = Error::OK;
 
     child.ptr = iterator->ptr;
-    if (!TreeIterator::left(&child))
-        destroySubtree(tree, &child);
+    if (!TreeIterator::left(&child)) {
+        errChild = destroySubtree(tree, &child);
+        err = max(err, errChild);
+    }
 
     child.ptr = iterator->ptr;
-    if (!TreeIterator::right(&child))
-        destroySubtree(tree, &child);
+    if (!TreeIterator::right(&child)) {
+        errChild = destroySubtree(tree, &child);
+        err = max(err, errChild);
+    }
+
+    if (tree->dtorFunc(iterator->ptr->valuePtr)) {
+        errChild = max(err, errChild);
+        err = Error::DTOR_ERR;
+    }
 
     if (tree->root == iterator->ptr) {
         tree->root = nullptr;
