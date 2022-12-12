@@ -16,7 +16,11 @@ Akinator::Error Akinator::ctor(Akinator* const akinator, DEBUGINFO_CTOR_ARGS_H) 
 
     DEBUGINFO_CTOR_ARGS_INITIALIZE(akinator);
 
-    Tree__ctor(akinator->data, char const*, "%s");
+    Tree__ctor(akinator->data, char const*, "%s",
+    [](ValueDtorFunction_t_PARAMS) -> int {
+        free(*(char**)valuePtr);
+        return 0;
+    });
     // tree->root = nullptr;
 
     // tree->elemSize = elemSize;
