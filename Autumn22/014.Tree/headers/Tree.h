@@ -41,6 +41,8 @@ public:
         return strFParser::parseFNBuf(bufN, printfTemplate, *(type const*)valuePtr);                             \
     }                                                                                                             \
     __VA_OPT__(, __VA_ARGS__))
+#define Tree__ctorVariableOutFunc(obj, type, ...) Tree::ctor(&obj, DEBUGINFO_CTOR_ARGS_R(#obj), sizeof(type), \
+    __VA_ARGS__)
     static Error ctor(Tree* const tree, DEBUGINFO_CTOR_ARGS_H, 
         size_t const elemSize, ValueOutFunction_t outFunc, ValueDtorFunction_t dtorFunc = nullptr);
     static Error dtor(Tree* const tree);
