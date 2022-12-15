@@ -12,6 +12,8 @@ int main(int argc, const char* const* const argv) {
     Tree::set2Root(&akinator.data, &it);
     Tree::addRight(&akinator.data, &it, "leftь");
 
+    Tree__dump(akinator.data);
+
     if (Akinator::save(&akinator, "data.txt")) {
         printf("File error\n");
         return 1;
