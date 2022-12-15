@@ -25,6 +25,8 @@ public:
         LAST_ELEM,  ///< The last element is reached
     };
 
+    static Error copyTo(TreeIterator* const src, TreeIterator* const dst);
+
     static Error left(TreeIterator* const iterator);
     static Error right(TreeIterator* const iterator);
     static void* getValue(TreeIterator const* const iterator);

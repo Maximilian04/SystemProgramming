@@ -2,6 +2,16 @@
 
 #include "TreeIterator.h"
 
+TreeIterator::Error TreeIterator::copyTo(TreeIterator* const src, TreeIterator* const dst) {
+    assert(src);
+    assert(dst);
+
+    dst->ptr = src->ptr;
+
+    return Error::OK;
+}
+
+
 TreeIterator::Error TreeIterator::left(TreeIterator* const iterator) {
     assert(iterator);
     assert(iterator->ptr);
