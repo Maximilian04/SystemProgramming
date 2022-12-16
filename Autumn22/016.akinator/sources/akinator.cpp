@@ -16,10 +16,7 @@ Akinator::Error Akinator::ctor(Akinator* const akinator, DEBUGINFO_CTOR_ARGS_H) 
 
     DEBUGINFO_CTOR_ARGS_INITIALIZE(akinator);
 
-    Tree__ctorVariableOutFunc(akinator->data, char const*,
-    [](ValueOutFunction_t_PARAMS) -> char const* {
-        return strFParser::parseFNBuf(bufN, "%s", (char const* const*)valuePtr);
-    },
+    Tree__ctor(akinator->data, char const*, "%s",
     [](ValueDtorFunction_t_PARAMS) -> int {
         free(*(char**)valuePtr);
         return 0;
@@ -62,7 +59,24 @@ Akinator::Error Akinator::upload(Akinator* const akinator, char const* const fil
     assert(akinator);
     assert(fileName);
 
-
+    switch (akinatorIO::upload(&akinator->data, fileName)) {
+    case akinatorIO::Error::FILE_ERR:
+        return Error::FILE_ERR;
+        break;
+    case akinatorIO::Error::FILE_FORMAT_ERR:
+        return Error::FILE_FORMAT_ERR;
+        break;
+    case akinatorIO::Error::ISNOT_EMPTY:
+        return Error::UPLOAD_TO_NOT_EMPTY;
+        break;
+    case akinatorIO::Error::MEM_ERR:
+        return Error::MEM_ERR;
+        break;
+    case akinatorIO::Error::OK:
+        break;
+    default:
+        assert(false);
+    }
 
     return Error::OK;
 }
