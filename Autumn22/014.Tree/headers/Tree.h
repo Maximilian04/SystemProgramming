@@ -70,6 +70,8 @@ public:
     static Error addRoot( Tree* const tree,                               void const* const src = nullptr);
     static Error addLeft( Tree* const tree, TreeIterator* const iterator, void const* const src = nullptr);
     static Error addRight(Tree* const tree, TreeIterator* const iterator, void const* const src = nullptr);
+    static Error rehangLeft( Tree* const tree, TreeIterator* const iterator, void const* const src = nullptr);
+    static Error rehangRight(Tree* const tree, TreeIterator* const iterator, void const* const src = nullptr);
 
     static ValueOutFunction_t getOutFunc(Tree const* const tree);
 

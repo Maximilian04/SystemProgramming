@@ -100,8 +100,8 @@ Tree::Error Tree::destroySubtree(Tree* const tree, TreeIterator* const iterator)
     return Error::OK;
 }
 
-#define MAKE_NEW_ELEMENT                                             \
-    TreeElem* const newElem = (TreeElem*)calloc(sizeof(TreeElem), 1); \
+#define MAKE_NEW_ELEMENT                                       \
+    TreeElem* newElem = (TreeElem*)calloc(sizeof(TreeElem), 1); \
     if (!newElem) return Error::MEM_ERR;
 
 #define SET_NEW_ELEMENT_VALUE                       \
@@ -478,6 +478,62 @@ Tree::Error Tree::addRight(Tree* const tree, TreeIterator* const iterator, void 
 
     MAKE_NEW_ELEMENT;
     _RIGHT(iterator) = newElem;
+    SET_NEW_ELEMENT_VALUE;
+
+    return Error::OK;
+}
+
+/**
+ * @brief Add left child to node
+ *
+ * @param [out] iterator Iterator to node
+ * @param [in] src Data
+ * @return Tree::Error Error code
+ */
+Tree::Error Tree::rehangLeft(Tree* const tree, TreeIterator* const iterator, void const* const src) {
+    assert(iterator);
+
+    MAKE_NEW_ELEMENT;
+    // _LEFT(iterator) = newElem;
+
+    newElem->left  = _LEFT (iterator);
+    newElem->right = _RIGHT(iterator);
+    newElem->valuePtr = iterator->ptr->valuePtr;
+
+    _RIGHT(iterator) = nullptr;
+    _LEFT (iterator) = newElem;
+    iterator->ptr->valuePtr = nullptr;
+
+    newElem = iterator->ptr;
+
+    SET_NEW_ELEMENT_VALUE;
+
+    return Error::OK;
+}
+
+/**
+ * @brief Add right child to node
+ *
+ * @param [out] iterator Iterator to node
+ * @param [in] src Data
+ * @return Tree::Error Error code
+ */
+Tree::Error Tree::rehangRight(Tree* const tree, TreeIterator* const iterator, void const* const src) {
+    assert(iterator);
+
+    MAKE_NEW_ELEMENT;
+    // _RIGHT(iterator) = newElem;
+
+    newElem->left  = _LEFT (iterator);
+    newElem->right = _RIGHT(iterator);
+    newElem->valuePtr = iterator->ptr->valuePtr;
+
+    _RIGHT(iterator) = newElem;
+    _LEFT (iterator) = nullptr;
+    iterator->ptr->valuePtr = nullptr;
+
+    newElem = iterator->ptr;
+
     SET_NEW_ELEMENT_VALUE;
 
     return Error::OK;
