@@ -46,26 +46,26 @@ namespace akinatorIO {
         fprintf(file, "{");
         Tree::dfs(data,
             [](DfsCallbackFunction_t_PARAMS) -> void {
-            assert(tree);
-            assert(iterator);
-            assert(userdata);
+                assert(tree);
+                assert(iterator);
+                assert(userdata);
 
-            fprintf((FILE*)userdata, "%llu:%s\n{", strlen(*(char**)TreeIterator::getValue(iterator)), *(char**)TreeIterator::getValue(iterator));
-        },
+                fprintf((FILE*)userdata, "%llu:%s\n{", strlen(*(char**)TreeIterator::getValue(iterator)), *(char**)TreeIterator::getValue(iterator));
+            },
             [](DfsCallbackFunction_t_PARAMS) -> void {
-            assert(tree);
-            assert(iterator);
-            assert(userdata);
+                assert(tree);
+                assert(iterator);
+                assert(userdata);
 
-            fprintf((FILE*)userdata, "}\n{");
-        },
+                fprintf((FILE*)userdata, "}\n{");
+            },
             [](DfsCallbackFunction_t_PARAMS) -> void {
-            assert(tree);
-            assert(iterator);
-            assert(userdata);
+                assert(tree);
+                assert(iterator);
+                assert(userdata);
 
-            fprintf((FILE*)userdata, "}\n");
-        },
+                fprintf((FILE*)userdata, "}\n");
+            },
             file
             );
         fprintf(file, "}\n");
@@ -98,7 +98,7 @@ namespace akinatorIO {
         if (!file) {
             return Error::FILE_ERR;
         }
-        
+
         char* buffer = (char*)calloc(fileSize + 1, sizeof(char));
         if (!buffer)
             return Error::MEM_ERR;
@@ -142,7 +142,7 @@ namespace recDescent {
         assert(s);
         assert(tree);
         assert(Tree::isEmpty(tree));
-        
+
         char const** str = &s;
 
         Error err = Error::OK; //getValue(str);
@@ -154,7 +154,7 @@ namespace recDescent {
         }
 
         skipSpaces(str);
-        if(**str != '\0') {
+        if (**str != '\0') {
             printf("Syntax error : end was not reached");
             return Error::SYNTAX;
         }
@@ -177,7 +177,7 @@ namespace recDescent {
             Error err = getViscera(str, tree, parent, dir);
             if (err) return err;
         }
-        
+
         skipSpaces(str);
         if (**str != '}')
             return Error::SYNTAX;
@@ -213,7 +213,6 @@ namespace recDescent {
             ++(*str);
         }
         string[strLength] = '\0';
-        printf("'%s'\n", string);
 
         TreeIterator it{};
         if (parent) {
@@ -235,16 +234,7 @@ namespace recDescent {
             Tree::addRoot(tree, &string);
             Tree::set2Root(tree, &it);
         }
-        printf("'%s'\n", *(char const**)it.ptr->valuePtr);
-        printf("'%p'\n", (char const**)it.ptr->valuePtr);
-        printf("'%p'\n", *(char const**)it.ptr->valuePtr);
-        printf("'%c", **(char const**)it.ptr->valuePtr);
-        printf("%c", *(*(char const**)it.ptr->valuePtr + 1));
-        printf("%c", *(*(char const**)it.ptr->valuePtr + 2));
-        printf("%c", *(*(char const**)it.ptr->valuePtr + 3));
-        printf("%d'\n", *(*(char const**)it.ptr->valuePtr + 4));
-        printf("%d", strFParser::addCallocBuf());
-        printf("'%s'\n", tree->outFunc(0, it.ptr->valuePtr));
+
 
         err = getNode(str, tree, &it, Dir::LEFT);
         if (err) return err;
@@ -267,35 +257,11 @@ namespace recDescent {
             hasS = true;
         }
 
-        if(!hasS)
+        if (!hasS)
             return Error::SYNTAX;
 
         return Error::OK;
     }
-
-    double getE(char const** str) {
-        // printf("E");
-        double value = 0;
-
-        // value = getT(str);
-
-        while (
-            **str == '+' ||
-            **str == '-') {
-
-            bool isPositive = **str == '+';
-            ++(*str);
-
-            if (isPositive) {
-                // value += getT(str);
-            } else {
-                // value -= getT(str);
-            }
-        }
-
-        return value;
-    }
-
 
     static void skipSpaces(char const** str) {
         while (isspace(**str))
