@@ -5,6 +5,8 @@
 #include "akinatorIO.h"
 #include "akinatorAlgorithms.h"
 
+#include "voice.h"
+
 #include "Akinator.h"
 
 /**
@@ -105,9 +107,12 @@ Akinator::Error Akinator::guess(Akinator* const akinator) {
     if (Tree::set2Root(&akinator->data, &position))
         return Error::EMPTY;
 
+    voice::addText(L"Я могу найти подходящую музыку. Отвечай йес или ноу, пожалуйста.");
+    voice::generate();
+
     char input[INPUT_BUFFER_SIZE] = {};
     while (TreeIterator::getRightPtr(&position)) {
-        printf("'%s'?\n", *(char const**)TreeIterator::getValue(&position));
+        printf("%s?\n", *(char const**)TreeIterator::getValue(&position));
         scanf("%s", input);
 
         if (*input == 'y')
