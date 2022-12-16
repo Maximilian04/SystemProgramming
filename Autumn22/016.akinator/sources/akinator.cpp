@@ -102,6 +102,10 @@ Akinator::Error Akinator::upload(Akinator* const akinator, char const* const fil
 }
 
 Akinator::Error Akinator::findNode(Akinator* const akinator, char const* keyword, FinderResult* result) {
+    assert(akinator);
+    assert(keyword);
+    assert(result);
+
     struct SearchInfo {
         char const* keyword;
         double bestScore;
@@ -140,6 +144,60 @@ Akinator::Error Akinator::findNode(Akinator* const akinator, char const* keyword
 
     result->bestNode = searchInfo.bestNode;
     result->depth = searchInfo.bestNodeDepth;
+
+    return Error::OK;
+}
+
+Akinator::Error Akinator::getNodeOrigin(Akinator* const akinator, TreeIterator node, size_t maxDepth, FeatsList* result) {
+    assert(akinator);
+    assert(node.ptr);
+    assert(result);
+
+    struct DefInfo {
+        TreeIterator bestNode;
+        size_t maxDepth;
+        FeatsList* featsList;
+        size_t depth;
+    };
+
+    DefInfo defInfo{ node, maxDepth, result, 0 };
+
+    Tree::dfs(&akinator->data,
+        [](DfsCallbackFunction_t_PARAMS) -> void {
+            assert(tree);
+            assert(iterator);
+            assert(userdata);
+
+            if (((DefInfo*)userdata)->bestNode.ptr == iterator->ptr)
+                ((DefInfo*)userdata)->bestNode.ptr = nullptr;
+            if (((DefInfo*)userdata)->bestNode.ptr == nullptr)
+                return;
+            // printf("%d\n", ((DefInfo*)userdata)->depth);
+
+            if (((DefInfo*)userdata)->depth < ((DefInfo*)userdata)->maxDepth) {
+                (((DefInfo*)userdata)->featsList)[((DefInfo*)userdata)->depth].feat = *(char const**)TreeIterator::getValue(iterator);
+                (((DefInfo*)userdata)->featsList)[((DefInfo*)userdata)->depth].correct = false;
+            }
+
+            ++(((DefInfo*)userdata)->depth);
+        },
+        [](DfsCallbackFunction_t_PARAMS) -> void {
+            assert(tree);
+            assert(iterator);
+            assert(userdata);
+
+            if (((DefInfo*)userdata)->bestNode.ptr == nullptr)
+                return;
+
+            (((DefInfo*)userdata)->featsList)[((DefInfo*)userdata)->depth - 1].correct = true;
+        },
+        [](DfsCallbackFunction_t_PARAMS) -> void {
+            assert(tree);
+            assert(iterator);
+            assert(userdata);
+
+            --(((DefInfo*)userdata)->depth);
+        }, &defInfo);
 
     return Error::OK;
 }
@@ -248,66 +306,24 @@ Akinator::Error Akinator::defenition(Akinator* const akinator) {
     }
     printf("Matched : %s\n", *(char const**)TreeIterator::getValue(&finderResult.bestNode));
 
-    struct DefList { 
-        char const* feat;
-        bool correct;
-    };
-    struct DefInfo {
-        TreeIterator bestNode;
-        DefList* defList;
-        size_t depth;
-    };
-
-    DefInfo defInfo{ finderResult.bestNode, nullptr, 0 };
-    defInfo.defList = (DefList*)calloc(finderResult.depth, sizeof(DefList));
-    if (!defInfo.defList)
+    FeatsList* featsList = (FeatsList*)calloc(finderResult.depth, sizeof(FeatsList));
+    if (!featsList)
         return Error::MEM_ERR;
 
-    Tree::dfs(&akinator->data,
-        [](DfsCallbackFunction_t_PARAMS) -> void {
-            assert(tree);
-            assert(iterator);
-            assert(userdata);
-
-            if (((DefInfo*)userdata)->bestNode.ptr == iterator->ptr)
-                ((DefInfo*)userdata)->bestNode.ptr = nullptr;
-            if (((DefInfo*)userdata)->bestNode.ptr == nullptr)
-                return;
-            // printf("%d\n", ((DefInfo*)userdata)->depth);
-
-            (((DefInfo*)userdata)->defList)[((DefInfo*)userdata)->depth].feat = *(char const**)TreeIterator::getValue(iterator);
-            (((DefInfo*)userdata)->defList)[((DefInfo*)userdata)->depth].correct = false;
-
-            ++(((DefInfo*)userdata)->depth);
-        },
-        [](DfsCallbackFunction_t_PARAMS) -> void {
-            assert(tree);
-            assert(iterator);
-            assert(userdata);
-
-            if (((DefInfo*)userdata)->bestNode.ptr == nullptr)
-                return;
-
-            (((DefInfo*)userdata)->defList)[((DefInfo*)userdata)->depth - 1].correct = true;
-        },
-        [](DfsCallbackFunction_t_PARAMS) -> void {
-            assert(tree);
-            assert(iterator);
-            assert(userdata);
-
-            --(((DefInfo*)userdata)->depth);
-        }, &defInfo);
+    getNodeOrigin(akinator, finderResult.bestNode, finderResult.depth, featsList);
 
     // printf("Defenition:\n");
     printf("%s is a", *(char const**)TreeIterator::getValue(&finderResult.bestNode));
     for (size_t i = 0; i < finderResult.depth; ++i) {
         if (i > 0)
             printf(",");
-        if (!defInfo.defList[i].correct)
+        if (!featsList[i].correct)
             printf(" not");
-        printf(" %s", defInfo.defList[i].feat);
+        printf(" %s", featsList[i].feat);
     }
     printf(" song.\n");
+
+    free(featsList);
 
     return Error::OK;
 }

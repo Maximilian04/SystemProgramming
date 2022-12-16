@@ -42,6 +42,11 @@ public:
         size_t depth;
     };
     static Error findNode(Akinator* const akinator, char const* keyword, FinderResult* result);
+    struct FeatsList { 
+        char const* feat;
+        bool correct;
+    };
+    static Error getNodeOrigin(Akinator* const akinator, TreeIterator node, size_t maxDepth, FeatsList* result);
 
     static Error guess(Akinator* const akinator);
     static Error defenition(Akinator* const akinator);
