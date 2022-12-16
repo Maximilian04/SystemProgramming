@@ -1,10 +1,13 @@
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "include.h"
 #include "akinatorIO.h"
 
 #include "Akinator.h"
+
+static double getScore(char const* keyword, const TreeIterator* it);
 
 /**
  * @brief Akinator constructor
@@ -98,12 +101,55 @@ Akinator::Error Akinator::upload(Akinator* const akinator, char const* const fil
     return Error::OK;
 }
 
+Akinator::Error Akinator::findNode(Akinator* const akinator, char const* keyword, FinderResult* result) {
+    struct SearchInfo {
+        char const* keyword;
+        double bestScore;
+        TreeIterator bestNode;
+        size_t depth;
+        size_t bestNodeDepth;
+    };
+
+    SearchInfo searchInfo{ keyword, 0.0, {}, 0, 0 };
+
+    if (Tree::dfs(&akinator->data,
+        [](DfsCallbackFunction_t_PARAMS) -> void {
+            assert(tree);
+            assert(iterator);
+            assert(userdata);
+
+            double score = getScore(((SearchInfo*)userdata)->keyword, iterator);
+            if (score > ((SearchInfo*)userdata)->bestScore) {
+                ((SearchInfo*)userdata)->bestScore = score;
+                ((SearchInfo*)userdata)->bestNode = *iterator;
+                ((SearchInfo*)userdata)->bestNodeDepth = ((SearchInfo*)userdata)->depth;
+            }
+
+            ++(((SearchInfo*)userdata)->depth);
+        },
+        nullptr, 
+        [](DfsCallbackFunction_t_PARAMS) -> void {
+            assert(tree);
+            assert(iterator);
+            assert(userdata);
+
+            --(((SearchInfo*)userdata)->depth);
+        }, &searchInfo)) {
+            return Error::FINDER_ERR;
+        }
+
+    result->bestNode = searchInfo.bestNode;
+    result->depth = searchInfo.bestNodeDepth;
+
+    return Error::OK;
+}
+
 Akinator::Error Akinator::guess(Akinator* const akinator) {
     TreeIterator position{};
     if (Tree::set2Root(&akinator->data, &position))
         return Error::EMPTY;
 
-    char input[INPUT_BUFFER_SIZE];
+    char input[INPUT_BUFFER_SIZE] = {};
     while (TreeIterator::getRightPtr(&position)) {
         printf("'%s'?\n", *(char const**)TreeIterator::getValue(&position));
         scanf("%s", input);
@@ -114,11 +160,11 @@ Akinator::Error Akinator::guess(Akinator* const akinator) {
             TreeIterator::left(&position);
     }
 
-    printf("%s podhodit?\n", *(char const**)TreeIterator::getValue(&position));
+    printf("Is %s suitable?\n", *(char const**)TreeIterator::getValue(&position));
     scanf("%s", input);
 
     if (*input == 'y') {
-        printf("Priyatnogo proslushivaniya\n");
+        printf("Enjoy listening.\n");
         return Error::OK;
     }
 
@@ -127,11 +173,12 @@ Akinator::Error Akinator::guess(Akinator* const akinator) {
     if (!question || !name)
         return Error::MEM_ERR;
 
-    printf("Zhaly. Eto vsyo, chto u menya bylo. A chto togda podhodyt?\n");
+    printf("Sorry to hear. That is all i have. But finally, what is suitable for you?\n");
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-nonliteral"
     scanf(strFParser::parseFCalloc("\n%%%d[^\n]", INPUT_BUFFER_SIZE), name);
 #pragma GCC diagnostic pop
+    strFParser::freeCalloc();
 
     Tree::rehangLeft(&akinator->data, &position);
     Tree::addRight(&akinator->data, &position, &name);
@@ -150,6 +197,117 @@ Akinator::Error Akinator::guess(Akinator* const akinator) {
     strFParser::freeCalloc();
 
     *((char const**)TreeIterator::getValue(&position)) = question;
+
+    return Error::OK;
+}
+
+/**
+ * @brief Calc score of the node
+ *
+ * @param [in] keyword Keyword
+ * @param [in] it Iterator
+ * @return double Score
+ */
+static double getScore(char const* keyword, const TreeIterator* it) {
+    double bestScore = 0;
+    char const* name = *(char const**)(TreeIterator::getValue(it));
+    size_t keyLen = strlen(keyword);
+    size_t nameLen = strlen(name);
+
+    if (nameLen < keyLen)
+        return 0.0;
+
+    for (size_t shift = 0; shift <= (nameLen - keyLen); ++shift) {
+        double score = 0;
+        for (size_t i = 0; i < keyLen; ++i) {
+            score += (keyword[i] == name[i + shift]);
+        }
+        if (score > bestScore)
+            bestScore = score;
+    }
+
+    return bestScore;
+}
+
+Akinator::Error Akinator::defenition(Akinator* const akinator) {
+    char keyword[INPUT_BUFFER_SIZE] = {};
+
+    printf("Print keyword for defenition:\n");
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-nonliteral"
+    scanf(strFParser::parseFCalloc("\n%%%d[^\n]", INPUT_BUFFER_SIZE), keyword);
+#pragma GCC diagnostic pop
+    strFParser::freeCalloc();
+
+    FinderResult finderResult = {};
+    findNode(akinator, keyword, &finderResult);    
+
+    if (!finderResult.bestNode.ptr) {
+        printf("Sorry, no match\n");
+        return Error::OK;
+    }
+    printf("Matched : %s\n", *(char const**)TreeIterator::getValue(&finderResult.bestNode));
+
+    struct DefList { 
+        char const* feat;
+        bool correct;
+    };
+    struct DefInfo {
+        TreeIterator bestNode;
+        DefList* defList;
+        size_t depth;
+    };
+
+    DefInfo defInfo{ finderResult.bestNode, nullptr, 0 };
+    defInfo.defList = (DefList*)calloc(finderResult.depth, sizeof(DefList));
+    if (!defInfo.defList)
+        return Error::MEM_ERR;
+
+    Tree::dfs(&akinator->data,
+        [](DfsCallbackFunction_t_PARAMS) -> void {
+            assert(tree);
+            assert(iterator);
+            assert(userdata);
+
+            if (((DefInfo*)userdata)->bestNode.ptr == iterator->ptr)
+                ((DefInfo*)userdata)->bestNode.ptr = nullptr;
+            if (((DefInfo*)userdata)->bestNode.ptr == nullptr)
+                return;
+            // printf("%d\n", ((DefInfo*)userdata)->depth);
+
+            (((DefInfo*)userdata)->defList)[((DefInfo*)userdata)->depth].feat = *(char const**)TreeIterator::getValue(iterator);
+            (((DefInfo*)userdata)->defList)[((DefInfo*)userdata)->depth].correct = false;
+
+            ++(((DefInfo*)userdata)->depth);
+        },
+        [](DfsCallbackFunction_t_PARAMS) -> void {
+            assert(tree);
+            assert(iterator);
+            assert(userdata);
+
+            if (((DefInfo*)userdata)->bestNode.ptr == nullptr)
+                return;
+
+            (((DefInfo*)userdata)->defList)[((DefInfo*)userdata)->depth - 1].correct = true;
+        },
+        [](DfsCallbackFunction_t_PARAMS) -> void {
+            assert(tree);
+            assert(iterator);
+            assert(userdata);
+
+            --(((DefInfo*)userdata)->depth);
+        }, &defInfo);
+
+    // printf("Defenition:\n");
+    printf("%s is a", *(char const**)TreeIterator::getValue(&finderResult.bestNode));
+    for (size_t i = 0; i < finderResult.depth; ++i) {
+        if (i > 0)
+            printf(",");
+        if (!defInfo.defList[i].correct)
+            printf(" not");
+        printf(" %s", defInfo.defList[i].feat);
+    }
+    printf(" song.\n");
 
     return Error::OK;
 }

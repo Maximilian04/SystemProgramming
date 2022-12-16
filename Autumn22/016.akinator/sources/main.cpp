@@ -31,9 +31,12 @@ int main(int argc, const char* const* const argv) {
 
     switch (mode) {
     case Mode::GUESS:
-        Akinator::guess(&akinator);
+        if (Akinator::guess(&akinator))
+            return 1;
         break;
     case Mode::DEFENITION:
+        if (Akinator::defenition(&akinator))
+            return 1;
         break;
     default:
         assert(0);

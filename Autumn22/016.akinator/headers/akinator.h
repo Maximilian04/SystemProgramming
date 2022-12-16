@@ -27,6 +27,7 @@ public:
         FILE_ERR,            ///< Error with file writing or reading
         FILE_FORMAT_ERR,     ///< Error with input file format
         UPLOAD_TO_NOT_EMPTY, ///< Tree to upload is not empty
+        FINDER_ERR,          ///< Error in finder function
     };
 
 #define Akinator__ctor(obj) Akinator::ctor(&obj, DEBUGINFO_CTOR_ARGS_R(#obj))
@@ -36,7 +37,14 @@ public:
     static Error save(Akinator const* const akinator, char const* const fileName);
     static Error upload(Akinator* const akinator, char const* const fileName);
 
+    struct FinderResult {
+        TreeIterator bestNode;
+        size_t depth;
+    };
+    static Error findNode(Akinator* const akinator, char const* keyword, FinderResult* result);
+
     static Error guess(Akinator* const akinator);
+    static Error defenition(Akinator* const akinator);
 };
 
 #endif // AKINATOR_H

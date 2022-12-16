@@ -1,5 +1,5 @@
-{12:Orkestrovaya
-{6:milaya
+{10:orchestral
+{5:sweet
 {29:Koroly i shut "Kukla kolduna"
 {}
 {}
@@ -9,7 +9,7 @@
 {}
 }
 }
-{8:Classika
+{7:classic
 {42:Ramin Djawadi "Paint it black" (Westworld)
 {}
 {}
