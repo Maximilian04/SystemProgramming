@@ -1,15 +1,35 @@
 #include <assert.h>
 #include <stdio.h>
 
+#include "include.h"
+#include "cmdParsing.h"
 #include "Akinator.h"
 
-const size_t INPUT_BUFFER_SIZE = 512;
-
 int main(int argc, const char* const* const argv) {
+    Mode mode = Mode::GUESS;
+    char const* databaseFileName = "data.txt";
+
+    cmdParser::ProccessFlagsPtrs proccessFlagsPtrs = {
+        &mode,
+        &databaseFileName,
+    };
+
+    switch (cmdParser::handleFlags(argc, argv, cmdParser::reactToFlags, &proccessFlagsPtrs)) {
+    case cmdParser::ParserResult::BAD_INPUT:
+        return 1;
+        break;
+    case cmdParser::ParserResult::GOOD_INPUT:
+        break;
+    default:
+        assert(false && "cmdParser::processFlags()'s return value is not an allowed cmdParser::PARSER_RESULT's member");
+        break;
+    }
+
+
     Akinator akinator{};
     Akinator__ctor(akinator);
 
-    if (Akinator::upload(&akinator, "data.txt")) {
+    if (Akinator::upload(&akinator, databaseFileName)) {
         printf("upload error\n");
         return 1;
     }
@@ -41,7 +61,7 @@ int main(int argc, const char* const* const argv) {
         printf("Nooo0o\n");
 
 
-    if (Akinator::save(&akinator, "data.txt")) {
+    if (Akinator::save(&akinator, databaseFileName)) {
         printf("File error\n");
         return 1;
     }
