@@ -50,7 +50,8 @@ namespace akinatorIO {
                 assert(iterator);
                 assert(userdata);
 
-                fprintf((FILE*)userdata, "%llu:%s\n{", strlen(*(char**)TreeIterator::getValue(iterator)), *(char**)TreeIterator::getValue(iterator));
+                fprintf((FILE*)userdata, "%llu:%s\n{", 
+                    strlen(*(char**)TreeIterator::getValue(iterator)), *(char**)TreeIterator::getValue(iterator));
             },
             [](DfsCallbackFunction_t_PARAMS) -> void {
                 assert(tree);

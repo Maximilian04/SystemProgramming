@@ -105,7 +105,7 @@ Akinator::Error Akinator::guess(Akinator* const akinator) {
 
     char input[INPUT_BUFFER_SIZE];
     while (TreeIterator::getRightPtr(&position)) {
-        printf("%s\n", *(char const**)TreeIterator::getValue(&position));
+        printf("'%s'?\n", *(char const**)TreeIterator::getValue(&position));
         scanf("%s", input);
 
         if (*input == 'y')
