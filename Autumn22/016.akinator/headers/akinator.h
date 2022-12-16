@@ -20,11 +20,13 @@ public:
     DebugInfo debugInfo;
 
     enum Error {
-        OK = 0,      ///< No errors
-        MEM_ERR,     ///< Error in memory allocation
-        NULLPTR_ERR, ///< Nullptr is occured
-        EMPTY,       ///< No elements in tree
-        FILE_ERR,    ///< Error with file writing
+        OK = 0,              ///< No errors
+        MEM_ERR,             ///< Error in memory allocation
+        NULLPTR_ERR,         ///< Nullptr is occured
+        EMPTY,               ///< No elements in tree
+        FILE_ERR,            ///< Error with file writing or reading
+        FILE_FORMAT_ERR,     ///< Error with input file format
+        UPLOAD_TO_NOT_EMPTY, ///< Tree to upload is not empty
     };
 
 #define Akinator__ctor(obj) Akinator::ctor(&obj, DEBUGINFO_CTOR_ARGS_R(#obj))

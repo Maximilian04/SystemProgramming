@@ -19,6 +19,7 @@ namespace akinatorIO {
         FILE_ERR,        ///< Error with file writing or reading
         FILE_FORMAT_ERR, ///< Error with file format
         ISNOT_EMPTY,     ///< Object to write is not empty
+        MEM_ERR,         ///< Error with memory allocation
     };
 
     Error save(Tree const* const data, char const* const fileName);
