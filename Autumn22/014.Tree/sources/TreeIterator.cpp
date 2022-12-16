@@ -26,7 +26,7 @@ TreeIterator::Error TreeIterator::right(TreeIterator* const iterator) {
     assert(iterator);
     assert(iterator->ptr);
 
-    if (!iterator->ptr->right) return Error::FIRST_ELEM;
+    if (!iterator->ptr->right) return Error::LAST_ELEM;
     iterator->ptr = iterator->ptr->right;
 
     return Error::OK;
