@@ -93,6 +93,9 @@ namespace akinatorIO {
         }
 
         int fileSize = getSizeOfFile(fileName);
+        if (!fileSize) {
+            return Error::FILE_ERR;
+        }
 
         FILE* file = fopen(fileName, "rt");
         if (!file) {
@@ -123,7 +126,7 @@ namespace akinatorIO {
      * @brief Get the size of file
      *
      * @param [in] fileName Name of file
-     * @return _off_t Size of file
+     * @return _off_t Size of file or 0 if error occured
      */
     static _off_t getSizeOfFile(const char* fileName) {
         assert(fileName != nullptr);
@@ -131,6 +134,9 @@ namespace akinatorIO {
         struct stat fileStat = {};
 
         int statResult = stat(fileName, &fileStat);
+        if (statResult != 0)
+            return 0;
+
         assert(statResult == 0 && "Cannot get file info");
 
         return fileStat.st_size;
