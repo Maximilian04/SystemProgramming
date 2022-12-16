@@ -1,7 +1,7 @@
 /**
  * @file Akinator.h
  * @author Maximilian (https://github.com/Maximilian04)
- * @brief
+ * @brief Akinator
  * @date 2022-11-25
  *
  * @copyright Copyright (c) 2022
@@ -36,17 +36,6 @@ public:
 
     static Error save(Akinator const* const akinator, char const* const fileName);
     static Error upload(Akinator* const akinator, char const* const fileName);
-
-    struct FinderResult {
-        TreeIterator bestNode;
-        size_t depth;
-    };
-    static Error findNode(Akinator* const akinator, char const* keyword, FinderResult* result);
-    struct FeatsList { 
-        char const* feat;
-        bool correct;
-    };
-    static Error getNodeOrigin(Akinator* const akinator, TreeIterator node, size_t maxDepth, FeatsList* result);
 
     static Error guess(Akinator* const akinator);
     static Error defenition(Akinator* const akinator);

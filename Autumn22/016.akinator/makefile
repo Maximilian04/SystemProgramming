@@ -57,6 +57,11 @@ OBJECTS := ${OBJECTS} build\${NAME}.o
 build\${NAME}.o: sources\${NAME}.cpp
 	${COMPILE_O}
 
+NAME = akinatorAlgorithms
+OBJECTS := ${OBJECTS} build\${NAME}.o
+build\${NAME}.o: sources\${NAME}.cpp
+	${COMPILE_O}
+
 
 akinator: ${OBJECTS}
 	@ g++ $(COMPILE_FLAGS) $^ -o build\akinator $(LINK_FLAGS)
