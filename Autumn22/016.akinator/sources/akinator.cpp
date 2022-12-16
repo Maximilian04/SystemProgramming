@@ -114,13 +114,42 @@ Akinator::Error Akinator::guess(Akinator* const akinator) {
             TreeIterator::left(&position);
     }
 
-    printf("Is it %s?\n", *(char const**)TreeIterator::getValue(&position));
+    printf("%s podhodit?\n", *(char const**)TreeIterator::getValue(&position));
     scanf("%s", input);
 
-    if (*input == 'y')
-        printf("Yeeee\n");
-    else
-        printf("Nooo0o\n");
+    if (*input == 'y') {
+        printf("Priyatnogo proslushivaniya\n");
+        return Error::OK;
+    }
+
+    char* question = (char*)calloc(INPUT_BUFFER_SIZE, sizeof(char));
+    char* name = (char*)calloc(INPUT_BUFFER_SIZE, sizeof(char));
+    if (!question || !name)
+        return Error::MEM_ERR;
+
+    printf("Zhaly. Eto vsyo, chto u menya bylo. A chto togda podhodyt?\n");
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-nonliteral"
+    scanf(strFParser::parseFCalloc("\n%%%d[^\n]", INPUT_BUFFER_SIZE), name);
+#pragma GCC diagnostic pop
+
+    Tree::rehangLeft(&akinator->data, &position);
+    Tree::addRight(&akinator->data, &position, &name);
+
+    TreeIterator left = position;
+    TreeIterator right = position;
+    TreeIterator::left(&left);
+    TreeIterator::right(&right);
+
+    printf("A kakaya %s v otlichie ot %s?\n",
+        *(char const**)TreeIterator::getValue(&right), *(char const**)TreeIterator::getValue(&left));
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-nonliteral"
+    scanf(strFParser::parseFCalloc("\n%%%d[^\n]", INPUT_BUFFER_SIZE), question);
+#pragma GCC diagnostic pop
+    strFParser::freeCalloc();
+
+    *((char const**)TreeIterator::getValue(&position)) = question;
 
     return Error::OK;
 }

@@ -40,12 +40,12 @@ int main(int argc, const char* const* const argv) {
     }
 
 
+    logger::logMsg(COLORED_TEXT(COLORS_SETTINGS_NOTE_TEXTCOLOR, "end:"));
+    Tree__dump(akinator.data);
     if (Akinator::save(&akinator, databaseFileName)) {
         printf("File error\n");
         return 1;
     }
-    logger::logMsg(COLORED_TEXT(COLORS_SETTINGS_NOTE_TEXTCOLOR, "end:"));
-    Tree__dump(akinator.data);
 
     Akinator::dtor(&akinator);
 
