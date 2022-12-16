@@ -39,6 +39,7 @@ public:
 
     static Error guess(Akinator* const akinator);
     static Error defenition(Akinator* const akinator);
+    static Error difference(Akinator* const akinator);
 };
 
 #endif // AKINATOR_H

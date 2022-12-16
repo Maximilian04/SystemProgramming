@@ -31,6 +31,9 @@ namespace cmdParser {
         case 'd':
             *((ProccessFlagsPtrs*)userdata)->modePtr = Mode::DEFENITION;
             break;
+        case '~':
+            *((ProccessFlagsPtrs*)userdata)->modePtr = Mode::DIFFERENCE;
+            break;
         default:
             return cmdParser::handleFlagResult::UNKNOWN;
         }

@@ -100,7 +100,6 @@ Akinator::Error Akinator::upload(Akinator* const akinator, char const* const fil
 }
 
 
-
 Akinator::Error Akinator::guess(Akinator* const akinator) {
     TreeIterator position{};
     if (Tree::set2Root(&akinator->data, &position))
@@ -145,7 +144,7 @@ Akinator::Error Akinator::guess(Akinator* const akinator) {
     TreeIterator::left(&left);
     TreeIterator::right(&right);
 
-    printf("A kakaya %s v otlichie ot %s?\n",
+    printf("What is %s as opposed to %s?\n",
         *(char const**)TreeIterator::getValue(&right), *(char const**)TreeIterator::getValue(&left));
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-nonliteral"
@@ -195,6 +194,90 @@ Akinator::Error Akinator::defenition(Akinator* const akinator) {
     printf(" song.\n");
 
     free(featsList);
+
+    return Error::OK;
+}
+
+Akinator::Error Akinator::difference(Akinator* const akinator) {
+    char keyword1[INPUT_BUFFER_SIZE] = {};
+    char keyword2[INPUT_BUFFER_SIZE] = {};
+
+    printf("Print keyword for defenition:\n");
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-nonliteral"
+    scanf(strFParser::parseFCalloc("\n%%%d[^\n]", INPUT_BUFFER_SIZE), keyword1);
+    scanf(strFParser::parseFCalloc("\n%%%d[^\n]", INPUT_BUFFER_SIZE), keyword2);
+#pragma GCC diagnostic pop
+    strFParser::freeCalloc();
+
+    akinatorAlgorithms::FinderResult finderResult1 = {};
+    akinatorAlgorithms::FinderResult finderResult2 = {};
+    akinatorAlgorithms::findNode(akinator, keyword1, &finderResult1);
+    akinatorAlgorithms::findNode(akinator, keyword2, &finderResult2);
+
+    if (!finderResult1.bestNode.ptr) {
+        printf("Sorry, no match\n");
+        return Error::OK;
+    }
+    printf("Matched : %s\n", *(char const**)TreeIterator::getValue(&finderResult1.bestNode));
+    if (!finderResult2.bestNode.ptr) {
+        printf("Sorry, no match\n");
+        return Error::OK;
+    }
+    printf("Matched : %s\n", *(char const**)TreeIterator::getValue(&finderResult2.bestNode));
+
+
+    akinatorAlgorithms::FeatsList* featsList1 = (akinatorAlgorithms::FeatsList*)calloc(finderResult1.depth, sizeof(akinatorAlgorithms::FeatsList));
+    if (!featsList1)
+        return Error::MEM_ERR;
+    akinatorAlgorithms::FeatsList* featsList2 = (akinatorAlgorithms::FeatsList*)calloc(finderResult2.depth, sizeof(akinatorAlgorithms::FeatsList));
+    if (!featsList2)
+        return Error::MEM_ERR;
+
+    akinatorAlgorithms::getNodeOrigin(akinator, finderResult1.bestNode, finderResult1.depth, featsList1);
+    akinatorAlgorithms::getNodeOrigin(akinator, finderResult2.bestNode, finderResult2.depth, featsList2);
+
+    size_t commonCounter = 0;
+
+    printf("%s and %s are both",
+        *(char const**)TreeIterator::getValue(&finderResult1.bestNode),
+        *(char const**)TreeIterator::getValue(&finderResult2.bestNode));
+    for (size_t i = 0; i < finderResult1.depth && i < finderResult2.depth; ++i) {
+        if (featsList1[i].correct != featsList2[i].correct) {
+            commonCounter = i;
+            break;
+        }
+        if (i > 0)
+            printf(",");
+        if (!featsList1[i].correct)
+            printf(" not");
+        printf(" %s", featsList1[i].feat);
+    }
+    printf(" songs.\n");
+
+    printf("But %s is",
+        *(char const**)TreeIterator::getValue(&finderResult1.bestNode));
+    for (size_t i = commonCounter; i < finderResult1.depth; ++i) {
+        if (i > commonCounter)
+            printf(",");
+        if (!featsList1[i].correct)
+            printf(" not");
+        printf(" %s", featsList1[i].feat);
+    }
+
+    printf(" while %s is",
+        *(char const**)TreeIterator::getValue(&finderResult2.bestNode));
+    for (size_t i = commonCounter; i < finderResult2.depth; ++i) {
+        if (i > commonCounter)
+            printf(",");
+        if (!featsList2[i].correct)
+            printf(" not");
+        printf(" %s", featsList2[i].feat);
+    }
+    printf(".\n");
+
+    free(featsList1);
+    free(featsList2);
 
     return Error::OK;
 }

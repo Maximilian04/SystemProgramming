@@ -18,6 +18,7 @@ const size_t INPUT_BUFFER_SIZE = 512;
 enum Mode {
     GUESS,
     DEFENITION,
+    DIFFERENCE,
 };
 
 #endif // INCLUDE_H

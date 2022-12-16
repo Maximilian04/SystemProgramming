@@ -38,6 +38,10 @@ int main(int argc, const char* const* const argv) {
         if (Akinator::defenition(&akinator))
             return 1;
         break;
+    case Mode::DIFFERENCE:
+        if (Akinator::difference(&akinator))
+            return 1;
+        break;
     default:
         assert(0);
     }
