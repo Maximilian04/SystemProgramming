@@ -31,9 +31,12 @@ public:
 
 #define Akinator__ctor(obj) Akinator::ctor(&obj, DEBUGINFO_CTOR_ARGS_R(#obj))
     static Error ctor(Akinator* const akinator, DEBUGINFO_CTOR_ARGS_H);
+    static Error dtor(Akinator* const akinator);
 
     static Error save(Akinator const* const akinator, char const* const fileName);
     static Error upload(Akinator* const akinator, char const* const fileName);
+
+    static Error guess(Akinator* const akinator);
 };
 
 #endif // AKINATOR_H
