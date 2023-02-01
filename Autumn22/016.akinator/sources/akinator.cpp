@@ -5,6 +5,7 @@
 #include "akinatorIO.h"
 #include "akinatorAlgorithms.h"
 
+#include "texts.h"
 #include "voice.h"
 
 #include "Akinator.h"
@@ -101,31 +102,42 @@ Akinator::Error Akinator::upload(Akinator* const akinator, char const* const fil
     return Error::OK;
 }
 
+static bool getAnswer(char* input) {
+    scanf("%s", input);
+
+    return *input == 'y';
+}
+
+static bool askFeatureQuestion(TreeIterator const* const position, char* input) {
+    printf(texts::FEATUREQUESTION, *(char const**)TreeIterator::getValue(position));
+
+    return getAnswer(input);
+}
+
+#define SCAN2BUFFER(size, dst) scanf(strFParser::parseFCalloc("\n%%%d[^\n]", size), dst);
 
 Akinator::Error Akinator::guess(Akinator* const akinator) {
     TreeIterator position{};
     if (Tree::set2Root(&akinator->data, &position))
         return Error::EMPTY;
 
-    voice::addText(L"I can help you find music that is suitable for you. Please, answer me only with yes or no.");
+    voice::addText(texts::GUESS_INVITE_L);
     voice::generate();
+    printf(texts::GUESS_INVITE);
 
     char input[INPUT_BUFFER_SIZE] = {};
-    while (TreeIterator::getRightPtr(&position)) {
-        printf("%s?\n", *(char const**)TreeIterator::getValue(&position));
-        scanf("%s", input);
 
-        if (*input == 'y')
+    while (TreeIterator::getRightPtr(&position)) {
+        if (askFeatureQuestion(&position, input))
             TreeIterator::right(&position);
         else
             TreeIterator::left(&position);
     }
 
-    printf("Is %s suitable?\n", *(char const**)TreeIterator::getValue(&position));
-    scanf("%s", input);
+    printf(texts::CERTAINQUESTION, *(char const**)TreeIterator::getValue(&position));
 
-    if (*input == 'y') {
-        printf("Enjoy listening.\n");
+    if (getAnswer(input)) {
+        printf(texts::GUESS_GOODBYE);
         return Error::OK;
     }
 
@@ -134,10 +146,10 @@ Akinator::Error Akinator::guess(Akinator* const akinator) {
     if (!question || !name)
         return Error::MEM_ERR;
 
-    printf("Sorry to hear. That is all i have. But finally, what is suitable for you?\n");
+    printf(texts::GUESS_SURRENDER);
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-nonliteral"
-    scanf(strFParser::parseFCalloc("\n%%%d[^\n]", INPUT_BUFFER_SIZE), name);
+    SCAN2BUFFER(INPUT_BUFFER_SIZE, name);
 #pragma GCC diagnostic pop
     strFParser::freeCalloc();
 
@@ -149,11 +161,10 @@ Akinator::Error Akinator::guess(Akinator* const akinator) {
     TreeIterator::left(&left);
     TreeIterator::right(&right);
 
-    printf("What is %s as opposed to %s?\n",
-        *(char const**)TreeIterator::getValue(&right), *(char const**)TreeIterator::getValue(&left));
+    printf(texts::GUESS_DIFFQUESTION, *(char const**)TreeIterator::getValue(&right), *(char const**)TreeIterator::getValue(&left));
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-nonliteral"
-    scanf(strFParser::parseFCalloc("\n%%%d[^\n]", INPUT_BUFFER_SIZE), question);
+    SCAN2BUFFER(INPUT_BUFFER_SIZE, question);
 #pragma GCC diagnostic pop
     strFParser::freeCalloc();
 
