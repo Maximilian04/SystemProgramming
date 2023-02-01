@@ -18,7 +18,7 @@ namespace voice {
         "local_file = 'model.pt'\n"
         "\n"
         "if not os.path.isfile(local_file):\n"
-        "    torch.hub.download_url_to_file('https://models.silero.ai/models/tts/ru/v3_1_ru.pt',\n"
+        "    torch.hub.download_url_to_file('https://models.silero.ai/models/tts/en/v3_en.pt',\n"
         "                                   local_file)  \n"
         "\n"
         "model = torch.package.PackageImporter(local_file).load_pickle(\"tts_models\", \"model\")\n"
@@ -28,10 +28,11 @@ namespace voice {
         "example_text = '";
     static const wchar_t* codeTemplateEnd = L""
         "'\n"
-        "# example_text = 'Is it suitable for you? I am glad you do.'\n"
+        "#example_text = 'Is it suitable for you? I am glad you do.'\n"
         "sample_rate = 48000\n"
         "# speaker='baya'\n"
-        "speaker='xenia'\n"
+        "# speaker='xenia'\n"
+        "speaker='en_5'\n"
         "\n"
         "audio_paths = model.save_wav(text=example_text,\n"
         "                             speaker=speaker,\n"
@@ -75,6 +76,6 @@ namespace voice {
         fclose(file);
 
         system("python stuff/speach.py");
-        system("test.wav");
+        PlaySound(TEXT("test.wav"), NULL, SND_FILENAME | SND_ASYNC);
     }
 }

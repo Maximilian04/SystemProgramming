@@ -12,7 +12,8 @@ namespace cmdParser {
             "Help message. Command list:\n"
             "-h\t\tshow help message\n"
             "-f [name]\tuse database from [name] file\n"
-            "-d\t\tdefenition mode\n");
+            "-d\t\tdefenition mode\n"
+            "-~\t\tcomparing mode\n");
     }
 
     cmdParser::handleFlagResult handleFlag(cmdParser::CmdArgument cmdArgument, void* userdata) {

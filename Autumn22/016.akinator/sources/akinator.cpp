@@ -107,7 +107,7 @@ Akinator::Error Akinator::guess(Akinator* const akinator) {
     if (Tree::set2Root(&akinator->data, &position))
         return Error::EMPTY;
 
-    voice::addText(L"Я могу найти подходящую музыку. Отвечай йес или ноу, пожалуйста.");
+    voice::addText(L"I can help you find music that is suitable for you. Please, answer me only with yes or no.");
     voice::generate();
 
     char input[INPUT_BUFFER_SIZE] = {};
@@ -207,7 +207,7 @@ Akinator::Error Akinator::difference(Akinator* const akinator) {
     char keyword1[INPUT_BUFFER_SIZE] = {};
     char keyword2[INPUT_BUFFER_SIZE] = {};
 
-    printf("Print keyword for defenition:\n");
+    printf("Print two keywords for getting difference:\n");
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-nonliteral"
     scanf(strFParser::parseFCalloc("\n%%%d[^\n]", INPUT_BUFFER_SIZE), keyword1);
