@@ -13,17 +13,15 @@ int main() {
     int size = 0, in = 0;
     cin >> size;
 
-    vector<bool> arr(size + 1, true);
+    int ans = 0;
     for (int i = 0; i < size; ++i) {
         cin >> in;
-        arr[in] = false;
+        ans ^= i;
+        ans ^= in;
     }
+    ans ^= size;
 
-    for (int i = 0; i <= size; ++i) {
-        if (arr[i])
-            cout << i << " ";
-    }
-    cout << endl;
+    cout << ans << endl;
 
     return 0;
 }
