@@ -1,0 +1,124 @@
+Turbo Assembler	 Version 4.1	    02/17/23 01:55:44	    Page 1
+prtndec.asm
+
+
+
+      1	0000			     .model tiny
+      2	0000			     .code
+      3				     locals @@
+      4				     org 100h
+      5
+      6	0100			     Start:
+      7	0100  B8 B800				     mov ax, 0b800h		     ; адрес сегмента с		    +
+      8				     видеопамятью -> es
+      9	0103  8E C0				     mov es, ax			     ;
+     10
+     11	0105  BE 0000				     mov si, 0h
+     12
+     13	0108  BB 0C30				     mov bx, 160d*19 + 160d/2	     ; Середина	10 строчки
+     14										     ; Каждой строчке		    +
+     15				     соответствует	160 байт
+     16
+     17	010B  B6 02				     mov dh, 00000010b		     ; Dark green on black
+     18
+     19	010D  B8 5F7C				     mov ax, 5F7Ch		     ; Print 1
+     20	0110  B8 00E4				     mov ax, 228d		     ; Print 1
+     21
+     22	0113  E8 0005				     call PrintNDec
+     23
+     24	0116  B8 4C00				     mov ax, 4c00h		     ; exit(0)
+     25	0119  CD 21				     int 21h
+     26
+     27				     ;------------------------------------------------
+     28				     ; Prints number as	decimal	to vidmem
+     29				     ;------------------------------------------------
+     30				     ; Entry:	     AX	= number to print
+     31				     ;		     BX	= start	addr to	print
+     32				     ;
+     33				     ; Expects:	     ES	-> Video segment
+     34				     ;		     DH	= color	code
+     35				     ;
+     36				     ; Exit:	     None
+     37				     ;
+     38				     ; Destroys:     AX	BX CX DL Si
+     39				     ;------------------------------------------------
+     40				     ;------------------------------------------------
+     41	011B			     PrintNDec	     proc
+     42
+     43	011B  B9 0005				     mov cx, 5d			     ; 5 digits	in 2 byte in ax
+     44
+     45	011E			     @@PrintDigit:				     ; <-------------------------\
+     46	011E  8A EE				     mov ch, dh			     ; Store dh	to ch		 |
+     47										     ;				 |
+     48	0120  BA 0000				     mov dx, 0d			     ; for division		 |
+     49	0123  BE 000A				     mov si, 10d		     ; ax/10 ->	ax &		 |
+     50	0126  F7 F6				     div si			     ; & ax%10 -> dx		 | !!! dx < 10
+     51										     ;				 |
+     52	0128  8B F2				     mov si, dx			     ; dl -> si			 |
+     53										     ;				 |
+     54	012A  8A 94 0000r			     mov dl, byte ptr [Alphabet]+si  ; ASCII "0" offset		 |
+     55										     ;				 |
+     56	012E  8A F5				     mov dh, ch			     ; Restore dh from ch	 |
+     57	0130  B5 00				     mov ch, 0			     ; ^			 |
+Turbo Assembler	 Version 4.1	    02/17/23 01:55:44	    Page 2
+prtndec.asm
+
+
+
+     58										     ;				 |
+     59	0132  26: 89 17				     mov word ptr es:[bx], dx	     ; Print dl	on position bx	 |
+     60										     ;				 |
+     61	0135  4B				     dec bx			     ; Next digit		 |
+     62	0136  4B				     dec bx			     ; ^			 |
+     63										     ;				 |
+     64										     ;				 |
+     65	0137  E2 E5				     loop @@PrintDigit		     ; >-------------------------/
+     66
+     67	0139  C3				     ret
+     68
+     69	013A			     PrintNDec	     endp
+     70
+     71				     ;------------------------------------------------
+     72				     ;------------------------------------------------
+     73
+     74	013A			     .data
+     75	0000  30 31 32 33 34 35	36+  Alphabet:	     db	"0123456789ABCDEF"	     ; Alphabet	for printing (Thanks Ilya)
+     76	      37 38 39 41 42 43	44+
+     77	      45 46
+     78
+     79				     end	     Start
+Turbo Assembler	 Version 4.1	    02/17/23 01:55:44	    Page 3
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "02/17/23"
+??FILENAME			  Text	 "prtndec "
+??TIME				  Text	 "01:55:44"
+??VERSION			  Number 040A
+@32BIT				  Text	 0
+@@PRINTDIGIT			  Near	 DGROUP:011E
+@CODE				  Text	 DGROUP
+@CODESIZE			  Text	 0
+@CPU				  Text	 0101H
+@CURSEG				  Text	 _DATA
+@DATA				  Text	 DGROUP
+@DATASIZE			  Text	 0
+@FILENAME			  Text	 PRTNDEC
+@INTERFACE			  Text	 000H
+@MODEL				  Text	 1
+@STACK				  Text	 DGROUP
+@WORDSIZE			  Text	 2
+ALPHABET			  Near	 DGROUP:0000
+PRINTNDEC			  Near	 DGROUP:011B
+START				  Near	 DGROUP:0100
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+DGROUP				  Group
+  _DATA				  16  0010 Word	  Public  DATA
+  _TEXT				  16  013A Word	  Public  CODE
+
