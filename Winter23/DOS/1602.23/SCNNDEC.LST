@@ -1,0 +1,187 @@
+Turbo Assembler	 Version 4.1	    02/17/23 02:44:12	    Page 1
+scnndec.asm
+
+
+
+      1	0000			     .model tiny
+      2	0000			     .code
+      3				     locals @@
+      4				     org 100h
+      5
+      6	0100			     Start:
+      7	0100  BB 0000				     mov bx, 0d
+      8	0103  E8 0014				     call ScanNDec
+      9
+     10	0106  B8 B800				     mov ax, 0b800h		     ; адрес сегмента с		    +
+     11				     видеопамятью -> es
+     12	0109  8E C0				     mov es, ax			     ;
+     13
+     14	010B  8B C3				     mov ax, bx			     ; Scanned number
+     15
+     16	010D  BB 0C30				     mov bx, 160d*19 + 160d/2	     ; Середина	10 строчки
+     17										     ; Каждой строчке		    +
+     18				     соответствует	160 байт
+     19
+     20	0110  B6 02				     mov dh, 00000010b		     ; Dark green on black
+     21
+     22						     ; mov ax, 5F7Ch		       ; Print 1
+     23						     ; mov ax, 228d		       ; Print 1
+     24
+     25	0112  E8 0023				     call PrintNDec
+     26
+     27	0115  B8 4C00				     mov ax, 4c00h		     ; exit(0)
+     28	0118  CD 21				     int 21h
+     29
+     30				     ;------------------------------------------------
+     31				     ; Scans number as decimal
+     32				     ;------------------------------------------------
+     33				     ; Entry:	     none
+     34				     ;
+     35				     ; Expects:	     BX	= 0
+     36				     ;
+     37				     ; Exit:	     BX	= number to print
+     38				     ;
+     39				     ; Destroys:     AX	CL Si
+     40				     ;------------------------------------------------
+     41				     ;------------------------------------------------
+     42	011A			     ScanNDec	     proc
+     43
+     44	011A			     @@ScanDigit:				     ;						    +
+     45				     <─────────────────────────┐
+     46										     ;				 │
+     47	011A  B4 01				     mov ah, 01h		     ; getc -> al		 │
+     48	011C  CD 21				     int 21h			     ; ^			 │
+     49										     ;				 │
+     50	011E  3C 0D				     cmp al, 13d		     ; Stop scan if enter	 │
+     51	0120  74 15				     je	@@EndScanDigit		     ;						    +
+     52				     >>════════════════════════┼══════�
+     53				     ��╗
+     54										     ;				 │	   ║
+     55	0122  8A C8				     mov cl, al			     ; Store al	to cl		 │	   ║
+     56										     ;				 │	   ║
+     57	0124  8B C3				     mov ax, bx			     ; bx *= 10			 │	   ║
+Turbo Assembler	 Version 4.1	    02/17/23 02:44:12	    Page 2
+scnndec.asm
+
+
+
+     58	0126  BE 000A				     mov si, 10d		     ; ^			 │	   ║
+     59	0129  F7 E6				     mul si			     ; ^			 │	   ║
+     60	012B  8B D8				     mov bx, ax			     ; ^			 │	   ║
+     61										     ;				 │	   ║
+     62	012D  8A C1				     mov al, cl			     ; Retore al from cl	 │	   ║
+     63										     ;				 │	   ║
+     64	012F  2C 30				     sub al, "0"		     ; ASCII "0" offset		 │	   ║
+     65										     ;				 │	   ║
+     66	0131  B4 00				     mov ah, 0d			     ; bx += al			 │	   ║
+     67	0133  03 D8				     add bx, ax			     ; ^			 │	   ║
+     68										     ;				 │	   ║
+     69	0135  EB E3				     jmp @@ScanDigit		     ;						    +
+     70				     >─────────────────────────┘	   ║
+     71										     ;					 ║
+     72	0137			     @@EndScanDigit:				     ;						    +
+     73				     <<═══════════════════════════════�
+     74				     ��╝
+     75	0137  C3				     ret
+     76
+     77	0138			     ScanNDec	     endp
+     78
+     79				     ;------------------------------------------------
+     80				     ;------------------------------------------------
+     81
+     82				     ;------------------------------------------------
+     83				     ; Prints number as	decimal	to vidmem
+     84				     ;------------------------------------------------
+     85				     ; Entry:	     AX	= number to print
+     86				     ;		     BX	= start	addr to	print
+     87				     ;
+     88				     ; Expects:	     ES	-> Video segment
+     89				     ;		     DH	= color	code
+     90				     ;
+     91				     ; Exit:	     None
+     92				     ;
+     93				     ; Destroys:     AX	BX CX DL Si
+     94				     ;------------------------------------------------
+     95				     ;------------------------------------------------
+     96	0138			     PrintNDec	     proc
+     97
+     98	0138  B9 0005				     mov cx, 5d			     ; 5 digits	in 2 byte in ax
+     99
+    100	013B			     @@PrintDigit:				     ; <-------------------------\
+    101	013B  8A EE				     mov ch, dh			     ; Store dh	to ch		 |
+    102										     ;				 |
+    103	013D  BA 0000				     mov dx, 0d			     ; for division		 |
+    104	0140  BE 000A				     mov si, 10d		     ; ax/10 ->	ax &		 |
+    105	0143  F7 F6				     div si			     ; & ax%10 -> dx		 | !!! dx < 10
+    106										     ;				 |
+    107	0145  8B F2				     mov si, dx			     ; dl -> si			 |
+    108										     ;				 |
+    109	0147  8A 94 0000r			     mov dl, byte ptr [Alphabet]+si  ; ASCII "0" offset		 |
+    110										     ;				 |
+    111	014B  8A F5				     mov dh, ch			     ; Restore dh from ch	 |
+    112	014D  B5 00				     mov ch, 0			     ; ^			 |
+    113										     ;				 |
+    114	014F  26: 89 17				     mov word ptr es:[bx], dx	     ; Print dl	on position bx	 |
+Turbo Assembler	 Version 4.1	    02/17/23 02:44:12	    Page 3
+scnndec.asm
+
+
+
+    115										     ;				 |
+    116	0152  4B				     dec bx			     ; Next digit		 |
+    117	0153  4B				     dec bx			     ; ^			 |
+    118										     ;				 |
+    119										     ;				 |
+    120	0154  E2 E5				     loop @@PrintDigit		     ; >-------------------------/
+    121
+    122	0156  C3				     ret
+    123
+    124	0157			     PrintNDec	     endp
+    125
+    126				     ;------------------------------------------------
+    127				     ;------------------------------------------------
+    128
+    129	0157			     .data
+    130	0000  30 31 32 33 34 35	36+  Alphabet:	     db	"0123456789ABCDEF"	     ; Alphabet	for printing (Thanks Ilya)
+    131	      37 38 39 41 42 43	44+
+    132	      45 46
+    133
+    134				     end	     Start
+Turbo Assembler	 Version 4.1	    02/17/23 02:44:12	    Page 4
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "02/17/23"
+??FILENAME			  Text	 "scnndec "
+??TIME				  Text	 "02:44:12"
+??VERSION			  Number 040A
+@32BIT				  Text	 0
+@@ENDSCANDIGIT			  Near	 DGROUP:0137
+@@PRINTDIGIT			  Near	 DGROUP:013B
+@@SCANDIGIT			  Near	 DGROUP:011A
+@CODE				  Text	 DGROUP
+@CODESIZE			  Text	 0
+@CPU				  Text	 0101H
+@CURSEG				  Text	 _DATA
+@DATA				  Text	 DGROUP
+@DATASIZE			  Text	 0
+@FILENAME			  Text	 SCNNDEC
+@INTERFACE			  Text	 000H
+@MODEL				  Text	 1
+@STACK				  Text	 DGROUP
+@WORDSIZE			  Text	 2
+ALPHABET			  Near	 DGROUP:0000
+PRINTNDEC			  Near	 DGROUP:0138
+SCANNDEC			  Near	 DGROUP:011A
+START				  Near	 DGROUP:0100
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+DGROUP				  Group
+  _DATA				  16  0010 Word	  Public  DATA
+  _TEXT				  16  0157 Word	  Public  CODE
+
