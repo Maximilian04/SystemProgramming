@@ -1,0 +1,91 @@
+Turbo Assembler	 Version 4.1	    02/16/23 23:41:41	    Page 1
+clearscr.asm
+
+
+
+      1	0000			     .model tiny
+      2	0000			     .code
+      3				     locals @@
+      4				     org 100h
+      5
+      6	0100			     Start:
+      7	0100  B8 B800				     mov ax, 0b800h		     ; адрес сегмента с	видеопамятью
+      8	0103  8E C0				     mov es, ax			     ;
+      9
+     10	0105  BB 0690				     mov bx, 160d*10 + 160d/2	     ; Середина	5 строчки
+     11										     ; Каждой строчке соответствует 160	байт
+     12
+     13	0108  B9 0910				     mov cx, 2000d+160d*2d	     ;
+     14	010B  BB 0000				     mov bx, 0			     ;
+     15
+     16	010E  B8 4EFE				     mov ax, 4efeh		     ; Yellow squere on	Red
+     17	0111  BB 0000				     mov bx, 0
+     18	0114  B9 07D0				     mov cx, 80d*25d		     ; Screen W*H
+     19	0117  E8 0005				     call ClearScr
+     20
+     21	011A  B8 4C00				     mov ax, 4c00h		     ; exit(0)
+     22	011D  CD 21				     int 21h
+     23
+     24				     ;------------------------------------------------
+     25				     ; Clears the screen
+     26				     ;------------------------------------------------
+     27				     ; Entry:	     AH	= color	attr for erasing
+     28				     ;		     AL	= symbol for erasing
+     29				     ;		     BX	= start	addr to	erase
+     30				     ;		     CX	= number of symbol to erase
+     31				     ;
+     32				     ; Expects:	     ES	-> Video segment
+     33				     ;
+     34				     ; Exit:	     None
+     35				     ;
+     36				     ; Destroys:     BX	CX
+     37				     ;------------------------------------------------
+     38
+     39	011F			     ClearScr	     proc
+     40
+     41	011F			     @@EraseStep:				     ; <------------------\
+     42	011F  26: 89 07				     mov es:[bx], ax		     ;			  |
+     43	0122  83 C3 02				     add bx, 2			     ;			  |
+     44										     ;			  |
+     45	0125  E2 F8				     loop @@EraseStep		     ; >------------------/
+     46
+     47	0127  C3				     ret
+     48	0128			     ClearScr	     endp
+     49
+     50				     ;------------------------------------------------
+     51
+     52				     end	     Start
+Turbo Assembler	 Version 4.1	    02/16/23 23:41:41	    Page 2
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "02/16/23"
+??FILENAME			  Text	 "clearscr"
+??TIME				  Text	 "23:41:41"
+??VERSION			  Number 040A
+@32BIT				  Text	 0
+@@ERASESTEP			  Near	 DGROUP:011F
+@CODE				  Text	 DGROUP
+@CODESIZE			  Text	 0
+@CPU				  Text	 0101H
+@CURSEG				  Text	 _TEXT
+@DATA				  Text	 DGROUP
+@DATASIZE			  Text	 0
+@FILENAME			  Text	 CLEARSCR
+@INTERFACE			  Text	 000H
+@MODEL				  Text	 1
+@STACK				  Text	 DGROUP
+@WORDSIZE			  Text	 2
+CLEARSCR			  Near	 DGROUP:011F
+START				  Near	 DGROUP:0100
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+DGROUP				  Group
+  _DATA				  16  0000 Word	  Public  DATA
+  _TEXT				  16  0128 Word	  Public  CODE
+
