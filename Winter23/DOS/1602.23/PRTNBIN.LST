@@ -1,0 +1,111 @@
+Turbo Assembler	 Version 4.1	    02/17/23 00:54:21	    Page 1
+prtnbin.asm
+
+
+
+      1	0000			     .model tiny
+      2	0000			     .code
+      3				     locals @@
+      4				     org 100h
+      5
+      6	0100			     Start:
+      7	0100  B8 B800				     mov ax, 0b800h		     ; адрес сегмента с	видеопамятью ->	es
+      8	0103  8E C0				     mov es, ax			     ;
+      9
+     10	0105  BB 0C30				     mov bx, 160d*19 + 160d/2	     ; Середина	10 строчки
+     11										     ; Каждой строчке соответствует 160	байт
+     12
+     13	0108  B6 02				     mov dh, 00000010b		     ; Dark green on black
+     14
+     15	010A  B8 00E4				     mov ax, 228d		     ; Print 1
+     16
+     17	010D  E8 0005				     call PrintNBin
+     18
+     19	0110  B8 4C00				     mov ax, 4c00h		     ; exit(0)
+     20	0113  CD 21				     int 21h
+     21
+     22				     ;------------------------------------------------
+     23				     ; Clears the screen
+     24				     ;------------------------------------------------
+     25				     ; Entry:	     AX	= number to print
+     26				     ;		     BX	= start	addr to	print
+     27				     ;
+     28				     ; Expects:	     ES	-> Video segment
+     29				     ;		     DH	= color	code
+     30				     ;
+     31				     ; Exit:	     None
+     32				     ;
+     33				     ; Destroys:     BX	CX
+     34				     ;------------------------------------------------
+     35				     ;------------------------------------------------
+     36	0115			     PrintNBin	     proc
+     37
+     38	0115  B9 0016				     mov cx, 16h		     ; 16 bit in 2 byte	in ax
+     39
+     40	0118			     @@PrintDigit:				     ; <-------------------------\
+     41	0118  53				     push bx			     ; Store bx	in stack	 |
+     42										     ;				 |
+     43										     ;				 |
+     44	0119  B2 01				     mov dl, 00000001b		     ; Mask			 |
+     45	011B  22 D0				     and dl, al			     ;				 |
+     46	011D  B3 30				     mov bl, 30h		     ; ASCII "0" offset		 |
+     47	011F  02 D3				     add dl, bl			     ; ^			 |
+     48										     ;				 |
+     49										     ;				 |
+     50	0121  5B				     pop bx			     ; Restore bx from stack	 |
+     51	0122  26: 89 17				     mov word ptr es:[bx], dx	     ; Print dl	on position bx	 |
+     52										     ;				 |
+     53	0125  4B				     dec bx			     ; Next digit		 |
+     54	0126  4B				     dec bx			     ; ^			 |
+     55										     ;				 |
+     56	0127  D1 E8				     shr ax, 1d			     ; ax >> 1			 |
+     57										     ;				 |
+Turbo Assembler	 Version 4.1	    02/17/23 00:54:21	    Page 2
+prtnbin.asm
+
+
+
+     58	0129  E2 ED				     loop @@PrintDigit		     ; >-------------------------/
+     59
+     60	012B  C3				     ret
+     61
+     62	012C			     PrintNBin	     endp
+     63
+     64				     ;------------------------------------------------
+     65				     ;------------------------------------------------
+     66
+     67				     end	     Start
+Turbo Assembler	 Version 4.1	    02/17/23 00:54:21	    Page 3
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "02/17/23"
+??FILENAME			  Text	 "prtnbin "
+??TIME				  Text	 "00:54:21"
+??VERSION			  Number 040A
+@32BIT				  Text	 0
+@@PRINTDIGIT			  Near	 DGROUP:0118
+@CODE				  Text	 DGROUP
+@CODESIZE			  Text	 0
+@CPU				  Text	 0101H
+@CURSEG				  Text	 _TEXT
+@DATA				  Text	 DGROUP
+@DATASIZE			  Text	 0
+@FILENAME			  Text	 PRTNBIN
+@INTERFACE			  Text	 000H
+@MODEL				  Text	 1
+@STACK				  Text	 DGROUP
+@WORDSIZE			  Text	 2
+PRINTNBIN			  Near	 DGROUP:0115
+START				  Near	 DGROUP:0100
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+DGROUP				  Group
+  _DATA				  16  0000 Word	  Public  DATA
+  _TEXT				  16  012C Word	  Public  CODE
+
