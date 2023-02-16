@@ -38,16 +38,11 @@ PrintNBin       proc
                 mov cx, 16h                     ; 16 bit in 2 byte in ax
 
 @@PrintDigit:                                   ; <-------------------------\
-                push bx                         ; Store bx in stack         |
-                                                ;                           |
                                                 ;                           |
                 mov dl, 00000001b               ; Mask                      |
                 and dl, al                      ;                           |
-                mov bl, 30h                     ; ASCII "0" offset          |
-                add dl, bl                      ; ^                         |
+                add dl, 30h                     ; ASCII "0" offset          |
                                                 ;                           |
-                                                ;                           |
-                pop bx                          ; Restore bx from stack     |
                 mov word ptr es:[bx], dx        ; Print dl on position bx   |
                                                 ;                           |
                 dec bx                          ; Next digit                |
