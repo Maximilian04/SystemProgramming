@@ -1,4 +1,4 @@
-Turbo Assembler	 Version 4.1	    02/17/23 01:01:51	    Page 1
+Turbo Assembler	 Version 4.1	    02/17/23 01:25:03	    Page 1
 prtnbin.asm
 
 
@@ -40,7 +40,7 @@ prtnbin.asm
      35				     ;------------------------------------------------
      36	0115			     PrintNBin	     proc
      37
-     38	0115  B9 0016				     mov cx, 16h		     ; 16 bit in 2 byte	in ax
+     38	0115  B9 0010				     mov cx, 16d		     ; 16 bit in 2 byte	in ax
      39
      40	0118			     @@PrintDigit:				     ; <-------------------------\
      41										     ;				 |
@@ -60,7 +60,7 @@ prtnbin.asm
      55	0128  C3				     ret
      56
      57	0129			     PrintNBin	     endp
-Turbo Assembler	 Version 4.1	    02/17/23 01:01:51	    Page 2
+Turbo Assembler	 Version 4.1	    02/17/23 01:25:03	    Page 2
 prtnbin.asm
 
 
@@ -70,7 +70,7 @@ prtnbin.asm
      60				     ;------------------------------------------------
      61
      62				     end	     Start
-Turbo Assembler	 Version 4.1	    02/17/23 01:01:51	    Page 3
+Turbo Assembler	 Version 4.1	    02/17/23 01:25:03	    Page 3
 Symbol Table
 
 
@@ -80,7 +80,7 @@ Symbol Name			  Type	 Value
 
 ??DATE				  Text	 "02/17/23"
 ??FILENAME			  Text	 "prtnbin "
-??TIME				  Text	 "01:01:51"
+??TIME				  Text	 "01:25:03"
 ??VERSION			  Number 040A
 @32BIT				  Text	 0
 @@PRINTDIGIT			  Near	 DGROUP:0118

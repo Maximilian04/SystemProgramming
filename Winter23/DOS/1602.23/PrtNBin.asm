@@ -35,7 +35,7 @@ Start:
 ;------------------------------------------------
 PrintNBin       proc
 
-                mov cx, 16h                     ; 16 bit in 2 byte in ax
+                mov cx, 16d                     ; 16 bit in 2 byte in ax
 
 @@PrintDigit:                                   ; <-------------------------\
                                                 ;                           |
