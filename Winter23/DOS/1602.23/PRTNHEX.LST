@@ -1,0 +1,120 @@
+Turbo Assembler	 Version 4.1	    02/17/23 01:24:41	    Page 1
+prtnhex.asm
+
+
+
+      1	0000			     .model tiny
+      2	0000			     .code
+      3				     locals @@
+      4				     org 100h
+      5
+      6	0100			     Start:
+      7	0100  B8 B800				     mov ax, 0b800h		     ; адрес сегмента с	видеопамятью ->	es
+      8	0103  8E C0				     mov es, ax			     ;
+      9
+     10	0105  BE 0000				     mov si, 0h
+     11
+     12	0108  BB 0C30				     mov bx, 160d*19 + 160d/2	     ; Середина	10 строчки
+     13										     ; Каждой строчке соответствует 160	байт
+     14
+     15	010B  B6 02				     mov dh, 00000010b		     ; Dark green on black
+     16
+     17	010D  B8 00E4				     mov ax, 228d		     ; Print 1
+     18	0110  B8 5F7C				     mov ax, 5F7Ch		     ; Print 1
+     19
+     20	0113  E8 0005				     call PrintNHex
+     21
+     22	0116  B8 4C00				     mov ax, 4c00h		     ; exit(0)
+     23	0119  CD 21				     int 21h
+     24
+     25				     ;------------------------------------------------
+     26				     ; Prints number as	hexagen	to vidmem
+     27				     ;------------------------------------------------
+     28				     ; Entry:	     AX	= number to print
+     29				     ;		     BX	= start	addr to	print
+     30				     ;
+     31				     ; Expects:	     ES	-> Video segment
+     32				     ;		     DH	= color	code
+     33				     ;
+     34				     ; Exit:	     None
+     35				     ;
+     36				     ; Destroys:     AX	BX CX DL Si
+     37				     ;------------------------------------------------
+     38				     ;------------------------------------------------
+     39	011B			     PrintNHex	     proc
+     40
+     41	011B  B9 0004				     mov cx, 4d			     ; 4 digits	in 2 byte in ax
+     42
+     43	011E			     @@PrintDigit:				     ; <-------------------------\
+     44										     ;				 |
+     45	011E  B2 0F				     mov dl, 00001111b		     ; Mask			 |
+     46	0120  22 D0				     and dl, al			     ;				 |
+     47										     ;				 |
+     48	0122  8B F2				     mov si, dx			     ; dl -> si			 |
+     49	0124  83 E6 0F				     and si, 0Fh		     ;				 |
+     50										     ;				 |
+     51	0127  8A 94 0000r			     mov dl, byte ptr [Alphabet]+si  ; ASCII "0" offset		 |
+     52										     ;				 |
+     53	012B  26: 89 17				     mov word ptr es:[bx], dx	     ; Print dl	on position bx	 |
+     54										     ;				 |
+     55	012E  4B				     dec bx			     ; Next digit		 |
+     56	012F  4B				     dec bx			     ; ^			 |
+     57										     ;				 |
+Turbo Assembler	 Version 4.1	    02/17/23 01:24:41	    Page 2
+prtnhex.asm
+
+
+
+     58	0130  D1 E8 D1 E8 D1 E8	D1+		     shr ax, 4d			     ; ax >> 4			 |
+     59	      E8
+     60										     ;				 |
+     61	0138  E2 E4				     loop @@PrintDigit		     ; >-------------------------/
+     62
+     63	013A  C3				     ret
+     64
+     65	013B			     PrintNHex	     endp
+     66
+     67				     ;------------------------------------------------
+     68				     ;------------------------------------------------
+     69
+     70	013B			     .data
+     71	0000  30 31 32 33 34 35	36+  Alphabet:	     db	"0123456789ABCDEF"	     ; Alphabet	for printing (Thanks Ilya)
+     72	      37 38 39 41 42 43	44+
+     73	      45 46
+     74
+     75				     end	     Start
+Turbo Assembler	 Version 4.1	    02/17/23 01:24:41	    Page 3
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "02/17/23"
+??FILENAME			  Text	 "prtnhex "
+??TIME				  Text	 "01:24:41"
+??VERSION			  Number 040A
+@32BIT				  Text	 0
+@@PRINTDIGIT			  Near	 DGROUP:011E
+@CODE				  Text	 DGROUP
+@CODESIZE			  Text	 0
+@CPU				  Text	 0101H
+@CURSEG				  Text	 _DATA
+@DATA				  Text	 DGROUP
+@DATASIZE			  Text	 0
+@FILENAME			  Text	 PRTNHEX
+@INTERFACE			  Text	 000H
+@MODEL				  Text	 1
+@STACK				  Text	 DGROUP
+@WORDSIZE			  Text	 2
+ALPHABET			  Near	 DGROUP:0000
+PRINTNHEX			  Near	 DGROUP:011B
+START				  Near	 DGROUP:0100
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+DGROUP				  Group
+  _DATA				  16  0010 Word	  Public  DATA
+  _TEXT				  16  013B Word	  Public  CODE
+
