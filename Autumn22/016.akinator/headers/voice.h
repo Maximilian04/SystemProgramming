@@ -14,7 +14,7 @@
 namespace voice {
     void clear();
 
-    void addText(wchar_t const* str);
+    void addText(char const* str);
 
     void generate();
 }

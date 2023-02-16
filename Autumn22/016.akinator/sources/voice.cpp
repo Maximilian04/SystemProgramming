@@ -6,10 +6,10 @@
 
 namespace voice {
     static const size_t BUFFERSIZE = 2048;
-    static wchar_t buffer[BUFFERSIZE] = {};
+    static char buffer[BUFFERSIZE] = {};
     static size_t currentPos = 0;
 
-    static const wchar_t* codeTemplateBegin = L""
+    static const char* codeTemplateBegin = ""
         "import os\n"
         "import torch\n"
         "\n"
@@ -24,9 +24,9 @@ namespace voice {
         "model = torch.package.PackageImporter(local_file).load_pickle(\"tts_models\", \"model\")\n"
         "model.to(device)\n"
         "\n"
-        "#example_text = 'В недрах тундры выдры в г+етрах т+ырят в вёдра +ядра к+едров. А теперь сильно более длинный текст. Вообще не знаю, что и говорить тут. А ты знаешь? Я - нет!'\n"
+        // "#example_text = 'В недрах тундры выдры в г+етрах т+ырят в вёдра +ядра к+едров. А теперь сильно более длинный текст. Вообще не знаю, что и говорить тут. А ты знаешь? Я - нет!'\n"
         "example_text = '";
-    static const wchar_t* codeTemplateEnd = L""
+    static const char* codeTemplateEnd = ""
         "'\n"
         "#example_text = 'Is it suitable for you? I am glad you do.'\n"
         "sample_rate = 48000\n"
@@ -43,7 +43,7 @@ namespace voice {
      *
      */
     void clear() {
-        memset(buffer, 0, BUFFERSIZE * sizeof(wchar_t));
+        memset(buffer, 0, BUFFERSIZE * sizeof(char));
         currentPos = 0;
     }
 
@@ -52,7 +52,7 @@ namespace voice {
      *
      * @param [in] str Text to add
      */
-    void addText(wchar_t const* str) {
+    void addText(char const* str) {
         size_t index = 0;
         while (str[index] != '\0') {
             buffer[currentPos + index] = str[index];
@@ -69,9 +69,9 @@ namespace voice {
         char const* fileName = "stuff/speach.py";
         FILE* file = fopen(fileName, "wt, ccs=UTF-8");
 
-        fwprintf(file, codeTemplateBegin);
-        fwprintf(file, buffer);
-        fwprintf(file, codeTemplateEnd);
+        fprintf(file, codeTemplateBegin);
+        fprintf(file, buffer);
+        fprintf(file, codeTemplateEnd);
 
         fclose(file);
 

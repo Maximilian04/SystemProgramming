@@ -12,10 +12,8 @@
 #define TEXTS_H
 
 namespace texts {
-    const wchar_t GUESS_INVITE_L[] = L""
-        "I can help you find music that is suitable for you. Please, answer me only with yes or no.";
     const char GUESS_INVITE[] = ""
-        "I can help you find music that is suitable for you. Please, answer me only with yes or no.";
+        "I can help you find music that is suitable for you. Please, answer me only with yes or no.\n";
 
     const char FEATUREQUESTION[] = ""
         "%s?\n";

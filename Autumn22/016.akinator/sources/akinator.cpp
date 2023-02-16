@@ -121,7 +121,7 @@ Akinator::Error Akinator::guess(Akinator* const akinator) {
     if (Tree::set2Root(&akinator->data, &position))
         return Error::EMPTY;
 
-    voice::addText(texts::GUESS_INVITE_L);
+    voice::addText(texts::GUESS_INVITE);
     voice::generate();
     printf(texts::GUESS_INVITE);
 
@@ -134,6 +134,9 @@ Akinator::Error Akinator::guess(Akinator* const akinator) {
             TreeIterator::left(&position);
     }
 
+    // voice::addText(strFParser::parseFCalloc(texts::CERTAINQUESTION, *(char const**)TreeIterator::getValue(&position)));
+    voice::addText(texts::CERTAINQUESTION);
+    voice::generate();
     printf(texts::CERTAINQUESTION, *(char const**)TreeIterator::getValue(&position));
 
     if (getAnswer(input)) {
