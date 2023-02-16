@@ -20,7 +20,7 @@ Start:
                 int 21h
 
 ;------------------------------------------------
-; Clears the screen
+; Prints number as binary to vidmem
 ;------------------------------------------------
 ; Entry:        AX = number to print
 ;               BX = start addr to print
@@ -30,7 +30,7 @@ Start:
 ;
 ; Exit:         None
 ;
-; Destroys:     BX CX
+; Destroys:     AX BX CX DL
 ;------------------------------------------------
 ;------------------------------------------------
 PrintNBin       proc

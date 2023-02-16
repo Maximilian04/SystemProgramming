@@ -1,4 +1,4 @@
-Turbo Assembler	 Version 4.1	    02/17/23 00:58:50	    Page 1
+Turbo Assembler	 Version 4.1	    02/17/23 01:01:51	    Page 1
 prtnbin.asm
 
 
@@ -25,7 +25,7 @@ prtnbin.asm
      20	0113  CD 21				     int 21h
      21
      22				     ;------------------------------------------------
-     23				     ; Clears the screen
+     23				     ; Prints number as	binary to vidmem
      24				     ;------------------------------------------------
      25				     ; Entry:	     AX	= number to print
      26				     ;		     BX	= start	addr to	print
@@ -35,7 +35,7 @@ prtnbin.asm
      30				     ;
      31				     ; Exit:	     None
      32				     ;
-     33				     ; Destroys:     BX	CX
+     33				     ; Destroys:     AX	BX CX DL
      34				     ;------------------------------------------------
      35				     ;------------------------------------------------
      36	0115			     PrintNBin	     proc
@@ -43,38 +43,34 @@ prtnbin.asm
      38	0115  B9 0016				     mov cx, 16h		     ; 16 bit in 2 byte	in ax
      39
      40	0118			     @@PrintDigit:				     ; <-------------------------\
-     41						     ; push bx			       ; Store bx in stack	   |
-     42										     ;				 |
-     43										     ;				 |
-     44	0118  B2 01				     mov dl, 00000001b		     ; Mask			 |
-     45	011A  22 D0				     and dl, al			     ;				 |
-     46	011C  80 C2 30				     add dl, 30h		     ; ASCII "0" offset		 |
+     41										     ;				 |
+     42	0118  B2 01				     mov dl, 00000001b		     ; Mask			 |
+     43	011A  22 D0				     and dl, al			     ;				 |
+     44	011C  80 C2 30				     add dl, 30h		     ; ASCII "0" offset		 |
+     45										     ;				 |
+     46	011F  26: 89 17				     mov word ptr es:[bx], dx	     ; Print dl	on position bx	 |
      47										     ;				 |
-     48										     ;				 |
-     49						     ; pop bx			       ; Restore bx from stack	   |
-     50	011F  26: 89 17				     mov word ptr es:[bx], dx	     ; Print dl	on position bx	 |
-     51										     ;				 |
-     52	0122  4B				     dec bx			     ; Next digit		 |
-     53	0123  4B				     dec bx			     ; ^			 |
-     54										     ;				 |
-     55	0124  D1 E8				     shr ax, 1d			     ; ax >> 1			 |
-     56										     ;				 |
-     57	0126  E2 F0				     loop @@PrintDigit		     ; >-------------------------/
-Turbo Assembler	 Version 4.1	    02/17/23 00:58:50	    Page 2
+     48	0122  4B				     dec bx			     ; Next digit		 |
+     49	0123  4B				     dec bx			     ; ^			 |
+     50										     ;				 |
+     51	0124  D1 E8				     shr ax, 1d			     ; ax >> 1			 |
+     52										     ;				 |
+     53	0126  E2 F0				     loop @@PrintDigit		     ; >-------------------------/
+     54
+     55	0128  C3				     ret
+     56
+     57	0129			     PrintNBin	     endp
+Turbo Assembler	 Version 4.1	    02/17/23 01:01:51	    Page 2
 prtnbin.asm
 
 
 
      58
-     59	0128  C3				     ret
-     60
-     61	0129			     PrintNBin	     endp
-     62
-     63				     ;------------------------------------------------
-     64				     ;------------------------------------------------
-     65
-     66				     end	     Start
-Turbo Assembler	 Version 4.1	    02/17/23 00:58:50	    Page 3
+     59				     ;------------------------------------------------
+     60				     ;------------------------------------------------
+     61
+     62				     end	     Start
+Turbo Assembler	 Version 4.1	    02/17/23 01:01:51	    Page 3
 Symbol Table
 
 
@@ -84,7 +80,7 @@ Symbol Name			  Type	 Value
 
 ??DATE				  Text	 "02/17/23"
 ??FILENAME			  Text	 "prtnbin "
-??TIME				  Text	 "00:58:50"
+??TIME				  Text	 "01:01:51"
 ??VERSION			  Number 040A
 @32BIT				  Text	 0
 @@PRINTDIGIT			  Near	 DGROUP:0118
