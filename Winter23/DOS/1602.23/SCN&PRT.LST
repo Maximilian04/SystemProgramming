@@ -1,4 +1,4 @@
-Turbo Assembler	 Version 4.1	    02/17/23 09:18:32	    Page 1
+Turbo Assembler	 Version 4.1	    02/17/23 10:44:59	    Page 1
 scn&prt.asm
 
 
@@ -10,10 +10,10 @@ scn&prt.asm
       5
       6	0100			     Start:
       7	0100  BB 0000				     mov bx, 0d			     ; Scan number to stack
-      8	0103  E8 0031				     call ScanNDec
+      8	0103  E8 003D				     call ScanNDec
       9	0106  53				     push bx
      10	0107  BB 0000				     mov bx, 0d			     ; Scan number to stack
-     11	010A  E8 002A				     call ScanNDec
+     11	010A  E8 0036				     call ScanNDec
      12	010D  53				     push bx
      13
      14	010E  58				     pop ax			     ; Addiction
@@ -24,246 +24,372 @@ scn&prt.asm
      19	0113  B8 B800				     mov ax, 0b800h		     ; адрес сегмента с		    +
      20				     видеопамятью -> es
      21	0116  8E C0				     mov es, ax			     ;
-     22	0118  B6 02				     mov dh, 00000010b		     ; Dark green on black
-     23
-     24	011A  58				     pop ax			     ; Scanned number
-     25	011B  50				     push ax			     ;
-     26
-     27	011C  BB 0C30				     mov bx, 160d*19 + 160d/2	     ; Середина	строчки
+     22
+     23	0118  B4 0A				     mov ah, 00001010b		     ; Light green on black
+     24	011A  BB 0B70				     mov bx, 160d*18 + 160d/2 -	18d*2 +	4d; Середина строчки
+     25	011D  B5 05				     mov ch, 5			     ; Height
+     26	011F  B1 12				     mov cl, 18			     ; Width
+     27	0121  E8 0090				     call DrawBox
      28
-     29	011F  E8 0067				     call PrintNDec
-     30
-     31
-     32	0122  58				     pop ax			     ; Scanned number
-     33	0123  50				     push ax			     ;
+     29
+     30	0124  B6 02				     mov dh, 00000010b		     ; Dark green on black
+     31	0126  58				     pop ax			     ; Scanned number
+     32	0127  50				     push ax			     ;
+     33
      34
-     35	0124  BB 0CD0				     mov bx, 160d*20 + 160d/2	     ; Середина	строчки
+     35	0128  BB 0C30				     mov bx, 160d*19 + 160d/2	     ; Середина	строчки
      36
-     37	0127  E8 003F				     call PrintNHex
+     37	012B  E8 0067				     call PrintNDec
      38
      39
-     40	012A  58				     pop ax			     ; Scanned number
-     41	012B  50				     push ax			     ;
+     40	012E  58				     pop ax			     ; Scanned number
+     41	012F  50				     push ax			     ;
      42
-     43	012C  BB 0D70				     mov bx, 160d*21 + 160d/2	     ; Середина	строчки
+     43	0130  BB 0CD0				     mov bx, 160d*20 + 160d/2	     ; Середина	строчки
      44
-     45	012F  E8 0023				     call PrintNBin
+     45	0133  E8 003F				     call PrintNHex
      46
-     47	0132  B8 4C00				     mov ax, 4c00h		     ; exit(0)
-     48	0135  CD 21				     int 21h
-     49
-     50				     include ..\LianLib\ScanNDec.asm
-1    51				     ;------------------------------------------------
-1    52				     ; Scans number as decimal
-1    53				     ;------------------------------------------------
-1    54				     ; Entry:	     none
-1    55				     ;
-1    56				     ; Expects:	     BX	= 0
-1    57				     ;
-Turbo Assembler	 Version 4.1	    02/17/23 09:18:32	    Page 2
+     47
+     48	0136  58				     pop ax			     ; Scanned number
+     49	0137  50				     push ax			     ;
+     50
+     51	0138  BB 0D70				     mov bx, 160d*21 + 160d/2	     ; Середина	строчки
+     52
+     53	013B  E8 0023				     call PrintNBin
+     54
+     55	013E  B8 4C00				     mov ax, 4c00h		     ; exit(0)
+     56	0141  CD 21				     int 21h
+     57
+Turbo Assembler	 Version 4.1	    02/17/23 10:44:59	    Page 2
 scn&prt.asm
 
 
 
-1    58				     ; Exit:	     BX	= number to print
-1    59				     ;
-1    60				     ; Destroys:     AX	CL Si
+     58				     include ..\LianLib\ScanNDec.asm
+1    59				     ;------------------------------------------------
+1    60				     ; Scans number as decimal
 1    61				     ;------------------------------------------------
-1    62				     ;------------------------------------------------
-1    63	0137			     ScanNDec	     proc
-1    64
-1    65	0137			     @@ScanDigit:				     ; <??????????????????????????
-1    66										     ;				 ?
-1    67	0137  B4 01				     mov ah, 01h		     ; getc -> al		 ?
-1    68	0139  CD 21				     int 21h			     ; ^			 ?
-1    69										     ;				 ?
-1    70	013B  3C 0D				     cmp al, 13d		     ; Stop scan if enter	 ?
-1    71	013D  74 15				     je	@@EndScanDigit		     ; >>?????????????????????????????????
-1    72										     ;				 ?	 ?
-1    73	013F  8A C8				     mov cl, al			     ; Store al	to cl		 ?	 ?
-1    74										     ;				 ?	 ?
-1    75	0141  8B C3				     mov ax, bx			     ; bx *= 10			 ?	 ?
-1    76	0143  BE 000A				     mov si, 10d		     ; ^			 ?	 ?
-1    77	0146  F7 E6				     mul si			     ; ^			 ?	 ?
-1    78	0148  8B D8				     mov bx, ax			     ; ^			 ?	 ?
-1    79										     ;				 ?	 ?
-1    80	014A  8A C1				     mov al, cl			     ; Retore al from cl	 ?	 ?
-1    81										     ;				 ?	 ?
-1    82	014C  2C 30				     sub al, "0"		     ; ASCII "0" offset		 ?	 ?
-1    83										     ;				 ?	 ?
-1    84	014E  B4 00				     mov ah, 0d			     ; bx += al			 ?	 ?
-1    85	0150  03 D8				     add bx, ax			     ; ^			 ?	 ?
-1    86										     ;				 ?	 ?
-1    87	0152  EB E3				     jmp @@ScanDigit		     ; >??????????????????????????	 ?
-1    88										     ;					 ?
-1    89	0154			     @@EndScanDigit:				     ; <<?????????????????????????????????
-1    90	0154  C3				     ret
-1    91
-1    92	0155			     ScanNDec	     endp
-1    93
-1    94				     ;------------------------------------------------
-1    95				     ;------------------------------------------------
-1    96
-     97				     include ..\LianLib\PrntNBin.asm
-1    98				     ;------------------------------------------------
-1    99				     ; Prints number as	binary to vidmem
-1   100				     ;------------------------------------------------
-1   101				     ; Entry:	     AX	= number to print
-1   102				     ;		     BX	= start	addr to	print
-1   103				     ;
-1   104				     ; Expects:	     ES	-> Video segment
-1   105				     ;		     DH	= color	code
-1   106				     ;
-1   107				     ; Exit:	     None
-1   108				     ;
-1   109				     ; Destroys:     AX	BX CX DL
-1   110				     ;------------------------------------------------
-1   111				     ;------------------------------------------------
-1   112	0155			     PrintNBin	     proc
-1   113
-1   114	0155  B9 0010				     mov cx, 16d		     ; 16 bit in 2 byte	in ax
-Turbo Assembler	 Version 4.1	    02/17/23 09:18:32	    Page 3
+1    62				     ; Entry:	     none
+1    63				     ;
+1    64				     ; Expects:	     BX	= 0
+1    65				     ;
+1    66				     ; Exit:	     BX	= number to print
+1    67				     ;
+1    68				     ; Destroys:     AX	CL Si
+1    69				     ;------------------------------------------------
+1    70				     ;------------------------------------------------
+1    71	0143			     ScanNDec	     proc
+1    72
+1    73	0143			     @@ScanDigit:				     ; <??????????????????????????
+1    74										     ;				 ?
+1    75	0143  B4 01				     mov ah, 01h		     ; getc -> al		 ?
+1    76	0145  CD 21				     int 21h			     ; ^			 ?
+1    77										     ;				 ?
+1    78	0147  3C 0D				     cmp al, 13d		     ; Stop scan if enter	 ?
+1    79	0149  74 15				     je	@@EndScanDigit		     ; >>?????????????????????????????????
+1    80										     ;				 ?	 ?
+1    81	014B  8A C8				     mov cl, al			     ; Store al	to cl		 ?	 ?
+1    82										     ;				 ?	 ?
+1    83	014D  8B C3				     mov ax, bx			     ; bx *= 10			 ?	 ?
+1    84	014F  BE 000A				     mov si, 10d		     ; ^			 ?	 ?
+1    85	0152  F7 E6				     mul si			     ; ^			 ?	 ?
+1    86	0154  8B D8				     mov bx, ax			     ; ^			 ?	 ?
+1    87										     ;				 ?	 ?
+1    88	0156  8A C1				     mov al, cl			     ; Retore al from cl	 ?	 ?
+1    89										     ;				 ?	 ?
+1    90	0158  2C 30				     sub al, "0"		     ; ASCII "0" offset		 ?	 ?
+1    91										     ;				 ?	 ?
+1    92	015A  B4 00				     mov ah, 0d			     ; bx += al			 ?	 ?
+1    93	015C  03 D8				     add bx, ax			     ; ^			 ?	 ?
+1    94										     ;				 ?	 ?
+1    95	015E  EB E3				     jmp @@ScanDigit		     ; >??????????????????????????	 ?
+1    96										     ;					 ?
+1    97	0160			     @@EndScanDigit:				     ; <<?????????????????????????????????
+1    98	0160  C3				     ret
+1    99
+1   100	0161			     ScanNDec	     endp
+1   101
+1   102				     ;------------------------------------------------
+1   103				     ;------------------------------------------------
+1   104
+    105				     include ..\LianLib\PrntNBin.asm
+1   106				     ;------------------------------------------------
+1   107				     ; Prints number as	binary to vidmem
+1   108				     ;------------------------------------------------
+1   109				     ; Entry:	     AX	= number to print
+1   110				     ;		     BX	= start	addr to	print
+1   111				     ;
+1   112				     ; Expects:	     ES	-> Video segment
+1   113				     ;		     DH	= color	code
+1   114				     ;
+Turbo Assembler	 Version 4.1	    02/17/23 10:44:59	    Page 3
 scn&prt.asm
 
 
 
-1   115
-1   116	0158			     @@PrintDigit:				     ; <-------------------------\
-1   117										     ;				 |
-1   118	0158  B2 01				     mov dl, 00000001b		     ; Mask			 |
-1   119	015A  22 D0				     and dl, al			     ;				 |
-1   120	015C  80 C2 30				     add dl, 30h		     ; ASCII "0" offset		 |
-1   121										     ;				 |
-1   122	015F  26: 89 17				     mov word ptr es:[bx], dx	     ; Print dl	on position bx	 |
-1   123										     ;				 |
-1   124	0162  4B				     dec bx			     ; Next digit		 |
-1   125	0163  4B				     dec bx			     ; ^			 |
-1   126										     ;				 |
-1   127	0164  D1 E8				     shr ax, 1d			     ; ax >> 1			 |
-1   128										     ;				 |
-1   129	0166  E2 F0				     loop @@PrintDigit		     ; >-------------------------/
-1   130
-1   131	0168  C3				     ret
-1   132
-1   133	0169			     PrintNBin	     endp
-1   134
-1   135				     ;------------------------------------------------
-1   136				     ;------------------------------------------------
-1   137
-    138				     include ..\LianLib\PrntNHex.asm
-1   139				     ;------------------------------------------------
-1   140				     ; Prints number as	hexagen	to vidmem
-1   141				     ;------------------------------------------------
-1   142				     ; Entry:	     AX	= number to print
-1   143				     ;		     BX	= start	addr to	print
-1   144				     ;
-1   145				     ; Expects:	     ES	-> Video segment
-1   146				     ;		     DH	= color	code
-1   147				     ;
-1   148				     ; Exit:	     None
-1   149				     ;
-1   150				     ; Destroys:     AX	BX CX DL Si
-1   151				     ;------------------------------------------------
-1   152				     ;------------------------------------------------
-1   153	0169			     PrintNHex	     proc
-1   154
-1   155	0169  B9 0004				     mov cx, 4d			     ; 4 digits	in 2 byte in ax
-1   156
-1   157	016C			     @@PrintDigit:				     ; <-------------------------\
-1   158										     ;				 |
-1   159	016C  B2 0F				     mov dl, 00001111b		     ; Mask			 |
-1   160	016E  22 D0				     and dl, al			     ;				 |
-1   161										     ;				 |
-1   162	0170  8B F2				     mov si, dx			     ; dl -> si			 |
-1   163	0172  83 E6 0F				     and si, 0Fh		     ;				 |
-1   164										     ;				 |
-1   165	0175  8A 94 0000r			     mov dl, byte ptr [Alphabet]+si  ; ASCII "0" offset		 |
+1   115				     ; Exit:	     None
+1   116				     ;
+1   117				     ; Destroys:     AX	BX CX DL
+1   118				     ;------------------------------------------------
+1   119				     ;------------------------------------------------
+1   120	0161			     PrintNBin	     proc
+1   121
+1   122	0161  B9 0010				     mov cx, 16d		     ; 16 bit in 2 byte	in ax
+1   123
+1   124	0164			     @@PrintDigit:				     ; <-------------------------\
+1   125										     ;				 |
+1   126	0164  B2 01				     mov dl, 00000001b		     ; Mask			 |
+1   127	0166  22 D0				     and dl, al			     ;				 |
+1   128	0168  80 C2 30				     add dl, 30h		     ; ASCII "0" offset		 |
+1   129										     ;				 |
+1   130	016B  26: 89 17				     mov word ptr es:[bx], dx	     ; Print dl	on position bx	 |
+1   131										     ;				 |
+1   132	016E  4B				     dec bx			     ; Next digit		 |
+1   133	016F  4B				     dec bx			     ; ^			 |
+1   134										     ;				 |
+1   135	0170  D1 E8				     shr ax, 1d			     ; ax >> 1			 |
+1   136										     ;				 |
+1   137	0172  E2 F0				     loop @@PrintDigit		     ; >-------------------------/
+1   138
+1   139	0174  C3				     ret
+1   140
+1   141	0175			     PrintNBin	     endp
+1   142
+1   143				     ;------------------------------------------------
+1   144				     ;------------------------------------------------
+1   145
+    146				     include ..\LianLib\PrntNHex.asm
+1   147				     ;------------------------------------------------
+1   148				     ; Prints number as	hexagen	to vidmem
+1   149				     ;------------------------------------------------
+1   150				     ; Entry:	     AX	= number to print
+1   151				     ;		     BX	= start	addr to	print
+1   152				     ;
+1   153				     ; Expects:	     ES	-> Video segment
+1   154				     ;		     DH	= color	code
+1   155				     ;
+1   156				     ; Exit:	     None
+1   157				     ;
+1   158				     ; Destroys:     AX	BX CX DL Si
+1   159				     ;------------------------------------------------
+1   160				     ;------------------------------------------------
+1   161	0175			     PrintNHex	     proc
+1   162
+1   163	0175  B9 0004				     mov cx, 4d			     ; 4 digits	in 2 byte in ax
+1   164
+1   165	0178			     @@PrintDigit:				     ; <-------------------------\
 1   166										     ;				 |
-1   167	0179  26: 89 17				     mov word ptr es:[bx], dx	     ; Print dl	on position bx	 |
-1   168										     ;				 |
-1   169	017C  4B				     dec bx			     ; Next digit		 |
-1   170	017D  4B				     dec bx			     ; ^			 |
-1   171										     ;				 |
-Turbo Assembler	 Version 4.1	    02/17/23 09:18:32	    Page 4
+1   167	0178  B2 0F				     mov dl, 00001111b		     ; Mask			 |
+1   168	017A  22 D0				     and dl, al			     ;				 |
+1   169										     ;				 |
+1   170	017C  8B F2				     mov si, dx			     ; dl -> si			 |
+1   171	017E  83 E6 0F				     and si, 0Fh		     ;				 |
+Turbo Assembler	 Version 4.1	    02/17/23 10:44:59	    Page 4
 scn&prt.asm
 
 
 
-1   172	017E  D1 E8 D1 E8 D1 E8	D1+		     shr ax, 4d			     ; ax >> 4			 |
-    173	      E8
+1   172										     ;				 |
+1   173	0181  8A 94 0000r			     mov dl, byte ptr [Alphabet]+si  ; ASCII "0" offset		 |
 1   174										     ;				 |
-1   175	0186  E2 E4				     loop @@PrintDigit		     ; >-------------------------/
-1   176
-1   177	0188  C3				     ret
-1   178
-1   179	0189			     PrintNHex	     endp
-1   180
-1   181				     ;------------------------------------------------
-1   182				     ;------------------------------------------------
-1   183
-    184				     include ..\LianLib\PrntNDec.asm
-1   185				     ;------------------------------------------------
-1   186				     ; Prints number as	decimal	to vidmem
-1   187				     ;------------------------------------------------
-1   188				     ; Entry:	     AX	= number to print
-1   189				     ;		     BX	= start	addr to	print
-1   190				     ;
-1   191				     ; Expects:	     ES	-> Video segment
-1   192				     ;		     DH	= color	code
-1   193				     ;
-1   194				     ; Exit:	     None
-1   195				     ;
-1   196				     ; Destroys:     AX	BX CX DL Si
-1   197				     ;------------------------------------------------
-1   198				     ;------------------------------------------------
-1   199	0189			     PrintNDec	     proc
-1   200
-1   201	0189  B9 0005				     mov cx, 5d			     ; 5 digits	in 2 byte in ax
-1   202
-1   203	018C			     @@PrintDigit:				     ; <-------------------------\
-1   204	018C  8A EE				     mov ch, dh			     ; Store dh	to ch		 |
-1   205										     ;				 |
-1   206	018E  BA 0000				     mov dx, 0d			     ; for division		 |
-1   207	0191  BE 000A				     mov si, 10d		     ; ax/10 ->	ax &		 |
-1   208	0194  F7 F6				     div si			     ; & ax%10 -> dx		 | !!! dx < 10
-1   209										     ;				 |
-1   210	0196  8B F2				     mov si, dx			     ; dl -> si			 |
-1   211										     ;				 |
-1   212	0198  8A 94 0000r			     mov dl, byte ptr [Alphabet]+si  ; ASCII "0" offset		 |
+1   175	0185  26: 89 17				     mov word ptr es:[bx], dx	     ; Print dl	on position bx	 |
+1   176										     ;				 |
+1   177	0188  4B				     dec bx			     ; Next digit		 |
+1   178	0189  4B				     dec bx			     ; ^			 |
+1   179										     ;				 |
+1   180	018A  D1 E8 D1 E8 D1 E8	D1+		     shr ax, 4d			     ; ax >> 4			 |
+    181	      E8
+1   182										     ;				 |
+1   183	0192  E2 E4				     loop @@PrintDigit		     ; >-------------------------/
+1   184
+1   185	0194  C3				     ret
+1   186
+1   187	0195			     PrintNHex	     endp
+1   188
+1   189				     ;------------------------------------------------
+1   190				     ;------------------------------------------------
+1   191
+    192				     include ..\LianLib\PrntNDec.asm
+1   193				     ;------------------------------------------------
+1   194				     ; Prints number as	decimal	to vidmem
+1   195				     ;------------------------------------------------
+1   196				     ; Entry:	     AX	= number to print
+1   197				     ;		     BX	= start	addr to	print
+1   198				     ;
+1   199				     ; Expects:	     ES	-> Video segment
+1   200				     ;		     DH	= color	code
+1   201				     ;
+1   202				     ; Exit:	     None
+1   203				     ;
+1   204				     ; Destroys:     AX	BX CX DL Si
+1   205				     ;------------------------------------------------
+1   206				     ;------------------------------------------------
+1   207	0195			     PrintNDec	     proc
+1   208
+1   209	0195  B9 0005				     mov cx, 5d			     ; 5 digits	in 2 byte in ax
+1   210
+1   211	0198			     @@PrintDigit:				     ; <-------------------------\
+1   212	0198  8A EE				     mov ch, dh			     ; Store dh	to ch		 |
 1   213										     ;				 |
-1   214	019C  8A F5				     mov dh, ch			     ; Restore dh from ch	 |
-1   215	019E  B5 00				     mov ch, 0			     ; ^			 |
-1   216										     ;				 |
-1   217	01A0  26: 89 17				     mov word ptr es:[bx], dx	     ; Print dl	on position bx	 |
-1   218										     ;				 |
-1   219	01A3  4B				     dec bx			     ; Next digit		 |
-1   220	01A4  4B				     dec bx			     ; ^			 |
+1   214	019A  BA 0000				     mov dx, 0d			     ; for division		 |
+1   215	019D  BE 000A				     mov si, 10d		     ; ax/10 ->	ax &		 |
+1   216	01A0  F7 F6				     div si			     ; & ax%10 -> dx		 | !!! dx < 10
+1   217										     ;				 |
+1   218	01A2  8B F2				     mov si, dx			     ; dl -> si			 |
+1   219										     ;				 |
+1   220	01A4  8A 94 0000r			     mov dl, byte ptr [Alphabet]+si  ; ASCII "0" offset		 |
 1   221										     ;				 |
-1   222										     ;				 |
-1   223	01A5  E2 E5				     loop @@PrintDigit		     ; >-------------------------/
-1   224
-1   225	01A7  C3				     ret
-1   226
-1   227	01A8			     PrintNDec	     endp
-1   228
-Turbo Assembler	 Version 4.1	    02/17/23 09:18:32	    Page 5
+1   222	01A8  8A F5				     mov dh, ch			     ; Restore dh from ch	 |
+1   223	01AA  B5 00				     mov ch, 0			     ; ^			 |
+1   224										     ;				 |
+1   225	01AC  26: 89 17				     mov word ptr es:[bx], dx	     ; Print dl	on position bx	 |
+1   226										     ;				 |
+1   227	01AF  4B				     dec bx			     ; Next digit		 |
+1   228	01B0  4B				     dec bx			     ; ^			 |
+Turbo Assembler	 Version 4.1	    02/17/23 10:44:59	    Page 5
 scn&prt.asm
 
 
 
-1   229				     ;------------------------------------------------
-1   230				     ;------------------------------------------------
-1   231
-    232
-    233	01A8			     .data
-    234				     include ..\LianLib\Alphabet.asm
-1   235	0000  30 31 32 33 34 35	36+  Alphabet:	     db	"0123456789ABCDEF"	     ; Alphabet	for printing (Thanks Ilya)
-    236	      37 38 39 41 42 43	44+
-    237	      45 46
-1   238
-    239
-    240				     end	     Start
-Turbo Assembler	 Version 4.1	    02/17/23 09:18:32	    Page 6
+1   229										     ;				 |
+1   230										     ;				 |
+1   231	01B1  E2 E5				     loop @@PrintDigit		     ; >-------------------------/
+1   232
+1   233	01B3  C3				     ret
+1   234
+1   235	01B4			     PrintNDec	     endp
+1   236
+1   237				     ;------------------------------------------------
+1   238				     ;------------------------------------------------
+1   239
+    240				     include ..\LianLib\DrawBox.asm
+1   241				     ;------------------------------------------------
+1   242				     ; Draws box on the	screen
+1   243				     ;------------------------------------------------
+1   244				     ; Entry:	     AH	= color	attr
+1   245				     ;		     BX	= start	addr to	draw
+1   246				     ;		     CH	= height of box
+1   247				     ;		     CL	= width	of box
+1   248				     ;
+1   249				     ; Expects:	     ES	-> Video segment
+1   250				     ;
+1   251				     ; Exit:	     None
+1   252				     ;
+1   253				     ; Destroys:     AL	BX DX
+1   254				     ;------------------------------------------------
+1   255
+1   256	01B4			     DrawBox	     proc
+1   257						     ; push cx			       ; Store cx to stack
+1   258	01B4  8B D1				     mov dx, cx			     ; Store cx	to dx
+1   259
+1   260	01B6  A0 0010r				     mov al, byte ptr [BoxSymbols]   ; "?" -> ax (colored)
+1   261	01B9  26: 89 07				     mov es:[bx], ax		     ;
+1   262
+1   263										     ;-------------------------------------------
+1   264
+1   265	01BC  A0 0011r				     mov al, byte ptr [BoxSymbols+1] ; "?" -> ax (colored)
+1   266	01BF  B5 00				     mov ch, 0			     ; cx = width
+1   267	01C1  83 E9 02				     sub cx, 2d
+1   268	01C4			     @@UpLine:					     ; <-----------------\
+1   269	01C4  83 C3 02				     add bx, 2			     ; b+=2 (Next char)	 |
+1   270	01C7  26: 89 07				     mov es:[bx], ax		     ;			 |
+1   271										     ;			 |
+1   272	01CA  E2 F8				     loop @@UpLine		     ; >-----------------/
+1   273
+1   274										     ;-------------------------------------------
+1   275
+1   276	01CC  A0 0012r				     mov al, byte ptr [BoxSymbols+2] ; "?" -> ax (colored)
+1   277	01CF  83 C3 02				     add bx, 2			     ; b+=2 (Next char)
+1   278	01D2  26: 89 07				     mov es:[bx], ax		     ;
+1   279
+1   280										     ;-------------------------------------------
+1   281
+1   282	01D5  A0 0013r				     mov al, byte ptr [BoxSymbols+3] ; "?" -> ax (colored)
+1   283						     ; pop cx
+1   284						     ; push cx
+1   285	01D8  8B CA				     mov cx, dx
+Turbo Assembler	 Version 4.1	    02/17/23 10:44:59	    Page 6
+scn&prt.asm
+
+
+
+1   286	01DA  8A CD				     mov cl, ch
+1   287	01DC  B5 00				     mov ch, 0			     ; cx = height
+1   288	01DE  83 E9 02				     sub cx, 2d
+1   289	01E1			     @@RightLine:				     ; <-----------------\
+1   290	01E1  81 C3 00A0			     add bx, 160d		     ; b+=160 (Next line)|
+1   291	01E5  26: 89 07				     mov es:[bx], ax		     ;			 |
+1   292										     ;			 |
+1   293	01E8  E2 F7				     loop @@RightLine		     ; >-----------------/
+1   294
+1   295										     ;-------------------------------------------
+1   296
+1   297	01EA  A0 0014r				     mov al, byte ptr [BoxSymbols+4] ; "?" -> ax (colored)
+1   298	01ED  81 C3 00A0			     add bx, 160d		     ; b+=160 (Next line)|
+1   299	01F1  26: 89 07				     mov es:[bx], ax		     ;
+1   300
+1   301										     ;-------------------------------------------
+1   302
+1   303	01F4  A0 0011r				     mov al, byte ptr [BoxSymbols+1] ; "?" -> ax (colored)
+1   304						     ; pop cx
+1   305						     ; push cx
+1   306	01F7  8B CA				     mov cx, dx
+1   307	01F9  B5 00				     mov ch, 0			     ; cx = width
+1   308	01FB  83 E9 02				     sub cx, 2d
+1   309	01FE			     @@BottomLine:				     ; <-----------------\
+1   310	01FE  83 EB 02				     sub bx, 2			     ; b-=2 (Prev char)	 |
+1   311	0201  26: 89 07				     mov es:[bx], ax		     ;			 |
+1   312										     ;			 |
+1   313	0204  E2 F8				     loop @@BottomLine		     ; >-----------------/
+1   314
+1   315										     ;-------------------------------------------
+1   316
+1   317	0206  A0 0015r				     mov al, byte ptr [BoxSymbols+5] ; "?" -> ax (colored)
+1   318	0209  83 EB 02				     sub bx, 2			     ; b+=2 (Next char)
+1   319	020C  26: 89 07				     mov es:[bx], ax		     ;
+1   320
+1   321										     ;-------------------------------------------
+1   322
+1   323	020F  A0 0013r				     mov al, byte ptr [BoxSymbols+3] ; "?" -> ax (colored)
+1   324						     ; pop cx
+1   325						     ; push cx
+1   326	0212  8B CA				     mov cx, dx
+1   327	0214  8A CD				     mov cl, ch
+1   328	0216  B5 00				     mov ch, 0			     ; cx = height
+1   329	0218  83 E9 02				     sub cx, 2d
+1   330	021B			     @@LeftLine:				     ; <-----------------\
+1   331	021B  81 EB 00A0			     sub bx, 160d		     ; b+=160 (Next line)|
+1   332	021F  26: 89 07				     mov es:[bx], ax		     ;			 |
+1   333										     ;			 |
+1   334	0222  E2 F7				     loop @@LeftLine		     ; >-----------------/
+1   335
+1   336										     ;-------------------------------------------
+1   337
+1   338						     ; pop cx			       ; Clear stack
+1   339	0224  8B CA				     mov cx, dx
+1   340
+1   341	0226  C3				     ret
+1   342	0227			     DrawBox	     endp
+Turbo Assembler	 Version 4.1	    02/17/23 10:44:59	    Page 7
+scn&prt.asm
+
+
+
+1   343
+1   344				     ;------------------------------------------------
+1   345				     ;------------------------------------------------
+1   346
+    347
+    348	0227			     .data
+    349				     include ..\LianLib\Alphabet.asm
+1   350	0000  30 31 32 33 34 35	36+  Alphabet:	     db	"0123456789ABCDEF"	     ; Alphabet	for printing (Thanks Ilya)
+    351	      37 38 39 41 42 43	44+
+    352	      45 46
+1   353	0010  C9 CD BB BA BC C8	     BoxSymbols:     db	0c9h, 0cdh, 0bbh, 0bah,	0bch, 0c8h ; "╔═╗║╝╚"
+1   354
+    355
+    356				     end	     Start
+Turbo Assembler	 Version 4.1	    02/17/23 10:44:59	    Page 8
 Symbol Table
 
 
@@ -273,14 +399,18 @@ Symbol Name			  Type	 Value
 
 ??DATE				  Text	 "02/17/23"
 ??FILENAME			  Text	 "scn&prt "
-??TIME				  Text	 "09:18:32"
+??TIME				  Text	 "10:44:59"
 ??VERSION			  Number 040A
 @32BIT				  Text	 0
-@@ENDSCANDIGIT			  Near	 DGROUP:0154
-@@PRINTDIGIT			  Near	 DGROUP:0158
-@@PRINTDIGIT			  Near	 DGROUP:016C
-@@PRINTDIGIT			  Near	 DGROUP:018C
-@@SCANDIGIT			  Near	 DGROUP:0137
+@@BOTTOMLINE			  Near	 DGROUP:01FE
+@@ENDSCANDIGIT			  Near	 DGROUP:0160
+@@LEFTLINE			  Near	 DGROUP:021B
+@@PRINTDIGIT			  Near	 DGROUP:0164
+@@PRINTDIGIT			  Near	 DGROUP:0178
+@@PRINTDIGIT			  Near	 DGROUP:0198
+@@RIGHTLINE			  Near	 DGROUP:01E1
+@@SCANDIGIT			  Near	 DGROUP:0143
+@@UPLINE			  Near	 DGROUP:01C4
 @CODE				  Text	 DGROUP
 @CODESIZE			  Text	 0
 @CPU				  Text	 0101H
@@ -293,15 +423,17 @@ Symbol Name			  Type	 Value
 @STACK				  Text	 DGROUP
 @WORDSIZE			  Text	 2
 ALPHABET			  Near	 DGROUP:0000
-PRINTNBIN			  Near	 DGROUP:0155
-PRINTNDEC			  Near	 DGROUP:0189
-PRINTNHEX			  Near	 DGROUP:0169
-SCANNDEC			  Near	 DGROUP:0137
+BOXSYMBOLS			  Near	 DGROUP:0010
+DRAWBOX				  Near	 DGROUP:01B4
+PRINTNBIN			  Near	 DGROUP:0161
+PRINTNDEC			  Near	 DGROUP:0195
+PRINTNHEX			  Near	 DGROUP:0175
+SCANNDEC			  Near	 DGROUP:0143
 START				  Near	 DGROUP:0100
 
 Groups & Segments		  Bit Size Align  Combine Class
 
 DGROUP				  Group
-  _DATA				  16  0010 Word	  Public  DATA
-  _TEXT				  16  01A8 Word	  Public  CODE
+  _DATA				  16  0016 Word	  Public  DATA
+  _TEXT				  16  0227 Word	  Public  CODE
 

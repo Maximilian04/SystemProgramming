@@ -18,10 +18,18 @@ Start:
 
                 mov ax, 0b800h                  ; адрес сегмента с видеопамятью -> es
                 mov es, ax                      ;
-                mov dh, 00000010b               ; Dark green on black
 
+                mov ah, 00001010b               ; Light green on black
+                mov bx, 160d*18 + 160d/2 - 18d*2 + 4d; Середина строчки
+                mov ch, 5                       ; Height
+                mov cl, 18                      ; Width
+                call DrawBox
+
+
+                mov dh, 00000010b               ; Dark green on black
                 pop ax                          ; Scanned number
                 push ax                         ;
+
 
                 mov bx, 160d*19 + 160d/2        ; Середина строчки
 
@@ -50,6 +58,7 @@ include ..\LianLib\ScanNDec.asm
 include ..\LianLib\PrntNBin.asm
 include ..\LianLib\PrntNHex.asm
 include ..\LianLib\PrntNDec.asm
+include ..\LianLib\DrawBox.asm
 
 .data
 include ..\LianLib\Alphabet.asm
