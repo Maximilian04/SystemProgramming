@@ -1,0 +1,182 @@
+Turbo Assembler	 Version 4.1	    02/17/23 10:30:50	    Page 1
+drawbox.asm
+
+
+
+      1	0000			     .model tiny
+      2	0000			     .code
+      3				     locals @@
+      4				     org 100h
+      5
+      6	0100			     Start:
+      7	0100  B8 B800				     mov ax, 0b800h		     ; адрес сегмента с	видеопамятью
+      8	0103  8E C0				     mov es, ax			     ;
+      9
+     10	0105  BB 0690				     mov bx, 160d*10 + 160d/2	     ; Середина	строчки
+     11										     ; Каждой строчке соответствует 160	байт
+     12
+     13	0108  BB 0000				     mov bx, 0			     ;
+     14
+     15	010B  B4 0A				     mov ah, 00001010b		     ; Bright green
+     16	010D  BB 0B4A				     mov bx, 160d*18+10d
+     17	0110  B5 05				     mov ch, 5			     ; Box H
+     18	0112  B1 13				     mov cl, 19			     ; Box W
+     19	0114  E8 0005				     call DrawBox
+     20
+     21	0117  B8 4C00				     mov ax, 4c00h		     ; exit(0)
+     22	011A  CD 21				     int 21h
+     23
+     24				     ;------------------------------------------------
+     25				     ; Draws box on the	screen
+     26				     ;------------------------------------------------
+     27				     ; Entry:	     AH	= color	attr
+     28				     ;		     BX	= start	addr to	draw
+     29				     ;		     CH	= height of box
+     30				     ;		     CL	= width	of box
+     31				     ;
+     32				     ; Expects:	     ES	-> Video segment
+     33				     ;
+     34				     ; Exit:	     None
+     35				     ;
+     36				     ; Destroys:     AL	BX
+     37				     ;------------------------------------------------
+     38
+     39	011C			     DrawBox	     proc
+     40	011C  51				     push cx			     ; Store cx	to stack
+     41
+     42	011D  A0 0000r				     mov al, byte ptr [BoxSymbols]   ; "?" -> ax (colored)
+     43	0120  26: 89 07				     mov es:[bx], ax		     ;
+     44
+     45										     ;-------------------------------------------
+     46
+     47	0123  A0 0001r				     mov al, byte ptr [BoxSymbols+1] ; "?" -> ax (colored)
+     48	0126  B5 00				     mov ch, 0			     ; cx = width
+     49	0128  83 E9 02				     sub cx, 2d
+     50	012B			     @@UpLine:					     ; <-----------------\
+     51	012B  83 C3 02				     add bx, 2			     ; b+=2 (Next char)	 |
+     52	012E  26: 89 07				     mov es:[bx], ax		     ;			 |
+     53										     ;			 |
+     54	0131  E2 F8				     loop @@UpLine		     ; >-----------------/
+     55
+     56										     ;-------------------------------------------
+     57
+Turbo Assembler	 Version 4.1	    02/17/23 10:30:50	    Page 2
+drawbox.asm
+
+
+
+     58	0133  A0 0002r				     mov al, byte ptr [BoxSymbols+2] ; "?" -> ax (colored)
+     59	0136  83 C3 02				     add bx, 2			     ; b+=2 (Next char)
+     60	0139  26: 89 07				     mov es:[bx], ax		     ;
+     61
+     62										     ;-------------------------------------------
+     63
+     64	013C  A0 0003r				     mov al, byte ptr [BoxSymbols+3] ; "?" -> ax (colored)
+     65	013F  59				     pop cx
+     66	0140  51				     push cx
+     67	0141  8A CD				     mov cl, ch
+     68	0143  B5 00				     mov ch, 0			     ; cx = height
+     69	0145  83 E9 02				     sub cx, 2d
+     70	0148			     @@RightLine:				     ; <-----------------\
+     71	0148  81 C3 00A0			     add bx, 160d		     ; b+=160 (Next line)|
+     72	014C  26: 89 07				     mov es:[bx], ax		     ;			 |
+     73										     ;			 |
+     74	014F  E2 F7				     loop @@RightLine		     ; >-----------------/
+     75
+     76										     ;-------------------------------------------
+     77
+     78	0151  A0 0004r				     mov al, byte ptr [BoxSymbols+4] ; "?" -> ax (colored)
+     79	0154  81 C3 00A0			     add bx, 160d		     ; b+=160 (Next line)|
+     80	0158  26: 89 07				     mov es:[bx], ax		     ;
+     81
+     82										     ;-------------------------------------------
+     83
+     84	015B  A0 0001r				     mov al, byte ptr [BoxSymbols+1] ; "?" -> ax (colored)
+     85	015E  59				     pop cx
+     86	015F  51				     push cx
+     87	0160  B5 00				     mov ch, 0			     ; cx = width
+     88	0162  83 E9 02				     sub cx, 2d
+     89	0165			     @@BottomLine:				     ; <-----------------\
+     90	0165  83 EB 02				     sub bx, 2			     ; b-=2 (Prev char)	 |
+     91	0168  26: 89 07				     mov es:[bx], ax		     ;			 |
+     92										     ;			 |
+     93	016B  E2 F8				     loop @@BottomLine		     ; >-----------------/
+     94
+     95										     ;-------------------------------------------
+     96
+     97	016D  A0 0005r				     mov al, byte ptr [BoxSymbols+5] ; "?" -> ax (colored)
+     98	0170  83 EB 02				     sub bx, 2			     ; b+=2 (Next char)
+     99	0173  26: 89 07				     mov es:[bx], ax		     ;
+    100
+    101										     ;-------------------------------------------
+    102
+    103	0176  A0 0003r				     mov al, byte ptr [BoxSymbols+3] ; "?" -> ax (colored)
+    104	0179  59				     pop cx
+    105	017A  51				     push cx
+    106	017B  8A CD				     mov cl, ch
+    107	017D  B5 00				     mov ch, 0			     ; cx = height
+    108	017F  83 E9 02				     sub cx, 2d
+    109	0182			     @@LeftLine:				     ; <-----------------\
+    110	0182  81 EB 00A0			     sub bx, 160d		     ; b+=160 (Next line)|
+    111	0186  26: 89 07				     mov es:[bx], ax		     ;			 |
+    112										     ;			 |
+    113	0189  E2 F7				     loop @@LeftLine		     ; >-----------------/
+    114
+Turbo Assembler	 Version 4.1	    02/17/23 10:30:50	    Page 3
+drawbox.asm
+
+
+
+    115										     ;-------------------------------------------
+    116
+    117	018B  59				     pop cx			     ; Clear stack
+    118
+    119	018C  C3				     ret
+    120	018D			     DrawBox	     endp
+    121
+    122				     ;------------------------------------------------
+    123				     ;------------------------------------------------
+    124
+    125	018D			     .data
+    126
+    127	0000  C9 CD BB BA BC C8	     BoxSymbols:     db	0c9h, 0cdh, 0bbh, 0bah,	0bch, 0c8h ; "??????"
+    128
+    129				     end	     Start
+Turbo Assembler	 Version 4.1	    02/17/23 10:30:50	    Page 4
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "02/17/23"
+??FILENAME			  Text	 "drawbox "
+??TIME				  Text	 "10:30:50"
+??VERSION			  Number 040A
+@32BIT				  Text	 0
+@@BOTTOMLINE			  Near	 DGROUP:0165
+@@LEFTLINE			  Near	 DGROUP:0182
+@@RIGHTLINE			  Near	 DGROUP:0148
+@@UPLINE			  Near	 DGROUP:012B
+@CODE				  Text	 DGROUP
+@CODESIZE			  Text	 0
+@CPU				  Text	 0101H
+@CURSEG				  Text	 _DATA
+@DATA				  Text	 DGROUP
+@DATASIZE			  Text	 0
+@FILENAME			  Text	 DRAWBOX
+@INTERFACE			  Text	 000H
+@MODEL				  Text	 1
+@STACK				  Text	 DGROUP
+@WORDSIZE			  Text	 2
+BOXSYMBOLS			  Near	 DGROUP:0000
+DRAWBOX				  Near	 DGROUP:011C
+START				  Near	 DGROUP:0100
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+DGROUP				  Group
+  _DATA				  16  0006 Word	  Public  DATA
+  _TEXT				  16  018D Word	  Public  CODE
+
