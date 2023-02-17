@@ -4,8 +4,16 @@ locals @@
 org 100h
 
 Start:
-                mov bx, 0d                      ; Scan number to bx
+                mov bx, 0d                      ; Scan number to stack
                 call ScanNDec
+                push bx
+                mov bx, 0d                      ; Scan number to stack
+                call ScanNDec
+                push bx
+
+                pop ax                          ; Addiction
+                pop bx
+                add bx, ax
                 push bx
 
                 mov ax, 0b800h                  ; адрес сегмента с видеопамятью -> es
