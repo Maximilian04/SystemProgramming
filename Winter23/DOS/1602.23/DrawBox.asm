@@ -33,11 +33,12 @@ Start:
 ;
 ; Exit:         None
 ;
-; Destroys:     AL BX
+; Destroys:     AL BX DX
 ;------------------------------------------------
 
 DrawBox         proc
-                push cx                         ; Store cx to stack
+                ; push cx                         ; Store cx to stack
+                mov dx, cx                      ; Store cx to dx
 
                 mov al, byte ptr [BoxSymbols]   ; "?" -> ax (colored)
                 mov es:[bx], ax                 ;
@@ -62,8 +63,9 @@ DrawBox         proc
                                                 ;-------------------------------------------
 
                 mov al, byte ptr [BoxSymbols+3] ; "?" -> ax (colored)
-                pop cx
-                push cx
+                ; pop cx
+                ; push cx
+                mov cx, dx
                 mov cl, ch
                 mov ch, 0                       ; cx = height
                 sub cx, 2d
@@ -82,8 +84,9 @@ DrawBox         proc
                                                 ;-------------------------------------------
 
                 mov al, byte ptr [BoxSymbols+1] ; "?" -> ax (colored)
-                pop cx
-                push cx
+                ; pop cx
+                ; push cx
+                mov cx, dx
                 mov ch, 0                       ; cx = width
                 sub cx, 2d
 @@BottomLine:                                   ; <-----------------\
@@ -101,8 +104,9 @@ DrawBox         proc
                                                 ;-------------------------------------------
 
                 mov al, byte ptr [BoxSymbols+3] ; "?" -> ax (colored)
-                pop cx
-                push cx
+                ; pop cx
+                ; push cx
+                mov cx, dx
                 mov cl, ch
                 mov ch, 0                       ; cx = height
                 sub cx, 2d
@@ -114,7 +118,8 @@ DrawBox         proc
 
                                                 ;-------------------------------------------
 
-                pop cx                          ; Clear stack
+                ; pop cx                          ; Clear stack
+                mov cx, dx
 
                 ret
 DrawBox         endp
