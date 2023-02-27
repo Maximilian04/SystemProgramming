@@ -1,0 +1,64 @@
+Turbo Assembler	 Version 4.1	    02/27/23 13:58:21	    Page 1
+ints.asm
+
+
+
+      1	0000			     .model tiny
+      2	0000			     .code
+      3				     org 100h
+      4
+      5	0100  EB 01 90		     Start:	     jmp Main
+      6
+      7
+      8
+      9	0103			     Main:
+     10	0103  BB B800				     mov bx, 0b800h
+     11	0106  8E C3				     mov es, bx
+     12	0108  BB 0370				     mov bx, 160d*5 + 80d
+     13
+     14	010B  B4 4E				     mov ah, 4eh
+     15
+     16	010D  E4 60		     Next:	     in	al, 60h
+     17	010F  26: 89 07				     mov es:[bx], ax
+     18
+     19	0112  3C 01				     cmp al, 1
+     20	0114  75 F7				     jne Next
+     21
+     22	0116  B8 4C00				     mov ax, 4c00h
+     23	0119  CD 21				     int 21h
+     24
+     25				     end	     Start
+Turbo Assembler	 Version 4.1	    02/27/23 13:58:21	    Page 2
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "02/27/23"
+??FILENAME			  Text	 "ints	  "
+??TIME				  Text	 "13:58:21"
+??VERSION			  Number 040A
+@32BIT				  Text	 0
+@CODE				  Text	 DGROUP
+@CODESIZE			  Text	 0
+@CPU				  Text	 0101H
+@CURSEG				  Text	 _TEXT
+@DATA				  Text	 DGROUP
+@DATASIZE			  Text	 0
+@FILENAME			  Text	 INTS
+@INTERFACE			  Text	 000H
+@MODEL				  Text	 1
+@STACK				  Text	 DGROUP
+@WORDSIZE			  Text	 2
+MAIN				  Near	 DGROUP:0103
+NEXT				  Near	 DGROUP:010D
+START				  Near	 DGROUP:0100
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+DGROUP				  Group
+  _DATA				  16  0000 Word	  Public  DATA
+  _TEXT				  16  011B Word	  Public  CODE
+
