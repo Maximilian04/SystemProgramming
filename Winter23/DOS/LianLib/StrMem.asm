@@ -107,7 +107,7 @@ StrCpy          proc
 
 @@CountStep:                                    ; <-------------------------\
                 movsb                           ;                           |
-                scasb                           ;                           |
+                cmp al, es:[di]                 ;                           |
                 jne @@CountStep                 ; >-------------------------/
 
                 ; pop bp                          ; Stack frame

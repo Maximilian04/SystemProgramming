@@ -12,6 +12,7 @@ Start:
                 mov di, offset String
                 call StrLen
                 mov dx, cx
+                test dx, dx
 
                 mov ax, 0b800h                  ; адрес сегмента с видеопамятью -> es
                 mov es, ax                      ;

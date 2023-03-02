@@ -1,4 +1,4 @@
-Turbo Assembler	 Version 4.1	    03/02/23 21:44:41	    Page 1
+Turbo Assembler	 Version 4.1	    03/02/23 23:33:37	    Page 1
 strfuncs.asm
 
 
@@ -15,594 +15,595 @@ strfuncs.asm
      10
      11	0100			     Start:
      12	0100  BF 0031r				     mov di, offset String
-     13	0103  E8 0055				     call StrLen
+     13	0103  E8 0057				     call StrLen
      14	0106  8B D1				     mov dx, cx
-     15
-     16	0108  B8 B800				     mov ax, 0b800h		     ; адрес сегмента с		    +
-     17				     видеопамятью -> es
-     18	010B  8E C0				     mov es, ax			     ;
-     19
-     20						     ; mov ax, ss		       ; Segment with stack, code, etc.
-     21						     ; mov ds, ax		       ;
-     22
-     23						     ; mov ah, 00001010b	       ; Light green on	black
-     24						     ; mov bx, 160d*18 + 160d/2	- 18d*2	+ 4d; Середина строчки
-     25						     ; mov ch, 5		       ; Height
-     26						     ; mov cl, 18		       ; Width
-     27						     ; call DrawBox
-     28	010D  BF 0B70				     mov di, 160d*18 + 160d/2 -	18d*2 +	4d; Середина строчки
-     29	0110  B9 0020				     mov cx, 32			      ;	Width
-     30	0113  B0 DA				     mov al, 0DAh
-     31	0115  E8 0050				     call MemSet
-     32
-     33	0118  8C D8				     mov ax, ds
-     34	011A  8E C0				     mov es, ax
-     35	011C  B8 003Dr				     mov ax, offset String1
-     36	011F  8B F0				     mov si, ax
-     37	0121  B8 0040r				     mov ax, offset String2
-     38	0124  8B F8				     mov di, ax
-     39	0126  E8 0020				     call StrCmp
-     40	0129  7D 0E				     jnl heh
-     41
-     42	012B  B8 B800				     mov ax, 0b800h		     ; адрес сегмента с		    +
-     43				     видеопамятью -> es
-     44	012E  8E C0				     mov es, ax			     ;
-     45
-     46	0130  8B C2				     mov ax, dx
-     47	0132  B6 02				     mov dh, 02h
-     48	0134  8B DF				     mov bx, di
-     49	0136  E8 0084				     call PrintNDec
-     50	0139			     heh:
-     51
-     52						     ; mov dh, 00000010b	       ; Dark green on black
-     53						     ; pop ax			       ; Scanned number
-     54						     ; push ax			       ;
-     55
-     56						     ; call PrintNBin
-     57
-Turbo Assembler	 Version 4.1	    03/02/23 21:44:41	    Page 2
+     15	0108  85 D2				     test dx, dx
+     16
+     17	010A  B8 B800				     mov ax, 0b800h		     ; адрес сегмента с		    +
+     18				     видеопамятью -> es
+     19	010D  8E C0				     mov es, ax			     ;
+     20
+     21						     ; mov ax, ss		       ; Segment with stack, code, etc.
+     22						     ; mov ds, ax		       ;
+     23
+     24						     ; mov ah, 00001010b	       ; Light green on	black
+     25						     ; mov bx, 160d*18 + 160d/2	- 18d*2	+ 4d; Середина строчки
+     26						     ; mov ch, 5		       ; Height
+     27						     ; mov cl, 18		       ; Width
+     28						     ; call DrawBox
+     29	010F  BF 0B70				     mov di, 160d*18 + 160d/2 -	18d*2 +	4d; Середина строчки
+     30	0112  B9 0020				     mov cx, 32			      ;	Width
+     31	0115  B0 DA				     mov al, 0DAh
+     32	0117  E8 0050				     call MemSet
+     33
+     34	011A  8C D8				     mov ax, ds
+     35	011C  8E C0				     mov es, ax
+     36	011E  B8 003Dr				     mov ax, offset String1
+     37	0121  8B F0				     mov si, ax
+     38	0123  B8 0040r				     mov ax, offset String2
+     39	0126  8B F8				     mov di, ax
+     40	0128  E8 0020				     call StrCmp
+     41	012B  7D 0E				     jnl heh
+     42
+     43	012D  B8 B800				     mov ax, 0b800h		     ; адрес сегмента с		    +
+     44				     видеопамятью -> es
+     45	0130  8E C0				     mov es, ax			     ;
+     46
+     47	0132  8B C2				     mov ax, dx
+     48	0134  B6 02				     mov dh, 02h
+     49	0136  8B DF				     mov bx, di
+     50	0138  E8 0084				     call PrintNDec
+     51	013B			     heh:
+     52
+     53						     ; mov dh, 00000010b	       ; Dark green on black
+     54						     ; pop ax			       ; Scanned number
+     55						     ; push ax			       ;
+     56
+     57						     ; call PrintNBin
+Turbo Assembler	 Version 4.1	    03/02/23 23:33:37	    Page 2
 strfuncs.asm
 
 
 
-     58	0139  B8 4C00				     mov ax, 4c00h		     ; exit(0)
-     59	013C  CD 21				     int 21h
-     60
-     61				     ;------------------------------------------------
-     62				     ; Compare (num) bytes from	(src) and (dst)
-     63				     ;------------------------------------------------
-     64				     ; Entry:	     CX	= num
-     65				     ;		     DS:SI = src
-     66				     ;		     ES:DI = dst
-     67				     ;
-     68				     ; Expects:	     DF	= 0 (CLD)
-     69				     ;
-     70				     ; Exit:	     Compare flags
-     71				     ;
-     72				     ; Destroys:     AX	SI DI
-     73				     ;------------------------------------------------
-     74				     ; Stack frame:
-     75				     ;		     ...
-     76				     ;		     retAddr	 []
-     77				     ;		     ...
-     78				     ;------------------------------------------------
-     79				     ;Направление просмотра	 зависит	 от флага		    +
-     80				     направления DF,	значение  которого  можно	менять  с    +
-     81				     помощью команд CLD (DF:=0) и	STD (DF:=1).
-     82
-     83	013E			     MemCmp	     proc
-     84						     ; push bp
-     85						     ; mov bp, sp		       ; Complete stack	frame
-     86
-     87	013E  33 C0				     xor ax, ax			     ; AL = 0
-     88
-     89	0140			     @@CountStep:				     ; <-------------------------\
-     90										     ;				 |
-     91	0140  A6				     cmpsb			     ;				 |
-     92	0141  75 05				     jne @@CountEnd		     ; >>===\\			 |
-     93	0143  49				     dec cx			     ;	    ||			 |
-     94	0144  3B C1				     cmp ax, cx			     ;	    ||			 |
-     95	0146  75 F8				     jne @@CountStep		     ; >----++-------------------/
-     96	0148			     @@CountEnd:				     ; <<===//
-     97
-     98						     ; pop bp			       ; Stack frame
-     99	0148  C3				     ret
-    100	0149			     MemCmp	     endp
-    101
-    102				     ;------------------------------------------------
+     58
+     59	013B  B8 4C00				     mov ax, 4c00h		     ; exit(0)
+     60	013E  CD 21				     int 21h
+     61
+     62				     ;------------------------------------------------
+     63				     ; Compare (num) bytes from	(src) and (dst)
+     64				     ;------------------------------------------------
+     65				     ; Entry:	     CX	= num
+     66				     ;		     DS:SI = src
+     67				     ;		     ES:DI = dst
+     68				     ;
+     69				     ; Expects:	     DF	= 0 (CLD)
+     70				     ;
+     71				     ; Exit:	     Compare flags
+     72				     ;
+     73				     ; Destroys:     AX	CX SI DI
+     74				     ;------------------------------------------------
+     75				     ; Stack frame:
+     76				     ;		     ...
+     77				     ;		     retAddr	 []
+     78				     ;		     ...
+     79				     ;------------------------------------------------
+     80				     ;Направление просмотра	 зависит	 от флага		    +
+     81				     направления DF,	значение  которого  можно	менять  с    +
+     82				     помощью команд CLD (DF:=0) и	STD (DF:=1).
+     83
+     84	0140			     MemCmp	     proc
+     85						     ; push bp
+     86						     ; mov bp, sp		       ; Complete stack	frame
+     87
+     88	0140  33 C0				     xor ax, ax			     ; AL = 0
+     89
+     90	0142			     @@CountStep:				     ; <-------------------------\
+     91										     ;				 |
+     92	0142  A6				     cmpsb			     ;				 |
+     93	0143  75 05				     jne @@CountEnd		     ; >>===\\			 |
+     94	0145  49				     dec cx			     ;	    ||			 |
+     95	0146  3B C1				     cmp ax, cx			     ;	    ||			 |
+     96	0148  75 F8				     jne @@CountStep		     ; >----++-------------------/
+     97	014A			     @@CountEnd:				     ; <<===//
+     98
+     99						     ; pop bp			       ; Stack frame
+    100	014A  C3				     ret
+    101	014B			     MemCmp	     endp
+    102
     103				     ;------------------------------------------------
-    104
-    105				     ;------------------------------------------------
-    106				     ; Compare null-terminated strings (src) and (dst)
-    107				     ;------------------------------------------------
-    108				     ; Entry:	     DS:SI = src
-    109				     ;		     ES:DI = dst
-    110				     ;
-    111				     ; Expects:	     DF	= 0 (CLD)
-    112				     ;
-    113				     ; Exit:	     Compare flags
-    114				     ;
-Turbo Assembler	 Version 4.1	    03/02/23 21:44:41	    Page 3
+    104				     ;------------------------------------------------
+    105
+    106				     ;------------------------------------------------
+    107				     ; Compare null-terminated strings (src) and (dst)
+    108				     ;------------------------------------------------
+    109				     ; Entry:	     DS:SI = src
+    110				     ;		     ES:DI = dst
+    111				     ;
+    112				     ; Expects:	     DF	= 0 (CLD)
+    113				     ;
+    114				     ; Exit:	     Compare flags
+Turbo Assembler	 Version 4.1	    03/02/23 23:33:37	    Page 3
 strfuncs.asm
 
 
 
-    115				     ; Destroys:     AL	SI DI
-    116				     ;------------------------------------------------
-    117				     ; Stack frame:
-    118				     ;		     ...
-    119				     ;		     retAddr	 []
-    120				     ;		     ...
-    121				     ;------------------------------------------------
-    122				     ;Направление просмотра	 зависит	 от флага		    +
-    123				     направления DF,	значение  которого  можно	менять  с    +
-    124				     помощью команд CLD (DF:=0) и	STD (DF:=1).
-    125
-    126	0149			     StrCmp	     proc
-    127						     ; push bp
-    128						     ; mov bp, sp		       ; Complete stack	frame
-    129
-    130	0149  32 C0				     xor al, al			     ; AL = 0
-    131
-    132	014B			     @@CountStep:				     ; <-------------------------\
-    133										     ;				 |
-    134	014B  A6				     cmpsb			     ;				 |
-    135	014C  75 05				     jne @@CountEnd		     ; >>===\\			 |
-    136	014E  26: 3A 05				     cmp al, es:[di]		     ;	    ||			 |
-    137	0151  75 F8				     jne @@CountStep		     ; >----++-------------------/
-    138	0153			     @@CountEnd:				     ; <<===//
-    139
-    140						     ; pop bp			       ; Stack frame
-    141	0153  C3				     ret
-    142	0154			     StrCmp	     endp
-    143
-    144				     ;------------------------------------------------
+    115				     ;
+    116				     ; Destroys:     AL	SI DI
+    117				     ;------------------------------------------------
+    118				     ; Stack frame:
+    119				     ;		     ...
+    120				     ;		     retAddr	 []
+    121				     ;		     ...
+    122				     ;------------------------------------------------
+    123				     ;Направление просмотра	 зависит	 от флага		    +
+    124				     направления DF,	значение  которого  можно	менять  с    +
+    125				     помощью команд CLD (DF:=0) и	STD (DF:=1).
+    126
+    127	014B			     StrCmp	     proc
+    128						     ; push bp
+    129						     ; mov bp, sp		       ; Complete stack	frame
+    130
+    131	014B  32 C0				     xor al, al			     ; AL = 0
+    132
+    133	014D			     @@CountStep:				     ; <-------------------------\
+    134										     ;				 |
+    135	014D  A6				     cmpsb			     ;				 |
+    136	014E  75 05				     jne @@CountEnd		     ; >>===\\			 |
+    137	0150  26: 3A 05				     cmp al, es:[di]		     ;	    ||			 |
+    138	0153  75 F8				     jne @@CountStep		     ; >----++-------------------/
+    139	0155			     @@CountEnd:				     ; <<===//
+    140
+    141						     ; pop bp			       ; Stack frame
+    142	0155  C3				     ret
+    143	0156			     StrCmp	     endp
+    144
     145				     ;------------------------------------------------
-    146
-    147				     ;------------------------------------------------
-    148				     ; Copies the null-terminated string (src) into the	(dst)
-    149				     ;------------------------------------------------
-    150				     ; Entry:	     DS:SI = src
-    151				     ;		     ES:DI = dst
-    152				     ;
-    153				     ; Expects:	     DF	= 0 (CLD)
-    154				     ;
-    155				     ; Exit:	     None
-    156				     ;
-    157				     ; Destroys:     AL	SI DI
-    158				     ;------------------------------------------------
-    159				     ; Stack frame:
-    160				     ;		     ...
-    161				     ;		     retAddr	 []
-    162				     ;		     ...
-    163				     ;------------------------------------------------
-    164				     ;Направление просмотра	 зависит	 от флага		    +
-    165				     направления DF,	значение  которого  можно	менять  с    +
-    166				     помощью команд CLD (DF:=0) и	STD (DF:=1).
-    167
-    168	0154			     StrCpy	     proc
-    169						     ; push bp
-    170						     ; mov bp, sp		       ; Complete stack	frame
-    171
-Turbo Assembler	 Version 4.1	    03/02/23 21:44:41	    Page 4
+    146				     ;------------------------------------------------
+    147
+    148				     ;------------------------------------------------
+    149				     ; Copies the null-terminated string (src) into the	(dst)
+    150				     ;------------------------------------------------
+    151				     ; Entry:	     DS:SI = src
+    152				     ;		     ES:DI = dst
+    153				     ;
+    154				     ; Expects:	     DF	= 0 (CLD)
+    155				     ;
+    156				     ; Exit:	     None
+    157				     ;
+    158				     ; Destroys:     AL	SI DI
+    159				     ;------------------------------------------------
+    160				     ; Stack frame:
+    161				     ;		     ...
+    162				     ;		     retAddr	 []
+    163				     ;		     ...
+    164				     ;------------------------------------------------
+    165				     ;Направление просмотра	 зависит	 от флага		    +
+    166				     направления DF,	значение  которого  можно	менять  с    +
+    167				     помощью команд CLD (DF:=0) и	STD (DF:=1).
+    168
+    169	0156			     StrCpy	     proc
+    170						     ; push bp
+    171						     ; mov bp, sp		       ; Complete stack	frame
+Turbo Assembler	 Version 4.1	    03/02/23 23:33:37	    Page 4
 strfuncs.asm
 
 
 
-    172	0154  32 C0				     xor al, al			     ; AL = 0
-    173
-    174	0156			     @@CountStep:				     ; <-------------------------\
-    175	0156  A4				     movsb			     ;				 |
-    176	0157  AE				     scasb			     ;				 |
-    177	0158  75 FC				     jne @@CountStep		     ; >-------------------------/
-    178
-    179						     ; pop bp			       ; Stack frame
-    180	015A  C3				     ret
-    181	015B			     StrCpy	     endp
-    182
-    183				     ;------------------------------------------------
+    172
+    173	0156  32 C0				     xor al, al			     ; AL = 0
+    174
+    175	0158			     @@CountStep:				     ; <-------------------------\
+    176	0158  A4				     movsb			     ;				 |
+    177	0159  AE				     scasb			     ;				 |
+    178	015A  75 FC				     jne @@CountStep		     ; >-------------------------/
+    179
+    180						     ; pop bp			       ; Stack frame
+    181	015C  C3				     ret
+    182	015D			     StrCpy	     endp
+    183
     184				     ;------------------------------------------------
-    185
-    186				     ;------------------------------------------------
-    187				     ; Count the length	of the null-terminated string (str)
-    188				     ;------------------------------------------------
-    189				     ; Entry:	     ES:DI = str
-    190				     ;
-    191				     ; Expects:	     DF	= 0 (CLD)
-    192				     ;
-    193				     ; Exit:	     CX	= length
-    194				     ;
-    195				     ; Destroys:     AL	DI
-    196				     ;------------------------------------------------
-    197				     ; Stack frame:
-    198				     ;		     ...
-    199				     ;		     retAddr	 []
-    200				     ;		     ...
-    201				     ;------------------------------------------------
-    202				     ;Направление просмотра	 зависит	 от флага		    +
-    203				     направления DF,	значение  которого  можно	менять  с    +
-    204				     помощью команд CLD (DF:=0) и	STD (DF:=1).
-    205
-    206	015B			     StrLen	     proc
-    207						     ; push bp
-    208						     ; mov bp, sp		       ; Complete stack	frame
-    209
-    210	015B  32 C0				     xor al, al			     ; AL = 0
-    211	015D  33 C9				     xor cx, cx			     ; CX = 0
-    212
-    213	015F			     @@CountStep:				     ; <-------------------------\
-    214	015F  41				     inc cx			     ;				 |
-    215	0160  AE				     scasb			     ;				 |
-    216	0161  75 FC				     jne @@CountStep		     ; >-------------------------/
-    217
-    218	0163  49				     dec cx
-    219
-    220						     ; pop bp			       ; Stack frame
-    221	0164  C3				     ret
-    222	0165			     StrLen	     endp
-    223
-    224				     ;------------------------------------------------
+    185				     ;------------------------------------------------
+    186
+    187				     ;------------------------------------------------
+    188				     ; Count the length	of the null-terminated string (str)
+    189				     ;------------------------------------------------
+    190				     ; Entry:	     ES:DI = str
+    191				     ;
+    192				     ; Expects:	     DF	= 0 (CLD)
+    193				     ;
+    194				     ; Exit:	     CX	= length
+    195				     ;
+    196				     ; Destroys:     AL	DI
+    197				     ;------------------------------------------------
+    198				     ; Stack frame:
+    199				     ;		     ...
+    200				     ;		     retAddr	 []
+    201				     ;		     ...
+    202				     ;------------------------------------------------
+    203				     ;Направление просмотра	 зависит	 от флага		    +
+    204				     направления DF,	значение  которого  можно	менять  с    +
+    205				     помощью команд CLD (DF:=0) и	STD (DF:=1).
+    206
+    207	015D			     StrLen	     proc
+    208						     ; push bp
+    209						     ; mov bp, sp		       ; Complete stack	frame
+    210
+    211	015D  32 C0				     xor al, al			     ; AL = 0
+    212	015F  33 C9				     xor cx, cx			     ; CX = 0
+    213
+    214	0161			     @@CountStep:				     ; <-------------------------\
+    215	0161  41				     inc cx			     ;				 |
+    216	0162  AE				     scasb			     ;				 |
+    217	0163  75 FC				     jne @@CountStep		     ; >-------------------------/
+    218
+    219	0165  49				     dec cx
+    220
+    221						     ; pop bp			       ; Stack frame
+    222	0166  C3				     ret
+    223	0167			     StrLen	     endp
+    224
     225				     ;------------------------------------------------
-    226
-    227				     ;------------------------------------------------
-    228				     ; Copies the (num)	bytes from (src) to (dst)
-Turbo Assembler	 Version 4.1	    03/02/23 21:44:41	    Page 5
+    226				     ;------------------------------------------------
+    227
+    228				     ;------------------------------------------------
+Turbo Assembler	 Version 4.1	    03/02/23 23:33:37	    Page 5
 strfuncs.asm
 
 
 
-    229				     ;------------------------------------------------
-    230				     ; Entry:	     CX	= num
-    231				     ;		     DS:SI = src
-    232				     ;		     ES:DI = dst
-    233				     ;
-    234				     ; Expects:	     DF	= 0 (CLD)
-    235				     ;
-    236				     ; Exit:	     None
-    237				     ;
-    238				     ; Destroys:     CX	SI DI
-    239				     ;------------------------------------------------
-    240				     ; Stack frame:
-    241				     ;		     ...
-    242				     ;		     retAddr	 []
-    243				     ;		     ...
-    244				     ;------------------------------------------------
-    245				     ;Направление просмотра	 зависит	 от флага		    +
-    246				     направления DF,	значение  которого  можно	менять  с    +
-    247				     помощью команд CLD (DF:=0) и	STD (DF:=1).
-    248
-    249	0165			     MemCpy	     proc
-    250						     ; push bp
-    251						     ; mov bp, sp		       ; Complete stack	frame
-    252
-    253	0165  F3> A4				     rep movsb
-    254
-    255						     ; pop bp			       ; Stack frame
-    256	0167  C3				     ret
-    257	0168			     MemCpy	     endp
-    258
-    259				     ;------------------------------------------------
+    229				     ; Copies the (num)	bytes from (src) to (dst)
+    230				     ;------------------------------------------------
+    231				     ; Entry:	     CX	= num
+    232				     ;		     DS:SI = src
+    233				     ;		     ES:DI = dst
+    234				     ;
+    235				     ; Expects:	     DF	= 0 (CLD)
+    236				     ;
+    237				     ; Exit:	     None
+    238				     ;
+    239				     ; Destroys:     CX	SI DI
+    240				     ;------------------------------------------------
+    241				     ; Stack frame:
+    242				     ;		     ...
+    243				     ;		     retAddr	 []
+    244				     ;		     ...
+    245				     ;------------------------------------------------
+    246				     ;Направление просмотра	 зависит	 от флага		    +
+    247				     направления DF,	значение  которого  можно	менять  с    +
+    248				     помощью команд CLD (DF:=0) и	STD (DF:=1).
+    249
+    250	0167			     MemCpy	     proc
+    251						     ; push bp
+    252						     ; mov bp, sp		       ; Complete stack	frame
+    253
+    254	0167  F3> A4				     rep movsb
+    255
+    256						     ; pop bp			       ; Stack frame
+    257	0169  C3				     ret
+    258	016A			     MemCpy	     endp
+    259
     260				     ;------------------------------------------------
-    261
-    262				     ;------------------------------------------------
-    263				     ; Sets (num) bytes	of the memory pointed by (ptr) to the specified	(value)
-    264				     ;------------------------------------------------
-    265				     ; Entry:	     CX	= num
-    266				     ;		     AL	= value
-    267				     ;		     ES:DI = ptr
-    268				     ;
-    269				     ; Expects:	     DF	= 0 (CLD)
-    270				     ;
-    271				     ; Exit:	     None
-    272				     ;
-    273				     ; Destroys:     CX	DI
-    274				     ;------------------------------------------------
-    275				     ; Stack frame:
-    276				     ;		     ...
-    277				     ;		     retAddr	 []
-    278				     ;		     ...
-    279				     ;------------------------------------------------
-    280				     ;Направление просмотра	 зависит	 от флага		    +
-    281				     направления DF,	значение  которого  можно	менять  с    +
-    282				     помощью команд CLD (DF:=0) и	STD (DF:=1).
-    283
-    284	0168			     MemSet	     proc
-    285						     ; push bp
-Turbo Assembler	 Version 4.1	    03/02/23 21:44:41	    Page 6
+    261				     ;------------------------------------------------
+    262
+    263				     ;------------------------------------------------
+    264				     ; Sets (num) bytes	of the memory pointed by (ptr) to the specified	(value)
+    265				     ;------------------------------------------------
+    266				     ; Entry:	     CX	= num
+    267				     ;		     AL	= value
+    268				     ;		     ES:DI = ptr
+    269				     ;
+    270				     ; Expects:	     DF	= 0 (CLD)
+    271				     ;
+    272				     ; Exit:	     None
+    273				     ;
+    274				     ; Destroys:     CX	DI
+    275				     ;------------------------------------------------
+    276				     ; Stack frame:
+    277				     ;		     ...
+    278				     ;		     retAddr	 []
+    279				     ;		     ...
+    280				     ;------------------------------------------------
+    281				     ;Направление просмотра	 зависит	 от флага		    +
+    282				     направления DF,	значение  которого  можно	менять  с    +
+    283				     помощью команд CLD (DF:=0) и	STD (DF:=1).
+    284
+    285	016A			     MemSet	     proc
+Turbo Assembler	 Version 4.1	    03/02/23 23:33:37	    Page 6
 strfuncs.asm
 
 
 
-    286						     ; mov bp, sp		       ; Complete stack	frame
-    287
-    288	0168  F3> AA				     rep stosb
-    289
-    290						     ; pop bp			       ; Stack frame
-    291	016A  C3				     ret
-    292	016B			     MemSet	     endp
-    293
-    294				     ;------------------------------------------------
+    286						     ; push bp
+    287						     ; mov bp, sp		       ; Complete stack	frame
+    288
+    289	016A  F3> AA				     rep stosb
+    290
+    291						     ; pop bp			       ; Stack frame
+    292	016C  C3				     ret
+    293	016D			     MemSet	     endp
+    294
     295				     ;------------------------------------------------
-    296
-    297				     include ..\LianLib\ScanNDec.asm
-1   298				     ;------------------------------------------------
-1   299				     ; Scans number as decimal
-1   300				     ;------------------------------------------------
-1   301				     ; Entry:	     none
-1   302				     ;
-1   303				     ; Expects:	     BX	= 0
-1   304				     ;
-1   305				     ; Exit:	     BX	= number to print
-1   306				     ;
-1   307				     ; Destroys:     AX	CL Si
-1   308				     ;------------------------------------------------
+    296				     ;------------------------------------------------
+    297
+    298				     include ..\LianLib\ScanNDec.asm
+1   299				     ;------------------------------------------------
+1   300				     ; Scans number as decimal
+1   301				     ;------------------------------------------------
+1   302				     ; Entry:	     none
+1   303				     ;
+1   304				     ; Expects:	     BX	= 0
+1   305				     ;
+1   306				     ; Exit:	     BX	= number to print
+1   307				     ;
+1   308				     ; Destroys:     AX	CL Si
 1   309				     ;------------------------------------------------
-1   310	016B			     ScanNDec	     proc
-1   311
-1   312	016B			     @@ScanDigit:				     ; <??????????????????????????
-1   313										     ;				 ?
-1   314	016B  B4 01				     mov ah, 01h		     ; getc -> al		 ?
-1   315	016D  CD 21				     int 21h			     ; ^			 ?
-1   316										     ;				 ?
-1   317	016F  3C 0D				     cmp al, 13d		     ; Stop scan if enter	 ?
-1   318	0171  74 15				     je	@@EndScanDigit		     ; >>?????????????????????????????????
-1   319										     ;				 ?	 ?
-1   320	0173  8A C8				     mov cl, al			     ; Store al	to cl		 ?	 ?
-1   321										     ;				 ?	 ?
-1   322	0175  8B C3				     mov ax, bx			     ; bx *= 10			 ?	 ?
-1   323	0177  BE 000A				     mov si, 10d		     ; ^			 ?	 ?
-1   324	017A  F7 E6				     mul si			     ; ^			 ?	 ?
-1   325	017C  8B D8				     mov bx, ax			     ; ^			 ?	 ?
-1   326										     ;				 ?	 ?
-1   327	017E  8A C1				     mov al, cl			     ; Retore al from cl	 ?	 ?
-1   328										     ;				 ?	 ?
-1   329	0180  2C 30				     sub al, "0"		     ; ASCII "0" offset		 ?	 ?
-1   330										     ;				 ?	 ?
-1   331	0182  B4 00				     mov ah, 0d			     ; bx += al			 ?	 ?
-1   332	0184  03 D8				     add bx, ax			     ; ^			 ?	 ?
-1   333										     ;				 ?	 ?
-1   334	0186  EB E3				     jmp @@ScanDigit		     ; >??????????????????????????	 ?
-1   335										     ;					 ?
-1   336	0188			     @@EndScanDigit:				     ; <<?????????????????????????????????
-1   337	0188  C3				     ret
-1   338
-1   339	0189			     ScanNDec	     endp
-1   340
-1   341				     ;------------------------------------------------
+1   310				     ;------------------------------------------------
+1   311	016D			     ScanNDec	     proc
+1   312
+1   313	016D			     @@ScanDigit:				     ; <??????????????????????????
+1   314										     ;				 ?
+1   315	016D  B4 01				     mov ah, 01h		     ; getc -> al		 ?
+1   316	016F  CD 21				     int 21h			     ; ^			 ?
+1   317										     ;				 ?
+1   318	0171  3C 0D				     cmp al, 13d		     ; Stop scan if enter	 ?
+1   319	0173  74 15				     je	@@EndScanDigit		     ; >>?????????????????????????????????
+1   320										     ;				 ?	 ?
+1   321	0175  8A C8				     mov cl, al			     ; Store al	to cl		 ?	 ?
+1   322										     ;				 ?	 ?
+1   323	0177  8B C3				     mov ax, bx			     ; bx *= 10			 ?	 ?
+1   324	0179  BE 000A				     mov si, 10d		     ; ^			 ?	 ?
+1   325	017C  F7 E6				     mul si			     ; ^			 ?	 ?
+1   326	017E  8B D8				     mov bx, ax			     ; ^			 ?	 ?
+1   327										     ;				 ?	 ?
+1   328	0180  8A C1				     mov al, cl			     ; Retore al from cl	 ?	 ?
+1   329										     ;				 ?	 ?
+1   330	0182  2C 30				     sub al, "0"		     ; ASCII "0" offset		 ?	 ?
+1   331										     ;				 ?	 ?
+1   332	0184  B4 00				     mov ah, 0d			     ; bx += al			 ?	 ?
+1   333	0186  03 D8				     add bx, ax			     ; ^			 ?	 ?
+1   334										     ;				 ?	 ?
+1   335	0188  EB E3				     jmp @@ScanDigit		     ; >??????????????????????????	 ?
+1   336										     ;					 ?
+1   337	018A			     @@EndScanDigit:				     ; <<?????????????????????????????????
+1   338	018A  C3				     ret
+1   339
+1   340	018B			     ScanNDec	     endp
+1   341
 1   342				     ;------------------------------------------------
-Turbo Assembler	 Version 4.1	    03/02/23 21:44:41	    Page 7
+Turbo Assembler	 Version 4.1	    03/02/23 23:33:37	    Page 7
 strfuncs.asm
 
 
 
-1   343
-    344				     include ..\LianLib\PrntNBin.asm
-1   345				     ;------------------------------------------------
-1   346				     ; Prints number as	binary to vidmem
-1   347				     ;------------------------------------------------
-1   348				     ; Entry:	     AX	= number to print
-1   349				     ;		     BX	= start	addr to	print
-1   350				     ;
-1   351				     ; Expects:	     ES	-> Video segment
-1   352				     ;		     DH	= color	code
-1   353				     ;
-1   354				     ; Exit:	     None
-1   355				     ;
-1   356				     ; Destroys:     AX	BX CX DL
-1   357				     ;------------------------------------------------
+1   343				     ;------------------------------------------------
+1   344
+    345				     include ..\LianLib\PrntNBin.asm
+1   346				     ;------------------------------------------------
+1   347				     ; Prints number as	binary to vidmem
+1   348				     ;------------------------------------------------
+1   349				     ; Entry:	     AX	= number to print
+1   350				     ;		     BX	= start	addr to	print
+1   351				     ;
+1   352				     ; Expects:	     ES	-> Video segment
+1   353				     ;		     DH	= color	code
+1   354				     ;
+1   355				     ; Exit:	     None
+1   356				     ;
+1   357				     ; Destroys:     AX	BX CX DL
 1   358				     ;------------------------------------------------
-1   359	0189			     PrintNBin	     proc
-1   360
-1   361	0189  B9 0010				     mov cx, 16d		     ; 16 bit in 2 byte	in ax
-1   362
-1   363	018C			     @@PrintDigit:				     ; <-------------------------\
-1   364										     ;				 |
-1   365	018C  B2 01				     mov dl, 00000001b		     ; Mask			 |
-1   366	018E  22 D0				     and dl, al			     ;				 |
-1   367	0190  80 C2 30				     add dl, 30h		     ; ASCII "0" offset		 |
-1   368										     ;				 |
-1   369	0193  26: 89 17				     mov word ptr es:[bx], dx	     ; Print dl	on position bx	 |
-1   370										     ;				 |
-1   371	0196  4B				     dec bx			     ; Next digit		 |
-1   372	0197  4B				     dec bx			     ; ^			 |
-1   373										     ;				 |
-1   374	0198  D1 E8				     shr ax, 1d			     ; ax >> 1			 |
-1   375										     ;				 |
-1   376	019A  E2 F0				     loop @@PrintDigit		     ; >-------------------------/
-1   377
-1   378	019C  C3				     ret
-1   379
-1   380	019D			     PrintNBin	     endp
-1   381
-1   382				     ;------------------------------------------------
+1   359				     ;------------------------------------------------
+1   360	018B			     PrintNBin	     proc
+1   361
+1   362	018B  B9 0010				     mov cx, 16d		     ; 16 bit in 2 byte	in ax
+1   363
+1   364	018E			     @@PrintDigit:				     ; <-------------------------\
+1   365										     ;				 |
+1   366	018E  B2 01				     mov dl, 00000001b		     ; Mask			 |
+1   367	0190  22 D0				     and dl, al			     ;				 |
+1   368	0192  80 C2 30				     add dl, 30h		     ; ASCII "0" offset		 |
+1   369										     ;				 |
+1   370	0195  26: 89 17				     mov word ptr es:[bx], dx	     ; Print dl	on position bx	 |
+1   371										     ;				 |
+1   372	0198  4B				     dec bx			     ; Next digit		 |
+1   373	0199  4B				     dec bx			     ; ^			 |
+1   374										     ;				 |
+1   375	019A  D1 E8				     shr ax, 1d			     ; ax >> 1			 |
+1   376										     ;				 |
+1   377	019C  E2 F0				     loop @@PrintDigit		     ; >-------------------------/
+1   378
+1   379	019E  C3				     ret
+1   380
+1   381	019F			     PrintNBin	     endp
+1   382
 1   383				     ;------------------------------------------------
-1   384
-    385				     include ..\LianLib\PrntNHex.asm
-1   386				     ;------------------------------------------------
-1   387				     ; Prints number as	hexagen	to vidmem
-1   388				     ;------------------------------------------------
-1   389				     ; Entry:	     AX	= number to print
-1   390				     ;		     BX	= start	addr to	print
-1   391				     ;
-1   392				     ; Expects:	     ES	-> Video segment
-1   393				     ;		     DH	= color	code
-1   394				     ;
-1   395				     ; Exit:	     None
-1   396				     ;
-1   397				     ; Destroys:     AX	BX CX DL Si
-1   398				     ;------------------------------------------------
+1   384				     ;------------------------------------------------
+1   385
+    386				     include ..\LianLib\PrntNHex.asm
+1   387				     ;------------------------------------------------
+1   388				     ; Prints number as	hexagen	to vidmem
+1   389				     ;------------------------------------------------
+1   390				     ; Entry:	     AX	= number to print
+1   391				     ;		     BX	= start	addr to	print
+1   392				     ;
+1   393				     ; Expects:	     ES	-> Video segment
+1   394				     ;		     DH	= color	code
+1   395				     ;
+1   396				     ; Exit:	     None
+1   397				     ;
+1   398				     ; Destroys:     AX	BX CX DL Si
 1   399				     ;------------------------------------------------
-Turbo Assembler	 Version 4.1	    03/02/23 21:44:41	    Page 8
+Turbo Assembler	 Version 4.1	    03/02/23 23:33:37	    Page 8
 strfuncs.asm
 
 
 
-1   400	019D			     PrintNHex	     proc
-1   401
-1   402	019D  B9 0004				     mov cx, 4d			     ; 4 digits	in 2 byte in ax
-1   403
-1   404	01A0			     @@PrintDigit:				     ; <-------------------------\
-1   405										     ;				 |
-1   406	01A0  B2 0F				     mov dl, 00001111b		     ; Mask			 |
-1   407	01A2  22 D0				     and dl, al			     ;				 |
-1   408										     ;				 |
-1   409	01A4  8B F2				     mov si, dx			     ; dl -> si			 |
-1   410	01A6  83 E6 0F				     and si, 0Fh		     ;				 |
-1   411										     ;				 |
-1   412	01A9  8A 94 0000r			     mov dl, byte ptr [Alphabet]+si  ; ASCII "0" offset		 |
-1   413										     ;				 |
-1   414	01AD  26: 89 17				     mov word ptr es:[bx], dx	     ; Print dl	on position bx	 |
-1   415										     ;				 |
-1   416	01B0  4B				     dec bx			     ; Next digit		 |
-1   417	01B1  4B				     dec bx			     ; ^			 |
-1   418										     ;				 |
-1   419	01B2  D1 E8 D1 E8 D1 E8	D1+		     shr ax, 4d			     ; ax >> 4			 |
-    420	      E8
-1   421										     ;				 |
-1   422	01BA  E2 E4				     loop @@PrintDigit		     ; >-------------------------/
-1   423
-1   424	01BC  C3				     ret
-1   425
-1   426	01BD			     PrintNHex	     endp
-1   427
-1   428				     ;------------------------------------------------
+1   400				     ;------------------------------------------------
+1   401	019F			     PrintNHex	     proc
+1   402
+1   403	019F  B9 0004				     mov cx, 4d			     ; 4 digits	in 2 byte in ax
+1   404
+1   405	01A2			     @@PrintDigit:				     ; <-------------------------\
+1   406										     ;				 |
+1   407	01A2  B2 0F				     mov dl, 00001111b		     ; Mask			 |
+1   408	01A4  22 D0				     and dl, al			     ;				 |
+1   409										     ;				 |
+1   410	01A6  8B F2				     mov si, dx			     ; dl -> si			 |
+1   411	01A8  83 E6 0F				     and si, 0Fh		     ;				 |
+1   412										     ;				 |
+1   413	01AB  8A 94 0000r			     mov dl, byte ptr [Alphabet]+si  ; ASCII "0" offset		 |
+1   414										     ;				 |
+1   415	01AF  26: 89 17				     mov word ptr es:[bx], dx	     ; Print dl	on position bx	 |
+1   416										     ;				 |
+1   417	01B2  4B				     dec bx			     ; Next digit		 |
+1   418	01B3  4B				     dec bx			     ; ^			 |
+1   419										     ;				 |
+1   420	01B4  D1 E8 D1 E8 D1 E8	D1+		     shr ax, 4d			     ; ax >> 4			 |
+    421	      E8
+1   422										     ;				 |
+1   423	01BC  E2 E4				     loop @@PrintDigit		     ; >-------------------------/
+1   424
+1   425	01BE  C3				     ret
+1   426
+1   427	01BF			     PrintNHex	     endp
+1   428
 1   429				     ;------------------------------------------------
-1   430
-    431				     include ..\LianLib\PrntNDec.asm
-1   432				     ;------------------------------------------------
-1   433				     ; Prints number as	decimal	to vidmem
-1   434				     ;------------------------------------------------
-1   435				     ; Entry:	     AX	= number to print
-1   436				     ;		     BX	= start	addr to	print
-1   437				     ;
-1   438				     ; Expects:	     ES	-> Video segment
-1   439				     ;		     DH	= color	code
-1   440				     ;
-1   441				     ; Exit:	     None
-1   442				     ;
-1   443				     ; Destroys:     AX	BX CX DL Si
-1   444				     ;------------------------------------------------
+1   430				     ;------------------------------------------------
+1   431
+    432				     include ..\LianLib\PrntNDec.asm
+1   433				     ;------------------------------------------------
+1   434				     ; Prints number as	decimal	to vidmem
+1   435				     ;------------------------------------------------
+1   436				     ; Entry:	     AX	= number to print
+1   437				     ;		     BX	= start	addr to	print
+1   438				     ;
+1   439				     ; Expects:	     ES	-> Video segment
+1   440				     ;		     DH	= color	code
+1   441				     ;
+1   442				     ; Exit:	     None
+1   443				     ;
+1   444				     ; Destroys:     AX	BX CX DL Si
 1   445				     ;------------------------------------------------
-1   446	01BD			     PrintNDec	     proc
-1   447
-1   448	01BD  B9 0005				     mov cx, 5d			     ; 5 digits	in 2 byte in ax
-1   449
-1   450	01C0			     @@PrintDigit:				     ; <-------------------------\
-1   451	01C0  8A EE				     mov ch, dh			     ; Store dh	to ch		 |
-1   452										     ;				 |
-1   453	01C2  BA 0000				     mov dx, 0d			     ; for division		 |
-1   454	01C5  BE 000A				     mov si, 10d		     ; ax/10 ->	ax &		 |
-1   455	01C8  F7 F6				     div si			     ; & ax%10 -> dx		 | !!! dx < 10
-1   456										     ;				 |
-Turbo Assembler	 Version 4.1	    03/02/23 21:44:41	    Page 9
+1   446				     ;------------------------------------------------
+1   447	01BF			     PrintNDec	     proc
+1   448
+1   449	01BF  B9 0005				     mov cx, 5d			     ; 5 digits	in 2 byte in ax
+1   450
+1   451	01C2			     @@PrintDigit:				     ; <-------------------------\
+1   452	01C2  8A EE				     mov ch, dh			     ; Store dh	to ch		 |
+1   453										     ;				 |
+1   454	01C4  BA 0000				     mov dx, 0d			     ; for division		 |
+1   455	01C7  BE 000A				     mov si, 10d		     ; ax/10 ->	ax &		 |
+1   456	01CA  F7 F6				     div si			     ; & ax%10 -> dx		 | !!! dx < 10
+Turbo Assembler	 Version 4.1	    03/02/23 23:33:37	    Page 9
 strfuncs.asm
 
 
 
-1   457	01CA  8B F2				     mov si, dx			     ; dl -> si			 |
-1   458										     ;				 |
-1   459	01CC  8A 94 0000r			     mov dl, byte ptr [Alphabet]+si  ; ASCII "0" offset		 |
-1   460										     ;				 |
-1   461	01D0  8A F5				     mov dh, ch			     ; Restore dh from ch	 |
-1   462	01D2  B5 00				     mov ch, 0			     ; ^			 |
-1   463										     ;				 |
-1   464	01D4  26: 89 17				     mov word ptr es:[bx], dx	     ; Print dl	on position bx	 |
-1   465										     ;				 |
-1   466	01D7  4B				     dec bx			     ; Next digit		 |
-1   467	01D8  4B				     dec bx			     ; ^			 |
-1   468										     ;				 |
+1   457										     ;				 |
+1   458	01CC  8B F2				     mov si, dx			     ; dl -> si			 |
+1   459										     ;				 |
+1   460	01CE  8A 94 0000r			     mov dl, byte ptr [Alphabet]+si  ; ASCII "0" offset		 |
+1   461										     ;				 |
+1   462	01D2  8A F5				     mov dh, ch			     ; Restore dh from ch	 |
+1   463	01D4  B5 00				     mov ch, 0			     ; ^			 |
+1   464										     ;				 |
+1   465	01D6  26: 89 17				     mov word ptr es:[bx], dx	     ; Print dl	on position bx	 |
+1   466										     ;				 |
+1   467	01D9  4B				     dec bx			     ; Next digit		 |
+1   468	01DA  4B				     dec bx			     ; ^			 |
 1   469										     ;				 |
-1   470	01D9  E2 E5				     loop @@PrintDigit		     ; >-------------------------/
-1   471
-1   472	01DB  C3				     ret
-1   473
-1   474	01DC			     PrintNDec	     endp
-1   475
-1   476				     ;------------------------------------------------
+1   470										     ;				 |
+1   471	01DB  E2 E5				     loop @@PrintDigit		     ; >-------------------------/
+1   472
+1   473	01DD  C3				     ret
+1   474
+1   475	01DE			     PrintNDec	     endp
+1   476
 1   477				     ;------------------------------------------------
-1   478
-    479
-    480				     include ..\LianLib\DrawLine.asm
-1   481				     ;------------------------------------------------
-1   482				     ; Draws line on the screen	(Pattern ABB~BBC)
-1   483				     ;------------------------------------------------
-1   484				     ; Entry:	     DI	= start	addr to	draw
-1   485				     ;		     CX	= width	of line	(without A&C)
-1   486				     ;
-1   487				     ; Expects:	     ES	-> Video segment
-1   488				     ;		     DF	= 0 (CLD)
-1   489				     ;
-1   490				     ; Exit:	     None
-1   491				     ;
-1   492				     ; Destroys:     AX	CX DI
-1   493				     ;------------------------------------------------
-1   494				     ; Stack frame:
-1   495				     ;		     ...
-1   496				     ;		     'A' char	 [bp + 8]    //	H - color attr
-1   497				     ;		     'B' char	 [bp + 6]    //	L - symb attr
-1   498				     ;		     'C' char	 [bp + 4]    //
-1   499				     ;		     retAddr	 [bp + 2]
-1   500				     ;		     stored BP	 [bp]
-1   501				     ;		     ...
-1   502				     ;------------------------------------------------
-1   503				     ;Направление просмотра	 зависит	 от флага		    +
-    504				     направления DF,	значение  которого  можно	менять  с    +
-    505				     помощью команд CLD (DF:=0) и	STD (DF:=1).
-1   506
-1   507	01DC			     DrawLine	     proc
-1   508	01DC  55				     push bp
-1   509	01DD  8B EC				     mov bp, sp			     ; Complete	stack frame
-1   510
-1   511	01DF  8B 46 08				     mov ax, [bp + 8]
-1   512	01E2  AB				     stosw
-1   513
-Turbo Assembler	 Version 4.1	    03/02/23 21:44:41	    Page 10
+1   478				     ;------------------------------------------------
+1   479
+    480
+    481				     include ..\LianLib\DrawLine.asm
+1   482				     ;------------------------------------------------
+1   483				     ; Draws line on the screen	(Pattern ABB~BBC)
+1   484				     ;------------------------------------------------
+1   485				     ; Entry:	     DI	= start	addr to	draw
+1   486				     ;		     CX	= width	of line	(without A&C)
+1   487				     ;
+1   488				     ; Expects:	     ES	-> Video segment
+1   489				     ;		     DF	= 0 (CLD)
+1   490				     ;
+1   491				     ; Exit:	     None
+1   492				     ;
+1   493				     ; Destroys:     AX	CX DI
+1   494				     ;------------------------------------------------
+1   495				     ; Stack frame:
+1   496				     ;		     ...
+1   497				     ;		     'A' char	 [bp + 8]    //	H - color attr
+1   498				     ;		     'B' char	 [bp + 6]    //	L - symb attr
+1   499				     ;		     'C' char	 [bp + 4]    //
+1   500				     ;		     retAddr	 [bp + 2]
+1   501				     ;		     stored BP	 [bp]
+1   502				     ;		     ...
+1   503				     ;------------------------------------------------
+1   504				     ;Направление просмотра	 зависит	 от флага		    +
+    505				     направления DF,	значение  которого  можно	менять  с    +
+    506				     помощью команд CLD (DF:=0) и	STD (DF:=1).
+1   507
+1   508	01DE			     DrawLine	     proc
+1   509	01DE  55				     push bp
+1   510	01DF  8B EC				     mov bp, sp			     ; Complete	stack frame
+1   511
+1   512	01E1  8B 46 08				     mov ax, [bp + 8]
+1   513	01E4  AB				     stosw
+Turbo Assembler	 Version 4.1	    03/02/23 23:33:37	    Page 10
 strfuncs.asm
 
 
 
-1   514	01E3  8B 46 06				     mov ax, [bp + 6]
-1   515	01E6  F3> AB				     rep stosw
-1   516
-1   517	01E8  8B 46 04				     mov ax, [bp + 4]
-1   518	01EB  AB				     stosw
-1   519
-1   520	01EC  5D				     pop bp			     ; Stack frame
-1   521	01ED  C3				     ret
-1   522	01EE			     DrawLine	     endp
-1   523
-1   524				     ;------------------------------------------------
+1   514
+1   515	01E5  8B 46 06				     mov ax, [bp + 6]
+1   516	01E8  F3> AB				     rep stosw
+1   517
+1   518	01EA  8B 46 04				     mov ax, [bp + 4]
+1   519	01ED  AB				     stosw
+1   520
+1   521	01EE  5D				     pop bp			     ; Stack frame
+1   522	01EF  C3				     ret
+1   523	01F0			     DrawLine	     endp
+1   524
 1   525				     ;------------------------------------------------
-1   526
-    527
-    528	01EE			     .data
-    529				     include ..\LianLib\Alphabet.asm
-1   530	0000  30 31 32 33 34 35	36+  Alphabet:	     db	"0123456789ABCDEF"	     ; Alphabet	for printing (Thanks Ilya)
-    531	      37 38 39 41 42 43	44+
-    532	      45 46
-1   533	0010  C9 CD BB BA BC C8	     BoxSymbols:     db	0c9h, 0cdh, 0bbh, 0bah,	0bch, 0c8h ; "╔═╗║╝╚"
-1   534
-1   535	0016  20 DA C9		     BoxAssetLU:     db	020h, 0dah, 0c9h
-1   536	0019  20 C4 CD		     BoxAsset_U:     db	020h, 0c4h, 0cdh
-1   537	001C  20 BF BB		     BoxAssetRU:     db	020h, 0bfh, 0bbh
-1   538	001F  20 B3 BA		     BoxAssetR_:     db	020h, 0b3h, 0bah
-1   539	0022  20 D9 BC		     BoxAssetRB:     db	020h, 0d9h, 0bch
-1   540	0025  20 C4 CD		     BoxAsset_B:     db	020h, 0c4h, 0cdh
-1   541	0028  20 C0 C8		     BoxAssetLB:     db	020h, 0c0h, 0c8h
-1   542	002B  20 B3 BA		     BoxAssetL_:     db	020h, 0b3h, 0bah
-1   543	002E  20 20 20		     BoxAssetFI:     db	020h, 020h, 020h
-1   544
-1   545				     ; 0:    1:┌─┐ 2:╔═╗
-1   546				     ;	       │ │	 ║ ║
-1   547				     ;	       └─┘   ╚═╝
-1   548
-    549	0031  31 32 33 34 35 36	37+  String:	 db "12345678910", 0h
-    550	      38 39 31 30 00
-    551	003D  61 61 00		     String1:	  db "aa", 0h
-    552	0040  61 61 62 00	     String2:	  db "aab", 0h
-    553
-    554				     end	     Start
-Turbo Assembler	 Version 4.1	    03/02/23 21:44:41	    Page 11
+1   526				     ;------------------------------------------------
+1   527
+    528
+    529	01F0			     .data
+    530				     include ..\LianLib\Alphabet.asm
+1   531	0000  30 31 32 33 34 35	36+  Alphabet:	     db	"0123456789ABCDEF"	     ; Alphabet	for printing (Thanks Ilya)
+    532	      37 38 39 41 42 43	44+
+    533	      45 46
+1   534	0010  C9 CD BB BA BC C8	     BoxSymbols:     db	0c9h, 0cdh, 0bbh, 0bah,	0bch, 0c8h ; "╔═╗║╝╚"
+1   535
+1   536	0016  20 DA C9		     BoxAssetLU:     db	020h, 0dah, 0c9h
+1   537	0019  20 C4 CD		     BoxAsset_U:     db	020h, 0c4h, 0cdh
+1   538	001C  20 BF BB		     BoxAssetRU:     db	020h, 0bfh, 0bbh
+1   539	001F  20 B3 BA		     BoxAssetR_:     db	020h, 0b3h, 0bah
+1   540	0022  20 D9 BC		     BoxAssetRB:     db	020h, 0d9h, 0bch
+1   541	0025  20 C4 CD		     BoxAsset_B:     db	020h, 0c4h, 0cdh
+1   542	0028  20 C0 C8		     BoxAssetLB:     db	020h, 0c0h, 0c8h
+1   543	002B  20 B3 BA		     BoxAssetL_:     db	020h, 0b3h, 0bah
+1   544	002E  20 20 20		     BoxAssetFI:     db	020h, 020h, 020h
+1   545
+1   546				     ; 0:    1:┌─┐ 2:╔═╗
+1   547				     ;	       │ │	 ║ ║
+1   548				     ;	       └─┘   ╚═╝
+1   549
+    550	0031  31 32 33 34 35 36	37+  String:	 db "12345678910", 0h
+    551	      38 39 31 30 00
+    552	003D  61 61 00		     String1:	  db "aa", 0h
+    553	0040  61 61 62 00	     String2:	  db "aab", 0h
+    554
+    555				     end	     Start
+Turbo Assembler	 Version 4.1	    03/02/23 23:33:37	    Page 11
 Symbol Table
 
 
@@ -612,20 +613,20 @@ Symbol Name			  Type	 Value
 
 ??DATE				  Text	 "03/02/23"
 ??FILENAME			  Text	 "strfuncs"
-??TIME				  Text	 "21:44:40"
+??TIME				  Text	 "23:33:37"
 ??VERSION			  Number 040A
 @32BIT				  Text	 0
-@@COUNTEND			  Near	 DGROUP:0148
-@@COUNTEND			  Near	 DGROUP:0153
-@@COUNTSTEP			  Near	 DGROUP:0140
-@@COUNTSTEP			  Near	 DGROUP:014B
-@@COUNTSTEP			  Near	 DGROUP:0156
-@@COUNTSTEP			  Near	 DGROUP:015F
-@@ENDSCANDIGIT			  Near	 DGROUP:0188
-@@PRINTDIGIT			  Near	 DGROUP:018C
-@@PRINTDIGIT			  Near	 DGROUP:01A0
-@@PRINTDIGIT			  Near	 DGROUP:01C0
-@@SCANDIGIT			  Near	 DGROUP:016B
+@@COUNTEND			  Near	 DGROUP:014A
+@@COUNTEND			  Near	 DGROUP:0155
+@@COUNTSTEP			  Near	 DGROUP:0142
+@@COUNTSTEP			  Near	 DGROUP:014D
+@@COUNTSTEP			  Near	 DGROUP:0158
+@@COUNTSTEP			  Near	 DGROUP:0161
+@@ENDSCANDIGIT			  Near	 DGROUP:018A
+@@PRINTDIGIT			  Near	 DGROUP:018E
+@@PRINTDIGIT			  Near	 DGROUP:01A2
+@@PRINTDIGIT			  Near	 DGROUP:01C2
+@@SCANDIGIT			  Near	 DGROUP:016D
 @CODE				  Text	 DGROUP
 @CODESIZE			  Text	 0
 @CPU				  Text	 0101H
@@ -650,31 +651,31 @@ BOXASSETR_			  Near	 DGROUP:001F
 BOXASSET_B			  Near	 DGROUP:0025
 BOXASSET_U			  Near	 DGROUP:0019
 BOXSYMBOLS			  Near	 DGROUP:0010
-DRAWLINE			  Near	 DGROUP:01DC
-HEH				  Near	 DGROUP:0139
-MEMCMP				  Near	 DGROUP:013E
-MEMCPY				  Near	 DGROUP:0165
-MEMSET				  Near	 DGROUP:0168
-PRINTNBIN			  Near	 DGROUP:0189
-PRINTNDEC			  Near	 DGROUP:01BD
-PRINTNHEX			  Near	 DGROUP:019D
-SCANNDEC			  Near	 DGROUP:016B
+DRAWLINE			  Near	 DGROUP:01DE
+HEH				  Near	 DGROUP:013B
+MEMCMP				  Near	 DGROUP:0140
+MEMCPY				  Near	 DGROUP:0167
+MEMSET				  Near	 DGROUP:016A
+PRINTNBIN			  Near	 DGROUP:018B
+PRINTNDEC			  Near	 DGROUP:01BF
+PRINTNHEX			  Near	 DGROUP:019F
+SCANNDEC			  Near	 DGROUP:016D
 START				  Near	 DGROUP:0100
-STRCMP				  Near	 DGROUP:0149
-STRCPY				  Near	 DGROUP:0154
+STRCMP				  Near	 DGROUP:014B
+STRCPY				  Near	 DGROUP:0156
 STRING				  Near	 DGROUP:0031
 STRING1				  Near	 DGROUP:003D
-Turbo Assembler	 Version 4.1	    03/02/23 21:44:41	    Page 12
+Turbo Assembler	 Version 4.1	    03/02/23 23:33:37	    Page 12
 Symbol Table
 
 
 
 STRING2				  Near	 DGROUP:0040
-STRLEN				  Near	 DGROUP:015B
+STRLEN				  Near	 DGROUP:015D
 
 Groups & Segments		  Bit Size Align  Combine Class
 
 DGROUP				  Group
   _DATA				  16  0044 Word	  Public  DATA
-  _TEXT				  16  01EE Word	  Public  CODE
+  _TEXT				  16  01F0 Word	  Public  CODE
 
