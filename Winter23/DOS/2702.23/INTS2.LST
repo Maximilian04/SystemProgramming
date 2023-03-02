@@ -1,0 +1,129 @@
+Turbo Assembler	 Version 4.1	    03/02/23 18:14:40	    Page 1
+ints2.asm
+
+
+
+      1	0000			     .model tiny
+      2	0000			     .code
+      3				     org 100h
+      4
+      5	0100  EB 01 90		     Start:	     jmp Main
+      6
+      7
+      8
+      9	0103			     Main:
+     10	0103  FA				     cli
+     11	0104  33 DB				     xor bx, bx
+     12	0106  8E C3				     mov es, bx
+     13	0108  BB 0024				     mov bx, 9*4
+     14
+     15	010B  26: 8B 07				     mov ax, es:[bx]
+     16	010E  A3 015Ar				     mov Old09Ofs, ax
+     17	0111  26: 8B 47	02			     mov ax, es:[bx+2]
+     18	0115  A3 015Cr				     mov Old09Seg, ax
+     19
+     20	0118  26: C7 07	0135r			     mov es:[bx], offset New09
+     21	011D  8C C8				     mov ax, cs
+     22	011F  26: 89 47	02			     mov es:[bx+2], ax
+     23	0123  FB				     sti
+     24
+     25	0124  B8 3100				     mov ax, 3100h
+     26	0127  BA 0176r				     mov dx, offset ProgramEnd	 ; Размер	необходимой памяти
+     27	012A  D1 EA D1 EA D1 EA	D1+		     shr dx, 4			 ; В параграфе 16 байт
+     28	      EA
+     29	0132  42				     inc dx			 ; С округлением вверх
+     30
+     31	0133  CD 21				     int 21h
+     32
+     33	0135			     New09	     proc
+     34	0135  50 53 06				     push ax bx	es
+     35
+     36	0138  BB B800				     mov bx, 0b800h
+     37	013B  8E C3				     mov es, bx
+     38	013D  BB 0370				     mov bx, 160d*5 + 80d
+     39
+     40	0140  B4 4E				     mov ah, 4eh
+     41	0142  E4 60				     in	al, 60h
+     42	0144  26: 89 07				     mov es:[bx], ax
+     43
+     44	0147  E4 61				     in	al, 61h
+     45	0149  0C 80				     or	al, 80h
+     46	014B  E6 61				     out 61h, al
+     47	014D  24 7F				     and al, not 80h
+     48	014F  E6 61				     out 61h, al
+     49
+     50	0151  B0 20				     mov al, 20h
+     51	0153  E6 20				     out 20h, al
+     52
+     53	0155  07 5B 58				     pop es bx ax
+     54
+     55
+     56						     ;iret
+     57
+Turbo Assembler	 Version 4.1	    03/02/23 18:14:40	    Page 2
+ints2.asm
+
+
+
+     58						     ;db 0eah			  ; JMP	FAR
+     59
+     60	0158  9C				     pushf
+     61	0159  9A				     db	09Ah			 ; CALL	FAR
+     62	015A  0000		     Old09Ofs	     dw	0
+     63	015C  0000		     Old09Seg	     dw	0
+     64
+     65	015E  50 53 06				     push ax bx	es
+     66	0161  BB B800				     mov bx, 0b800h
+     67	0164  8E C3				     mov es, bx
+     68	0166  BB 036E				     mov bx, 160d*5 + 80d - 2
+     69	0169  B4 2F				     mov ah, 2fh
+     70
+     71	016B  E4 60				     in	al, 60h
+     72	016D  B0 51				     mov al, "Q"
+     73
+     74	016F  26: 89 07				     mov es:[bx], ax
+     75	0172  07 5B 58				     pop es bx ax
+     76
+     77	0175  CF				     iret
+     78
+     79	0176					     endp
+     80
+     81	0176			     ProgramEnd:
+     82				     end	     Start
+Turbo Assembler	 Version 4.1	    03/02/23 18:14:40	    Page 3
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "03/02/23"
+??FILENAME			  Text	 "ints2	  "
+??TIME				  Text	 "18:14:40"
+??VERSION			  Number 040A
+@32BIT				  Text	 0
+@CODE				  Text	 DGROUP
+@CODESIZE			  Text	 0
+@CPU				  Text	 0101H
+@CURSEG				  Text	 _TEXT
+@DATA				  Text	 DGROUP
+@DATASIZE			  Text	 0
+@FILENAME			  Text	 INTS2
+@INTERFACE			  Text	 000H
+@MODEL				  Text	 1
+@STACK				  Text	 DGROUP
+@WORDSIZE			  Text	 2
+MAIN				  Near	 DGROUP:0103
+NEW09				  Near	 DGROUP:0135
+OLD09OFS			  Word	 DGROUP:015A
+OLD09SEG			  Word	 DGROUP:015C
+PROGRAMEND			  Near	 DGROUP:0176
+START				  Near	 DGROUP:0100
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+DGROUP				  Group
+  _DATA				  16  0000 Word	  Public  DATA
+  _TEXT				  16  0176 Word	  Public  CODE
+
