@@ -27,7 +27,8 @@ Start:
                 ; mov bx, 160d*17 + 160d/2 - 18d + 4d; Середина строчки
                 ; call PrintNDec
                 
-                mov bx, 2
+                mov bh, 0
+                mov bl, byte ptr [boxTheme]
 
                 mov ah, 00Ah                    ; Light green on black
                 mov al, byte ptr [BoxAssetLU + bx]
@@ -79,7 +80,7 @@ ReturnProgram:                                  ; <<<<<<<<<<<<<<
 ;
 ; Exit:         AX = 0 if no errors, 1 contrary
 ;
-; Destroys:     BX SI (DH if error)
+; Destroys:     BX CX SI (DH if error)
 ;------------------------------------------------
 ; Stack frame:
 ;               ...
@@ -137,11 +138,22 @@ GetArgs         proc
                 mov bx, 0
                 call MScnNDec
                 mov byte ptr [boxWidth], bl
-                ; test ax, ax
-                ; jz @@ContinueHere
-                ; jmp @@SetErrorNoArg             ; >>>>>>>>>>>>>>
-                ; @@ContinueHere:
+                test ax, ax
+                jz @@ContinueHere5
+                jmp @@SetErrorNoArg             ; >>>>>>>>>>>>>>
+                @@ContinueHere5:
 
+                mov bx, 0
+                call MScnNDec
+                mov byte ptr [boxTheme], bl
+
+                mov cx, 0Ch
+                cmp bx, cx
+
+                test ax, ax
+                jz @@ContinueHere6
+                jmp @@NoMoreArgs                ; >>>>>>>>>>>>>>
+                @@ContinueHere6:
 
 
 
@@ -153,6 +165,7 @@ GetArgs         proc
                 ; call PrintNHex
 
 
+@@NoMoreArgs:                                   ; <<<<<<<<<<<<<<
                 mov ax, 0
                 jmp @@ProcEnd                   ; >-\
 @@SetErrorNoArg:                                ; <<|<<<<<<<<<<<
@@ -221,6 +234,7 @@ include ..\LianLib\PrntNBin.asm
 include ..\LianLib\PrntNHex.asm
 include ..\LianLib\PrntNDec.asm
 include ..\LianLib\MScnNDec.asm
+include ..\LianLib\MScnNHex.asm
 
 include ..\LianLib\ProBox.asm
 include ..\LianLib\DrawLine.asm
@@ -232,5 +246,6 @@ boxHeightPos:   db ?
 boxWidthPos:    db ?
 boxHeight:      db ?
 boxWidth:       db ?
+boxTheme:       db ?
 
 end             Start
