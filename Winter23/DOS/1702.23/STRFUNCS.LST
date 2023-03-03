@@ -1,4 +1,4 @@
-Turbo Assembler	 Version 4.1	    03/03/23 09:49:40	    Page 1
+Turbo Assembler	 Version 4.1	    03/03/23 10:57:09	    Page 1
 strfuncs.asm
 
 
@@ -60,7 +60,7 @@ strfuncs.asm
      55						     ; push ax			       ;
      56
      57						     ; call PrintNBin
-Turbo Assembler	 Version 4.1	    03/03/23 09:49:40	    Page 2
+Turbo Assembler	 Version 4.1	    03/03/23 10:57:09	    Page 2
 strfuncs.asm
 
 
@@ -122,7 +122,7 @@ strfuncs.asm
     112				     ; Expects:	     DF	= 0 (CLD)
     113				     ;
     114				     ; Exit:	     Compare flags
-Turbo Assembler	 Version 4.1	    03/03/23 09:49:40	    Page 3
+Turbo Assembler	 Version 4.1	    03/03/23 10:57:09	    Page 3
 strfuncs.asm
 
 
@@ -184,7 +184,7 @@ strfuncs.asm
     169	0156			     StrCpy	     proc
     170						     ; push bp
     171						     ; mov bp, sp		       ; Complete stack	frame
-Turbo Assembler	 Version 4.1	    03/03/23 09:49:40	    Page 4
+Turbo Assembler	 Version 4.1	    03/03/23 10:57:09	    Page 4
 strfuncs.asm
 
 
@@ -246,7 +246,7 @@ strfuncs.asm
     226				     ;------------------------------------------------
     227
     228				     ;------------------------------------------------
-Turbo Assembler	 Version 4.1	    03/03/23 09:49:40	    Page 5
+Turbo Assembler	 Version 4.1	    03/03/23 10:57:09	    Page 5
 strfuncs.asm
 
 
@@ -308,7 +308,7 @@ strfuncs.asm
     283				     помощью команд CLD (DF:=0) и	STD (DF:=1).
     284
     285	016A			     MemSet	     proc
-Turbo Assembler	 Version 4.1	    03/03/23 09:49:40	    Page 6
+Turbo Assembler	 Version 4.1	    03/03/23 10:57:09	    Page 6
 strfuncs.asm
 
 
@@ -370,7 +370,7 @@ strfuncs.asm
 1   340	018B			     ScanNDec	     endp
 1   341
 1   342				     ;------------------------------------------------
-Turbo Assembler	 Version 4.1	    03/03/23 09:49:40	    Page 7
+Turbo Assembler	 Version 4.1	    03/03/23 10:57:09	    Page 7
 strfuncs.asm
 
 
@@ -432,7 +432,7 @@ strfuncs.asm
 1   397				     ;
 1   398				     ; Destroys:     AX	BX CX DL Si
 1   399				     ;------------------------------------------------
-Turbo Assembler	 Version 4.1	    03/03/23 09:49:40	    Page 8
+Turbo Assembler	 Version 4.1	    03/03/23 10:57:09	    Page 8
 strfuncs.asm
 
 
@@ -494,7 +494,7 @@ strfuncs.asm
 1   454	01C4  BA 0000				     mov dx, 0d			     ; for division		 |
 1   455	01C7  BE 000A				     mov si, 10d		     ; ax/10 ->	ax &		 |
 1   456	01CA  F7 F6				     div si			     ; & ax%10 -> dx		 | !!! dx < 10
-Turbo Assembler	 Version 4.1	    03/03/23 09:49:40	    Page 9
+Turbo Assembler	 Version 4.1	    03/03/23 10:57:09	    Page 9
 strfuncs.asm
 
 
@@ -556,7 +556,7 @@ strfuncs.asm
 1   511
 1   512	01E1  8B 46 08				     mov ax, [bp + 8]
 1   513	01E4  AB				     stosw
-Turbo Assembler	 Version 4.1	    03/03/23 09:49:40	    Page 10
+Turbo Assembler	 Version 4.1	    03/03/23 10:57:09	    Page 10
 strfuncs.asm
 
 
@@ -603,7 +603,7 @@ strfuncs.asm
     553	0040  61 61 62 00	     String2:	  db "aab", 0h
     554
     555				     end	     Start
-Turbo Assembler	 Version 4.1	    03/03/23 09:49:40	    Page 11
+Turbo Assembler	 Version 4.1	    03/03/23 10:57:09	    Page 11
 Symbol Table
 
 
@@ -613,7 +613,7 @@ Symbol Name			  Type	 Value
 
 ??DATE				  Text	 "03/03/23"
 ??FILENAME			  Text	 "strfuncs"
-??TIME				  Text	 "09:49:39"
+??TIME				  Text	 "10:57:09"
 ??VERSION			  Number 040A
 @32BIT				  Text	 0
 @@COUNTEND			  Near	 DGROUP:014A
@@ -665,7 +665,7 @@ STRCMP				  Near	 DGROUP:014B
 STRCPY				  Near	 DGROUP:0156
 STRING				  Near	 DGROUP:0031
 STRING1				  Near	 DGROUP:003D
-Turbo Assembler	 Version 4.1	    03/03/23 09:49:40	    Page 12
+Turbo Assembler	 Version 4.1	    03/03/23 10:57:09	    Page 12
 Symbol Table
 
 

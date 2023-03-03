@@ -16,20 +16,20 @@ Start:
                 mov ds, ax                      ;
 
                 call GetArgs
-                mov bx, 0
-                cmp ax, bx
-                jne ReturnProgram
+                test ax, ax
+                jz @@ContinueHere1
+                jmp ReturnProgram               ; >>>>>>>>>>>>>>
+                @@ContinueHere1:
 
-                mov dh, 01Ah
-                mov ah, 0
-                mov al, byte ptr [ArgCount]
-                mov bx, 160d*17 + 160d/2 - 18d + 4d; Середина строчки
-                call PrintNDec
-
-                mov ch, 5
-                mov cl, 5
-                mov ah, 00Ah                    ; Light green on black
+                ; mov dh, 01Ah
+                ; mov ah, 0
+                ; mov al, byte ptr [ArgCount]
+                ; mov bx, 160d*17 + 160d/2 - 18d + 4d; Середина строчки
+                ; call PrintNDec
+                
                 mov bx, 2
+
+                mov ah, 00Ah                    ; Light green on black
                 mov al, byte ptr [BoxAssetLU + bx]
                 push ax
                 mov al, byte ptr [BoxAsset_U + bx]
@@ -48,7 +48,11 @@ Start:
                 push ax
                 mov al, byte ptr [BoxAssetFI + bx]
                 push ax
-                mov bx, 160d*18 + 160d/2 + 4d; Середина строчки
+                mov ch, byte ptr [boxHeightPos]
+                mov cl, byte ptr [boxWidthPos]
+                call CalculateVidMemPos
+                mov ch, byte ptr [boxHeight]
+                mov cl, byte ptr [boxWidth]
                 call DrawBox
                 add sp, 2*9d
 
@@ -59,9 +63,11 @@ Start:
 
                 ; call PrintNBin
 
-ReturnProgram:
+ReturnProgram:                                  ; <<<<<<<<<<<<<<
                 mov ax, 4c00h                   ; exit(0)
                 int 21h
+
+
 
 
 ;------------------------------------------------
@@ -73,7 +79,7 @@ ReturnProgram:
 ;
 ; Exit:         AX = 0 if no errors, 1 contrary
 ;
-; Destroys:     AX BX CX DX DI
+; Destroys:     BX SI (DH if error)
 ;------------------------------------------------
 ; Stack frame:
 ;               ...
@@ -87,73 +93,77 @@ GetArgs         proc
                 mov bp, sp                      ; Complete stack frame
 
 
-                mov ax, 2d                      ; At least one argument
-                mov bh, 0                       ;
-                mov bl, byte ptr [ArgCount]     ;
+                mov ah, 0                       ; At least one argument!
+                mov al, byte ptr [ArgCount]     ;
+                mov bx, 2d                      ;
                 cmp ax, bx                      ;
-                jg @@SetError                   ;
+                jnl @@ContinueHere1             ;
+                jmp @@SetErrorNoArg             ; >>>>>>>>>>>>>>
+                @@ContinueHere1:                ;
 
-                ; mov bh, 0                       ; 
-                ; mov bl, byte ptr ArgCount       ;
-                ; mov ax, 020h                    ;
-                ; mov [offset Args + bx], ax      ;
+                            ; ONE STEP:
+                            ; arg -> bx
+                            ; if the last 1 -> ax
+                            ; DS:SI -> next
+                mov dl, 020h                    ; 20h Terminator
+                mov dh, 00Dh                    ; 0Dh TerminatorEnd
+                mov si, offset Args + 1         ; First argument
 
                 mov bx, 0
-                mov si, offset Args + 1
-                mov dl, 020h                    ; Terminator 20h
-                mov dh, 00Dh                    ; Terminator 0Dh
                 call MScnNDec
+                mov byte ptr [boxHeightPos], bl
+                test ax, ax
+                jz @@ContinueHere2
+                jmp @@SetErrorNoArg             ; >>>>>>>>>>>>>>
+                @@ContinueHere2:
 
-                mov ah, 0
-                mov al, bl
-                mov dh, 004h
-                mov bx, 160d*4+7d*2
-                call PrintNHex
 
-                mov ax, 4d
-                ; mov bh, 0
-                ; mov bl, byte ptr [ArgCount]
-                cmp ax, bx
-                jg @@SetError
-                jmp @@SetError
+                mov bx, 0
+                call MScnNDec
+                mov byte ptr [boxWidthPos], bl
+                test ax, ax
+                jz @@ContinueHere3
+                jmp @@SetErrorNoArg             ; >>>>>>>>>>>>>>
+                @@ContinueHere3:
+                
+                mov bx, 0
+                call MScnNDec
+                mov byte ptr [boxHeight], bl
+                test ax, ax
+                jz @@ContinueHere4
+                jmp @@SetErrorNoArg             ; >>>>>>>>>>>>>>
+                @@ContinueHere4:
+                
+                mov bx, 0
+                call MScnNDec
+                mov byte ptr [boxWidth], bl
+                ; test ax, ax
+                ; jz @@ContinueHere
+                ; jmp @@SetErrorNoArg             ; >>>>>>>>>>>>>>
+                ; @@ContinueHere:
 
-@@MiddleStep:                                   ; <-----------------\
-                                                ;                   |
-                add bx, 160d                    ;                   |
-                mov di, bx                      ;                   |
-                mov cx, [bp - 2]                ;                   |
-                mov ch, 0                       ;                   |
-                push [bp + 6]                   ;                   |
-                push [bp + 4]                   ;                   |
-                push [bp + 14]                  ;                   |
-                call DrawLine                   ;                   |
-                add sp, 2*3d                    ;                   |
-                dec dx                          ;                   |
-                jnz @@MiddleStep                ; >-----------------/
-                                                ;-------------------------------------------
-                                                ; Bottom line
-                add bx, 160d
-                mov di, bx
-                mov cx, [bp - 2]
-                mov ch, 0
-                push [bp + 8]
-                push [bp + 10]
-                push [bp + 12]
-                call DrawLine
-                add sp, 2*3d
-                                                ;-------------------------------------------
+
+
+
+
+                ; mov ah, 0
+                ; mov al, bl
+                ; mov dh, 004h
+                ; mov bx, 160d*4+7d*2
+                ; call PrintNHex
+
 
                 mov ax, 0
-                jmp @@ProcEnd                   ; >>\\
-@@SetError:                                     ;   ||
-                mov ah, 0                       ;   ||
-                mov al, byte ptr [ArgCount]     ;   ||
-                mov dh, 00Ch                    ;   ||
-                mov bx, 160d*4+3d*2             ;   ||
-                call PrintNHex                  ;   ||
-                mov ax, 2                       ;   ||
-                                                ;   ||
-@@ProcEnd:                                      ; <<//
+                jmp @@ProcEnd                   ; >-\
+@@SetErrorNoArg:                                ; <<|<<<<<<<<<<<
+                mov ax, 0239h                   ; Error code: No argument (more expected) : 239
+                mov dh, 00Ch                    ;   |
+                mov bx, 160d*4+3d*2             ;   |
+                call PrintNHex                  ;   |
+                mov ax, 0239h                   ;   |
+                                                ;   |
+                                                ;   |
+@@ProcEnd:                                      ; <-/
                 pop bp                          ; Stack frame
                 ret
 GetArgs         endp
@@ -161,6 +171,50 @@ GetArgs         endp
 ;------------------------------------------------
 ;------------------------------------------------
 
+
+;------------------------------------------------
+; Calculate video mem offset by position
+;------------------------------------------------
+; Entry:        CH = heightPosition
+;               CL = widthPosition
+;
+; Expects:      None
+;
+; Exit:         BX = start addr to draw
+;
+; Destroys:     AX
+;------------------------------------------------
+; Stack frame:
+;               ...
+;               retAddr     []
+;               ...
+;------------------------------------------------
+
+CalculateVidMemPos  proc
+                ; push bp
+                ; mov bp, sp                      ; Complete stack frame
+
+
+                ; bx = 160d * ch + 2 * cl
+                mov bh, 0
+                mov bl, cl
+                sal bx, 1
+                
+                mov ax, 160d
+                mul ch
+                add bx, ax
+
+                ; mov ax, bx
+                ; mov bx, 80d
+                ; call PrintNDec
+                
+
+                ; pop bp                          ; Stack frame
+                ret
+CalculateVidMemPos  endp
+
+;------------------------------------------------
+;------------------------------------------------
 
 include ..\LianLib\ScanNDec.asm
 include ..\LianLib\PrntNBin.asm
