@@ -1,4 +1,4 @@
-Turbo Assembler	 Version 4.1	    03/02/23 23:33:37	    Page 1
+Turbo Assembler	 Version 4.1	    03/03/23 09:49:40	    Page 1
 strfuncs.asm
 
 
@@ -60,7 +60,7 @@ strfuncs.asm
      55						     ; push ax			       ;
      56
      57						     ; call PrintNBin
-Turbo Assembler	 Version 4.1	    03/02/23 23:33:37	    Page 2
+Turbo Assembler	 Version 4.1	    03/03/23 09:49:40	    Page 2
 strfuncs.asm
 
 
@@ -122,7 +122,7 @@ strfuncs.asm
     112				     ; Expects:	     DF	= 0 (CLD)
     113				     ;
     114				     ; Exit:	     Compare flags
-Turbo Assembler	 Version 4.1	    03/02/23 23:33:37	    Page 3
+Turbo Assembler	 Version 4.1	    03/03/23 09:49:40	    Page 3
 strfuncs.asm
 
 
@@ -184,7 +184,7 @@ strfuncs.asm
     169	0156			     StrCpy	     proc
     170						     ; push bp
     171						     ; mov bp, sp		       ; Complete stack	frame
-Turbo Assembler	 Version 4.1	    03/02/23 23:33:37	    Page 4
+Turbo Assembler	 Version 4.1	    03/03/23 09:49:40	    Page 4
 strfuncs.asm
 
 
@@ -246,7 +246,7 @@ strfuncs.asm
     226				     ;------------------------------------------------
     227
     228				     ;------------------------------------------------
-Turbo Assembler	 Version 4.1	    03/02/23 23:33:37	    Page 5
+Turbo Assembler	 Version 4.1	    03/03/23 09:49:40	    Page 5
 strfuncs.asm
 
 
@@ -308,7 +308,7 @@ strfuncs.asm
     283				     помощью команд CLD (DF:=0) и	STD (DF:=1).
     284
     285	016A			     MemSet	     proc
-Turbo Assembler	 Version 4.1	    03/02/23 23:33:37	    Page 6
+Turbo Assembler	 Version 4.1	    03/03/23 09:49:40	    Page 6
 strfuncs.asm
 
 
@@ -340,37 +340,37 @@ strfuncs.asm
 1   310				     ;------------------------------------------------
 1   311	016D			     ScanNDec	     proc
 1   312
-1   313	016D			     @@ScanDigit:				     ; <??????????????????????????
-1   314										     ;				 ?
-1   315	016D  B4 01				     mov ah, 01h		     ; getc -> al		 ?
-1   316	016F  CD 21				     int 21h			     ; ^			 ?
-1   317										     ;				 ?
-1   318	0171  3C 0D				     cmp al, 13d		     ; Stop scan if enter	 ?
-1   319	0173  74 15				     je	@@EndScanDigit		     ; >>?????????????????????????????????
-1   320										     ;				 ?	 ?
-1   321	0175  8A C8				     mov cl, al			     ; Store al	to cl		 ?	 ?
-1   322										     ;				 ?	 ?
-1   323	0177  8B C3				     mov ax, bx			     ; bx *= 10			 ?	 ?
-1   324	0179  BE 000A				     mov si, 10d		     ; ^			 ?	 ?
-1   325	017C  F7 E6				     mul si			     ; ^			 ?	 ?
-1   326	017E  8B D8				     mov bx, ax			     ; ^			 ?	 ?
-1   327										     ;				 ?	 ?
-1   328	0180  8A C1				     mov al, cl			     ; Retore al from cl	 ?	 ?
-1   329										     ;				 ?	 ?
-1   330	0182  2C 30				     sub al, "0"		     ; ASCII "0" offset		 ?	 ?
-1   331										     ;				 ?	 ?
-1   332	0184  B4 00				     mov ah, 0d			     ; bx += al			 ?	 ?
-1   333	0186  03 D8				     add bx, ax			     ; ^			 ?	 ?
-1   334										     ;				 ?	 ?
-1   335	0188  EB E3				     jmp @@ScanDigit		     ; >??????????????????????????	 ?
-1   336										     ;					 ?
-1   337	018A			     @@EndScanDigit:				     ; <<?????????????????????????????????
+1   313	016D			     @@ScanDigit:				     ; <-------------------------\
+1   314										     ;				 |
+1   315	016D  B4 01				     mov ah, 01h		     ; getc -> al		 |
+1   316	016F  CD 21				     int 21h			     ; ^			 |
+1   317										     ;				 |
+1   318	0171  3C 0D				     cmp al, 13d		     ; Stop scan if enter	 |
+1   319	0173  74 15				     je	@@EndScanDigit		     ; >>========================|=======\\
+1   320										     ;				 |	 ||
+1   321	0175  8A C8				     mov cl, al			     ; Store al	to cl		 |	 ||
+1   322										     ;				 |	 ||
+1   323	0177  8B C3				     mov ax, bx			     ; bx *= 10			 |	 ||
+1   324	0179  BE 000A				     mov si, 10d		     ; ^			 |	 ||
+1   325	017C  F7 E6				     mul si			     ; ^			 |	 ||
+1   326	017E  8B D8				     mov bx, ax			     ; ^			 |	 ||
+1   327										     ;				 |	 ||
+1   328	0180  8A C1				     mov al, cl			     ; Retore al from cl	 |	 ||
+1   329										     ;				 |	 ||
+1   330	0182  2C 30				     sub al, "0"		     ; ASCII "0" offset		 |	 ||
+1   331										     ;				 |	 ||
+1   332	0184  B4 00				     mov ah, 0d			     ; bx += al			 |	 ||
+1   333	0186  03 D8				     add bx, ax			     ; ^			 |	 ||
+1   334										     ;				 |	 ||
+1   335	0188  EB E3				     jmp @@ScanDigit		     ; >-------------------------/	 ||
+1   336										     ;					 ||
+1   337	018A			     @@EndScanDigit:				     ; <<================================//
 1   338	018A  C3				     ret
 1   339
 1   340	018B			     ScanNDec	     endp
 1   341
 1   342				     ;------------------------------------------------
-Turbo Assembler	 Version 4.1	    03/02/23 23:33:37	    Page 7
+Turbo Assembler	 Version 4.1	    03/03/23 09:49:40	    Page 7
 strfuncs.asm
 
 
@@ -432,7 +432,7 @@ strfuncs.asm
 1   397				     ;
 1   398				     ; Destroys:     AX	BX CX DL Si
 1   399				     ;------------------------------------------------
-Turbo Assembler	 Version 4.1	    03/02/23 23:33:37	    Page 8
+Turbo Assembler	 Version 4.1	    03/03/23 09:49:40	    Page 8
 strfuncs.asm
 
 
@@ -494,7 +494,7 @@ strfuncs.asm
 1   454	01C4  BA 0000				     mov dx, 0d			     ; for division		 |
 1   455	01C7  BE 000A				     mov si, 10d		     ; ax/10 ->	ax &		 |
 1   456	01CA  F7 F6				     div si			     ; & ax%10 -> dx		 | !!! dx < 10
-Turbo Assembler	 Version 4.1	    03/02/23 23:33:37	    Page 9
+Turbo Assembler	 Version 4.1	    03/03/23 09:49:40	    Page 9
 strfuncs.asm
 
 
@@ -556,7 +556,7 @@ strfuncs.asm
 1   511
 1   512	01E1  8B 46 08				     mov ax, [bp + 8]
 1   513	01E4  AB				     stosw
-Turbo Assembler	 Version 4.1	    03/02/23 23:33:37	    Page 10
+Turbo Assembler	 Version 4.1	    03/03/23 09:49:40	    Page 10
 strfuncs.asm
 
 
@@ -603,7 +603,7 @@ strfuncs.asm
     553	0040  61 61 62 00	     String2:	  db "aab", 0h
     554
     555				     end	     Start
-Turbo Assembler	 Version 4.1	    03/02/23 23:33:37	    Page 11
+Turbo Assembler	 Version 4.1	    03/03/23 09:49:40	    Page 11
 Symbol Table
 
 
@@ -611,9 +611,9 @@ Symbol Table
 
 Symbol Name			  Type	 Value
 
-??DATE				  Text	 "03/02/23"
+??DATE				  Text	 "03/03/23"
 ??FILENAME			  Text	 "strfuncs"
-??TIME				  Text	 "23:33:37"
+??TIME				  Text	 "09:49:39"
 ??VERSION			  Number 040A
 @32BIT				  Text	 0
 @@COUNTEND			  Near	 DGROUP:014A
@@ -665,7 +665,7 @@ STRCMP				  Near	 DGROUP:014B
 STRCPY				  Near	 DGROUP:0156
 STRING				  Near	 DGROUP:0031
 STRING1				  Near	 DGROUP:003D
-Turbo Assembler	 Version 4.1	    03/02/23 23:33:37	    Page 12
+Turbo Assembler	 Version 4.1	    03/03/23 09:49:40	    Page 12
 Symbol Table
 
 

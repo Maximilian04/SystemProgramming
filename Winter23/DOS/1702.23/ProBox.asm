@@ -12,24 +12,19 @@ Start:
 
                 mov ax, 0b800h                  ; адрес сегмента с видеопамятью -> es
                 mov es, ax                      ;
+                mov ax, ss                      ; Segment with stack, code, etc.
+                mov ds, ax                      ;
 
-                ; mov ax, ss                      ; Segment with stack, code, etc.
-                ; mov ds, ax                      ;
+                call GetArgs
+                mov bx, 0
+                cmp ax, bx
+                jne ReturnProgram
 
-                ; mov ah, 00001010b               ; Light green on black
-                ; mov bx, 160d*18 + 160d/2 - 18d*2 + 4d; Середина строчки
-                ; mov ch, 5                       ; Height
-                ; mov cl, 18                      ; Width
-                ; call DrawBox
-                ; mov di, 160d*18 + 160d/2 - 18d*2 + 4d; Середина строчки
-                ; mov cx, 5                       ; Width
-                ; push 002DAh
-                ; push 002CDh
-                ; push 002BAh
-                ; call DrawLine
-                ; pop ax
-                ; pop ax
-                ; pop ax
+                mov dh, 01Ah
+                mov ah, 0
+                mov al, byte ptr [ArgCount]
+                mov bx, 160d*17 + 160d/2 - 18d + 4d; Середина строчки
+                call PrintNDec
 
                 mov ch, 5
                 mov cl, 5
@@ -53,7 +48,7 @@ Start:
                 push ax
                 mov al, byte ptr [BoxAssetFI + bx]
                 push ax
-                mov bx, 160d*18 + 160d/2 - 18d*2 + 4d; Середина строчки
+                mov bx, 160d*18 + 160d/2 + 4d; Середина строчки
                 call DrawBox
                 add sp, 2*9d
 
@@ -64,61 +59,64 @@ Start:
 
                 ; call PrintNBin
 
+ReturnProgram:
                 mov ax, 4c00h                   ; exit(0)
                 int 21h
 
 
-
 ;------------------------------------------------
-; Draws cool box on the screen
+; Gets information from cmd argument
 ;------------------------------------------------
-; Entry:        BX = start addr to draw
-;               CH = height of box (without frame)
-;               CL = width of box (without frame)
+; Entry:        None
 ;
-; Expects:      ES -> Video segment
+; Expects:      None
 ;
-; Exit:         None
+; Exit:         AX = 0 if no errors, 1 contrary
 ;
-; Destroys:     AX BX (CX) DI
+; Destroys:     AX BX CX DX DI
 ;------------------------------------------------
 ; Stack frame:
 ;               ...
-;               LU char     [bp + 20]   // H - color attr
-;               _U char     [bp + 18]   // L - symb attr
-;               RU char     [bp + 16]   //
-;               R_ char     [bp + 14]   //
-;               RB char     [bp + 12]   //
-;               _B char     [bp + 10]   //
-;               LB char     [bp + 8]    //
-;               L_ char     [bp + 6]    //
-;               FI char     [bp + 4]    //
 ;               retAddr     [bp + 2]
 ;               stored BP   [bp]
-;               stored CX   [bp - 2]    // size
 ;               ...
 ;------------------------------------------------
 
-DrawBox         proc
+GetArgs         proc
                 push bp
                 mov bp, sp                      ; Complete stack frame
-                push cx
 
-                                                ;-------------------------------------------
-                                                ; Upper line
-                mov di, bx
-                mov cx, [bp - 2]
-                mov ch, 0
-                push [bp + 20]
-                push [bp + 18]
-                push [bp + 16]
-                call DrawLine
-                add sp, 2*3d
-                                                ;-------------------------------------------
-                                                ; Middle line
-                mov cx, [bp - 2]
-                mov dh, 0
-                mov dl, ch
+
+                mov ax, 2d                      ; At least one argument
+                mov bh, 0                       ;
+                mov bl, byte ptr [ArgCount]     ;
+                cmp ax, bx                      ;
+                jg @@SetError                   ;
+
+                ; mov bh, 0                       ; 
+                ; mov bl, byte ptr ArgCount       ;
+                ; mov ax, 020h                    ;
+                ; mov [offset Args + bx], ax      ;
+
+                mov bx, 0
+                mov si, offset Args + 1
+                mov dl, 020h                    ; Terminator 20h
+                mov dh, 00Dh                    ; Terminator 0Dh
+                call MScnNDec
+
+                mov ah, 0
+                mov al, bl
+                mov dh, 004h
+                mov bx, 160d*4+7d*2
+                call PrintNHex
+
+                mov ax, 4d
+                ; mov bh, 0
+                ; mov bl, byte ptr [ArgCount]
+                cmp ax, bx
+                jg @@SetError
+                jmp @@SetError
+
 @@MiddleStep:                                   ; <-----------------\
                                                 ;                   |
                 add bx, 160d                    ;                   |
@@ -145,45 +143,40 @@ DrawBox         proc
                 add sp, 2*3d
                                                 ;-------------------------------------------
 
-
-;                 ; push cx                         ; Store cx to stack
-;                 mov dx, cx                      ; Store cx to dx
-
-;                 mov al, byte ptr [BoxSymbols]   ; "?" -> ax (colored)
-;                 mov es:[bx], ax                 ;
-
-;                                                 ;-------------------------------------------
-
-;                 mov al, byte ptr [BoxSymbols+1] ; "?" -> ax (colored)
-;                 mov ch, 0                       ; cx = width
-;                 sub cx, 2d
-; @@UpLine:                                       ; <-----------------\
-;                 add bx, 2                       ; b+=2 (Next char)  |
-;                 mov es:[bx], ax                 ;                   |
-;                                                 ;                   |
-;                 loop @@UpLine                   ; >-----------------/
-
-;                                                 ;-------------------------------------------
-
-;                 ; pop cx                          ; Clear stack
-;                 mov cx, dx
-
-                pop cx
+                mov ax, 0
+                jmp @@ProcEnd                   ; >>\\
+@@SetError:                                     ;   ||
+                mov ah, 0                       ;   ||
+                mov al, byte ptr [ArgCount]     ;   ||
+                mov dh, 00Ch                    ;   ||
+                mov bx, 160d*4+3d*2             ;   ||
+                call PrintNHex                  ;   ||
+                mov ax, 2                       ;   ||
+                                                ;   ||
+@@ProcEnd:                                      ; <<//
                 pop bp                          ; Stack frame
                 ret
-DrawBox         endp
+GetArgs         endp
 
 ;------------------------------------------------
 ;------------------------------------------------
+
 
 include ..\LianLib\ScanNDec.asm
 include ..\LianLib\PrntNBin.asm
 include ..\LianLib\PrntNHex.asm
 include ..\LianLib\PrntNDec.asm
+include ..\LianLib\MScnNDec.asm
 
+include ..\LianLib\ProBox.asm
 include ..\LianLib\DrawLine.asm
 
 .data
 include ..\LianLib\Alphabet.asm
+
+boxHeightPos:   db ?
+boxWidthPos:    db ?
+boxHeight:      db ?
+boxWidth:       db ?
 
 end             Start
