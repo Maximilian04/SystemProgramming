@@ -12,5 +12,5 @@ BoxAssetL_:     db 020h, 0b3h, 0bah, 000h
 BoxAssetFI:     db 020h, 020h, 020h, 000h
 
 ; 0:    1:┌─┐ 2:╔═╗ 3:usr
-;         │ │   ║ ║
+;         │ │   ║ ║   chr
 ;         └─┘   ╚═╝

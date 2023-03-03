@@ -29,8 +29,8 @@ Start:
                 
                 mov bh, 0
                 mov bl, byte ptr [boxTheme]
+                mov ah, byte ptr [boxColor]
 
-                mov ah, 00Ah                    ; Light green on black
                 mov al, byte ptr [BoxAssetLU + bx]
                 push ax
                 mov al, byte ptr [BoxAsset_U + bx]
@@ -144,17 +144,42 @@ GetArgs         proc
                 @@ContinueHere5:
 
                 mov bx, 0
-                call MScnNDec
+                call MScnNHex
                 mov byte ptr [boxTheme], bl
 
-                mov cx, 0Ch
+                mov cx, 02h
                 cmp bx, cx
+                jle @@Theme02                   ; ---->
+                mov cx, 0C0h
+                cmp bx, cx
+                jge @@ThemeC                    ; ---->
 
-                test ax, ax
-                jz @@ContinueHere6
-                jmp @@NoMoreArgs                ; >>>>>>>>>>>>>>
+                jmp @@SetErrorBadTheme
+
+@@Theme02:                                      ; <----
+                jmp @@NoMoreArgs
+
+@@ThemeC:                                       ; <----
+                mov cx, 0C2h
+                cmp bx, cx
+                jng @@ContinueHere6
+                jmp @@SetErrorBadTheme          ; >>>>>>>>>>>>>>
                 @@ContinueHere6:
 
+                sub byte ptr [boxTheme], 0C0h
+                mov ch, 0
+                mov cl, byte ptr [boxTheme]
+
+                test ax, ax
+                jz @@ContinueHere7
+                jmp @@SetErrorNoArg             ; >>>>>>>>>>>>>>
+                @@ContinueHere7:
+
+                mov bx, 0
+                call MScnNHex
+                mov byte ptr [boxColor], bl
+
+                jmp @@NoMoreArgs
 
 
 
@@ -174,6 +199,15 @@ GetArgs         proc
                 mov bx, 160d*4+3d*2             ;   |
                 call PrintNHex                  ;   |
                 mov ax, 0239h                   ;   |
+                                                ;   |
+                                                ;   |
+                jmp @@ProcEnd                   ; >-\
+@@SetErrorBadTheme:                             ; <<|<<<<<<<<<<<
+                mov ax, 0240h                   ; Error code: No argument (more expected) : 240
+                mov dh, 00Ch                    ;   |
+                mov bx, 160d*4+3d*2             ;   |
+                call PrintNHex                  ;   |
+                mov ax, 0240h                   ;   |
                                                 ;   |
                                                 ;   |
 @@ProcEnd:                                      ; <-/
@@ -247,5 +281,6 @@ boxWidthPos:    db ?
 boxHeight:      db ?
 boxWidth:       db ?
 boxTheme:       db ?
+boxColor:       db 00Ah
 
 end             Start
