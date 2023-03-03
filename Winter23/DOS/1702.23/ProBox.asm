@@ -8,6 +8,8 @@ Args:           db ?
 
 org 100h
 
+; probox.com 8 21 3 2 F 19 C 1A 15 10 9 7 8 3 12
+
 Start:
 
                 mov ax, 0b800h                  ; адрес сегмента с видеопамятью -> es
@@ -80,7 +82,7 @@ ReturnProgram:                                  ; <<<<<<<<<<<<<<
 ;
 ; Exit:         AX = 0 if no errors, 1 contrary
 ;
-; Destroys:     BX CX SI (DH if error)
+; Destroys:     BX CX SI DI (DH if error)
 ;------------------------------------------------
 ; Stack frame:
 ;               ...
@@ -150,6 +152,9 @@ GetArgs         proc
                 mov cx, 02h
                 cmp bx, cx
                 jle @@Theme02                   ; ---->
+                mov cx, 0Fh
+                cmp bx, cx
+                je @@ThemeF                     ; ---->
                 mov cx, 0C0h
                 cmp bx, cx
                 jge @@ThemeC                    ; ---->
@@ -159,21 +164,45 @@ GetArgs         proc
 @@Theme02:                                      ; <----
                 jmp @@NoMoreArgs
 
-@@ThemeC:                                       ; <----
-                mov cx, 0C2h
-                cmp bx, cx
-                jng @@ContinueHere6
-                jmp @@SetErrorBadTheme          ; >>>>>>>>>>>>>>
-                @@ContinueHere6:
+@@ThemeF:                                       ; <----
+                mov byte ptr [boxTheme], 03d
 
-                sub byte ptr [boxTheme], 0C0h
-                mov ch, 0
-                mov cl, byte ptr [boxTheme]
+                mov di, offset BoxAssetStart + 3
+                mov cx, offset BoxAssetStep     ; cx = step
+                sub cx, offset BoxAssetStart    ;
 
+    @@OneStep:                                  ; <-------------------------\
+                test ax, ax                     ;                           |
+                jz @@ContinueHere6              ;                           |
+                jmp @@SetErrorNoArg             ; >>>>>>>>>>>>>>            |>>>
+                @@ContinueHere6:                ;                           |
+                                                ;                           |
+                mov bx, 0                       ;                           |
+                call MScnNDec                   ;                           |
+                mov [di], bl                    ;                           |
+                                                ;                           |
+                add di, cx                      ;                           |
+                                                ;                           |
+                mov bx, offset BoxAssetEnd      ;                           |
+                cmp di, bx                      ;                           |
+                jl @@OneStep                    ; >-------------------------/
+                
+                jmp @@SetColor                  ; >>====\\
+                                                ;       ||
+@@ThemeC:                                       ; <-----||--
+                mov cx, 0C2h                    ;       ||
+                cmp bx, cx                      ;       ||
+                jng @@ContinueHere10            ;       ||
+                jmp @@SetErrorBadTheme          ; >>>>>>||>>>>>>
+                @@ContinueHere10:               ;       ||
+                                                ;       ||
+                sub byte ptr [boxTheme], 0C0h   ;       ||
+                                                ;       ||
+@@SetColor:                                     ; <<====//
                 test ax, ax
-                jz @@ContinueHere7
+                jz @@ContinueHere11
                 jmp @@SetErrorNoArg             ; >>>>>>>>>>>>>>
-                @@ContinueHere7:
+                @@ContinueHere11:
 
                 mov bx, 0
                 call MScnNHex
