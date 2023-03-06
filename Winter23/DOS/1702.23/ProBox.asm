@@ -91,7 +91,7 @@ ReturnProgram:                                  ; <<<<<<<<<<<<<<
 ;
 ; Exit:         None
 ;
-; Destroys:     
+; Destroys:     AX BX CX DX SI DI
 ;------------------------------------------------
 ; Stack frame:
 ;               ...
@@ -111,12 +111,28 @@ PrintText       proc
                 mov di, ds                      ; ds -> es
                 mov es, di                      ;
                 mov di, si                      ; si -> di
-                call StrLen                     ; cx = text length
-                pop es
+                call StrLen
+                pop es                          ; restore es -> vidmem
+                mov dx, cx                      ; dx = text length
+                
+                mov ch, byte ptr boxHeightPos
+                add ch, 1d
+                mov cl, byte ptr boxWidthPos
+                add cl, 1d
+                call CalculateVidMemPos
 
-                mov dh, 0Dh
-                mov ax, cx
-                call PrintNDec
+
+                mov cx, dx
+    @@OneChar:                                  ; <-------------------------\
+                mov al, byte ptr [si]           ;                           |
+                mov es:[bx], al                 ;                           |
+                                                ;                           |
+                inc si                          ;                           |
+                inc bx                          ;                           |
+                inc bx                          ;                           |
+                                                ;                           |
+                loop @@OneChar                  ; >-------------------------/
+
 
 
                 pop bp
