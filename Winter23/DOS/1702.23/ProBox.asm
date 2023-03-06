@@ -121,9 +121,24 @@ PrintText       proc
                 add cl, 1d
                 call CalculateVidMemPos
 
+                mov cx, dx                      ; cx = text length
+                mov dh, byte ptr boxHeight
+                mov dl, byte ptr boxWidth
 
-                mov cx, dx
+                cmp cl, dl
+                jge @@OneChar                   ; >>====\\
+                                                ;       ||
+                mov dh, 0                       ;       ||
+                sub dl, cl                      ;       ||
+                shr dl, 1                       ;  Center offset
+                shl dl, 1                       ;       ||
+                add bx, dx                      ;       ||
+                                                ;       ||
+                                                ; <<====//
     @@OneChar:                                  ; <-------------------------\
+                                                ;                           |
+                                                ;                           |
+                                                ;                           |
                 mov al, byte ptr [si]           ;                           |
                 mov es:[bx], al                 ;                           |
                                                 ;                           |
