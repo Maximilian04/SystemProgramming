@@ -130,15 +130,32 @@ PrintText       proc
                                                 ;       ||
                 mov dh, 0                       ;       ||
                 sub dl, cl                      ;       ||
-                shr dl, 1                       ;  Center offset
+                shr dl, 1                       ; Center offset
                 shl dl, 1                       ;       ||
                 add bx, dx                      ;       ||
+                jmp @@OneChar                   ; >>====\\
                                                 ;       ||
                                                 ; <<====//
     @@OneChar:                                  ; <-------------------------\
-                                                ;                           |
-                                                ;                           |
-                                                ;                           |
+                test dh, dh                     ;                           |
+                jz @@LastLine                   ; >>====\\                  |
+                                                ;       ||                  |
+                test dl, dl                     ;       ||                  |
+                jnz @@noLineBreak               ;       ||                  |
+                                                ;       ||                  |
+                mov dl, byte ptr boxWidth       ;       ||                  |
+                dec dh                          ;       ||                  |
+                                                ;       ||                  |
+                add bx, 160d                    ; Next Line                 |
+                mov ah, 0                       ;       ||                  |
+                mov al, dl                      ;       ||                  |
+                shl ax, 1                       ;       ||                  |
+                sub bx, ax                      ;       ||                  |
+                                                ;       ||                  |
+            @@noLineBreak:                      ;       ||                  |
+                dec dl                          ;       ||                  |
+                                                ;       ||                  |
+            @@LastLine:                         ; <<====//                  |
                 mov al, byte ptr [si]           ;                           |
                 mov es:[bx], al                 ;                           |
                                                 ;                           |
