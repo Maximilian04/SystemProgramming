@@ -1,5 +1,6 @@
 .model tiny
 .code
+.286
 locals @@
 
 org 80h
@@ -17,11 +18,13 @@ Start:
                 mov ax, ss                      ; Segment with stack, code, etc.
                 mov ds, ax                      ;
 
+                push 0h                         ; textFlag
                 call GetArgs
                 test ax, ax
                 jz @@ContinueHere1
                 jmp ReturnProgram               ; >>>>>>>>>>>>>>
                 @@ContinueHere1:
+                ; push si
 
                 ; mov dh, 01Ah
                 ; mov ah, 0
@@ -59,6 +62,13 @@ Start:
                 call DrawBox
                 add sp, 2*9d
 
+                ; pop si
+                pop ax                          ; textFlag
+                test ax, ax
+                jz ReturnProgram                ; >>>>>>>>>>>>>>
+
+
+                call PrintText
 
                 ; mov dh, 00000010b               ; Dark green on black
                 ; pop ax                          ; Scanned number
@@ -72,6 +82,51 @@ ReturnProgram:                                  ; <<<<<<<<<<<<<<
 
 
 
+;------------------------------------------------
+; Prints text into the box
+;------------------------------------------------
+; Entry:        None
+;
+; Expects:      DS:SI -> text
+;
+; Exit:         None
+;
+; Destroys:     
+;------------------------------------------------
+; Stack frame:
+;               ...
+;               retAddr     [bp + 2]
+;               stored BP   [bp]
+;               text ptr    [bp - 2]
+;               ...
+;------------------------------------------------
+
+PrintText       proc
+                push bp
+                mov bp, sp                      ; Complete stack frame
+                push si
+
+
+                push es
+                mov di, ds                      ; ds -> es
+                mov es, di                      ;
+                mov di, si                      ; si -> di
+                call StrLen                     ; cx = text length
+                pop es
+
+                mov dh, 0Dh
+                mov ax, cx
+                call PrintNDec
+
+
+                pop bp
+                pop bp                          ; Stack frame
+                ret
+PrintText       endp
+
+;------------------------------------------------
+;------------------------------------------------
+
 
 ;------------------------------------------------
 ; Gets information from cmd argument
@@ -81,11 +136,13 @@ ReturnProgram:                                  ; <<<<<<<<<<<<<<
 ; Expects:      None
 ;
 ; Exit:         AX = 0 if no errors, 1 contrary
+;               textFlag = 1 if DS:SI -> box text, 0 if no text
 ;
 ; Destroys:     BX CX SI DI (DH if error)
 ;------------------------------------------------
 ; Stack frame:
 ;               ...
+;               textFlag    [bp + 4]
 ;               retAddr     [bp + 2]
 ;               stored BP   [bp]
 ;               ...
@@ -161,8 +218,12 @@ GetArgs         proc
 
                 jmp @@SetErrorBadTheme
 
+;    0,  1,  2 - standart box         & text
+;   C0, C1, C2 - standart box & color & text
+;   F       - various symbols & color & text
+
 @@Theme02:                                      ; <----
-                jmp @@NoMoreArgs
+                jmp @@LastArg                   ; ->>>>>>>>>>>>>
 
 @@ThemeF:                                       ; <----
                 mov byte ptr [boxTheme], 03d
@@ -208,7 +269,7 @@ GetArgs         proc
                 call MScnNHex
                 mov byte ptr [boxColor], bl
 
-                jmp @@NoMoreArgs
+                jmp @@LastArg                   ; ->>>>>>>>>>>>>
 
 
 
@@ -219,8 +280,19 @@ GetArgs         proc
                 ; call PrintNHex
 
 
-@@NoMoreArgs:                                   ; <<<<<<<<<<<<<<
-                mov ax, 0
+@@LastArg:                                      ; <<<<<<<<<<<<<-
+                test ax, ax
+                jz @@hasText                    ; >>====\\
+                                                ;       ||
+                mov word ptr ss:[bp + 4], 0     ;       ||
+                                                ;       ||
+                mov ax, 0                       ;       ||
+                jmp @@ProcEnd                   ; >-\   ||
+                @@hasText:                      ; <<|===//
+                                                ;   |
+                mov word ptr ss:[bp + 4], 1     ;   |
+                                                ;   |
+                mov ax, 0                       ;   |
                 jmp @@ProcEnd                   ; >-\
 @@SetErrorNoArg:                                ; <<|<<<<<<<<<<<
                 mov ax, 0239h                   ; Error code: No argument (more expected) : 239
@@ -291,6 +363,47 @@ CalculateVidMemPos  endp
 
 ;------------------------------------------------
 ;------------------------------------------------
+
+
+;------------------------------------------------
+; Count the length of the 0Dh-terminated string (str)
+;------------------------------------------------
+; Entry:        ES:DI = str
+;
+; Expects:      DF = 0 (CLD)
+;
+; Exit:         CX = length
+;
+; Destroys:     AL DI
+;------------------------------------------------
+; Stack frame:
+;               ...
+;               retAddr     []
+;               ...
+;------------------------------------------------
+;Направление просмотра  зависит  от флага направления DF, значение  которого  можно  менять  с  помощью команд CLD (DF:=0) и STD (DF:=1).
+
+StrLen          proc
+                ; push bp
+                ; mov bp, sp                      ; Complete stack frame
+
+                mov al, 00Dh                    ; AL = terminator
+                xor cx, cx                      ; CX = 0
+
+@@CountStep:                                    ; <-------------------------\
+                inc cx                          ;                           |
+                scasb                           ;                           |
+                jne @@CountStep                 ; >-------------------------/
+
+                dec cx
+
+                ; pop bp                          ; Stack frame
+                ret
+StrLen          endp
+
+;------------------------------------------------
+;------------------------------------------------
+
 
 include ..\LianLib\ScanNDec.asm
 include ..\LianLib\PrntNBin.asm
