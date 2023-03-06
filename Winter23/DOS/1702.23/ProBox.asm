@@ -10,6 +10,7 @@ Args:           db ?
 org 100h
 
 ; probox.com 8 21 3 2 F 19 C 1A 15 10 9 7 8 3 12
+; probox.com 8 21 9 10 E 15 15 15 15 15 15 15 15 3 D E We Qqerreqwerq
 
 Start:
 
@@ -161,6 +162,9 @@ PrintText       proc
                                                 ;                           |
                 inc si                          ;                           |
                 inc bx                          ;                           |
+                                                ;                           |
+                mov al, byte ptr [boxTextColor] ;                           |
+                mov es:[bx], al                 ;                           |
                 inc bx                          ;                           |
                                                 ;                           |
                 loop @@OneChar                  ; >-------------------------/
@@ -257,6 +261,9 @@ GetArgs         proc
                 mov cx, 02h
                 cmp bx, cx
                 jle @@Theme02                   ; ---->
+                mov cx, 0Eh
+                cmp bx, cx
+                je @@ThemeE                     ; ---->
                 mov cx, 0Fh
                 cmp bx, cx
                 je @@ThemeF                     ; ---->
@@ -269,12 +276,14 @@ GetArgs         proc
 ;    0,  1,  2 - standart box         & text
 ;   C0, C1, C2 - standart box & color & text
 ;   F       - various symbols & color & text
+;   E       - various symbols & color & text & textColor
 
 @@Theme02:                                      ; <----
                 jmp @@LastArg                   ; ->>>>>>>>>>>>>
 
 @@ThemeF:                                       ; <----
                 mov byte ptr [boxTheme], 03d
+@@ThemeE:                                       ; <----
 
                 mov di, offset BoxAssetStart + 3
                 mov cx, offset BoxAssetStep     ; cx = step
@@ -316,16 +325,27 @@ GetArgs         proc
                 mov bx, 0
                 call MScnNHex
                 mov byte ptr [boxColor], bl
+                mov byte ptr [boxTextColor], bl
 
+
+                mov bh, 0
+                mov bl, byte ptr [boxTheme]
+                mov cx, 0Eh
+                cmp bx, cx
+                je @@ThemeEColor
                 jmp @@LastArg                   ; ->>>>>>>>>>>>>
+@@ThemeEColor:
+                mov byte ptr [boxTheme], 03d
 
+                test ax, ax
+                jz @@ContinueHere12
+                jmp @@SetErrorNoArg             ; >>>>>>>>>>>>>>
+                @@ContinueHere12:
 
-
-                ; mov ah, 0
-                ; mov al, bl
-                ; mov dh, 004h
-                ; mov bx, 160d*4+7d*2
-                ; call PrintNHex
+                mov bx, 0
+                call MScnNHex
+                mov byte ptr [boxTextColor], bl
+                jmp @@LastArg                   ; ->>>>>>>>>>>>>
 
 
 @@LastArg:                                      ; <<<<<<<<<<<<<-
@@ -472,5 +492,6 @@ boxHeight:      db ?
 boxWidth:       db ?
 boxTheme:       db ?
 boxColor:       db 00Ah
+boxTextColor:   db 00Ah
 
 end             Start
