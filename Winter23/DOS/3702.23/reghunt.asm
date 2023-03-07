@@ -6,10 +6,6 @@ org 100h
 
 Start:          jmp Main
 
-
-State:          db 0DDh
-
-
 ;------------------------------------------------
 ; Keyboard intterupt handler
 ;------------------------------------------------
@@ -19,7 +15,9 @@ State:          db 0DDh
 ;------------------------------------------------
 
 New09Int        proc
-                push ax bx es           ; Stored regs
+                push ax bx es ds        ; Stored regs
+                mov ax, cs
+                mov ds, ax
 
                 in al, 60h              ; Catch key code
 
@@ -32,7 +30,7 @@ New09Int        proc
             @@ControlKey1:
                                         ; Invert State variable
                 ; inc byte ptr [State]
-                xor byte ptr [State], 01b
+                xor byte ptr [State], 11b
 
                 jmp @@NotControlKey
             @@ControlKey2:
@@ -52,7 +50,7 @@ New09Int        proc
                 out 20h, al
 
 
-                pop es bx ax            ; Stored regs
+                pop ds es bx ax         ; Stored regs
                 pushf
                 db 09Ah                 ; CALL FAR
 Old09Ofs        dw 0                    ; call old 09 interruption
@@ -76,22 +74,33 @@ Old09Seg        dw 0
 New08Int        proc
                 push ax bx cx dx ds es si  ; Stored regs
 
-
                 mov bx, 0b800h
                 mov es, bx
                 mov bx, 200d
 
+                mov dx, cs
+                mov ds, dx
+
                 mov al, byte ptr [State]
                 mov byte ptr es:[bx], al
 
-                mov dx, cs
-                mov ds, dx
+
+                push ds ss cs
+
                 mov dx, 00A00h
                 sub bx, 2d
                 mov ah, 0d
                 call PrintNHex
 
-                cmp byte ptr [State], 01b
+                mov dx, 00E00h
+                pop ax
+                call PrintNHex
+                pop ax
+                call PrintNHex
+                pop ax
+                call PrintNHex
+
+                cmp byte ptr [State], 011b
                 jne @@DoNotDraw
 
                 ; mov byte ptr es:[bx], 61d
@@ -125,8 +134,11 @@ Old08Seg        dw 0
 ;------------------------------------------------
 ;------------------------------------------------
 
-
+.data
+State:          db 001h
 include ..\LianLib\Alphabet.asm
+.code
+
 include ..\LianLib\PrntNHex.asm
 include ..\LianLib\ProBox.asm
 include ..\LianLib\DrawLine.asm
@@ -161,6 +173,23 @@ Main:
                 mov ax, cs
                 mov es:[bx+2], ax
                 sti
+
+
+
+                mov bx, 0b800h
+                mov es, bx
+                mov bx, 342d
+
+                push ds ss cs
+
+                mov dx, 00D00h
+                pop ax
+                call PrintNHex
+                pop ax
+                call PrintNHex
+                pop ax
+                call PrintNHex
+
 
                 mov ax, 3100h
                 mov dx, offset InterruptorMemEnd    ; Размер необходимой памяти

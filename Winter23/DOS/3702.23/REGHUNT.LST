@@ -1,4 +1,4 @@
-Turbo Assembler	 Version 4.1	    03/07/23 18:22:12	    Page 1
+Turbo Assembler	 Version 4.1	    03/07/23 19:49:14	    Page 1
 reghunt.asm
 
 
@@ -9,402 +9,436 @@ reghunt.asm
       4				     locals @@
       5				     org 100h
       6
-      7	0100  E9 0136		     Start:	     jmp Main
+      7	0100  E9 0113		     Start:	     jmp Main
       8
-      9
-     10	0103  DD		     State:	     db	0DDh
-     11
-     12
-     13				     ;------------------------------------------------
-     14				     ; Keyboard	intterupt handler
+      9				     ;------------------------------------------------
+     10				     ; Keyboard	intterupt handler
+     11				     ;------------------------------------------------
+     12				     ;
+     13				     ;	 Catches control keys &	sets (State) variable
+     14				     ;
      15				     ;------------------------------------------------
-     16				     ;
-     17				     ;	 Catches control keys &	sets (State) variable
-     18				     ;
-     19				     ;------------------------------------------------
-     20
-     21	0104			     New09Int	     proc
-     22	0104  50 53 06				     push ax bx	es	     ; Stored regs
+     16
+     17	0103			     New09Int	     proc
+     18	0103  50 53 06 1E			     push ax bx	es ds	     ; Stored regs
+     19	0107  8C C8				     mov ax, cs
+     20	0109  8E D8				     mov ds, ax
+     21
+     22	010B  E4 60				     in	al, 60h		     ; Catch key code
      23
-     24	0107  E4 60				     in	al, 60h		     ; Catch key code
-     25
-     26	0109  3C 1D				     cmp al, 01Dh
-     27	010B  74 07				     je	@@ControlKey1
-     28	010D  3C 9D				     cmp al, 09Dh
-     29	010F  74 0B				     je	@@ControlKey2
-     30
-     31	0111  EB 0C 90				     jmp @@NotControlKey
-     32	0114					 @@ControlKey1:
-     33									     ; Invert State variable
-     34						     ; inc byte	ptr [State]
-     35	0114  80 36 0103r 01			     xor byte ptr [State], 01b
-     36
-     37	0119  EB 04 90				     jmp @@NotControlKey
-     38	011C					 @@ControlKey2:
-     39									     ; Invert State variable
-     40						     ; mov byte	ptr [State], 00b
-     41
-     42	011C  EB 01 90				     jmp @@NotControlKey
-     43	011F					 @@NotControlKey:
-     44
-     45	011F  E4 61				     in	al, 61h		     ; Set interruptor free
-     46	0121  0C 80				     or	al, 80h
-     47	0123  E6 61				     out 61h, al
-     48	0125  24 7F				     and al, not 80h
-     49	0127  E6 61				     out 61h, al
-     50
-     51	0129  B0 20				     mov al, 20h	     ; Set interruptor free
-     52	012B  E6 20				     out 20h, al
-     53
-     54
-     55	012D  07 5B 58				     pop es bx ax	     ; Stored regs
-     56	0130  9C				     pushf
-     57	0131  9A				     db	09Ah		     ; CALL FAR
-Turbo Assembler	 Version 4.1	    03/07/23 18:22:12	    Page 2
+     24	010D  3C 1D				     cmp al, 01Dh
+     25	010F  74 07				     je	@@ControlKey1
+     26	0111  3C 9D				     cmp al, 09Dh
+     27	0113  74 0B				     je	@@ControlKey2
+     28
+     29	0115  EB 0C 90				     jmp @@NotControlKey
+     30	0118					 @@ControlKey1:
+     31									     ; Invert State variable
+     32						     ; inc byte	ptr [State]
+     33	0118  80 36 0000r 03			     xor byte ptr [State], 11b
+     34
+     35	011D  EB 04 90				     jmp @@NotControlKey
+     36	0120					 @@ControlKey2:
+     37									     ; Invert State variable
+     38						     ; mov byte	ptr [State], 00b
+     39
+     40	0120  EB 01 90				     jmp @@NotControlKey
+     41	0123					 @@NotControlKey:
+     42
+     43	0123  E4 61				     in	al, 61h		     ; Set interruptor free
+     44	0125  0C 80				     or	al, 80h
+     45	0127  E6 61				     out 61h, al
+     46	0129  24 7F				     and al, not 80h
+     47	012B  E6 61				     out 61h, al
+     48
+     49	012D  B0 20				     mov al, 20h	     ; Set interruptor free
+     50	012F  E6 20				     out 20h, al
+     51
+     52
+     53	0131  1F 07 5B 58			     pop ds es bx ax	     ; Stored regs
+     54	0135  9C				     pushf
+     55	0136  9A				     db	09Ah		     ; CALL FAR
+     56	0137  0000		     Old09Ofs	     dw	0		     ; call old	09 interruption
+     57	0139  0000		     Old09Seg	     dw	0
+Turbo Assembler	 Version 4.1	    03/07/23 19:49:14	    Page 2
 reghunt.asm
 
 
 
-     58	0132  0000		     Old09Ofs	     dw	0		     ; call old	09 interruption
-     59	0134  0000		     Old09Seg	     dw	0
-     60
-     61	0136  CF				     iret
-     62	0137					     endp
-     63
-     64				     ;------------------------------------------------
-     65				     ;------------------------------------------------
-     66
-     67
+     58
+     59	013B  CF				     iret
+     60	013C					     endp
+     61
+     62				     ;------------------------------------------------
+     63				     ;------------------------------------------------
+     64
+     65
+     66				     ;------------------------------------------------
+     67				     ; Timer intterupt handler
      68				     ;------------------------------------------------
-     69				     ; Timer intterupt handler
-     70				     ;------------------------------------------------
+     69				     ;
+     70				     ;	 Draws
      71				     ;
-     72				     ;	 Draws
-     73				     ;
-     74				     ;------------------------------------------------
-     75
-     76	0137			     New08Int	     proc
-     77	0137  50 53 51 52 1E 06	56		     push ax bx	cx dx ds es si	; Stored regs
-     78
-     79
-     80	013E  BB B800				     mov bx, 0b800h
-     81	0141  8E C3				     mov es, bx
-     82	0143  BB 00C8				     mov bx, 200d
+     72				     ;------------------------------------------------
+     73
+     74	013C			     New08Int	     proc
+     75	013C  50 53 51 52 1E 06	56		     push ax bx	cx dx ds es si	; Stored regs
+     76
+     77	0143  BB B800				     mov bx, 0b800h
+     78	0146  8E C3				     mov es, bx
+     79	0148  BB 00C8				     mov bx, 200d
+     80
+     81	014B  8C CA				     mov dx, cs
+     82	014D  8E DA				     mov ds, dx
      83
-     84	0146  A0 0103r				     mov al, byte ptr [State]
-     85	0149  26: 88 07				     mov byte ptr es:[bx], al
+     84	014F  A0 0000r				     mov al, byte ptr [State]
+     85	0152  26: 88 07				     mov byte ptr es:[bx], al
      86
-     87	014C  8C CA				     mov dx, cs
-     88	014E  8E DA				     mov ds, dx
-     89	0150  BA 0A00				     mov dx, 00A00h
-     90	0153  83 EB 02				     sub bx, 2d
-     91	0156  B4 00				     mov ah, 0d
-     92	0158  E8 0056				     call PrintNHex
-     93
-     94	015B  80 3E 0103r 01			     cmp byte ptr [State], 01b
-     95	0160  75 03				     jne @@DoNotDraw
-     96
-     97						     ; mov byte	ptr es:[bx], 61d
-     98
-     99	0162  EB 01 90				     jmp @@DoNotDrawEnd
-    100	0165					 @@DoNotDraw:
-    101
-    102						     ; mov byte	ptr es:[bx], 62d
-    103
-    104	0165					 @@DoNotDrawEnd:
-    105						     ; in al, 61h	       ; Set interruptor free
-    106						     ; or al, 80h
-    107						     ; out 61h,	al
-    108						     ; and al, not 80h
-    109						     ; out 61h,	al
+     87
+     88	0155  1E 16 0E				     push ds ss	cs
+     89
+     90	0158  BA 0A00				     mov dx, 00A00h
+     91	015B  83 EB 02				     sub bx, 2d
+     92	015E  B4 00				     mov ah, 0d
+     93	0160  E8 002B				     call PrintNHex
+     94
+     95	0163  BA 0E00				     mov dx, 00E00h
+     96	0166  58				     pop ax
+     97	0167  E8 0024				     call PrintNHex
+     98	016A  58				     pop ax
+     99	016B  E8 0020				     call PrintNHex
+    100	016E  58				     pop ax
+    101	016F  E8 001C				     call PrintNHex
+    102
+    103	0172  80 3E 0000r 03			     cmp byte ptr [State], 011b
+    104	0177  75 03				     jne @@DoNotDraw
+    105
+    106						     ; mov byte	ptr es:[bx], 61d
+    107
+    108	0179  EB 01 90				     jmp @@DoNotDrawEnd
+    109	017C					 @@DoNotDraw:
     110
-    111	0165  B0 20				     mov al, 20h	     ; Set interruptor free
-    112	0167  E6 20				     out 20h, al
-    113
-    114	0169  5E 07 1F 5A 59 5B	58		     pop si es ds dx cx	bx ax	; Stored regs
-Turbo Assembler	 Version 4.1	    03/07/23 18:22:12	    Page 3
+    111						     ; mov byte	ptr es:[bx], 62d
+    112
+    113	017C					 @@DoNotDrawEnd:
+    114						     ; in al, 61h	       ; Set interruptor free
+Turbo Assembler	 Version 4.1	    03/07/23 19:49:14	    Page 3
 reghunt.asm
 
 
 
-    115
-    116
-    117	0170  9C				     pushf
-    118	0171  9A				     db	09Ah		     ; CALL FAR
-    119	0172  0000		     Old08Ofs	     dw	0		     ; call old	08 interruption
-    120	0174  0000		     Old08Seg	     dw	0
-    121
-    122	0176  CF				     iret
-    123	0177					     endp
+    115						     ; or al, 80h
+    116						     ; out 61h,	al
+    117						     ; and al, not 80h
+    118						     ; out 61h,	al
+    119
+    120	017C  B0 20				     mov al, 20h	     ; Set interruptor free
+    121	017E  E6 20				     out 20h, al
+    122
+    123	0180  5E 07 1F 5A 59 5B	58		     pop si es ds dx cx	bx ax	; Stored regs
     124
-    125				     ;------------------------------------------------
-    126				     ;------------------------------------------------
-    127
-    128
-    129				     include ..\LianLib\Alphabet.asm
-1   130	0177  30 31 32 33 34 35	36+  Alphabet:	     db	"0123456789ABCDEF"	     ; Alphabet	for printing (Thanks Ilya)
-    131	      37 38 39 41 42 43	44+
-    132	      45 46
-1   133	0187  C9 CD BB BA BC C8	     BoxSymbols:     db	0c9h, 0cdh, 0bbh, 0bah,	0bch, 0c8h ; "╔═╗║╝╚"
-1   134
-1   135	018D			     BoxAssetStart:
-1   136	018D  20 DA C9 00	     BoxAssetLU:     db	020h, 0dah, 0c9h, 000h
-1   137	0191			     BoxAssetStep:
-1   138	0191  20 C4 CD 00	     BoxAsset_U:     db	020h, 0c4h, 0cdh, 000h
-1   139	0195  20 BF BB 00	     BoxAssetRU:     db	020h, 0bfh, 0bbh, 000h
-1   140	0199  20 B3 BA 00	     BoxAssetR_:     db	020h, 0b3h, 0bah, 000h
-1   141	019D  20 D9 BC 00	     BoxAssetRB:     db	020h, 0d9h, 0bch, 000h
-1   142	01A1  20 C4 CD 00	     BoxAsset_B:     db	020h, 0c4h, 0cdh, 000h
-1   143	01A5  20 C0 C8 00	     BoxAssetLB:     db	020h, 0c0h, 0c8h, 000h
-1   144	01A9  20 B3 BA 00	     BoxAssetL_:     db	020h, 0b3h, 0bah, 000h
-1   145	01AD  20 20 20 00	     BoxAssetFI:     db	020h, 020h, 020h, 000h
-1   146	01B1			     BoxAssetEnd:
-1   147
-1   148				     ; 0:    1:┌─┐ 2:╔═╗ 3:usr
-1   149				     ;	       │ │	 ║ ║   chr
-1   150				     ;	       └─┘   ╚═╝
-1   151
-    152				     include ..\LianLib\PrntNHex.asm
-1   153				     ;------------------------------------------------
-1   154				     ; Prints number as	hexagen	to vidmem
-1   155				     ;------------------------------------------------
-1   156				     ; Entry:	     AX	= number to print
-1   157				     ;		     BX	= start	addr to	print
-1   158				     ;
-1   159				     ; Expects:	     ES	-> Video segment
-1   160				     ;		     DH	= color	code
-1   161				     ;
-1   162				     ; Exit:	     None
-1   163				     ;
-1   164				     ; Destroys:     AX	BX CX DL Si
+    125
+    126	0187  9C				     pushf
+    127	0188  9A				     db	09Ah		     ; CALL FAR
+    128	0189  0000		     Old08Ofs	     dw	0		     ; call old	08 interruption
+    129	018B  0000		     Old08Seg	     dw	0
+    130
+    131	018D  CF				     iret
+    132	018E					     endp
+    133
+    134				     ;------------------------------------------------
+    135				     ;------------------------------------------------
+    136
+    137	018E			     .data
+    138	0000  01		     State:	     db	001h
+    139				     include ..\LianLib\Alphabet.asm
+1   140	0001  30 31 32 33 34 35	36+  Alphabet:	     db	"0123456789ABCDEF"	     ; Alphabet	for printing (Thanks Ilya)
+    141	      37 38 39 41 42 43	44+
+    142	      45 46
+1   143	0011  C9 CD BB BA BC C8	     BoxSymbols:     db	0c9h, 0cdh, 0bbh, 0bah,	0bch, 0c8h ; "╔═╗║╝╚"
+1   144
+1   145	0017			     BoxAssetStart:
+1   146	0017  20 DA C9 00	     BoxAssetLU:     db	020h, 0dah, 0c9h, 000h
+1   147	001B			     BoxAssetStep:
+1   148	001B  20 C4 CD 00	     BoxAsset_U:     db	020h, 0c4h, 0cdh, 000h
+1   149	001F  20 BF BB 00	     BoxAssetRU:     db	020h, 0bfh, 0bbh, 000h
+1   150	0023  20 B3 BA 00	     BoxAssetR_:     db	020h, 0b3h, 0bah, 000h
+1   151	0027  20 D9 BC 00	     BoxAssetRB:     db	020h, 0d9h, 0bch, 000h
+1   152	002B  20 C4 CD 00	     BoxAsset_B:     db	020h, 0c4h, 0cdh, 000h
+1   153	002F  20 C0 C8 00	     BoxAssetLB:     db	020h, 0c0h, 0c8h, 000h
+1   154	0033  20 B3 BA 00	     BoxAssetL_:     db	020h, 0b3h, 0bah, 000h
+1   155	0037  20 20 20 00	     BoxAssetFI:     db	020h, 020h, 020h, 000h
+1   156	003B			     BoxAssetEnd:
+1   157
+1   158				     ; 0:    1:┌─┐ 2:╔═╗ 3:usr
+1   159				     ;	       │ │	 ║ ║   chr
+1   160				     ;	       └─┘   ╚═╝
+1   161
+    162	003B			     .code
+    163
+    164				     include ..\LianLib\PrntNHex.asm
 1   165				     ;------------------------------------------------
-1   166				     ;------------------------------------------------
-1   167	01B1			     PrintNHex	     proc
-1   168
-1   169	01B1  B9 0004				     mov cx, 4d			     ; 4 digits	in 2 byte in ax
-1   170
-1   171	01B4			     @@PrintDigit:				     ; <-------------------------\
-Turbo Assembler	 Version 4.1	    03/07/23 18:22:12	    Page 4
+1   166				     ; Prints number as	hexagen	to vidmem
+1   167				     ;------------------------------------------------
+1   168				     ; Entry:	     AX	= number to print
+1   169				     ;		     BX	= start	addr to	print
+1   170				     ;
+1   171				     ; Expects:	     ES	-> Video segment
+Turbo Assembler	 Version 4.1	    03/07/23 19:49:14	    Page 4
 reghunt.asm
 
 
 
-1   172										     ;				 |
-1   173	01B4  B2 0F				     mov dl, 00001111b		     ; Mask			 |
-1   174	01B6  22 D0				     and dl, al			     ;				 |
-1   175										     ;				 |
-1   176	01B8  8B F2				     mov si, dx			     ; dl -> si			 |
-1   177	01BA  83 E6 0F				     and si, 0Fh		     ;				 |
-1   178										     ;				 |
-1   179	01BD  8A 94 0177r			     mov dl, byte ptr [Alphabet]+si  ; ASCII "0" offset		 |
-1   180										     ;				 |
-1   181	01C1  26: 89 17				     mov word ptr es:[bx], dx	     ; Print dl	on position bx	 |
-1   182										     ;				 |
-1   183	01C4  4B				     dec bx			     ; Next digit		 |
-1   184	01C5  4B				     dec bx			     ; ^			 |
-1   185										     ;				 |
-1   186	01C6  C1 E8 04				     shr ax, 4d			     ; ax >> 4			 |
+1   172				     ;		     DH	= color	code
+1   173				     ;
+1   174				     ; Exit:	     None
+1   175				     ;
+1   176				     ; Destroys:     AX	BX CX DL Si
+1   177				     ;------------------------------------------------
+1   178				     ;------------------------------------------------
+1   179	018E			     PrintNHex	     proc
+1   180
+1   181	018E  B9 0004				     mov cx, 4d			     ; 4 digits	in 2 byte in ax
+1   182
+1   183	0191			     @@PrintDigit:				     ; <-------------------------\
+1   184										     ;				 |
+1   185	0191  B2 0F				     mov dl, 00001111b		     ; Mask			 |
+1   186	0193  22 D0				     and dl, al			     ;				 |
 1   187										     ;				 |
-1   188	01C9  E2 E9				     loop @@PrintDigit		     ; >-------------------------/
-1   189
-1   190	01CB  C3				     ret
-1   191
-1   192	01CC			     PrintNHex	     endp
-1   193
-1   194				     ;------------------------------------------------
-1   195				     ;------------------------------------------------
-1   196
-    197				     include ..\LianLib\ProBox.asm
-1   198				     ;------------------------------------------------
-1   199				     ; Draws cool box on the screen
-1   200				     ;------------------------------------------------
-1   201				     ; Entry:	     BX	= start	addr to	draw
-1   202				     ;		     CH	= height of box	(without frame)
-1   203				     ;		     CL	= width	of box (without	frame)
-1   204				     ;
-1   205				     ; Expects:	     ES	-> Video segment
-1   206				     ;
-1   207				     ; Exit:	     None
-1   208				     ;
-1   209				     ; Destroys:     AX	BX (CX)	DX DI
+1   188	0195  8B F2				     mov si, dx			     ; dl -> si			 |
+1   189	0197  83 E6 0F				     and si, 0Fh		     ;				 |
+1   190										     ;				 |
+1   191	019A  8A 94 0001r			     mov dl, byte ptr [Alphabet]+si  ; ASCII "0" offset		 |
+1   192										     ;				 |
+1   193	019E  26: 89 17				     mov word ptr es:[bx], dx	     ; Print dl	on position bx	 |
+1   194										     ;				 |
+1   195	01A1  4B				     dec bx			     ; Next digit		 |
+1   196	01A2  4B				     dec bx			     ; ^			 |
+1   197										     ;				 |
+1   198	01A3  C1 E8 04				     shr ax, 4d			     ; ax >> 4			 |
+1   199										     ;				 |
+1   200	01A6  E2 E9				     loop @@PrintDigit		     ; >-------------------------/
+1   201
+1   202	01A8  C3				     ret
+1   203
+1   204	01A9			     PrintNHex	     endp
+1   205
+1   206				     ;------------------------------------------------
+1   207				     ;------------------------------------------------
+1   208
+    209				     include ..\LianLib\ProBox.asm
 1   210				     ;------------------------------------------------
-1   211				     ; Stack frame:
-1   212				     ;		     ...
-1   213				     ;		     LU	char	 [bp + 20]   //	H - color attr
-1   214				     ;		     _U	char	 [bp + 18]   //	L - symb attr
-1   215				     ;		     RU	char	 [bp + 16]   //
-1   216				     ;		     R_	char	 [bp + 14]   //
-1   217				     ;		     RB	char	 [bp + 12]   //
-1   218				     ;		     _B	char	 [bp + 10]   //
-1   219				     ;		     LB	char	 [bp + 8]    //
-1   220				     ;		     L_	char	 [bp + 6]    //
-1   221				     ;		     FI	char	 [bp + 4]    //
-1   222				     ;		     retAddr	 [bp + 2]
-1   223				     ;		     stored BP	 [bp]
-1   224				     ;		     stored CX	 [bp - 2]    //	size
-1   225				     ;		     ...
-1   226				     ;------------------------------------------------
-1   227
-1   228	01CC			     DrawBox	     proc
-Turbo Assembler	 Version 4.1	    03/07/23 18:22:12	    Page 5
+1   211				     ; Draws cool box on the screen
+1   212				     ;------------------------------------------------
+1   213				     ; Entry:	     BX	= start	addr to	draw
+1   214				     ;		     CH	= height of box	(without frame)
+1   215				     ;		     CL	= width	of box (without	frame)
+1   216				     ;
+1   217				     ; Expects:	     ES	-> Video segment
+1   218				     ;
+1   219				     ; Exit:	     None
+1   220				     ;
+1   221				     ; Destroys:     AX	BX (CX)	DX DI
+1   222				     ;------------------------------------------------
+1   223				     ; Stack frame:
+1   224				     ;		     ...
+1   225				     ;		     LU	char	 [bp + 20]   //	H - color attr
+1   226				     ;		     _U	char	 [bp + 18]   //	L - symb attr
+1   227				     ;		     RU	char	 [bp + 16]   //
+1   228				     ;		     R_	char	 [bp + 14]   //
+Turbo Assembler	 Version 4.1	    03/07/23 19:49:14	    Page 5
 reghunt.asm
 
 
 
-1   229	01CC  55				     push bp
-1   230	01CD  8B EC				     mov bp, sp			     ; Complete	stack frame
-1   231	01CF  51				     push cx
-1   232
-1   233										     ;-------------------------------------------
-1   234										     ; Upper line
-1   235	01D0  8B FB				     mov di, bx
-1   236	01D2  8B 4E FE				     mov cx, [bp - 2]
-1   237	01D5  B5 00				     mov ch, 0
-1   238	01D7  FF 76 14				     push [bp +	20]
-1   239	01DA  FF 76 12				     push [bp +	18]
-1   240	01DD  FF 76 10				     push [bp +	16]
-1   241	01E0  E8 0044				     call DrawLine
-1   242	01E3  83 C4 06				     add sp, 2*3d
-1   243										     ;-------------------------------------------
-1   244										     ; Middle line
-1   245	01E6  8B 4E FE				     mov cx, [bp - 2]
-1   246	01E9  B6 00				     mov dh, 0
-1   247	01EB  8A D5				     mov dl, ch
-1   248	01ED			     @@MiddleStep:				     ; <-----------------\
-1   249										     ;			 |
-1   250	01ED  81 C3 00A0			     add bx, 160d		     ;			 |
-1   251	01F1  8B FB				     mov di, bx			     ;			 |
-1   252	01F3  8B 4E FE				     mov cx, [bp - 2]		     ;			 |
-1   253	01F6  B5 00				     mov ch, 0			     ;			 |
-1   254	01F8  FF 76 06				     push [bp +	6]		     ;			 |
-1   255	01FB  FF 76 04				     push [bp +	4]		     ;			 |
-1   256	01FE  FF 76 0E				     push [bp +	14]		     ;			 |
-1   257	0201  E8 0023				     call DrawLine		     ;			 |
-1   258	0204  83 C4 06				     add sp, 2*3d		     ;			 |
-1   259	0207  4A				     dec dx			     ;			 |
-1   260	0208  75 E3				     jnz @@MiddleStep		     ; >-----------------/
-1   261										     ;-------------------------------------------
-1   262										     ; Bottom line
-1   263	020A  81 C3 00A0			     add bx, 160d
-1   264	020E  8B FB				     mov di, bx
-1   265	0210  8B 4E FE				     mov cx, [bp - 2]
-1   266	0213  B5 00				     mov ch, 0
-1   267	0215  FF 76 08				     push [bp +	8]
-1   268	0218  FF 76 0A				     push [bp +	10]
-1   269	021B  FF 76 0C				     push [bp +	12]
-1   270	021E  E8 0006				     call DrawLine
-1   271	0221  83 C4 06				     add sp, 2*3d
-1   272										     ;-------------------------------------------
-1   273
-1   274	0224  59				     pop cx
-1   275	0225  5D				     pop bp			     ; Stack frame
-1   276	0226  C3				     ret
-1   277	0227			     DrawBox	     endp
-1   278
-1   279				     ;------------------------------------------------
-1   280				     ;------------------------------------------------
-1   281
-1   282				     ; needs <include ?\LianLib\DrawLine.asm>
-1   283
-    284				     include ..\LianLib\DrawLine.asm
-1   285				     ;------------------------------------------------
-Turbo Assembler	 Version 4.1	    03/07/23 18:22:12	    Page 6
+1   229				     ;		     RB	char	 [bp + 12]   //
+1   230				     ;		     _B	char	 [bp + 10]   //
+1   231				     ;		     LB	char	 [bp + 8]    //
+1   232				     ;		     L_	char	 [bp + 6]    //
+1   233				     ;		     FI	char	 [bp + 4]    //
+1   234				     ;		     retAddr	 [bp + 2]
+1   235				     ;		     stored BP	 [bp]
+1   236				     ;		     stored CX	 [bp - 2]    //	size
+1   237				     ;		     ...
+1   238				     ;------------------------------------------------
+1   239
+1   240	01A9			     DrawBox	     proc
+1   241	01A9  55				     push bp
+1   242	01AA  8B EC				     mov bp, sp			     ; Complete	stack frame
+1   243	01AC  51				     push cx
+1   244
+1   245										     ;-------------------------------------------
+1   246										     ; Upper line
+1   247	01AD  8B FB				     mov di, bx
+1   248	01AF  8B 4E FE				     mov cx, [bp - 2]
+1   249	01B2  B5 00				     mov ch, 0
+1   250	01B4  FF 76 14				     push [bp +	20]
+1   251	01B7  FF 76 12				     push [bp +	18]
+1   252	01BA  FF 76 10				     push [bp +	16]
+1   253	01BD  E8 0044				     call DrawLine
+1   254	01C0  83 C4 06				     add sp, 2*3d
+1   255										     ;-------------------------------------------
+1   256										     ; Middle line
+1   257	01C3  8B 4E FE				     mov cx, [bp - 2]
+1   258	01C6  B6 00				     mov dh, 0
+1   259	01C8  8A D5				     mov dl, ch
+1   260	01CA			     @@MiddleStep:				     ; <-----------------\
+1   261										     ;			 |
+1   262	01CA  81 C3 00A0			     add bx, 160d		     ;			 |
+1   263	01CE  8B FB				     mov di, bx			     ;			 |
+1   264	01D0  8B 4E FE				     mov cx, [bp - 2]		     ;			 |
+1   265	01D3  B5 00				     mov ch, 0			     ;			 |
+1   266	01D5  FF 76 06				     push [bp +	6]		     ;			 |
+1   267	01D8  FF 76 04				     push [bp +	4]		     ;			 |
+1   268	01DB  FF 76 0E				     push [bp +	14]		     ;			 |
+1   269	01DE  E8 0023				     call DrawLine		     ;			 |
+1   270	01E1  83 C4 06				     add sp, 2*3d		     ;			 |
+1   271	01E4  4A				     dec dx			     ;			 |
+1   272	01E5  75 E3				     jnz @@MiddleStep		     ; >-----------------/
+1   273										     ;-------------------------------------------
+1   274										     ; Bottom line
+1   275	01E7  81 C3 00A0			     add bx, 160d
+1   276	01EB  8B FB				     mov di, bx
+1   277	01ED  8B 4E FE				     mov cx, [bp - 2]
+1   278	01F0  B5 00				     mov ch, 0
+1   279	01F2  FF 76 08				     push [bp +	8]
+1   280	01F5  FF 76 0A				     push [bp +	10]
+1   281	01F8  FF 76 0C				     push [bp +	12]
+1   282	01FB  E8 0006				     call DrawLine
+1   283	01FE  83 C4 06				     add sp, 2*3d
+1   284										     ;-------------------------------------------
+1   285
+Turbo Assembler	 Version 4.1	    03/07/23 19:49:14	    Page 6
 reghunt.asm
 
 
 
-1   286				     ; Draws line on the screen	(Pattern ABB~BBC)
-1   287				     ;------------------------------------------------
-1   288				     ; Entry:	     DI	= start	addr to	draw
-1   289				     ;		     CX	= width	of line	(without A&C)
-1   290				     ;
-1   291				     ; Expects:	     ES	-> Video segment
-1   292				     ;		     DF	= 0 (CLD)
-1   293				     ;
-1   294				     ; Exit:	     None
-1   295				     ;
-1   296				     ; Destroys:     AX	CX DI
+1   286	0201  59				     pop cx
+1   287	0202  5D				     pop bp			     ; Stack frame
+1   288	0203  C3				     ret
+1   289	0204			     DrawBox	     endp
+1   290
+1   291				     ;------------------------------------------------
+1   292				     ;------------------------------------------------
+1   293
+1   294				     ; needs <include ?\LianLib\DrawLine.asm>
+1   295
+    296				     include ..\LianLib\DrawLine.asm
 1   297				     ;------------------------------------------------
-1   298				     ; Stack frame:
-1   299				     ;		     ...
-1   300				     ;		     'A' char	 [bp + 8]    //	H - color attr
-1   301				     ;		     'B' char	 [bp + 6]    //	L - symb attr
-1   302				     ;		     'C' char	 [bp + 4]    //
-1   303				     ;		     retAddr	 [bp + 2]
-1   304				     ;		     stored BP	 [bp]
-1   305				     ;		     ...
-1   306				     ;------------------------------------------------
-1   307				     ;Направление просмотра	 зависит	 от флага		    +
-    308				     направления DF,	значение  которого  можно	менять  с    +
-    309				     помощью команд CLD (DF:=0) и	STD (DF:=1).
-1   310
-1   311	0227			     DrawLine	     proc
-1   312	0227  55				     push bp
-1   313	0228  8B EC				     mov bp, sp			     ; Complete	stack frame
-1   314
-1   315	022A  8B 46 08				     mov ax, [bp + 8]
-1   316	022D  AB				     stosw
-1   317
-1   318	022E  8B 46 06				     mov ax, [bp + 6]
-1   319	0231  F3> AB				     rep stosw
-1   320
-1   321	0233  8B 46 04				     mov ax, [bp + 4]
-1   322	0236  AB				     stosw
-1   323
-1   324	0237  5D				     pop bp			     ; Stack frame
-1   325	0238  C3				     ret
-1   326	0239			     DrawLine	     endp
-1   327
-1   328				     ;------------------------------------------------
-1   329				     ;------------------------------------------------
-1   330
-    331
-    332
-    333	0239			     InterruptorMemEnd:
-    334
-    335	0239			     Main:
-    336	0239  FA				     cli
-    337	023A  BB 0000				     mov bx, 0
-    338	023D  8E C3				     mov es, bx
-    339	023F  BB 0024				     mov bx, 9*4			 ; DOS interruption address offset
-    340
-    341	0242  26: 8B 07				     mov ax, es:[bx]			 ; Old interrupt-09 handler
-    342	0245  A3 0132r				     mov Old09Ofs, ax
-Turbo Assembler	 Version 4.1	    03/07/23 18:22:12	    Page 7
+1   298				     ; Draws line on the screen	(Pattern ABB~BBC)
+1   299				     ;------------------------------------------------
+1   300				     ; Entry:	     DI	= start	addr to	draw
+1   301				     ;		     CX	= width	of line	(without A&C)
+1   302				     ;
+1   303				     ; Expects:	     ES	-> Video segment
+1   304				     ;		     DF	= 0 (CLD)
+1   305				     ;
+1   306				     ; Exit:	     None
+1   307				     ;
+1   308				     ; Destroys:     AX	CX DI
+1   309				     ;------------------------------------------------
+1   310				     ; Stack frame:
+1   311				     ;		     ...
+1   312				     ;		     'A' char	 [bp + 8]    //	H - color attr
+1   313				     ;		     'B' char	 [bp + 6]    //	L - symb attr
+1   314				     ;		     'C' char	 [bp + 4]    //
+1   315				     ;		     retAddr	 [bp + 2]
+1   316				     ;		     stored BP	 [bp]
+1   317				     ;		     ...
+1   318				     ;------------------------------------------------
+1   319				     ;Направление просмотра	 зависит	 от флага		    +
+    320				     направления DF,	значение  которого  можно	менять  с    +
+    321				     помощью команд CLD (DF:=0) и	STD (DF:=1).
+1   322
+1   323	0204			     DrawLine	     proc
+1   324	0204  55				     push bp
+1   325	0205  8B EC				     mov bp, sp			     ; Complete	stack frame
+1   326
+1   327	0207  8B 46 08				     mov ax, [bp + 8]
+1   328	020A  AB				     stosw
+1   329
+1   330	020B  8B 46 06				     mov ax, [bp + 6]
+1   331	020E  F3> AB				     rep stosw
+1   332
+1   333	0210  8B 46 04				     mov ax, [bp + 4]
+1   334	0213  AB				     stosw
+1   335
+1   336	0214  5D				     pop bp			     ; Stack frame
+1   337	0215  C3				     ret
+1   338	0216			     DrawLine	     endp
+1   339
+1   340				     ;------------------------------------------------
+1   341				     ;------------------------------------------------
+1   342
+Turbo Assembler	 Version 4.1	    03/07/23 19:49:14	    Page 7
 reghunt.asm
 
 
 
-    343	0248  26: 8B 47	02			     mov ax, es:[bx+2]
-    344	024C  A3 0134r				     mov Old09Seg, ax
-    345
-    346	024F  26: C7 07	0104r			     mov es:[bx], offset New09Int	 ; Set my interrupt-09 handler
-    347	0254  8C C8				     mov ax, cs
-    348	0256  26: 89 47	02			     mov es:[bx+2], ax
-    349
-    350
-    351	025A  BB 0020				     mov bx, 8*4			 ; DOS interruption address offset
+    343
+    344
+    345	0216			     InterruptorMemEnd:
+    346
+    347	0216			     Main:
+    348	0216  FA				     cli
+    349	0217  BB 0000				     mov bx, 0
+    350	021A  8E C3				     mov es, bx
+    351	021C  BB 0024				     mov bx, 9*4			 ; DOS interruption address offset
     352
-    353	025D  26: 8B 07				     mov ax, es:[bx]			 ; Old interrupt-08 handler
-    354	0260  A3 0172r				     mov Old08Ofs, ax
-    355	0263  26: 8B 47	02			     mov ax, es:[bx+2]
-    356	0267  A3 0174r				     mov Old08Seg, ax
+    353	021F  26: 8B 07				     mov ax, es:[bx]			 ; Old interrupt-09 handler
+    354	0222  A3 0137r				     mov Old09Ofs, ax
+    355	0225  26: 8B 47	02			     mov ax, es:[bx+2]
+    356	0229  A3 0139r				     mov Old09Seg, ax
     357
-    358	026A  26: C7 07	0137r			     mov es:[bx], offset New08Int	 ; Set my interrupt-08 handler
-    359	026F  8C C8				     mov ax, cs
-    360	0271  26: 89 47	02			     mov es:[bx+2], ax
-    361	0275  FB				     sti
+    358	022C  26: C7 07	0103r			     mov es:[bx], offset New09Int	 ; Set my interrupt-09 handler
+    359	0231  8C C8				     mov ax, cs
+    360	0233  26: 89 47	02			     mov es:[bx+2], ax
+    361
     362
-    363	0276  B8 3100				     mov ax, 3100h
-    364	0279  BA 0239r				     mov dx, offset InterruptorMemEnd	 ; Размер	необходимой	    +
-    365				     памяти
-    366	027C  C1 EA 04				     shr dx, 4				 ; В параграфе 16 байт
-    367	027F  42				     inc dx				 ; С округлением вверх
-    368
-    369	0280  CD 21				     int 21h
-    370
-    371				     end	     Start
-Turbo Assembler	 Version 4.1	    03/07/23 18:22:12	    Page 8
+    363	0237  BB 0020				     mov bx, 8*4			 ; DOS interruption address offset
+    364
+    365	023A  26: 8B 07				     mov ax, es:[bx]			 ; Old interrupt-08 handler
+    366	023D  A3 0189r				     mov Old08Ofs, ax
+    367	0240  26: 8B 47	02			     mov ax, es:[bx+2]
+    368	0244  A3 018Br				     mov Old08Seg, ax
+    369
+    370	0247  26: C7 07	013Cr			     mov es:[bx], offset New08Int	 ; Set my interrupt-08 handler
+    371	024C  8C C8				     mov ax, cs
+    372	024E  26: 89 47	02			     mov es:[bx+2], ax
+    373	0252  FB				     sti
+    374
+    375
+    376
+    377	0253  BB B800				     mov bx, 0b800h
+    378	0256  8E C3				     mov es, bx
+    379	0258  BB 0156				     mov bx, 342d
+    380
+    381	025B  1E 16 0E				     push ds ss	cs
+    382
+    383	025E  BA 0D00				     mov dx, 00D00h
+    384	0261  58				     pop ax
+    385	0262  E8 FF29				     call PrintNHex
+    386	0265  58				     pop ax
+    387	0266  E8 FF25				     call PrintNHex
+    388	0269  58				     pop ax
+    389	026A  E8 FF21				     call PrintNHex
+    390
+    391
+    392	026D  B8 3100				     mov ax, 3100h
+    393	0270  BA 0216r				     mov dx, offset InterruptorMemEnd	 ; Размер	необходимой	    +
+    394				     памяти
+    395	0273  C1 EA 04				     shr dx, 4				 ; В параграфе 16 байт
+    396	0276  42				     inc dx				 ; С округлением вверх
+    397
+    398	0277  CD 21				     int 21h
+    399
+Turbo Assembler	 Version 4.1	    03/07/23 19:49:14	    Page 8
+reghunt.asm
+
+
+
+    400				     end	     Start
+Turbo Assembler	 Version 4.1	    03/07/23 19:49:14	    Page 9
 Symbol Table
 
 
@@ -414,16 +448,16 @@ Symbol Name			  Type	 Value
 
 ??DATE				  Text	 "03/07/23"
 ??FILENAME			  Text	 "reghunt "
-??TIME				  Text	 "18:22:12"
+??TIME				  Text	 "19:49:14"
 ??VERSION			  Number 040A
 @32BIT				  Text	 0
-@@CONTROLKEY1			  Near	 DGROUP:0114
-@@CONTROLKEY2			  Near	 DGROUP:011C
-@@DONOTDRAW			  Near	 DGROUP:0165
-@@DONOTDRAWEND			  Near	 DGROUP:0165
-@@MIDDLESTEP			  Near	 DGROUP:01ED
-@@NOTCONTROLKEY			  Near	 DGROUP:011F
-@@PRINTDIGIT			  Near	 DGROUP:01B4
+@@CONTROLKEY1			  Near	 DGROUP:0118
+@@CONTROLKEY2			  Near	 DGROUP:0120
+@@DONOTDRAW			  Near	 DGROUP:017C
+@@DONOTDRAWEND			  Near	 DGROUP:017C
+@@MIDDLESTEP			  Near	 DGROUP:01CA
+@@NOTCONTROLKEY			  Near	 DGROUP:0123
+@@PRINTDIGIT			  Near	 DGROUP:0191
 @CODE				  Text	 DGROUP
 @CODESIZE			  Text	 0
 @CPU				  Text	 0707H
@@ -435,34 +469,34 @@ Symbol Name			  Type	 Value
 @MODEL				  Text	 1
 @STACK				  Text	 DGROUP
 @WORDSIZE			  Text	 2
-ALPHABET			  Near	 DGROUP:0177
-BOXASSETEND			  Near	 DGROUP:01B1
-BOXASSETFI			  Near	 DGROUP:01AD
-BOXASSETLB			  Near	 DGROUP:01A5
-BOXASSETLU			  Near	 DGROUP:018D
-BOXASSETL_			  Near	 DGROUP:01A9
-BOXASSETRB			  Near	 DGROUP:019D
-BOXASSETRU			  Near	 DGROUP:0195
-BOXASSETR_			  Near	 DGROUP:0199
-BOXASSETSTART			  Near	 DGROUP:018D
-BOXASSETSTEP			  Near	 DGROUP:0191
-BOXASSET_B			  Near	 DGROUP:01A1
-BOXASSET_U			  Near	 DGROUP:0191
-BOXSYMBOLS			  Near	 DGROUP:0187
-DRAWBOX				  Near	 DGROUP:01CC
-DRAWLINE			  Near	 DGROUP:0227
-INTERRUPTORMEMEND		  Near	 DGROUP:0239
-MAIN				  Near	 DGROUP:0239
-NEW08INT			  Near	 DGROUP:0137
-NEW09INT			  Near	 DGROUP:0104
-OLD08OFS			  Word	 DGROUP:0172
-OLD08SEG			  Word	 DGROUP:0174
-OLD09OFS			  Word	 DGROUP:0132
-OLD09SEG			  Word	 DGROUP:0134
-PRINTNHEX			  Near	 DGROUP:01B1
+ALPHABET			  Near	 DGROUP:0001
+BOXASSETEND			  Near	 DGROUP:003B
+BOXASSETFI			  Near	 DGROUP:0037
+BOXASSETLB			  Near	 DGROUP:002F
+BOXASSETLU			  Near	 DGROUP:0017
+BOXASSETL_			  Near	 DGROUP:0033
+BOXASSETRB			  Near	 DGROUP:0027
+BOXASSETRU			  Near	 DGROUP:001F
+BOXASSETR_			  Near	 DGROUP:0023
+BOXASSETSTART			  Near	 DGROUP:0017
+BOXASSETSTEP			  Near	 DGROUP:001B
+BOXASSET_B			  Near	 DGROUP:002B
+BOXASSET_U			  Near	 DGROUP:001B
+BOXSYMBOLS			  Near	 DGROUP:0011
+DRAWBOX				  Near	 DGROUP:01A9
+DRAWLINE			  Near	 DGROUP:0204
+INTERRUPTORMEMEND		  Near	 DGROUP:0216
+MAIN				  Near	 DGROUP:0216
+NEW08INT			  Near	 DGROUP:013C
+NEW09INT			  Near	 DGROUP:0103
+OLD08OFS			  Word	 DGROUP:0189
+OLD08SEG			  Word	 DGROUP:018B
+OLD09OFS			  Word	 DGROUP:0137
+OLD09SEG			  Word	 DGROUP:0139
+PRINTNHEX			  Near	 DGROUP:018E
 START				  Near	 DGROUP:0100
-STATE				  Near	 DGROUP:0103
-Turbo Assembler	 Version 4.1	    03/07/23 18:22:12	    Page 9
+STATE				  Near	 DGROUP:0000
+Turbo Assembler	 Version 4.1	    03/07/23 19:49:14	    Page 10
 Symbol Table
 
 
@@ -471,6 +505,6 @@ Symbol Table
 Groups & Segments		  Bit Size Align  Combine Class
 
 DGROUP				  Group
-  _DATA				  16  0000 Word	  Public  DATA
-  _TEXT				  16  0282 Word	  Public  CODE
+  _DATA				  16  003B Word	  Public  DATA
+  _TEXT				  16  0279 Word	  Public  CODE
 
