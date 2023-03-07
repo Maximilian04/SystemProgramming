@@ -1,96 +1,173 @@
-Turbo Assembler	 Version 4.1	    03/07/23 14:12:06	    Page 1
+Turbo Assembler	 Version 4.1	    03/07/23 16:13:34	    Page 1
 reghunt.asm
 
 
 
       1	0000			     .model tiny
       2	0000			     .code
-      3				     org 100h
-      4
-      5	0100  EB 01 90		     Start:	     jmp Main
+      3				     .286
+      4				     locals @@
+      5				     org 100h
       6
-      7
+      7	0100  EB 58 90		     Start:	     jmp Main
       8
-      9	0103			     Main:
-     10	0103  FA				     cli
-     11	0104  33 DB				     xor bx, bx
-     12	0106  8E C3				     mov es, bx
-     13	0108  BB 0024				     mov bx, 9*4
-     14
-     15	010B  26: 8B 07				     mov ax, es:[bx]
-     16	010E  A3 015Ar				     mov Old09Ofs, ax
-     17	0111  26: 8B 47	02			     mov ax, es:[bx+2]
-     18	0115  A3 015Cr				     mov Old09Seg, ax
+      9	0103  00		     State:	     db	0h
+     10
+     11
+     12				     ;------------------------------------------------
+     13				     ; Keyboard	intterupt handler
+     14				     ;------------------------------------------------
+     15				     ;
+     16				     ;	 Catches control keys &	sets (State) variable
+     17				     ;
+     18				     ;------------------------------------------------
      19
-     20	0118  26: C7 07	0135r			     mov es:[bx], offset New09
-     21	011D  8C C8				     mov ax, cs
-     22	011F  26: 89 47	02			     mov es:[bx+2], ax
-     23	0123  FB				     sti
+     20	0104			     New09Int	     proc
+     21	0104  50 53 06				     push ax bx	es	     ; Stored regs
+     22
+     23	0107  E4 60				     in	al, 60h		     ; Catch key code
      24
-     25	0124  B8 3100				     mov ax, 3100h
-     26	0127  BA 0176r				     mov dx, offset ProgramEnd	 ; Размер	необходимой памяти
-     27	012A  D1 EA D1 EA D1 EA	D1+		     shr dx, 4			 ; В параграфе 16 байт
-     28	      EA
-     29	0132  42				     inc dx			 ; С округлением вверх
-     30
-     31	0133  CD 21				     int 21h
-     32
-     33	0135			     New09	     proc
-     34	0135  50 53 06				     push ax bx	es
+     25	0109  3C 1D				     cmp al, 01Dh
+     26	010B  74 07				     je	@@ControlKey1
+     27	010D  3C 9D				     cmp al, 09Dh
+     28	010F  74 0B				     je	@@ControlKey2
+     29
+     30	0111  EB 0C 90				     jmp @@NotControlKey
+     31	0114					 @@ControlKey1:
+     32									     ; Invert State variable
+     33						     ; inc byte	ptr [State]
+     34	0114  80 36 0103r 01			     xor byte ptr [State], 01b
      35
-     36	0138  BB B800				     mov bx, 0b800h
-     37	013B  8E C3				     mov es, bx
-     38	013D  BB 0370				     mov bx, 160d*5 + 80d
-     39
-     40	0140  B4 4E				     mov ah, 4eh
-     41	0142  E4 60				     in	al, 60h
-     42	0144  26: 89 07				     mov es:[bx], ax
+     36	0119  EB 04 90				     jmp @@NotControlKey
+     37	011C					 @@ControlKey2:
+     38									     ; Invert State variable
+     39						     ; mov byte	ptr [State], 00b
+     40
+     41	011C  EB 01 90				     jmp @@NotControlKey
+     42	011F					 @@NotControlKey:
      43
-     44	0147  E4 61				     in	al, 61h
-     45	0149  0C 80				     or	al, 80h
-     46	014B  E6 61				     out 61h, al
-     47	014D  24 7F				     and al, not 80h
-     48	014F  E6 61				     out 61h, al
+     44	011F  E4 61				     in	al, 61h		     ; Set interruptor free
+     45	0121  0C 80				     or	al, 80h
+     46	0123  E6 61				     out 61h, al
+     47	0125  24 7F				     and al, not 80h
+     48	0127  E6 61				     out 61h, al
      49
-     50	0151  B0 20				     mov al, 20h
-     51	0153  E6 20				     out 20h, al
+     50	0129  B0 20				     mov al, 20h	     ; Set interruptor free
+     51	012B  E6 20				     out 20h, al
      52
-     53	0155  07 5B 58				     pop es bx ax
-     54
-     55
-     56						     ;iret
-     57
-Turbo Assembler	 Version 4.1	    03/07/23 14:12:06	    Page 2
+     53
+     54	012D  07 5B 58				     pop es bx ax	     ; Stored regs
+     55	0130  9C				     pushf
+     56	0131  9A				     db	09Ah		     ; CALL FAR
+     57	0132  0000		     Old09Ofs	     dw	0		     ; call old	09 interruption
+Turbo Assembler	 Version 4.1	    03/07/23 16:13:34	    Page 2
 reghunt.asm
 
 
 
-     58						     ;db 0eah			  ; JMP	FAR
+     58	0134  0000		     Old09Seg	     dw	0
      59
-     60	0158  9C				     pushf
-     61	0159  9A				     db	09Ah			 ; CALL	FAR
-     62	015A  0000		     Old09Ofs	     dw	0
-     63	015C  0000		     Old09Seg	     dw	0
-     64
-     65	015E  50 53 06				     push ax bx	es
-     66	0161  BB B800				     mov bx, 0b800h
-     67	0164  8E C3				     mov es, bx
-     68	0166  BB 036E				     mov bx, 160d*5 + 80d - 2
-     69	0169  B4 2F				     mov ah, 2fh
-     70
-     71	016B  E4 60				     in	al, 60h
-     72	016D  B0 51				     mov al, "Q"
-     73
-     74	016F  26: 89 07				     mov es:[bx], ax
-     75	0172  07 5B 58				     pop es bx ax
-     76
-     77	0175  CF				     iret
+     60	0136  CF				     iret
+     61	0137					     endp
+     62
+     63				     ;------------------------------------------------
+     64				     ;------------------------------------------------
+     65
+     66
+     67				     ;------------------------------------------------
+     68				     ; Timer intterupt handler
+     69				     ;------------------------------------------------
+     70				     ;
+     71				     ;	 Draws
+     72				     ;
+     73				     ;------------------------------------------------
+     74
+     75	0137			     New08Int	     proc
+     76	0137  50 53 06				     push ax bx	es	     ; Stored regs
+     77
      78
-     79	0176					     endp
-     80
-     81	0176			     ProgramEnd:
-     82				     end	     Start
-Turbo Assembler	 Version 4.1	    03/07/23 14:12:06	    Page 3
+     79	013A  BB B800				     mov bx, 0b800h
+     80	013D  8E C3				     mov es, bx
+     81	013F  BB 00C8				     mov bx, 200d
+     82
+     83	0142  A0 0103r				     mov al, byte ptr [State]
+     84	0145  26: 88 07				     mov byte ptr es:[bx], al
+     85
+     86	0148  80 3E 0103r 01			     cmp byte ptr [State], 01b
+     87	014D  75 03				     jne @@DoNotDraw
+     88
+     89						     ; mov byte	ptr es:[bx], 61d
+     90
+     91	014F  EB 01 90				     jmp @@DoNotDrawEnd
+     92	0152					 @@DoNotDraw:
+     93
+     94						     ; mov byte	ptr es:[bx], 62d
+     95
+     96	0152					 @@DoNotDrawEnd:
+     97						     ; in al, 61h	       ; Set interruptor free
+     98						     ; or al, 80h
+     99						     ; out 61h,	al
+    100						     ; and al, not 80h
+    101						     ; out 61h,	al
+    102
+    103	0152  B0 20				     mov al, 20h	     ; Set interruptor free
+    104	0154  E6 20				     out 20h, al
+    105
+    106	0156  07 5B 58				     pop es bx ax	     ; Stored regs
+    107
+    108
+    109						     ; pushf
+    110						     ; db 09Ah		       ; CALL FAR
+    111				     ; Old08Ofs	       dw 0		       ; call old 08 interruption
+    112				     ; Old08Seg	       dw 0
+    113
+    114	0159  CF				     iret
+Turbo Assembler	 Version 4.1	    03/07/23 16:13:34	    Page 3
+reghunt.asm
+
+
+
+    115	015A					     endp
+    116
+    117	015A			     InterruptorMemEnd:
+    118
+    119				     ;------------------------------------------------
+    120				     ;------------------------------------------------
+    121
+    122
+    123	015A			     Main:
+    124	015A  FA				     cli
+    125	015B  BB 0000				     mov bx, 0
+    126	015E  8E C3				     mov es, bx
+    127	0160  BB 0024				     mov bx, 9*4			 ; DOS interruption address offset
+    128
+    129	0163  26: 8B 07				     mov ax, es:[bx]			 ; Old interrupt-09 handler
+    130	0166  A3 0132r				     mov Old09Ofs, ax
+    131	0169  26: 8B 47	02			     mov ax, es:[bx+2]
+    132	016D  A3 0134r				     mov Old09Seg, ax
+    133
+    134	0170  26: C7 07	0104r			     mov es:[bx], offset New09Int	 ; Set my interrupt-09 handler
+    135	0175  8C C8				     mov ax, cs
+    136	0177  26: 89 47	02			     mov es:[bx+2], ax
+    137
+    138
+    139	017B  BB 0020				     mov bx, 8*4			 ; DOS interruption address offset
+    140
+    141	017E  26: C7 07	0137r			     mov es:[bx], offset New08Int	 ; Set my interrupt-08 handler
+    142	0183  8C C8				     mov ax, cs
+    143	0185  26: 89 47	02			     mov es:[bx+2], ax
+    144	0189  FB				     sti
+    145
+    146	018A  B8 3100				     mov ax, 3100h
+    147	018D  BA 015Ar				     mov dx, offset InterruptorMemEnd	 ; Размер	необходимой	    +
+    148				     памяти
+    149	0190  C1 EA 04				     shr dx, 4				 ; В параграфе 16 байт
+    150	0193  42				     inc dx				 ; С округлением вверх
+    151
+    152	0194  CD 21				     int 21h
+    153
+    154				     end	     Start
+Turbo Assembler	 Version 4.1	    03/07/23 16:13:34	    Page 4
 Symbol Table
 
 
@@ -100,12 +177,17 @@ Symbol Name			  Type	 Value
 
 ??DATE				  Text	 "03/07/23"
 ??FILENAME			  Text	 "reghunt "
-??TIME				  Text	 "14:12:05"
+??TIME				  Text	 "16:13:34"
 ??VERSION			  Number 040A
 @32BIT				  Text	 0
+@@CONTROLKEY1			  Near	 DGROUP:0114
+@@CONTROLKEY2			  Near	 DGROUP:011C
+@@DONOTDRAW			  Near	 DGROUP:0152
+@@DONOTDRAWEND			  Near	 DGROUP:0152
+@@NOTCONTROLKEY			  Near	 DGROUP:011F
 @CODE				  Text	 DGROUP
 @CODESIZE			  Text	 0
-@CPU				  Text	 0101H
+@CPU				  Text	 0707H
 @CURSEG				  Text	 _TEXT
 @DATA				  Text	 DGROUP
 @DATASIZE			  Text	 0
@@ -114,16 +196,18 @@ Symbol Name			  Type	 Value
 @MODEL				  Text	 1
 @STACK				  Text	 DGROUP
 @WORDSIZE			  Text	 2
-MAIN				  Near	 DGROUP:0103
-NEW09				  Near	 DGROUP:0135
-OLD09OFS			  Word	 DGROUP:015A
-OLD09SEG			  Word	 DGROUP:015C
-PROGRAMEND			  Near	 DGROUP:0176
+INTERRUPTORMEMEND		  Near	 DGROUP:015A
+MAIN				  Near	 DGROUP:015A
+NEW08INT			  Near	 DGROUP:0137
+NEW09INT			  Near	 DGROUP:0104
+OLD09OFS			  Word	 DGROUP:0132
+OLD09SEG			  Word	 DGROUP:0134
 START				  Near	 DGROUP:0100
+STATE				  Near	 DGROUP:0103
 
 Groups & Segments		  Bit Size Align  Combine Class
 
 DGROUP				  Group
   _DATA				  16  0000 Word	  Public  DATA
-  _TEXT				  16  0176 Word	  Public  CODE
+  _TEXT				  16  0196 Word	  Public  CODE
 

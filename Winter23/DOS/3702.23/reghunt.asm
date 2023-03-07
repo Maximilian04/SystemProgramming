@@ -6,12 +6,40 @@ org 100h
 
 Start:          jmp Main
 
+State:          db 0h
 
-New09Int        proc                    ; Keyboard interruption
-                                        ; Must catch control keys
-                push ax bx es           
+
+;------------------------------------------------
+; Keyboard intterupt handler
+;------------------------------------------------
+;
+;   Catches control keys & sets (State) variable
+;
+;------------------------------------------------
+
+New09Int        proc
+                push ax bx es           ; Stored regs
 
                 in al, 60h              ; Catch key code
+
+                cmp al, 01Dh
+                je @@ControlKey1
+                cmp al, 09Dh
+                je @@ControlKey2
+
+                jmp @@NotControlKey
+            @@ControlKey1:
+                                        ; Invert State variable
+                ; inc byte ptr [State]
+                xor byte ptr [State], 01b
+
+                jmp @@NotControlKey
+            @@ControlKey2:
+                                        ; Invert State variable
+                ; mov byte ptr [State], 00b
+
+                jmp @@NotControlKey
+            @@NotControlKey:
 
                 in al, 61h              ; Set interruptor free
                 or al, 80h
@@ -22,44 +50,103 @@ New09Int        proc                    ; Keyboard interruption
                 mov al, 20h             ; Set interruptor free
                 out 20h, al
 
-                pop es bx ax
 
-
+                pop es bx ax            ; Stored regs
                 pushf
-                db 09Ah                     ; CALL FAR
-Old09Ofs        dw 0                        ; call old 09 interruption
+                db 09Ah                 ; CALL FAR
+Old09Ofs        dw 0                    ; call old 09 interruption
 Old09Seg        dw 0
-
-                push ax bx es
-
-                pop es bx ax
 
                 iret
                 endp
 
-ProgramEnd:
+;------------------------------------------------
+;------------------------------------------------
+
+
+;------------------------------------------------
+; Timer intterupt handler
+;------------------------------------------------
+;
+;   Draws
+;
+;------------------------------------------------
+
+New08Int        proc
+                push ax bx es           ; Stored regs
+
+
+                mov bx, 0b800h
+                mov es, bx
+                mov bx, 200d
+
+                mov al, byte ptr [State]
+                mov byte ptr es:[bx], al
+
+                cmp byte ptr [State], 01b
+                jne @@DoNotDraw
+
+                ; mov byte ptr es:[bx], 61d
+
+                jmp @@DoNotDrawEnd
+            @@DoNotDraw:
+
+                ; mov byte ptr es:[bx], 62d
+
+            @@DoNotDrawEnd:
+                ; in al, 61h              ; Set interruptor free
+                ; or al, 80h
+                ; out 61h, al
+                ; and al, not 80h
+                ; out 61h, al
+
+                mov al, 20h             ; Set interruptor free
+                out 20h, al
+
+                pop es bx ax            ; Stored regs
+
+
+                ; pushf
+                ; db 09Ah                 ; CALL FAR
+; Old08Ofs        dw 0                    ; call old 08 interruption
+; Old08Seg        dw 0
+
+                iret
+                endp
+
+InterruptorMemEnd:
+
+;------------------------------------------------
+;------------------------------------------------
 
 
 Main:
                 cli
                 mov bx, 0
                 mov es, bx
-                mov bx, 9*4                 ; DOS interruption address offset
+                mov bx, 9*4                         ; DOS interruption address offset
 
-                mov ax, es:[bx]             ; Old interrupt-09 handler
+                mov ax, es:[bx]                     ; Old interrupt-09 handler
                 mov Old09Ofs, ax
                 mov ax, es:[bx+2]
                 mov Old09Seg, ax
 
-                mov es:[bx], offset New09Int; Set my interrupt-09 handler
+                mov es:[bx], offset New09Int        ; Set my interrupt-09 handler
+                mov ax, cs
+                mov es:[bx+2], ax
+
+
+                mov bx, 8*4                         ; DOS interruption address offset
+
+                mov es:[bx], offset New08Int        ; Set my interrupt-08 handler
                 mov ax, cs
                 mov es:[bx+2], ax
                 sti
 
                 mov ax, 3100h
-                mov dx, offset ProgramEnd   ; Размер необходимой памяти
-                shr dx, 4                   ; В параграфе 16 байт
-                inc dx                      ; С округлением вверх
+                mov dx, offset InterruptorMemEnd    ; Размер необходимой памяти
+                shr dx, 4                           ; В параграфе 16 байт
+                inc dx                              ; С округлением вверх
 
                 int 21h
 
