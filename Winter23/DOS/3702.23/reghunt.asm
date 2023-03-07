@@ -6,7 +6,8 @@ org 100h
 
 Start:          jmp Main
 
-State:          db 0h
+
+State:          db 0DDh
 
 
 ;------------------------------------------------
@@ -73,7 +74,7 @@ Old09Seg        dw 0
 ;------------------------------------------------
 
 New08Int        proc
-                push ax bx es           ; Stored regs
+                push ax bx cx dx ds es si  ; Stored regs
 
 
                 mov bx, 0b800h
@@ -82,6 +83,13 @@ New08Int        proc
 
                 mov al, byte ptr [State]
                 mov byte ptr es:[bx], al
+
+                mov dx, cs
+                mov ds, dx
+                mov dx, 00A00h
+                sub bx, 2d
+                mov ah, 0d
+                call PrintNHex
 
                 cmp byte ptr [State], 01b
                 jne @@DoNotDraw
@@ -103,22 +111,28 @@ New08Int        proc
                 mov al, 20h             ; Set interruptor free
                 out 20h, al
 
-                pop es bx ax            ; Stored regs
+                pop si es ds dx cx bx ax   ; Stored regs
 
 
-                ; pushf
-                ; db 09Ah                 ; CALL FAR
-; Old08Ofs        dw 0                    ; call old 08 interruption
-; Old08Seg        dw 0
+                pushf
+                db 09Ah                 ; CALL FAR
+Old08Ofs        dw 0                    ; call old 08 interruption
+Old08Seg        dw 0
 
                 iret
                 endp
 
+;------------------------------------------------
+;------------------------------------------------
+
+
+include ..\LianLib\Alphabet.asm
+include ..\LianLib\PrntNHex.asm
+include ..\LianLib\ProBox.asm
+include ..\LianLib\DrawLine.asm
+
+
 InterruptorMemEnd:
-
-;------------------------------------------------
-;------------------------------------------------
-
 
 Main:
                 cli
@@ -137,6 +151,11 @@ Main:
 
 
                 mov bx, 8*4                         ; DOS interruption address offset
+
+                mov ax, es:[bx]                     ; Old interrupt-08 handler
+                mov Old08Ofs, ax
+                mov ax, es:[bx+2]
+                mov Old08Seg, ax
 
                 mov es:[bx], offset New08Int        ; Set my interrupt-08 handler
                 mov ax, cs
