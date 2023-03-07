@@ -6,6 +6,7 @@
 ;               CL = width of box (without frame)
 ;
 ; Expects:      ES -> Video segment
+;               DS -> Data segment
 ;
 ; Exit:         None
 ;

@@ -15,27 +15,25 @@ Start:          jmp Main
 ;------------------------------------------------
 
 New09Int        proc
-                push ax bx es ds        ; Stored regs
-                mov ax, cs
-                mov ds, ax
+                push ax                 ; Stored regs
+                ; mov ax, cs
+                ; mov ds, ax
 
                 in al, 60h              ; Catch key code
 
-                cmp al, 01Dh
+                cmp al, 01Dh            ; ctrl is pressed
                 je @@ControlKey1
-                cmp al, 09Dh
+                cmp al, 09Dh            ; ctrl is released
                 je @@ControlKey2
 
                 jmp @@NotControlKey
             @@ControlKey1:
                                         ; Invert State variable
-                ; inc byte ptr [State]
-                xor byte ptr [State], 11b
+                xor byte ptr cs:[State], 01b
 
                 jmp @@NotControlKey
             @@ControlKey2:
                                         ; Invert State variable
-                ; mov byte ptr [State], 00b
 
                 jmp @@NotControlKey
             @@NotControlKey:
@@ -50,7 +48,7 @@ New09Int        proc
                 out 20h, al
 
 
-                pop ds es bx ax         ; Stored regs
+                pop ax                  ; Stored regs
                 pushf
                 db 09Ah                 ; CALL FAR
 Old09Ofs        dw 0                    ; call old 09 interruption
@@ -72,38 +70,31 @@ Old09Seg        dw 0
 ;------------------------------------------------
 
 New08Int        proc
-                push ax bx cx dx ds es si  ; Stored regs
+                push ax bx cx dx ds es si di    ; Stored regs
 
-                mov bx, 0b800h
+                mov bx, 0b800h                  ; ES -> vidmem segment
                 mov es, bx
-                mov bx, 200d
-
-                mov dx, cs
-                mov ds, dx
-
-                mov al, byte ptr [State]
-                mov byte ptr es:[bx], al
+                mov bx, cs                      ; DS -> datasegment
+                mov ds, bx
 
 
-                push ds ss cs
+                ; mov al, byte ptr [State]
+                ; mov byte ptr es:[bx], al
 
-                mov dx, 00A00h
-                sub bx, 2d
-                mov ah, 0d
-                call PrintNHex
 
-                mov dx, 00E00h
-                pop ax
-                call PrintNHex
-                pop ax
-                call PrintNHex
-                pop ax
-                call PrintNHex
+                ; push ds
 
-                cmp byte ptr [State], 011b
-                jne @@DoNotDraw
+                ; sub bx, 2d
+                ; mov ah, 0d
+                ; call PrintNHex
 
-                ; mov byte ptr es:[bx], 61d
+                ; cmp byte ptr [State], 011b
+                test byte ptr [State], 01b
+                jz @@DoNotDraw
+
+                ; xor byte ptr [State], 01b
+                
+                call DrawRegBox
 
                 jmp @@DoNotDrawEnd
             @@DoNotDraw:
@@ -111,16 +102,11 @@ New08Int        proc
                 ; mov byte ptr es:[bx], 62d
 
             @@DoNotDrawEnd:
-                ; in al, 61h              ; Set interruptor free
-                ; or al, 80h
-                ; out 61h, al
-                ; and al, not 80h
-                ; out 61h, al
 
                 mov al, 20h             ; Set interruptor free
                 out 20h, al
 
-                pop si es ds dx cx bx ax   ; Stored regs
+                pop di si es ds dx cx bx ax     ; Stored regs
 
 
                 pushf
@@ -140,8 +126,102 @@ include ..\LianLib\Alphabet.asm
 ; .code
 
 include ..\LianLib\PrntNHex.asm
-include ..\LianLib\ProBox.asm
+; include ..\LianLib\ProBox.asm
 include ..\LianLib\DrawLine.asm
+
+
+;------------------------------------------------
+; Draws box for registers on the screen
+;------------------------------------------------
+; Entry:        ...
+;
+; Expects:      ES -> Video segment
+;               DS -> Data segment
+;
+; Exit:         None
+;
+; Destroys:     AX BX CX DX DI
+;               BX = start addr to draw
+;               CH = height of box (without frame)
+;               CL = width of box (without frame)
+;------------------------------------------------
+; Stack frame:
+;               ...
+;               retAddr     [bp + 2]
+;               stored BP   [bp]
+;               stored CX   [bp - 2]    // size
+;               ...
+;------------------------------------------------
+
+DrawRegBox      proc
+                push bp
+                mov bp, sp                      ; Complete stack frame
+
+                mov bx, 0d                      ; box position
+                mov cl, 10d                     ; box width
+                mov ch, 12d                     ; box height
+
+                push cx
+
+                mov ah, 00Eh                    ; box color
+
+                                                ;-------------------------------------------
+                                                ; Upper line
+                mov di, bx
+                mov cx, [bp - 2]
+                mov ch, 0
+                mov al, byte ptr [BoxAssetLU + 2]
+                push ax
+                mov al, byte ptr [BoxAsset_U + 2]
+                push ax
+                mov al, byte ptr [BoxAssetRU + 2]
+                push ax
+                call DrawLine
+                add sp, 2*3d
+                                                ;-------------------------------------------
+                                                ; Middle line
+                mov cx, [bp - 2]
+                mov dh, 0
+                mov dl, ch
+@@MiddleStep:                                   ; <-----------------\
+                                                ;                   |
+                add bx, 160d                    ;                   |
+                mov di, bx                      ;                   |
+                mov cx, [bp - 2]                ;                   |
+                mov ch, 0                       ;                   |
+                mov al, byte ptr [BoxAssetL_ + 2];                  |
+                push ax                         ;                   |
+                mov al, byte ptr [BoxAssetFI + 2];                  |
+                push ax                         ;                   |
+                mov al, byte ptr [BoxAssetR_ + 2];                  |
+                push ax                         ;                   |
+                call DrawLine                   ;                   |
+                add sp, 2*3d                    ;                   |
+                dec dx                          ;                   |
+                jnz @@MiddleStep                ; >-----------------/
+                                                ;-------------------------------------------
+                                                ; Bottom line
+                add bx, 160d
+                mov di, bx
+                mov cx, [bp - 2]
+                mov ch, 0
+                mov al, byte ptr [BoxAssetLB + 2]
+                push ax
+                mov al, byte ptr [BoxAsset_B + 2]
+                push ax
+                mov al, byte ptr [BoxAssetRB + 2]
+                push ax
+                call DrawLine
+                add sp, 2*3d
+                                                ;-------------------------------------------
+
+                pop cx
+                pop bp                          ; Stack frame
+                ret
+DrawRegBox      endp
+
+;------------------------------------------------
+;------------------------------------------------
 
 
 InterruptorMemEnd:
@@ -176,19 +256,19 @@ Main:
 
 
 
-                mov bx, 0b800h
-                mov es, bx
-                mov bx, 342d
+                ; mov bx, 0b800h
+                ; mov es, bx
+                ; mov bx, 342d
 
-                push ds ss cs
+                ; push ds ss cs
 
-                mov dx, 00D00h
-                pop ax
-                call PrintNHex
-                pop ax
-                call PrintNHex
-                pop ax
-                call PrintNHex
+                ; mov dx, 00D00h
+                ; pop ax
+                ; call PrintNHex
+                ; pop ax
+                ; call PrintNHex
+                ; pop ax
+                ; call PrintNHex
 
 
                 mov ax, 3100h
