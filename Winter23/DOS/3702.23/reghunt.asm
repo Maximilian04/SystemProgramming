@@ -134,10 +134,10 @@ Old08Seg        dw 0
 ;------------------------------------------------
 ;------------------------------------------------
 
-.data
+; .data
 State:          db 001h
 include ..\LianLib\Alphabet.asm
-.code
+; .code
 
 include ..\LianLib\PrntNHex.asm
 include ..\LianLib\ProBox.asm
