@@ -4,6 +4,11 @@
 locals @@
 org 100h
 
+boxWidth  = 10d
+boxHeight = 12d
+boxTheme  = 2
+boxColor  = 00Eh
+
 Start:          jmp Main
 
 ;------------------------------------------------
@@ -88,7 +93,6 @@ New08Int        proc
                 ; mov ah, 0d
                 ; call PrintNHex
 
-                ; cmp byte ptr [State], 011b
                 test byte ptr [State], 01b
                 jz @@DoNotDraw
 
@@ -96,12 +100,22 @@ New08Int        proc
                 
                 call DrawRegBox
 
+                or byte ptr cs:[State], 10b
                 jmp @@DoNotDrawEnd
-            @@DoNotDraw:
+        @@DoNotDraw:
 
-                ; mov byte ptr es:[bx], 62d
+                test byte ptr [State], 10b
+                jz @@DoNotRedrawOff
 
-            @@DoNotDrawEnd:
+                mov cx, 500d
+                mov ax, 0
+                mov word ptr es:[0], ax
+
+
+            @@DoNotRedrawOff:
+
+                and byte ptr cs:[State], not 10b
+        @@DoNotDrawEnd:
 
                 mov al, 20h             ; Set interruptor free
                 out 20h, al
@@ -121,8 +135,14 @@ Old08Seg        dw 0
 ;------------------------------------------------
 
 ; .data
-State:          db 001h
 include ..\LianLib\Alphabet.asm
+    ;   State variable:
+    ; mask | meaning
+    ; -----+---------
+    ; 0001 | Box is on (1) / off (0)
+    ; 0010 | Box was on (1) / off (0) last timer intr
+State:          db 001h
+Buffer1:        db (boxHeight * boxWidth) DUP(?)
 ; .code
 
 include ..\LianLib\PrntNHex.asm
@@ -158,23 +178,23 @@ DrawRegBox      proc
                 mov bp, sp                      ; Complete stack frame
 
                 mov bx, 0d                      ; box position
-                mov cl, 10d                     ; box width
-                mov ch, 12d                     ; box height
+                mov cl, boxWidth                ; box width
+                mov ch, boxHeight               ; box height
 
                 push cx
 
-                mov ah, 00Eh                    ; box color
+                mov ah, boxColor                ; box color
 
                                                 ;-------------------------------------------
                                                 ; Upper line
                 mov di, bx
                 mov cx, [bp - 2]
                 mov ch, 0
-                mov al, byte ptr [BoxAssetLU + 2]
+                mov al, byte ptr [BoxAssetLU + boxTheme]
                 push ax
-                mov al, byte ptr [BoxAsset_U + 2]
+                mov al, byte ptr [BoxAsset_U + boxTheme]
                 push ax
-                mov al, byte ptr [BoxAssetRU + 2]
+                mov al, byte ptr [BoxAssetRU + boxTheme]
                 push ax
                 call DrawLine
                 add sp, 2*3d
@@ -189,11 +209,11 @@ DrawRegBox      proc
                 mov di, bx                      ;                   |
                 mov cx, [bp - 2]                ;                   |
                 mov ch, 0                       ;                   |
-                mov al, byte ptr [BoxAssetL_ + 2];                  |
+                mov al, byte ptr [BoxAssetL_ + boxTheme];                  |
                 push ax                         ;                   |
-                mov al, byte ptr [BoxAssetFI + 2];                  |
+                mov al, byte ptr [BoxAssetFI + boxTheme];                  |
                 push ax                         ;                   |
-                mov al, byte ptr [BoxAssetR_ + 2];                  |
+                mov al, byte ptr [BoxAssetR_ + boxTheme];                  |
                 push ax                         ;                   |
                 call DrawLine                   ;                   |
                 add sp, 2*3d                    ;                   |
@@ -205,11 +225,11 @@ DrawRegBox      proc
                 mov di, bx
                 mov cx, [bp - 2]
                 mov ch, 0
-                mov al, byte ptr [BoxAssetLB + 2]
+                mov al, byte ptr [BoxAssetLB + boxTheme]
                 push ax
-                mov al, byte ptr [BoxAsset_B + 2]
+                mov al, byte ptr [BoxAsset_B + boxTheme]
                 push ax
-                mov al, byte ptr [BoxAssetRB + 2]
+                mov al, byte ptr [BoxAssetRB + boxTheme]
                 push ax
                 call DrawLine
                 add sp, 2*3d
