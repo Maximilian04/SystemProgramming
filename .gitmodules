@@ -1,3 +1,6 @@
 [submodule "Winter23/Algths/CodeReview"]
 	path = Winter23/Algths/CodeReview
 	url = https://github.com/MaximilianYan/CodeReview
+[submodule "Winter23/MiptExamples"]
+	path = Winter23/MiptExamples
+	url = https://github.com/MaximilianYan/MiptExamples
