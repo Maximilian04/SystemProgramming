@@ -99,8 +99,10 @@ New08Int        proc
                 jz @@RedrawOn                   ; >-----------------\
                                                 ;                   |
                                                 ;                   |
-                ; call SaveScreenDiffs            ;                   |   < drawing ON, prev. was ON
+                call SaveScreenDiffs            ;                   |   < drawing ON, prev. was ON
                 call DrawRegBox                 ;                   |
+                mov si, offset buffer2          ;                   |
+                call SaveScreen                 ;                   |
                                                 ;                   |
                                                 ;                   |
                 jmp @@DoNotDrawEnd              ; >>========\\      |
@@ -108,8 +110,11 @@ New08Int        proc
                 or byte ptr cs:[State], 10b     ;           ||      |
                                                 ;           ||      |
                                                 ;           ||      |
-                call SaveScreen                 ;           ||      |   < drawing ON, prev. was OFF
-                call DrawRegBox                 ;                   |
+                mov si, offset buffer1          ;           ||      |   < drawing ON, prev. was OFF
+                call SaveScreen                 ;           ||      |
+                call DrawRegBox                 ;           ||      |
+                mov si, offset buffer2          ;           ||      |
+                call SaveScreen                 ;           ||      |
                                                 ;           ||      |
                                                 ;           ||      |
                 jmp @@DoNotDrawEnd              ; >>========\\      |
@@ -259,12 +264,11 @@ DrawRegBox      endp
 
 
 ;------------------------------------------------
-; Save screen into buffer1
+; Save screen into various buffer
 ;------------------------------------------------
-; Entry:        ...
+; Entry:        SI = offset of the bufffer
 ;
 ; Expects:      ES -> Video segment
-;               DS -> Data segment
 ;
 ; Exit:         None
 ;
@@ -293,10 +297,6 @@ SaveScreen      proc
 
                 push cx
 
-                
-                mov si, offset buffer1
-                                                ; Upper line
-                                                ; Middle line
                 mov cx, [bp - 2]
                 mov dh, 0
                 mov dl, ch
@@ -319,7 +319,6 @@ SaveScreen      proc
                                                 ;                   |
                 dec dx                          ;                   |
                 jnz @@OneLine                   ; >-----------------/
-                                                ; Bottom line
 
                 pop cx
                 pop bp                          ; Stack frame
@@ -336,7 +335,6 @@ SaveScreen      endp
 ; Entry:        ...
 ;
 ; Expects:      ES -> Video segment
-;               DS -> Data segment
 ;
 ; Exit:         None
 ;
@@ -367,8 +365,7 @@ RestoreScreen   proc
 
                 
                 mov si, offset buffer1
-                                                ; Upper line
-                                                ; Middle line
+
                 mov cx, [bp - 2]
                 mov dh, 0
                 mov dl, ch
@@ -391,12 +388,88 @@ RestoreScreen   proc
                                                 ;                   |
                 dec dx                          ;                   |
                 jnz @@OneLine                   ; >-----------------/
-                                                ; Bottom line
 
                 pop cx
                 pop bp                          ; Stack frame
                 ret
 RestoreScreen   endp
+
+;------------------------------------------------
+;------------------------------------------------
+
+
+;------------------------------------------------
+; Update saved screen in buffer1
+;------------------------------------------------
+; Entry:        SI = offset of the bufffer
+;
+; Expects:      ES -> Video segment
+;
+; Exit:         None
+;
+; Destroys:     AX BX CX DX DI SI
+;               BX = start addr to draw
+;               CH = height of box (with frame)
+;               CL = width of box (with frame)
+;------------------------------------------------
+; Stack frame:
+;               ...
+;               retAddr     [bp + 2]
+;               stored BP   [bp]
+;               stored CX   [bp - 2]    // size
+;               ...
+;------------------------------------------------
+
+SaveScreenDiffs proc
+                push bp
+                mov bp, sp                      ; Complete stack frame
+
+                mov bx, 0d                      ; box position
+                mov cl, boxWidth                ; box area width
+                add cl, 2d
+                mov ch, boxHeight               ; box area height
+                add ch, 2d
+
+                push cx
+
+                mov si, offset buffer2
+
+                mov cx, [bp - 2]
+                mov dh, 0
+                mov dl, ch
+@@OneLine:                                      ; <-----------------\
+                                                ;                   |
+                mov di, bx                      ;                   |
+                mov cx, [bp - 2]                ;                   |
+                mov ch, 0                       ;                   |
+                                                ;                   |
+            @@OneWord:                          ; <-----\           |
+                                                ;       |           |
+                mov ax, word ptr es:[di]        ;       |           |
+                cmp word ptr cs:[si], ax        ;       |           |
+                je @@NoUpdate                   ; <<=\\ |           |
+                                                ;    || |           |
+                sub si, offset buffer2          ;    || |           |
+                add si, offset buffer1          ;    || |           |
+                mov word ptr cs:[si], ax        ;    || |           |
+                sub si, offset buffer1          ;    || |           |
+                add si, offset buffer2          ;    || |           |
+                                                ;    || |           |
+                @@NoUpdate:                     ; >>=// |           |
+                add di, 2d                      ;       |           |
+                add si, 2d                      ;       |           |
+                                                ;       |           |
+                loop @@OneWord                  ; >-----/           |
+                                                ;                   |
+                add bx, 160d                    ;                   |
+                                                ;                   |
+                dec dx                          ;                   |
+                jnz @@OneLine                   ; >-----------------/
+
+                pop cx
+                pop bp                          ; Stack frame
+                ret
+SaveScreenDiffs endp
 
 ;------------------------------------------------
 ;------------------------------------------------
