@@ -93,29 +93,42 @@ New08Int        proc
                 ; mov ah, 0d
                 ; call PrintNHex
 
-                test byte ptr [State], 01b
-                jz @@DoNotDraw
-
-                ; xor byte ptr [State], 01b
-                
-                call DrawRegBox
-
-                or byte ptr cs:[State], 10b
-                jmp @@DoNotDrawEnd
-        @@DoNotDraw:
-
-                test byte ptr [State], 10b
-                jz @@DoNotRedrawOff
-
-                mov cx, 500d
-                mov ax, 0
-                mov word ptr es:[0], ax
-
-
-            @@DoNotRedrawOff:
-
-                and byte ptr cs:[State], not 10b
-        @@DoNotDrawEnd:
+                test byte ptr cs:[State], 01b
+                jz @@DoNotDraw                  ; >-----------------\
+                test byte ptr [State], 10b      ;                   |
+                jz @@RedrawOn                   ; >-----------------\
+                                                ;                   |
+                                                ;                   |
+                ; call SaveScreenDiffs            ;                   |   < drawing ON, prev. was ON
+                call DrawRegBox                 ;                   |
+                                                ;                   |
+                                                ;                   |
+                jmp @@DoNotDrawEnd              ; >>========\\      |
+            @@RedrawOn:                         ;           ||      |
+                or byte ptr cs:[State], 10b     ;           ||      |
+                                                ;           ||      |
+                                                ;           ||      |
+                call SaveScreen                 ;           ||      |   < drawing ON, prev. was OFF
+                call DrawRegBox                 ;                   |
+                                                ;           ||      |
+                                                ;           ||      |
+                jmp @@DoNotDrawEnd              ; >>========\\      |
+        @@DoNotDraw:                            ; <---------++------/
+                test byte ptr [State], 10b      ;           ||
+                jz @@DoNotRedrawOff             ; >---------++------\
+                and byte ptr cs:[State], not 10b;           ||      |
+                                                ;           ||      |
+                                                ;           ||      |
+                call RestoreScreen              ;           ||      |   < drawing OFF, prev. was ON
+                                                ;           ||      |
+                                                ;           ||      |
+                jmp @@DoNotDrawEnd              ; >>========\\      |
+            @@DoNotRedrawOff:                   ; <---------++------/
+                                                ;           ||
+                                                ;           ||          < drawing OFF, prev. was OFF
+                                                ;           ||
+                                                ;           ||
+        @@DoNotDrawEnd:                         ; <<========//
 
                 mov al, 20h             ; Set interruptor free
                 out 20h, al
@@ -142,7 +155,8 @@ include ..\LianLib\Alphabet.asm
     ; 0001 | Box is on (1) / off (0)
     ; 0010 | Box was on (1) / off (0) last timer intr
 State:          db 001h
-Buffer1:        db (boxHeight * boxWidth) DUP(?)
+Buffer1:        dw ((boxHeight + 2) * (boxWidth + 2)) DUP(?)    ; Info to restore (modified first screen)
+Buffer2:        dw ((boxHeight + 2) * (boxWidth + 2)) DUP(?)    ; Info to compare (previous screen)
 ; .code
 
 include ..\LianLib\PrntNHex.asm
@@ -209,11 +223,11 @@ DrawRegBox      proc
                 mov di, bx                      ;                   |
                 mov cx, [bp - 2]                ;                   |
                 mov ch, 0                       ;                   |
-                mov al, byte ptr [BoxAssetL_ + boxTheme];                  |
+                mov al, byte ptr [BoxAssetL_ + boxTheme];           |
                 push ax                         ;                   |
-                mov al, byte ptr [BoxAssetFI + boxTheme];                  |
+                mov al, byte ptr [BoxAssetFI + boxTheme];           |
                 push ax                         ;                   |
-                mov al, byte ptr [BoxAssetR_ + boxTheme];                  |
+                mov al, byte ptr [BoxAssetR_ + boxTheme];           |
                 push ax                         ;                   |
                 call DrawLine                   ;                   |
                 add sp, 2*3d                    ;                   |
@@ -239,6 +253,150 @@ DrawRegBox      proc
                 pop bp                          ; Stack frame
                 ret
 DrawRegBox      endp
+
+;------------------------------------------------
+;------------------------------------------------
+
+
+;------------------------------------------------
+; Save screen into buffer1
+;------------------------------------------------
+; Entry:        ...
+;
+; Expects:      ES -> Video segment
+;               DS -> Data segment
+;
+; Exit:         None
+;
+; Destroys:     AX BX CX DX DI SI
+;               BX = start addr to draw
+;               CH = height of box (with frame)
+;               CL = width of box (with frame)
+;------------------------------------------------
+; Stack frame:
+;               ...
+;               retAddr     [bp + 2]
+;               stored BP   [bp]
+;               stored CX   [bp - 2]    // size
+;               ...
+;------------------------------------------------
+
+SaveScreen      proc
+                push bp
+                mov bp, sp                      ; Complete stack frame
+
+                mov bx, 0d                      ; box position
+                mov cl, boxWidth                ; box area width
+                add cl, 2d
+                mov ch, boxHeight               ; box area height
+                add ch, 2d
+
+                push cx
+
+                
+                mov si, offset buffer1
+                                                ; Upper line
+                                                ; Middle line
+                mov cx, [bp - 2]
+                mov dh, 0
+                mov dl, ch
+@@OneLine:                                      ; <-----------------\
+                                                ;                   |
+                mov di, bx                      ;                   |
+                mov cx, [bp - 2]                ;                   |
+                mov ch, 0                       ;                   |
+                                                ;                   |
+            @@OneWord:                          ; <-----\           |
+                                                ;       |           |
+                mov ax, word ptr es:[di]        ;       |           |
+                mov word ptr cs:[si], ax        ;       |           |
+                add di, 2d                      ;       |           |
+                add si, 2d                      ;       |           |
+                                                ;       |           |
+                loop @@OneWord                  ; >-----/           |
+                                                ;                   |
+                add bx, 160d                    ;                   |
+                                                ;                   |
+                dec dx                          ;                   |
+                jnz @@OneLine                   ; >-----------------/
+                                                ; Bottom line
+
+                pop cx
+                pop bp                          ; Stack frame
+                ret
+SaveScreen      endp
+
+;------------------------------------------------
+;------------------------------------------------
+
+
+;------------------------------------------------
+; Restore screen from buffer1
+;------------------------------------------------
+; Entry:        ...
+;
+; Expects:      ES -> Video segment
+;               DS -> Data segment
+;
+; Exit:         None
+;
+; Destroys:     AX BX CX DX DI SI
+;               BX = start addr to draw
+;               CH = height of box (with frame)
+;               CL = width of box (with frame)
+;------------------------------------------------
+; Stack frame:
+;               ...
+;               retAddr     [bp + 2]
+;               stored BP   [bp]
+;               stored CX   [bp - 2]    // size
+;               ...
+;------------------------------------------------
+
+RestoreScreen   proc
+                push bp
+                mov bp, sp                      ; Complete stack frame
+
+                mov bx, 0d                      ; box position
+                mov cl, boxWidth                ; box area width
+                add cl, 2d
+                mov ch, boxHeight               ; box area height
+                add ch, 2d
+
+                push cx
+
+                
+                mov si, offset buffer1
+                                                ; Upper line
+                                                ; Middle line
+                mov cx, [bp - 2]
+                mov dh, 0
+                mov dl, ch
+@@OneLine:                                      ; <-----------------\
+                                                ;                   |
+                mov di, bx                      ;                   |
+                mov cx, [bp - 2]                ;                   |
+                mov ch, 0                       ;                   |
+                                                ;                   |
+            @@OneWord:                          ; <-----\           |
+                                                ;       |           |
+                mov ax, word ptr cs:[si]        ;       |           |
+                mov word ptr es:[di], ax        ;       |           |
+                add di, 2d                      ;       |           |
+                add si, 2d                      ;       |           |
+                                                ;       |           |
+                loop @@OneWord                  ; >-----/           |
+                                                ;                   |
+                add bx, 160d                    ;                   |
+                                                ;                   |
+                dec dx                          ;                   |
+                jnz @@OneLine                   ; >-----------------/
+                                                ; Bottom line
+
+                pop cx
+                pop bp                          ; Stack frame
+                ret
+RestoreScreen   endp
 
 ;------------------------------------------------
 ;------------------------------------------------
