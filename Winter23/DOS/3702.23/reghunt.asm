@@ -5,11 +5,31 @@ locals @@
 org 100h
 
 boxWidth  = 10d
-boxHeight = 12d
+boxHeight = 13d
 boxTheme  = 2
 boxColor  = 00Eh
 
 Start:          jmp Main
+                ; mov ax, word ptr ss:[bx]     ~~ 368B 07
+                ; mov ax, word ptr ss:[bx + 2] ~~ 368B 4702
+                ; mov ax, word ptr ss:[bx + 4] ~~ 368B 4704
+                ; mov ax, word ptr cs:[Ptr1]  ~~ 2E A1 2F01
+                ;   Ptr1 = 012F
+                ; mov word ptr cs:[Ptr1], ax ~~ 2E A3 2F01
+                ; mov word ptr cs:[Ptr1], bx ~~ 2E 89 1E 2F01
+                ; mov word ptr cs:[Ptr1], cx ~~ 2E 89 0E 2F01
+                ; mov word ptr cs:[Ptr1], dx ~~ 2E 89 16 2F01
+                ; mov word ptr cs:[Ptr1], si ~~ 2E 89 36 2F01
+                ; mov word ptr cs:[Ptr1], di ~~ 2E 89 3E 2F01
+                ; mov word ptr cs:[Ptr1], bp ~~ 2E 89 2E 2F01
+                ; mov word ptr cs:[Ptr1], sp ~~ 2E 89 26 2F01
+                ; mov word ptr cs:[Ptr1], ds ~~ 2E 8C 1E 2F01
+                ; mov word ptr cs:[Ptr1], es ~~ 2E 8C 06 2F01
+                ; mov word ptr cs:[Ptr1], ss ~~ 2E 8C 16 2F01
+Ptr1:           db 90h
+                db 90h
+                ; mov ax, 239h                ~~ B8 39 02
+                ; mov bx, 349h                ~~ BB 49 03
 
 ;------------------------------------------------
 ; Keyboard intterupt handler
@@ -76,6 +96,61 @@ Old09Seg        dw 0
 
 New08Int        proc
                 push ax bx cx dx ds es si di    ; Stored regs
+
+                ; mov word ptr cs:[Ptr1], ax ~~ 2E A3 2F01
+                dw 0A32Eh
+                dw offset RegAX
+                ; mov word ptr cs:[Ptr1], bx ~~ 2E 89 1E 2F01
+                dw 0892Eh
+                db 01Eh
+                dw offset RegBX
+                ; mov word ptr cs:[Ptr1], cx ~~ 2E 89 0E 2F01
+                dw 0892Eh
+                db 00Eh
+                dw offset RegCX
+                ; mov word ptr cs:[Ptr1], dx ~~ 2E 89 16 2F01
+                dw 0892Eh
+                db 016h
+                dw offset RegDX
+                ; mov word ptr cs:[Ptr1], si ~~ 2E 89 36 2F01
+                dw 0892Eh
+                db 036h
+                dw offset RegSI
+                ; mov word ptr cs:[Ptr1], di ~~ 2E 89 3E 2F01
+                dw 0892Eh
+                db 03Eh
+                dw offset RegDI
+                ; mov word ptr cs:[Ptr1], bp ~~ 2E 89 2E 2F01
+                dw 0892Eh
+                db 02Eh
+                dw offset RegBP
+                ; mov word ptr cs:[Ptr1], sp ~~ 2E 89 26 2F01
+                dw 0892Eh
+                db 026h
+                dw offset RegSP
+                ; mov word ptr cs:[Ptr1], ds ~~ 2E 8C 1E 2F01
+                dw 08C2Eh
+                db 01Eh
+                dw offset RegDS
+                ; mov word ptr cs:[Ptr1], es ~~ 2E 8C 06 2F01
+                dw 08C2Eh
+                db 006h
+                dw offset RegES
+                ; mov word ptr cs:[Ptr1], ss ~~ 2E 8C 16 2F01
+                dw 08C2Eh
+                db 016h
+                dw offset RegSS
+
+                mov bx, sp
+
+                mov ax, word ptr ss:[bx + 2]
+                ; mov word ptr cs:[Ptr1], ax ~~ 2E A3 2F01
+                dw 0A32Eh
+                dw offset RegCS
+                mov ax, word ptr ss:[bx + 0]
+                ; mov word ptr cs:[Ptr1], ax ~~ 2E A3 2F01
+                dw 0A32Eh
+                dw offset RegIP
 
                 mov bx, 0b800h                  ; ES -> vidmem segment
                 mov es, bx
@@ -163,6 +238,34 @@ State:          db 001h
 Buffer1:        dw ((boxHeight + 2) * (boxWidth + 2)) DUP(?)    ; Info to restore (modified first screen)
 Buffer2:        dw ((boxHeight + 2) * (boxWidth + 2)) DUP(?)    ; Info to compare (previous screen)
 ; .code
+
+RegAX:      dw 0h
+            db "rax"
+RegBX:      dw 0h
+            db "rbx"
+RegCX:      dw 0h
+            db "rcx"
+RegDX:      dw 0h
+            db "rdx"
+RegSI:      dw 0h
+            db " si"
+RegDI:      dw 0h
+            db " di"
+RegBP:      dw 0h
+            db " bp"
+RegSP:      dw 0h
+            db " sp"
+RegDS:      dw 0h
+            db " ds"
+RegES:      dw 0h
+            db " es"
+RegSS:      dw 0h
+            db " ss"
+RegCS:      dw 0h
+            db " cs"
+RegIP:      dw 0h
+            db " ip"
+RegEnding:
 
 include ..\LianLib\PrntNHex.asm
 ; include ..\LianLib\ProBox.asm
@@ -253,6 +356,46 @@ DrawRegBox      proc
                 call DrawLine
                 add sp, 2*3d
                                                 ;-------------------------------------------
+                                                ;-------------------------------------------
+                                                ; Printing regs
+
+                mov bx, 10d                     ; start position
+                mov dh, boxColor                ; color
+
+                mov di, offset RegAX
+
+        @@OneRegister:                          ; <-----------------\
+                add bx, 160d                    ;                   |
+                sub bx, 06d                     ;                   |
+                                                ;                   |
+                add di, 2d                      ;                   |
+                                                ;                   |
+                mov cx, 3d                      ;                   |
+            @@OneChar:                          ; <-----\           |
+                                                ;       |           |
+                mov dl, cs:[di]                 ;       |           |
+                mov es:[bx], dx                 ;       |           |
+                                                ;       |           |
+                inc di                          ;       |           |
+                add bx, 2                       ;       |           |
+                loop @@OneChar                  ; >-----/           |
+                                                ;                   |
+                mov dl, "="                     ;                   |
+                mov es:[bx], dx                 ;                   |
+                                                ;                   |
+                sub di, 5d                      ;                   |
+                                                ;                   |
+                add bx, 08d                     ;                   |
+                                                ;                   |
+                mov ax, word ptr cs:[di]        ;                   |
+                call PrintNHex                  ;                   |
+                                                ;                   |
+                sub di, offset RegAX            ;                   |
+                add di, offset RegBX            ;                   |
+                                                ;                   |
+                cmp di, offset RegEnding        ;                   |
+                jl @@OneRegister                ; >-----------------/
+
 
                 pop cx
                 pop bp                          ; Stack frame

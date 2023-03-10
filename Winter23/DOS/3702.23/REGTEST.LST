@@ -1,0 +1,168 @@
+Turbo Assembler	 Version 4.1	    03/10/23 11:53:43	    Page 1
+regtest.asm
+
+
+
+      1	0000			     .model tiny
+      2	0000			     .code
+      3				     .286
+      4				     locals @@
+      5				     org 100h
+      6
+      7	0100			     Start:
+      8
+      9	0100  BB 0736				     mov bx, 0736h
+     10	0103  8E DB				     mov ds, bx
+     11	0105  BB 0737				     mov bx, 0737h
+     12	0108  8E C3				     mov es, bx
+     13
+     14	010A  B8 0739				     mov ax, 0739h
+     15	010D  BB 0740				     mov bx, 0740h
+     16	0110  B9 0731				     mov cx, 0731h
+     17	0113  BA 0732				     mov dx, 0732h
+     18	0116  BE 0733				     mov si, 0733h
+     19	0119  BF 0734				     mov di, 0734h
+     20	011C  BD 0735				     mov bp, 0735h
+     21
+     22	011F  B4 01				     mov ah, 01h		     ; getc -> al
+     23	0121  CD 21				     int 21h			     ; ^
+     24	0123  50				     push ax
+     25	0124  50				     push ax
+     26	0125  B4 01				     mov ah, 01h		     ; getc -> al
+     27	0127  CD 21				     int 21h			     ; ^
+     28	0129  50				     push ax
+     29	012A  B4 01				     mov ah, 01h		     ; getc -> al
+     30	012C  CD 21				     int 21h			     ; ^
+     31
+     32
+     33	012E  B8 4C00				     mov ax, 4c00h		     ; exit(0)
+     34	0131  CD 21				     int 21h
+     35
+     36				     include ..\LianLib\ScanNDec.asm
+1    37				     ;------------------------------------------------
+1    38				     ; Scans number as decimal
+1    39				     ;------------------------------------------------
+1    40				     ; Entry:	     none
+1    41				     ;
+1    42				     ; Expects:	     BX	= 0
+1    43				     ;
+1    44				     ; Exit:	     BX	= number to print
+1    45				     ;
+1    46				     ; Destroys:     AX	CL Si
+1    47				     ;------------------------------------------------
+1    48				     ;------------------------------------------------
+1    49	0133			     ScanNDec	     proc
+1    50
+1    51	0133			     @@ScanDigit:				     ; <-------------------------\
+1    52										     ;				 |
+1    53	0133  B4 01				     mov ah, 01h		     ; getc -> al		 |
+1    54	0135  CD 21				     int 21h			     ; ^			 |
+1    55										     ;				 |
+1    56	0137  3C 0D				     cmp al, 13d		     ; Stop scan if enter	 |
+1    57	0139  74 15				     je	@@EndScanDigit		     ; >>========================|=======\\
+Turbo Assembler	 Version 4.1	    03/10/23 11:53:43	    Page 2
+regtest.asm
+
+
+
+1    58										     ;				 |	 ||
+1    59	013B  8A C8				     mov cl, al			     ; Store al	to cl		 |	 ||
+1    60										     ;				 |	 ||
+1    61	013D  8B C3				     mov ax, bx			     ; bx *= 10			 |	 ||
+1    62	013F  BE 000A				     mov si, 10d		     ; ^			 |	 ||
+1    63	0142  F7 E6				     mul si			     ; ^			 |	 ||
+1    64	0144  8B D8				     mov bx, ax			     ; ^			 |	 ||
+1    65										     ;				 |	 ||
+1    66	0146  8A C1				     mov al, cl			     ; Retore al from cl	 |	 ||
+1    67										     ;				 |	 ||
+1    68	0148  2C 30				     sub al, "0"		     ; ASCII "0" offset		 |	 ||
+1    69										     ;				 |	 ||
+1    70	014A  B4 00				     mov ah, 0d			     ; bx += al			 |	 ||
+1    71	014C  03 D8				     add bx, ax			     ; ^			 |	 ||
+1    72										     ;				 |	 ||
+1    73	014E  EB E3				     jmp @@ScanDigit		     ; >-------------------------/	 ||
+1    74										     ;					 ||
+1    75	0150			     @@EndScanDigit:				     ; <<================================//
+1    76	0150  C3				     ret
+1    77
+1    78	0151			     ScanNDec	     endp
+1    79
+1    80				     ;------------------------------------------------
+1    81				     ;------------------------------------------------
+1    82
+     83
+     84	0151			     .data
+     85				     include ..\LianLib\Alphabet.asm
+1    86	0000  30 31 32 33 34 35	36+  Alphabet:	     db	"0123456789ABCDEF"	     ; Alphabet	for printing (Thanks Ilya)
+     87	      37 38 39 41 42 43	44+
+     88	      45 46
+1    89	0010  C9 CD BB BA BC C8	     BoxSymbols:     db	0c9h, 0cdh, 0bbh, 0bah,	0bch, 0c8h ; "╔═╗║╝╚"
+1    90
+1    91	0016			     BoxAssetStart:
+1    92	0016  20 DA C9 00	     BoxAssetLU:     db	020h, 0dah, 0c9h, 000h
+1    93	001A			     BoxAssetStep:
+1    94	001A  20 C4 CD 00	     BoxAsset_U:     db	020h, 0c4h, 0cdh, 000h
+1    95	001E  20 BF BB 00	     BoxAssetRU:     db	020h, 0bfh, 0bbh, 000h
+1    96	0022  20 B3 BA 00	     BoxAssetR_:     db	020h, 0b3h, 0bah, 000h
+1    97	0026  20 D9 BC 00	     BoxAssetRB:     db	020h, 0d9h, 0bch, 000h
+1    98	002A  20 C4 CD 00	     BoxAsset_B:     db	020h, 0c4h, 0cdh, 000h
+1    99	002E  20 C0 C8 00	     BoxAssetLB:     db	020h, 0c0h, 0c8h, 000h
+1   100	0032  20 B3 BA 00	     BoxAssetL_:     db	020h, 0b3h, 0bah, 000h
+1   101	0036  20 20 20 00	     BoxAssetFI:     db	020h, 020h, 020h, 000h
+1   102	003A			     BoxAssetEnd:
+1   103
+1   104				     ; 0:    1:┌─┐ 2:╔═╗ 3:usr
+1   105				     ;	       │ │	 ║ ║   chr
+1   106				     ;	       └─┘   ╚═╝
+1   107
+    108
+    109				     end	     Start
+Turbo Assembler	 Version 4.1	    03/10/23 11:53:43	    Page 3
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "03/10/23"
+??FILENAME			  Text	 "regtest "
+??TIME				  Text	 "11:53:43"
+??VERSION			  Number 040A
+@32BIT				  Text	 0
+@@ENDSCANDIGIT			  Near	 DGROUP:0150
+@@SCANDIGIT			  Near	 DGROUP:0133
+@CODE				  Text	 DGROUP
+@CODESIZE			  Text	 0
+@CPU				  Text	 0707H
+@CURSEG				  Text	 _DATA
+@DATA				  Text	 DGROUP
+@DATASIZE			  Text	 0
+@FILENAME			  Text	 REGTEST
+@INTERFACE			  Text	 000H
+@MODEL				  Text	 1
+@STACK				  Text	 DGROUP
+@WORDSIZE			  Text	 2
+ALPHABET			  Near	 DGROUP:0000
+BOXASSETEND			  Near	 DGROUP:003A
+BOXASSETFI			  Near	 DGROUP:0036
+BOXASSETLB			  Near	 DGROUP:002E
+BOXASSETLU			  Near	 DGROUP:0016
+BOXASSETL_			  Near	 DGROUP:0032
+BOXASSETRB			  Near	 DGROUP:0026
+BOXASSETRU			  Near	 DGROUP:001E
+BOXASSETR_			  Near	 DGROUP:0022
+BOXASSETSTART			  Near	 DGROUP:0016
+BOXASSETSTEP			  Near	 DGROUP:001A
+BOXASSET_B			  Near	 DGROUP:002A
+BOXASSET_U			  Near	 DGROUP:001A
+BOXSYMBOLS			  Near	 DGROUP:0010
+SCANNDEC			  Near	 DGROUP:0133
+START				  Near	 DGROUP:0100
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+DGROUP				  Group
+  _DATA				  16  003A Word	  Public  DATA
+  _TEXT				  16  0151 Word	  Public  CODE
+
