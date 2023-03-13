@@ -22,8 +22,12 @@ Start:
                 call ScanPassword
                 call CheckPassword
 
+                push ax
                 test ax, ax
-                jz ReturnProgram                ; >>>>>>>>>>>>>>
+                jnz GoodPsswd                   ; >-\
+                mov byte ptr [boxTheme], 1      ;   |
+                mov byte ptr [boxColor], 0C0h   ;   |
+            GoodPsswd:                          ; <-/    
                 
                 mov bh, 0
                 mov bl, byte ptr [boxTheme]
@@ -55,7 +59,15 @@ Start:
                 call DrawBox
                 add sp, 2*9d
 
+                add byte ptr [boxHeightPos], 1d
+
                 mov si, offset TextOK
+                pop ax
+                test ax, ax
+                jnz GoodPsswdTxt                ; >-\
+                mov si, offset TextNEOK         ;   |
+                mov byte ptr [boxTextColor], 0C0h ; |
+            GoodPsswdTxt:                       ; <-/    
                 call PrintText
 
 ReturnProgram:                                  ; <<<<<<<<<<<<<<
@@ -257,6 +269,8 @@ GetArgs         proc
                 jmp @@SetErrorBadTheme
 TextOK:         db "Access granted"
                 db 090h
+TextNEOK:       db "Access denied"
+                db 090h
 
 ;    0,  1,  2 - standart box         & text
 ;   C0, C1, C2 - standart box & color & text
@@ -406,6 +420,7 @@ GetArgs         endp
 ScanPassword    proc
 
                 mov di, offset PasswordBuffer
+                mov ch, 0                       ; has password
                 mov cl, 0                       ; it is a xnumber
 
 @@ScanDigit:                                    ; <-------------------------\
@@ -415,6 +430,8 @@ ScanPassword    proc
                                                 ;                           |
                 cmp al, 13d                     ; Stop scan if enter        |
                 je @@EndScanDigit               ; >>========================|=======\\
+                                                ;                           |       ||
+                mov ch, 1                       ;                           |       ||
                                                 ;                           |       ||
                 test cl, cl                     ;                           |       ||
                 jnz @@EndCmps                   ;                           |       ||
@@ -439,6 +456,8 @@ ScanPassword    proc
                                                 ;
                 test cl, cl                     ;
                 jnz @@EndFunc                   ; >>================================\\
+                test ch, ch                     ;
+                jz @@EndFunc                    ; >>================================\\
                                                 ;                                   ||
                 mov si, offset PasswordBuffer   ;                                   ||
                 mov di, offset PasswordBuffer   ;                                   ||
