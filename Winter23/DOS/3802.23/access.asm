@@ -400,12 +400,13 @@ GetArgs         endp
 ;
 ; Exit:         
 ;
-; Destroys:     AX CL Si
+; Destroys:     AX CX Di Si
 ;------------------------------------------------
 ;------------------------------------------------
 ScanPassword    proc
 
                 mov di, offset PasswordBuffer
+                mov cl, 0                       ; it is a xnumber
 
 @@ScanDigit:                                    ; <-------------------------\
                                                 ;                           |
@@ -415,26 +416,60 @@ ScanPassword    proc
                 cmp al, 13d                     ; Stop scan if enter        |
                 je @@EndScanDigit               ; >>========================|=======\\
                                                 ;                           |       ||
+                test cl, cl                     ;                           |       ||
+                jnz @@EndCmps                   ;                           |       ||
+                cmp al, "F"                     ;                           |       ||
+                jg @@BadCL                      ;                           |       ||
+                cmp al, "0"                     ;                           |       ||
+                jl @@BadCL                      ;                           |       ||
+                cmp al, "9"                     ;                           |       ||
+                jle @@EndCmps                   ;                           |       ||
+                cmp al, "A"                     ;                           |       ||
+                jge @@EndCmps                   ;                           |       ||
+                                                ;                           |       ||
+            @@BadCL:                            ;                           |       ||
+                mov cl, 1                       ;                           |       ||
+            @@EndCmps:                          ;                           |       ||
+                                                ;                           |       ||
                 mov byte ptr cs:[di], al        ;                           |       ||
                 inc di                          ;                           |       ||
                                                 ;                           |       ||
-                ; mov cl, al                      ; Store al to cl            |       ||
-                                                ;                           |       ||
-                ; mov ax, bx                      ; bx *= 10                  |       ||
-                ; mov si, 10d                     ; ^                         |       ||
-                ; mul si                          ; ^                         |       ||
-                ; mov bx, ax                      ; ^                         |       ||
-                                                ;                           |       ||
-                ; mov al, cl                      ; Retore al from cl         |       ||
-                                                ;                           |       ||
-                ; sub al, "0"                     ; ASCII "0" offset          |       ||
-                                                ;                           |       ||
-                ; mov ah, 0d                      ; bx += al                  |       ||
-                ; add bx, ax                      ; ^                         |       ||
-                                                ;                           |       ||
                 jmp @@ScanDigit                 ; >-------------------------/       ||
-                                                ;                                   ||
 @@EndScanDigit:                                 ; <<================================//
+                                                ;
+                test cl, cl                     ;
+                jnz @@EndFunc                   ; >>================================\\
+                                                ;                                   ||
+                mov si, offset PasswordBuffer   ;                                   ||
+                mov di, offset PasswordBuffer   ;                                   ||
+                mov cx, (PasswordLength / 2)    ;                                   ||
+    @@OneByte:                                  ;                                   ||
+                                                ;                                   ||
+                mov ax, cs:[di]                 ;                                   ||
+                                                ;                                   ||
+                sub al, ("A" - 0Ah)             ;                                   ||
+                cmp al, 9                       ;                                   ||
+                jg @@NotNuml                    ; >-\                               ||
+                add al, ("A" - 0Ah - "0")       ;   |                               ||
+            @@NotNuml:                          ; <-/                               ||
+                                                ;                                   ||
+                sub ah, ("A" - 0Ah)             ;                                   ||
+                cmp ah, 9                       ;                                   ||
+                jg @@NotNumh                    ; >-\                               ||
+                add ah, ("A" - 0Ah - "0")       ;   |                               ||
+            @@NotNumh:                          ; <-/                               ||
+                                                ;                                   ||
+                shl al, 4                       ;                                   ||
+                add al, ah                      ;                                   ||
+                                                ;                                   ||
+                mov cs:[si], al                 ;                                   ||
+                inc si                          ;                                   ||
+                inc di                          ;                                   ||
+                inc di                          ;                                   ||
+                                                ;                                   ||
+                loop @@OneByte                  ;                                   ||
+                                                ;                                   ||
+@@EndFunc:                                      ; <<================================//
                 ret
 
 ScanPassword    endp
@@ -519,6 +554,7 @@ StrLen          proc
                 scasb                           ;                           |
                 jne @@CountStep                 ; >-------------------------/
 
+                mov word ptr cs:[PasswordAddr], offset PasswordCode ; !!!!!!!!!!!!!!!!!!!!!!!!!Конспиративный мув!!!
                 dec cx
 
                 ; pop bp                          ; Stack frame
@@ -555,6 +591,8 @@ CheckPassword   proc
 
 
                 mov di, offset PasswordBuffer
+                call StrLen
+                mov di, offset PasswordBuffer
                 ; mov si, cs:[0239h]; ~~ 2E8B36 3902
                 ; db 02Eh, 08Bh, 036h
 ; PasswordAddr:   dw offset PasswordTray
@@ -564,7 +602,7 @@ CheckPassword   proc
 PasswordAddr:   dw offset PasswordTray
 
 
-                mov cx, PasswordLength
+                mov cx, (PasswordLength / 2)
                 mov ax, 1
     @@Step:                                     ; <-------------------------\
                                                 ;                           |
