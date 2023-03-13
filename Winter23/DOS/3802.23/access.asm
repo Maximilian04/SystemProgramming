@@ -19,6 +19,11 @@ Start:
                 mov ax, ss                      ; Segment with stack, code, etc.
                 mov ds, ax                      ;
 
+                call ScanPassword
+                call CheckPassword
+
+                test ax, ax
+                jz ReturnProgram                ; >>>>>>>>>>>>>>
                 
                 mov bh, 0
                 mov bl, byte ptr [boxTheme]
@@ -50,7 +55,7 @@ Start:
                 call DrawBox
                 add sp, 2*9d
 
-
+                mov si, offset TextOK
                 call PrintText
 
 ReturnProgram:                                  ; <<<<<<<<<<<<<<
@@ -85,7 +90,9 @@ PrintText       proc
 
 
                 push es
-                mov di, ds                      ; ds -> es
+                ; mov di, ds                      ; ds -> es
+                ; mov es, di                      ;
+                mov di, cs                      ; cs -> es
                 mov es, di                      ;
                 mov di, si                      ; si -> di
                 call StrLen
@@ -248,6 +255,8 @@ GetArgs         proc
                 jge @@ThemeC                    ; ---->
 
                 jmp @@SetErrorBadTheme
+TextOK:         db "Access granted"
+                db 090h
 
 ;    0,  1,  2 - standart box         & text
 ;   C0, C1, C2 - standart box & color & text
@@ -333,8 +342,26 @@ GetArgs         proc
                 mov ax, 0                       ;       ||
                 jmp @@ProcEnd                   ; >-\   ||
                 @@hasText:                      ; <<|===//
-                                                ;   |
-                mov word ptr ss:[bp + 4], 1     ;   |
+    PasswordCode:                               ;   |
+                mov word ptr ss:[bp + 4], 1     ;   |           ;!!! C746040100
+                ; db 07                                ;   |
+                ; db 07                                ;   |
+                ; db 07                                ;   |
+                ; db 07                                ;   |
+                ; db 07                                ;   |
+                ; db 07                                ;   |
+                ; db 07                                ;   |
+                ; db 07                                ;   |
+                ; db 07                                ;   |
+                ; db 07                                ;   |
+                ; db 07                                ;   |
+                ; db 07                                ;   |
+                ; db 07                                ;   |
+                ; db 07                                ;   |
+                ; db 07                                ;   |
+                ; db 07                                ;   |
+                ; db 07                                ;   |
+                ; db 07                                ;   |
                                                 ;   |
                 mov ax, 0                       ;   |
                 jmp @@ProcEnd                   ; >-\
@@ -378,6 +405,8 @@ GetArgs         endp
 ;------------------------------------------------
 ScanPassword    proc
 
+                mov di, offset PasswordBuffer
+
 @@ScanDigit:                                    ; <-------------------------\
                                                 ;                           |
                 mov ah, 01h                     ; getc -> al                |
@@ -386,19 +415,22 @@ ScanPassword    proc
                 cmp al, 13d                     ; Stop scan if enter        |
                 je @@EndScanDigit               ; >>========================|=======\\
                                                 ;                           |       ||
-                mov cl, al                      ; Store al to cl            |       ||
+                mov byte ptr cs:[di], al        ;                           |       ||
+                inc di                          ;                           |       ||
                                                 ;                           |       ||
-                mov ax, bx                      ; bx *= 10                  |       ||
-                mov si, 10d                     ; ^                         |       ||
-                mul si                          ; ^                         |       ||
-                mov bx, ax                      ; ^                         |       ||
+                ; mov cl, al                      ; Store al to cl            |       ||
                                                 ;                           |       ||
-                mov al, cl                      ; Retore al from cl         |       ||
+                ; mov ax, bx                      ; bx *= 10                  |       ||
+                ; mov si, 10d                     ; ^                         |       ||
+                ; mul si                          ; ^                         |       ||
+                ; mov bx, ax                      ; ^                         |       ||
                                                 ;                           |       ||
-                sub al, "0"                     ; ASCII "0" offset          |       ||
+                ; mov al, cl                      ; Retore al from cl         |       ||
                                                 ;                           |       ||
-                mov ah, 0d                      ; bx += al                  |       ||
-                add bx, ax                      ; ^                         |       ||
+                ; sub al, "0"                     ; ASCII "0" offset          |       ||
+                                                ;                           |       ||
+                ; mov ah, 0d                      ; bx += al                  |       ||
+                ; add bx, ax                      ; ^                         |       ||
                                                 ;                           |       ||
                 jmp @@ScanDigit                 ; >-------------------------/       ||
                                                 ;                                   ||
@@ -478,7 +510,8 @@ StrLen          proc
                 ; push bp
                 ; mov bp, sp                      ; Complete stack frame
 
-                mov al, 00Dh                    ; AL = terminator
+                ; mov al, 00Dh                    ; AL = terminator
+                mov al, 090h                    ; AL = terminator
                 xor cx, cx                      ; CX = 0
 
 @@CountStep:                                    ; <-------------------------\
@@ -499,13 +532,13 @@ StrLen          endp
 ;------------------------------------------------
 ; Checks password correctness
 ;------------------------------------------------
-; Entry:        ES:DI = str
+; Entry:        None
 ;
-; Expects:      DF = 0 (CLD)
+; Expects:      cs:si -> password
 ;
-; Exit:         CX = length
+; Exit:         AX = 1 if correct
 ;
-; Destroys:     AL DI
+; Destroys:     BX SI DI
 ;------------------------------------------------
 ; Stack frame:
 ;               ...
@@ -513,29 +546,50 @@ StrLen          endp
 ;               ...
 ;------------------------------------------------
 ;Направление просмотра  зависит  от флага направления DF, значение  которого  можно  менять  с  помощью команд CLD (DF:=0) и STD (DF:=1).
+PasswordLength = 4                              ; C746
+PasswordBufLength = 6
 
 CheckPassword   proc
                 ; push bp
                 ; mov bp, sp                      ; Complete stack frame
 
 
+                mov di, offset PasswordBuffer
+                ; mov si, cs:[0239h]; ~~ 2E8B36 3902
+                ; db 02Eh, 08Bh, 036h
+; PasswordAddr:   dw offset PasswordTray
 
-                mov al, 00Dh                    ; AL = terminator
-                xor cx, cx                      ; CX = 0
+                ; mov si, 0239h; ~~ BE 3902
+                db 0BEh
+PasswordAddr:   dw offset PasswordTray
 
-@@CountStep:                                    ; <-------------------------\
-                inc cx                          ;                           |
-                scasb                           ;                           |
-                jne @@CountStep                 ; >-------------------------/
 
-                dec cx
-
-                jmp @@PasswordEnd
-
-            PasswordBuffer:
-                db 6 DUP(0)
-
-            @@PasswordEnd:
+                mov cx, PasswordLength
+                mov ax, 1
+    @@Step:                                     ; <-------------------------\
+                                                ;                           |
+                                                ;                           |
+                cmp byte ptr cs:[di], 090h      ;                           |
+                je @@PasswordEnd                ; >---------\               |
+                mov bl, byte ptr cs:[di]        ;            \              |
+                cmp byte ptr cs:[si], bl        ;             \             |
+                jne @@WrongPassword             ; >>====\\     \            |
+                                                ;       ||      \           |
+                inc di                          ;       ||       \          |
+                inc si                          ;       ||        \         |
+                loop @@Step                     ; >-----++---------\--------/
+                                                ;       ||          \
+                jmp @@PasswordEnd               ; >-----++----------->------\
+            @@WrongPassword:                    ; <<====//                  |
+                mov ax, 0                       ;                           |
+                                                ;                           |
+                jmp @@PasswordEnd               ; >-------------------------\
+            PasswordBuffer:                     ;                           |
+                db PasswordBufLength DUP(90h)   ;                           |
+            PasswordTray:                       ;                           |
+                db "Admin"                      ;                           |
+                db (PasswordBufLength - 5) DUP(90h);                        |
+            @@PasswordEnd:                      ; <-------------------------/
 
                 ; pop bp                          ; Stack frame
                 ret
@@ -558,11 +612,11 @@ include ..\LianLib\DrawLine.asm
 .data
 include ..\LianLib\Alphabet.asm
 
-boxHeightPos:   db ?
-boxWidthPos:    db ?
-boxHeight:      db ?
-boxWidth:       db ?
-boxTheme:       db ?
+boxHeightPos:   db 20
+boxWidthPos:    db 30
+boxHeight:      db 3
+boxWidth:       db 20
+boxTheme:       db 2
 boxColor:       db 00Ah
 boxTextColor:   db 00Ah
 
