@@ -259,7 +259,7 @@ GetArgs         proc
                 mov byte ptr [boxTheme], bl
 
                 mov cx, 02h
-                cmp bx, cx
+                cmp bx, 02h
                 jle @@Theme02                   ; ---->
                 mov cx, 0Eh
                 cmp bx, cx

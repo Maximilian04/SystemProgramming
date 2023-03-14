@@ -143,11 +143,11 @@ New08Int        proc
 
                 mov bx, sp
 
-                mov ax, word ptr ss:[bx + 2]
+                mov ax, word ptr ss:[bx + 18]
                 ; mov word ptr cs:[Ptr1], ax ~~ 2E A3 2F01
                 dw 0A32Eh
                 dw offset RegCS
-                mov ax, word ptr ss:[bx + 0]
+                mov ax, word ptr ss:[bx + 16]
                 ; mov word ptr cs:[Ptr1], ax ~~ 2E A3 2F01
                 dw 0A32Eh
                 dw offset RegIP

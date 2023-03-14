@@ -1,4 +1,4 @@
-Turbo Assembler	 Version 4.1	    03/03/23 25:47:45	    Page 1
+Turbo Assembler	 Version 4.1	    03/14/23 22:01:19	    Page 1
 probox.asm
 
 
@@ -15,1059 +15,1061 @@ probox.asm
      10				     org 100h
      11
      12				     ; probox.com 8 21 3 2 F 19	C 1A 15	10 9 7 8 3 12
-     13
-     14	0100			     Start:
-     15
-     16	0100  B8 B800				     mov ax, 0b800h		     ; адрес сегмента с		    +
-     17				     видеопамятью -> es
-     18	0103  8E C0				     mov es, ax			     ;
-     19	0105  8C D0				     mov ax, ss			     ; Segment with stack, code, etc.
-     20	0107  8E D8				     mov ds, ax			     ;
-     21
-     22	0109  6A 00				     push 0h			     ; textFlag
-     23	010B  E8 00D0				     call GetArgs
-     24	010E  85 C0				     test ax, ax
-     25	0110  74 03				     jz	@@ContinueHere1
-     26	0112  EB 59 90				     jmp ReturnProgram		     ; >>>>>>>>>>>>>>
-     27	0115					     @@ContinueHere1:
-     28						     ; push si
-     29
-     30						     ; mov dh, 01Ah
-     31						     ; mov ah, 0
-     32						     ; mov al, byte ptr	[ArgCount]
-     33						     ; mov bx, 160d*17 + 160d/2	- 18d +	4d; Середина строчки
-     34						     ; call PrintNDec
-     35
-     36	0115  B7 00				     mov bh, 0
-     37	0117  8A 1E 003Er			     mov bl, byte ptr [boxTheme]
-     38	011B  8A 26 003Fr			     mov ah, byte ptr [boxColor]
-     39
-     40	011F  8A 87 0016r			     mov al, byte ptr [BoxAssetLU + bx]
-     41	0123  50				     push ax
-     42	0124  8A 87 001Ar			     mov al, byte ptr [BoxAsset_U + bx]
-     43	0128  50				     push ax
-     44	0129  8A 87 001Er			     mov al, byte ptr [BoxAssetRU + bx]
-     45	012D  50				     push ax
-     46	012E  8A 87 0022r			     mov al, byte ptr [BoxAssetR_ + bx]
-     47	0132  50				     push ax
-     48	0133  8A 87 0026r			     mov al, byte ptr [BoxAssetRB + bx]
-     49	0137  50				     push ax
-     50	0138  8A 87 002Ar			     mov al, byte ptr [BoxAsset_B + bx]
-     51	013C  50				     push ax
-     52	013D  8A 87 002Er			     mov al, byte ptr [BoxAssetLB + bx]
-     53	0141  50				     push ax
-     54	0142  8A 87 0032r			     mov al, byte ptr [BoxAssetL_ + bx]
-     55	0146  50				     push ax
-     56	0147  8A 87 0036r			     mov al, byte ptr [BoxAssetFI + bx]
-     57	014B  50				     push ax
-Turbo Assembler	 Version 4.1	    03/03/23 25:47:45	    Page 2
+     13				     ; probox.com 8 21 9 10 E 15 15 15 15 15 15	15 15 3	D E We Qqerreqwerq
+     14
+     15	0100			     Start:
+     16
+     17	0100  B8 B800				     mov ax, 0b800h		     ; адрес сегмента с		    +
+     18				     видеопамятью -> es
+     19	0103  8E C0				     mov es, ax			     ;
+     20	0105  8C D0				     mov ax, ss			     ; Segment with stack, code, etc.
+     21	0107  8E D8				     mov ds, ax			     ;
+     22
+     23	0109  6A 00				     push 0h			     ; textFlag
+     24	010B  E8 00D0				     call GetArgs
+     25	010E  85 C0				     test ax, ax
+     26	0110  74 03				     jz	@@ContinueHere1
+     27	0112  EB 59 90				     jmp ReturnProgram		     ; >>>>>>>>>>>>>>
+     28	0115					     @@ContinueHere1:
+     29						     ; push si
+     30
+     31						     ; mov dh, 01Ah
+     32						     ; mov ah, 0
+     33						     ; mov al, byte ptr	[ArgCount]
+     34						     ; mov bx, 160d*17 + 160d/2	- 18d +	4d; Середина строчки
+     35						     ; call PrintNDec
+     36
+     37	0115  B7 00				     mov bh, 0
+     38	0117  8A 1E 003Er			     mov bl, byte ptr [boxTheme]
+     39	011B  8A 26 003Fr			     mov ah, byte ptr [boxColor]
+     40
+     41	011F  8A 87 0016r			     mov al, byte ptr [BoxAssetLU + bx]
+     42	0123  50				     push ax
+     43	0124  8A 87 001Ar			     mov al, byte ptr [BoxAsset_U + bx]
+     44	0128  50				     push ax
+     45	0129  8A 87 001Er			     mov al, byte ptr [BoxAssetRU + bx]
+     46	012D  50				     push ax
+     47	012E  8A 87 0022r			     mov al, byte ptr [BoxAssetR_ + bx]
+     48	0132  50				     push ax
+     49	0133  8A 87 0026r			     mov al, byte ptr [BoxAssetRB + bx]
+     50	0137  50				     push ax
+     51	0138  8A 87 002Ar			     mov al, byte ptr [BoxAsset_B + bx]
+     52	013C  50				     push ax
+     53	013D  8A 87 002Er			     mov al, byte ptr [BoxAssetLB + bx]
+     54	0141  50				     push ax
+     55	0142  8A 87 0032r			     mov al, byte ptr [BoxAssetL_ + bx]
+     56	0146  50				     push ax
+     57	0147  8A 87 0036r			     mov al, byte ptr [BoxAssetFI + bx]
+Turbo Assembler	 Version 4.1	    03/14/23 22:01:19	    Page 2
 probox.asm
 
 
 
-     58	014C  8A 2E 003Ar			     mov ch, byte ptr [boxHeightPos]
-     59	0150  8A 0E 003Br			     mov cl, byte ptr [boxWidthPos]
-     60	0154  E8 01C2				     call CalculateVidMemPos
-     61	0157  8A 2E 003Cr			     mov ch, byte ptr [boxHeight]
-     62	015B  8A 0E 003Dr			     mov cl, byte ptr [boxWidth]
-     63	015F  E8 02B5				     call DrawBox
-     64	0162  83 C4 12				     add sp, 2*9d
-     65
-     66						     ; pop si
-     67	0165  58				     pop ax			     ; textFlag
-     68	0166  85 C0				     test ax, ax
-     69	0168  74 03				     jz	ReturnProgram		     ; >>>>>>>>>>>>>>
-     70
+     58	014B  50				     push ax
+     59	014C  8A 2E 003Ar			     mov ch, byte ptr [boxHeightPos]
+     60	0150  8A 0E 003Br			     mov cl, byte ptr [boxWidthPos]
+     61	0154  E8 01C3				     call CalculateVidMemPos
+     62	0157  8A 2E 003Cr			     mov ch, byte ptr [boxHeight]
+     63	015B  8A 0E 003Dr			     mov cl, byte ptr [boxWidth]
+     64	015F  E8 02B6				     call DrawBox
+     65	0162  83 C4 12				     add sp, 2*9d
+     66
+     67						     ; pop si
+     68	0165  58				     pop ax			     ; textFlag
+     69	0166  85 C0				     test ax, ax
+     70	0168  74 03				     jz	ReturnProgram		     ; >>>>>>>>>>>>>>
      71
-     72	016A  E8 0005				     call PrintText
-     73
-     74						     ; mov dh, 00000010b	       ; Dark green on black
-     75						     ; pop ax			       ; Scanned number
-     76						     ; push ax			       ;
-     77
-     78						     ; call PrintNBin
-     79
-     80	016D			     ReturnProgram:				     ; <<<<<<<<<<<<<<
-     81	016D  B8 4C00				     mov ax, 4c00h		     ; exit(0)
-     82	0170  CD 21				     int 21h
-     83
+     72
+     73	016A  E8 0005				     call PrintText
+     74
+     75						     ; mov dh, 00000010b	       ; Dark green on black
+     76						     ; pop ax			       ; Scanned number
+     77						     ; push ax			       ;
+     78
+     79						     ; call PrintNBin
+     80
+     81	016D			     ReturnProgram:				     ; <<<<<<<<<<<<<<
+     82	016D  B8 4C00				     mov ax, 4c00h		     ; exit(0)
+     83	0170  CD 21				     int 21h
      84
      85
-     86				     ;------------------------------------------------
-     87				     ; Prints text into	the box
-     88				     ;------------------------------------------------
-     89				     ; Entry:	     None
-     90				     ;
-     91				     ; Expects:	     DS:SI -> text
-     92				     ;
-     93				     ; Exit:	     None
-     94				     ;
-     95				     ; Destroys:     AX	BX CX DX SI DI
-     96				     ;------------------------------------------------
-     97				     ; Stack frame:
-     98				     ;		     ...
-     99				     ;		     retAddr	 [bp + 2]
-    100				     ;		     stored BP	 [bp]
-    101				     ;		     text ptr	 [bp - 2]
-    102				     ;		     ...
-    103				     ;------------------------------------------------
-    104
-    105	0172			     PrintText	     proc
-    106	0172  55				     push bp
-    107	0173  8B EC				     mov bp, sp			     ; Complete	stack frame
-    108	0175  56				     push si
-    109
+     86
+     87				     ;------------------------------------------------
+     88				     ; Prints text into	the box
+     89				     ;------------------------------------------------
+     90				     ; Entry:	     None
+     91				     ;
+     92				     ; Expects:	     DS:SI -> text
+     93				     ;
+     94				     ; Exit:	     None
+     95				     ;
+     96				     ; Destroys:     AX	BX CX DX SI DI
+     97				     ;------------------------------------------------
+     98				     ; Stack frame:
+     99				     ;		     ...
+    100				     ;		     retAddr	 [bp + 2]
+    101				     ;		     stored BP	 [bp]
+    102				     ;		     text ptr	 [bp - 2]
+    103				     ;		     ...
+    104				     ;------------------------------------------------
+    105
+    106	0172			     PrintText	     proc
+    107	0172  55				     push bp
+    108	0173  8B EC				     mov bp, sp			     ; Complete	stack frame
+    109	0175  56				     push si
     110
-    111	0176  06				     push es
-    112	0177  8C DF				     mov di, ds			     ; ds -> es
-    113	0179  8E C7				     mov es, di			     ;
-    114	017B  8B FE				     mov di, si			     ; si -> di
-Turbo Assembler	 Version 4.1	    03/03/23 25:47:45	    Page 3
+    111
+    112	0176  06				     push es
+    113	0177  8C DF				     mov di, ds			     ; ds -> es
+    114	0179  8E C7				     mov es, di			     ;
+Turbo Assembler	 Version 4.1	    03/14/23 22:01:19	    Page 3
 probox.asm
 
 
 
-    115	017D  E8 01A7				     call StrLen
-    116	0180  07				     pop es			     ; restore es -> vidmem
-    117	0181  8B D1				     mov dx, cx			     ; dx = text length
-    118
-    119	0183  8A 2E 003Ar			     mov ch, byte ptr boxHeightPos
-    120	0187  80 C5 01				     add ch, 1d
-    121	018A  8A 0E 003Br			     mov cl, byte ptr boxWidthPos
-    122	018E  80 C1 01				     add cl, 1d
-    123	0191  E8 0185				     call CalculateVidMemPos
-    124
-    125	0194  8B CA				     mov cx, dx			     ; cx = text length
-    126	0196  8A 36 003Cr			     mov dh, byte ptr boxHeight
-    127	019A  8A 16 003Dr			     mov dl, byte ptr boxWidth
-    128
-    129	019E  3A CA				     cmp cl, dl
-    130	01A0  7D 0D				     jge @@OneChar		     ; >>====\\
-    131										     ;	     ||
-    132	01A2  B6 00				     mov dh, 0			     ;	     ||
-    133	01A4  2A D1				     sub dl, cl			     ;	     ||
-    134	01A6  D0 EA				     shr dl, 1			     ; Center offset
-    135	01A8  D0 E2				     shl dl, 1			     ;	     ||
-    136	01AA  03 DA				     add bx, dx			     ;	     ||
-    137	01AC  EB 01 90				     jmp @@OneChar		     ; >>====\\
-    138										     ;	     ||
-    139										     ; <<====//
-    140	01AF				 @@OneChar:				     ; <-------------------------\
-    141	01AF  84 F6				     test dh, dh		     ;				 |
-    142	01B1  74 18				     jz	@@LastLine		     ; >>====\\			 |
-    143										     ;	     ||			 |
-    144	01B3  84 D2				     test dl, dl		     ;	     ||			 |
-    145	01B5  75 12				     jnz @@noLineBreak		     ;	     ||			 |
-    146										     ;	     ||			 |
-    147	01B7  8A 16 003Dr			     mov dl, byte ptr boxWidth	     ;	     ||			 |
-    148	01BB  FE CE				     dec dh			     ;	     ||			 |
-    149										     ;	     ||			 |
-    150	01BD  81 C3 00A0			     add bx, 160d		     ; Next Line		 |
-    151	01C1  B4 00				     mov ah, 0			     ;	     ||			 |
-    152	01C3  8A C2				     mov al, dl			     ;	     ||			 |
-    153	01C5  D1 E0				     shl ax, 1			     ;	     ||			 |
-    154	01C7  2B D8				     sub bx, ax			     ;	     ||			 |
-    155										     ;	     ||			 |
-    156	01C9					 @@noLineBreak:			     ;	     ||			 |
-    157	01C9  FE CA				     dec dl			     ;	     ||			 |
-    158										     ;	     ||			 |
-    159	01CB					 @@LastLine:			     ; <<====//			 |
-    160	01CB  8A 04				     mov al, byte ptr [si]	     ;				 |
-    161	01CD  26: 88 07				     mov es:[bx], al		     ;				 |
-    162										     ;				 |
-    163	01D0  46				     inc si			     ;				 |
-    164	01D1  43				     inc bx			     ;				 |
-    165										     ;				 |
-    166	01D2  A0 0040r				     mov al, byte ptr [boxTextColor] ;				 |
-    167	01D5  26: 88 07				     mov es:[bx], al		     ;				 |
-    168	01D8  43				     inc bx			     ;				 |
-    169										     ;				 |
-    170	01D9  E2 D4				     loop @@OneChar		     ; >-------------------------/
-    171
-Turbo Assembler	 Version 4.1	    03/03/23 25:47:45	    Page 4
+    115	017B  8B FE				     mov di, si			     ; si -> di
+    116	017D  E8 01A8				     call StrLen
+    117	0180  07				     pop es			     ; restore es -> vidmem
+    118	0181  8B D1				     mov dx, cx			     ; dx = text length
+    119
+    120	0183  8A 2E 003Ar			     mov ch, byte ptr boxHeightPos
+    121	0187  80 C5 01				     add ch, 1d
+    122	018A  8A 0E 003Br			     mov cl, byte ptr boxWidthPos
+    123	018E  80 C1 01				     add cl, 1d
+    124	0191  E8 0186				     call CalculateVidMemPos
+    125
+    126	0194  8B CA				     mov cx, dx			     ; cx = text length
+    127	0196  8A 36 003Cr			     mov dh, byte ptr boxHeight
+    128	019A  8A 16 003Dr			     mov dl, byte ptr boxWidth
+    129
+    130	019E  3A CA				     cmp cl, dl
+    131	01A0  7D 0D				     jge @@OneChar		     ; >>====\\
+    132										     ;	     ||
+    133	01A2  B6 00				     mov dh, 0			     ;	     ||
+    134	01A4  2A D1				     sub dl, cl			     ;	     ||
+    135	01A6  D0 EA				     shr dl, 1			     ; Center offset
+    136	01A8  D0 E2				     shl dl, 1			     ;	     ||
+    137	01AA  03 DA				     add bx, dx			     ;	     ||
+    138	01AC  EB 01 90				     jmp @@OneChar		     ; >>====\\
+    139										     ;	     ||
+    140										     ; <<====//
+    141	01AF				 @@OneChar:				     ; <-------------------------\
+    142	01AF  84 F6				     test dh, dh		     ;				 |
+    143	01B1  74 18				     jz	@@LastLine		     ; >>====\\			 |
+    144										     ;	     ||			 |
+    145	01B3  84 D2				     test dl, dl		     ;	     ||			 |
+    146	01B5  75 12				     jnz @@noLineBreak		     ;	     ||			 |
+    147										     ;	     ||			 |
+    148	01B7  8A 16 003Dr			     mov dl, byte ptr boxWidth	     ;	     ||			 |
+    149	01BB  FE CE				     dec dh			     ;	     ||			 |
+    150										     ;	     ||			 |
+    151	01BD  81 C3 00A0			     add bx, 160d		     ; Next Line		 |
+    152	01C1  B4 00				     mov ah, 0			     ;	     ||			 |
+    153	01C3  8A C2				     mov al, dl			     ;	     ||			 |
+    154	01C5  D1 E0				     shl ax, 1			     ;	     ||			 |
+    155	01C7  2B D8				     sub bx, ax			     ;	     ||			 |
+    156										     ;	     ||			 |
+    157	01C9					 @@noLineBreak:			     ;	     ||			 |
+    158	01C9  FE CA				     dec dl			     ;	     ||			 |
+    159										     ;	     ||			 |
+    160	01CB					 @@LastLine:			     ; <<====//			 |
+    161	01CB  8A 04				     mov al, byte ptr [si]	     ;				 |
+    162	01CD  26: 88 07				     mov es:[bx], al		     ;				 |
+    163										     ;				 |
+    164	01D0  46				     inc si			     ;				 |
+    165	01D1  43				     inc bx			     ;				 |
+    166										     ;				 |
+    167	01D2  A0 0040r				     mov al, byte ptr [boxTextColor] ;				 |
+    168	01D5  26: 88 07				     mov es:[bx], al		     ;				 |
+    169	01D8  43				     inc bx			     ;				 |
+    170										     ;				 |
+    171	01D9  E2 D4				     loop @@OneChar		     ; >-------------------------/
+Turbo Assembler	 Version 4.1	    03/14/23 22:01:19	    Page 4
 probox.asm
 
 
 
     172
     173
-    174	01DB  5D				     pop bp
-    175	01DC  5D				     pop bp			     ; Stack frame
-    176	01DD  C3				     ret
-    177	01DE			     PrintText	     endp
-    178
-    179				     ;------------------------------------------------
+    174
+    175	01DB  5D				     pop bp
+    176	01DC  5D				     pop bp			     ; Stack frame
+    177	01DD  C3				     ret
+    178	01DE			     PrintText	     endp
+    179
     180				     ;------------------------------------------------
-    181
+    181				     ;------------------------------------------------
     182
-    183				     ;------------------------------------------------
-    184				     ; Gets information	from cmd argument
-    185				     ;------------------------------------------------
-    186				     ; Entry:	     None
-    187				     ;
-    188				     ; Expects:	     None
-    189				     ;
-    190				     ; Exit:	     AX	= 0 if no errors, 1 contrary
-    191				     ;		     textFlag =	1 if DS:SI -> box text,	0 if no	text
-    192				     ;
-    193				     ; Destroys:     BX	CX SI DI (DH if	error)
-    194				     ;------------------------------------------------
-    195				     ; Stack frame:
-    196				     ;		     ...
-    197				     ;		     textFlag	 [bp + 4]
-    198				     ;		     retAddr	 [bp + 2]
-    199				     ;		     stored BP	 [bp]
-    200				     ;		     ...
-    201				     ;------------------------------------------------
-    202
-    203	01DE			     GetArgs	     proc
-    204	01DE  55				     push bp
-    205	01DF  8B EC				     mov bp, sp			     ; Complete	stack frame
-    206
+    183
+    184				     ;------------------------------------------------
+    185				     ; Gets information	from cmd argument
+    186				     ;------------------------------------------------
+    187				     ; Entry:	     None
+    188				     ;
+    189				     ; Expects:	     None
+    190				     ;
+    191				     ; Exit:	     AX	= 0 if no errors, 1 contrary
+    192				     ;		     textFlag =	1 if DS:SI -> box text,	0 if no	text
+    193				     ;
+    194				     ; Destroys:     BX	CX SI DI (DH if	error)
+    195				     ;------------------------------------------------
+    196				     ; Stack frame:
+    197				     ;		     ...
+    198				     ;		     textFlag	 [bp + 4]
+    199				     ;		     retAddr	 [bp + 2]
+    200				     ;		     stored BP	 [bp]
+    201				     ;		     ...
+    202				     ;------------------------------------------------
+    203
+    204	01DE			     GetArgs	     proc
+    205	01DE  55				     push bp
+    206	01DF  8B EC				     mov bp, sp			     ; Complete	stack frame
     207
-    208	01E1  B4 00				     mov ah, 0			     ; At least	one argument!
-    209	01E3  A0 0080r				     mov al, byte ptr [ArgCount]     ;
-    210	01E6  BB 0002				     mov bx, 2d			     ;
-    211	01E9  3B C3				     cmp ax, bx			     ;
-    212	01EB  7D 03				     jnl @@ContinueHere1	     ;
-    213	01ED  E9 0108				     jmp @@SetErrorNoArg	     ; >>>>>>>>>>>>>>
-    214	01F0					     @@ContinueHere1:		     ;
-    215
-    216								 ; ONE STEP:
-    217								 ; arg -> bx
-    218								 ; if the last 1 -> ax
-    219								 ; DS:SI -> next
-    220	01F0  B2 20				     mov dl, 020h		     ; 20h Terminator
-    221	01F2  B6 0D				     mov dh, 00Dh		     ; 0Dh TerminatorEnd
-    222	01F4  BE 0082r				     mov si, offset Args + 1	     ; First argument
-    223
-    224	01F7  BB 0000				     mov bx, 0
-    225	01FA  E8 01A0				     call MScnNDec
-    226	01FD  88 1E 003Ar			     mov byte ptr [boxHeightPos], bl
-    227	0201  85 C0				     test ax, ax
-    228	0203  74 03				     jz	@@ContinueHere2
-Turbo Assembler	 Version 4.1	    03/03/23 25:47:45	    Page 5
+    208
+    209	01E1  B4 00				     mov ah, 0			     ; At least	one argument!
+    210	01E3  A0 0080r				     mov al, byte ptr [ArgCount]     ;
+    211	01E6  BB 0002				     mov bx, 2d			     ;
+    212	01E9  3B C3				     cmp ax, bx			     ;
+    213	01EB  7D 03				     jnl @@ContinueHere1	     ;
+    214	01ED  E9 0109				     jmp @@SetErrorNoArg	     ; >>>>>>>>>>>>>>
+    215	01F0					     @@ContinueHere1:		     ;
+    216
+    217								 ; ONE STEP:
+    218								 ; arg -> bx
+    219								 ; if the last 1 -> ax
+    220								 ; DS:SI -> next
+    221	01F0  B2 20				     mov dl, 020h		     ; 20h Terminator
+    222	01F2  B6 0D				     mov dh, 00Dh		     ; 0Dh TerminatorEnd
+    223	01F4  BE 0082r				     mov si, offset Args + 1	     ; First argument
+    224
+    225	01F7  BB 0000				     mov bx, 0
+    226	01FA  E8 01A1				     call MScnNDec
+    227	01FD  88 1E 003Ar			     mov byte ptr [boxHeightPos], bl
+    228	0201  85 C0				     test ax, ax
+Turbo Assembler	 Version 4.1	    03/14/23 22:01:19	    Page 5
 probox.asm
 
 
 
-    229	0205  E9 00F0				     jmp @@SetErrorNoArg	     ; >>>>>>>>>>>>>>
-    230	0208					     @@ContinueHere2:
-    231
+    229	0203  74 03				     jz	@@ContinueHere2
+    230	0205  E9 00F1				     jmp @@SetErrorNoArg	     ; >>>>>>>>>>>>>>
+    231	0208					     @@ContinueHere2:
     232
-    233	0208  BB 0000				     mov bx, 0
-    234	020B  E8 018F				     call MScnNDec
-    235	020E  88 1E 003Br			     mov byte ptr [boxWidthPos], bl
-    236	0212  85 C0				     test ax, ax
-    237	0214  74 03				     jz	@@ContinueHere3
-    238	0216  E9 00DF				     jmp @@SetErrorNoArg	     ; >>>>>>>>>>>>>>
-    239	0219					     @@ContinueHere3:
-    240
-    241	0219  BB 0000				     mov bx, 0
-    242	021C  E8 017E				     call MScnNDec
-    243	021F  88 1E 003Cr			     mov byte ptr [boxHeight], bl
-    244	0223  85 C0				     test ax, ax
-    245	0225  74 03				     jz	@@ContinueHere4
-    246	0227  E9 00CE				     jmp @@SetErrorNoArg	     ; >>>>>>>>>>>>>>
-    247	022A					     @@ContinueHere4:
-    248
-    249	022A  BB 0000				     mov bx, 0
-    250	022D  E8 016D				     call MScnNDec
-    251	0230  88 1E 003Dr			     mov byte ptr [boxWidth], bl
-    252	0234  85 C0				     test ax, ax
-    253	0236  74 03				     jz	@@ContinueHere5
-    254	0238  E9 00BD				     jmp @@SetErrorNoArg	     ; >>>>>>>>>>>>>>
-    255	023B					     @@ContinueHere5:
-    256
-    257	023B  BB 0000				     mov bx, 0
-    258	023E  E8 0184				     call MScnNHex
-    259	0241  88 1E 003Er			     mov byte ptr [boxTheme], bl
-    260
-    261	0245  B9 0002				     mov cx, 02h
-    262	0248  3B D9				     cmp bx, cx
-    263	024A  7E 18				     jle @@Theme02		     ; ---->
-    264	024C  B9 000E				     mov cx, 0Eh
-    265	024F  3B D9				     cmp bx, cx
-    266	0251  74 19				     je	@@ThemeE		     ; ---->
-    267	0253  B9 000F				     mov cx, 0Fh
-    268	0256  3B D9				     cmp bx, cx
-    269	0258  74 0D				     je	@@ThemeF		     ; ---->
-    270	025A  B9 00C0				     mov cx, 0C0h
-    271	025D  3B D9				     cmp bx, cx
-    272	025F  7D 30				     jge @@ThemeC		     ; ---->
-    273
-    274	0261  E9 00A5				     jmp @@SetErrorBadTheme
-    275
-    276				     ;	  0,  1,  2 - standart box	   & text
-    277				     ;	 C0, C1, C2 - standart box & color & text
-    278				     ;	 F	 - various symbols & color & text
-    279				     ;	 E	 - various symbols & color & text & textColor
-    280
-    281	0264			     @@Theme02:					     ; <----
-    282	0264  EB 78 90				     jmp @@LastArg		     ; ->>>>>>>>>>>>>
-    283
-    284	0267			     @@ThemeF:					     ; <----
-    285	0267  C6 06 003Er 03			     mov byte ptr [boxTheme], 03d
-Turbo Assembler	 Version 4.1	    03/03/23 25:47:45	    Page 6
+    233
+    234	0208  BB 0000				     mov bx, 0
+    235	020B  E8 0190				     call MScnNDec
+    236	020E  88 1E 003Br			     mov byte ptr [boxWidthPos], bl
+    237	0212  85 C0				     test ax, ax
+    238	0214  74 03				     jz	@@ContinueHere3
+    239	0216  E9 00E0				     jmp @@SetErrorNoArg	     ; >>>>>>>>>>>>>>
+    240	0219					     @@ContinueHere3:
+    241
+    242	0219  BB 0000				     mov bx, 0
+    243	021C  E8 017F				     call MScnNDec
+    244	021F  88 1E 003Cr			     mov byte ptr [boxHeight], bl
+    245	0223  85 C0				     test ax, ax
+    246	0225  74 03				     jz	@@ContinueHere4
+    247	0227  E9 00CF				     jmp @@SetErrorNoArg	     ; >>>>>>>>>>>>>>
+    248	022A					     @@ContinueHere4:
+    249
+    250	022A  BB 0000				     mov bx, 0
+    251	022D  E8 016E				     call MScnNDec
+    252	0230  88 1E 003Dr			     mov byte ptr [boxWidth], bl
+    253	0234  85 C0				     test ax, ax
+    254	0236  74 03				     jz	@@ContinueHere5
+    255	0238  E9 00BE				     jmp @@SetErrorNoArg	     ; >>>>>>>>>>>>>>
+    256	023B					     @@ContinueHere5:
+    257
+    258	023B  BB 0000				     mov bx, 0
+    259	023E  E8 0185				     call MScnNHex
+    260	0241  88 1E 003Er			     mov byte ptr [boxTheme], bl
+    261
+    262	0245  B9 0002				     mov cx, 02h
+    263	0248  83 FB 02				     cmp bx, 02h
+    264	024B  7E 18				     jle @@Theme02		     ; ---->
+    265	024D  B9 000E				     mov cx, 0Eh
+    266	0250  3B D9				     cmp bx, cx
+    267	0252  74 19				     je	@@ThemeE		     ; ---->
+    268	0254  B9 000F				     mov cx, 0Fh
+    269	0257  3B D9				     cmp bx, cx
+    270	0259  74 0D				     je	@@ThemeF		     ; ---->
+    271	025B  B9 00C0				     mov cx, 0C0h
+    272	025E  3B D9				     cmp bx, cx
+    273	0260  7D 30				     jge @@ThemeC		     ; ---->
+    274
+    275	0262  E9 00A5				     jmp @@SetErrorBadTheme
+    276
+    277				     ;	  0,  1,  2 - standart box	   & text
+    278				     ;	 C0, C1, C2 - standart box & color & text
+    279				     ;	 F	 - various symbols & color & text
+    280				     ;	 E	 - various symbols & color & text & textColor
+    281
+    282	0265			     @@Theme02:					     ; <----
+    283	0265  EB 78 90				     jmp @@LastArg		     ; ->>>>>>>>>>>>>
+    284
+    285	0268			     @@ThemeF:					     ; <----
+Turbo Assembler	 Version 4.1	    03/14/23 22:01:19	    Page 6
 probox.asm
 
 
 
-    286	026C			     @@ThemeE:					     ; <----
-    287
-    288	026C  BF 0019r				     mov di, offset BoxAssetStart + 3
-    289	026F  B9 001Ar				     mov cx, offset BoxAssetStep     ; cx = step
-    290	0272  81 E9 0016r			     sub cx, offset BoxAssetStart    ;
-    291
-    292	0276				 @@OneStep:				     ; <-------------------------\
-    293	0276  85 C0				     test ax, ax		     ;				 |
-    294	0278  74 03				     jz	@@ContinueHere6		     ;				 |
-    295	027A  EB 7C 90				     jmp @@SetErrorNoArg	     ; >>>>>>>>>>>>>>		 |>>>
-    296	027D					     @@ContinueHere6:		     ;				 |
-    297										     ;				 |
-    298	027D  BB 0000				     mov bx, 0			     ;				 |
-    299	0280  E8 011A				     call MScnNDec		     ;				 |
-    300	0283  88 1D				     mov [di], bl		     ;				 |
-    301										     ;				 |
-    302	0285  03 F9				     add di, cx			     ;				 |
-    303										     ;				 |
-    304	0287  BB 003Ar				     mov bx, offset BoxAssetEnd	     ;				 |
-    305	028A  3B FB				     cmp di, bx			     ;				 |
-    306	028C  7C E8				     jl	@@OneStep		     ; >-------------------------/
-    307
-    308	028E  EB 10 90				     jmp @@SetColor		     ; >>====\\
-    309										     ;	     ||
-    310	0291			     @@ThemeC:					     ; <-----||--
-    311	0291  B9 00C2				     mov cx, 0C2h		     ;	     ||
-    312	0294  3B D9				     cmp bx, cx			     ;	     ||
-    313	0296  7E 03				     jng @@ContinueHere10	     ;	     ||
-    314	0298  EB 6F 90				     jmp @@SetErrorBadTheme	     ; >>>>>>||>>>>>>
-    315	029B					     @@ContinueHere10:		     ;	     ||
-    316										     ;	     ||
-    317	029B  80 2E 003Er C0			     sub byte ptr [boxTheme], 0C0h   ;	     ||
-    318										     ;	     ||
-    319	02A0			     @@SetColor:				     ; <<====//
-    320	02A0  85 C0				     test ax, ax
-    321	02A2  74 03				     jz	@@ContinueHere11
-    322	02A4  EB 52 90				     jmp @@SetErrorNoArg	     ; >>>>>>>>>>>>>>
-    323	02A7					     @@ContinueHere11:
-    324
-    325	02A7  BB 0000				     mov bx, 0
-    326	02AA  E8 0118				     call MScnNHex
-    327	02AD  88 1E 003Fr			     mov byte ptr [boxColor], bl
-    328	02B1  88 1E 0040r			     mov byte ptr [boxTextColor], bl
-    329
+    286	0268  C6 06 003Er 03			     mov byte ptr [boxTheme], 03d
+    287	026D			     @@ThemeE:					     ; <----
+    288
+    289	026D  BF 0019r				     mov di, offset BoxAssetStart + 3
+    290	0270  B9 001Ar				     mov cx, offset BoxAssetStep     ; cx = step
+    291	0273  81 E9 0016r			     sub cx, offset BoxAssetStart    ;
+    292
+    293	0277				 @@OneStep:				     ; <-------------------------\
+    294	0277  85 C0				     test ax, ax		     ;				 |
+    295	0279  74 03				     jz	@@ContinueHere6		     ;				 |
+    296	027B  EB 7C 90				     jmp @@SetErrorNoArg	     ; >>>>>>>>>>>>>>		 |>>>
+    297	027E					     @@ContinueHere6:		     ;				 |
+    298										     ;				 |
+    299	027E  BB 0000				     mov bx, 0			     ;				 |
+    300	0281  E8 011A				     call MScnNDec		     ;				 |
+    301	0284  88 1D				     mov [di], bl		     ;				 |
+    302										     ;				 |
+    303	0286  03 F9				     add di, cx			     ;				 |
+    304										     ;				 |
+    305	0288  BB 003Ar				     mov bx, offset BoxAssetEnd	     ;				 |
+    306	028B  3B FB				     cmp di, bx			     ;				 |
+    307	028D  7C E8				     jl	@@OneStep		     ; >-------------------------/
+    308
+    309	028F  EB 10 90				     jmp @@SetColor		     ; >>====\\
+    310										     ;	     ||
+    311	0292			     @@ThemeC:					     ; <-----||--
+    312	0292  B9 00C2				     mov cx, 0C2h		     ;	     ||
+    313	0295  3B D9				     cmp bx, cx			     ;	     ||
+    314	0297  7E 03				     jng @@ContinueHere10	     ;	     ||
+    315	0299  EB 6F 90				     jmp @@SetErrorBadTheme	     ; >>>>>>||>>>>>>
+    316	029C					     @@ContinueHere10:		     ;	     ||
+    317										     ;	     ||
+    318	029C  80 2E 003Er C0			     sub byte ptr [boxTheme], 0C0h   ;	     ||
+    319										     ;	     ||
+    320	02A1			     @@SetColor:				     ; <<====//
+    321	02A1  85 C0				     test ax, ax
+    322	02A3  74 03				     jz	@@ContinueHere11
+    323	02A5  EB 52 90				     jmp @@SetErrorNoArg	     ; >>>>>>>>>>>>>>
+    324	02A8					     @@ContinueHere11:
+    325
+    326	02A8  BB 0000				     mov bx, 0
+    327	02AB  E8 0118				     call MScnNHex
+    328	02AE  88 1E 003Fr			     mov byte ptr [boxColor], bl
+    329	02B2  88 1E 0040r			     mov byte ptr [boxTextColor], bl
     330
-    331	02B5  B7 00				     mov bh, 0
-    332	02B7  8A 1E 003Er			     mov bl, byte ptr [boxTheme]
-    333	02BB  B9 000E				     mov cx, 0Eh
-    334	02BE  3B D9				     cmp bx, cx
-    335	02C0  74 03				     je	@@ThemeEColor
-    336	02C2  EB 1A 90				     jmp @@LastArg		     ; ->>>>>>>>>>>>>
-    337	02C5			     @@ThemeEColor:
-    338	02C5  C6 06 003Er 03			     mov byte ptr [boxTheme], 03d
-    339
-    340	02CA  85 C0				     test ax, ax
-    341	02CC  74 03				     jz	@@ContinueHere12
-    342	02CE  EB 28 90				     jmp @@SetErrorNoArg	     ; >>>>>>>>>>>>>>
-Turbo Assembler	 Version 4.1	    03/03/23 25:47:45	    Page 7
+    331
+    332	02B6  B7 00				     mov bh, 0
+    333	02B8  8A 1E 003Er			     mov bl, byte ptr [boxTheme]
+    334	02BC  B9 000E				     mov cx, 0Eh
+    335	02BF  3B D9				     cmp bx, cx
+    336	02C1  74 03				     je	@@ThemeEColor
+    337	02C3  EB 1A 90				     jmp @@LastArg		     ; ->>>>>>>>>>>>>
+    338	02C6			     @@ThemeEColor:
+    339	02C6  C6 06 003Er 03			     mov byte ptr [boxTheme], 03d
+    340
+    341	02CB  85 C0				     test ax, ax
+    342	02CD  74 03				     jz	@@ContinueHere12
+Turbo Assembler	 Version 4.1	    03/14/23 22:01:19	    Page 7
 probox.asm
 
 
 
-    343	02D1					     @@ContinueHere12:
-    344
-    345	02D1  BB 0000				     mov bx, 0
-    346	02D4  E8 00EE				     call MScnNHex
-    347	02D7  88 1E 0040r			     mov byte ptr [boxTextColor], bl
-    348	02DB  EB 01 90				     jmp @@LastArg		     ; ->>>>>>>>>>>>>
-    349
+    343	02CF  EB 28 90				     jmp @@SetErrorNoArg	     ; >>>>>>>>>>>>>>
+    344	02D2					     @@ContinueHere12:
+    345
+    346	02D2  BB 0000				     mov bx, 0
+    347	02D5  E8 00EE				     call MScnNHex
+    348	02D8  88 1E 0040r			     mov byte ptr [boxTextColor], bl
+    349	02DC  EB 01 90				     jmp @@LastArg		     ; ->>>>>>>>>>>>>
     350
-    351	02DE			     @@LastArg:					     ; <<<<<<<<<<<<<-
-    352	02DE  85 C0				     test ax, ax
-    353	02E0  74 0B				     jz	@@hasText		     ; >>====\\
-    354										     ;	     ||
-    355	02E2  C7 46 04 0000			     mov word ptr ss:[bp + 4], 0     ;	     ||
-    356										     ;	     ||
-    357	02E7  B8 0000				     mov ax, 0			     ;	     ||
-    358	02EA  EB 2B 90				     jmp @@ProcEnd		     ; >-\   ||
-    359	02ED					     @@hasText:			     ; <<|===//
-    360										     ;	 |
-    361	02ED  C7 46 04 0001			     mov word ptr ss:[bp + 4], 1     ;	 |
-    362										     ;	 |
-    363	02F2  B8 0000				     mov ax, 0			     ;	 |
-    364	02F5  EB 20 90				     jmp @@ProcEnd		     ; >-\
-    365	02F8			     @@SetErrorNoArg:				     ; <<|<<<<<<<<<<<
-    366	02F8  B8 0239				     mov ax, 0239h		     ; Error code: No argument (more expected) : 239
-    367	02FB  B6 0C				     mov dh, 00Ch		     ;	 |
-    368	02FD  BB 0286				     mov bx, 160d*4+3d*2	     ;	 |
-    369	0300  E8 0060				     call PrintNHex		     ;	 |
-    370	0303  B8 0239				     mov ax, 0239h		     ;	 |
-    371										     ;	 |
+    351
+    352	02DF			     @@LastArg:					     ; <<<<<<<<<<<<<-
+    353	02DF  85 C0				     test ax, ax
+    354	02E1  74 0B				     jz	@@hasText		     ; >>====\\
+    355										     ;	     ||
+    356	02E3  C7 46 04 0000			     mov word ptr ss:[bp + 4], 0     ;	     ||
+    357										     ;	     ||
+    358	02E8  B8 0000				     mov ax, 0			     ;	     ||
+    359	02EB  EB 2B 90				     jmp @@ProcEnd		     ; >-\   ||
+    360	02EE					     @@hasText:			     ; <<|===//
+    361										     ;	 |
+    362	02EE  C7 46 04 0001			     mov word ptr ss:[bp + 4], 1     ;	 |
+    363										     ;	 |
+    364	02F3  B8 0000				     mov ax, 0			     ;	 |
+    365	02F6  EB 20 90				     jmp @@ProcEnd		     ; >-\
+    366	02F9			     @@SetErrorNoArg:				     ; <<|<<<<<<<<<<<
+    367	02F9  B8 0239				     mov ax, 0239h		     ; Error code: No argument (more expected) : 239
+    368	02FC  B6 0C				     mov dh, 00Ch		     ;	 |
+    369	02FE  BB 0286				     mov bx, 160d*4+3d*2	     ;	 |
+    370	0301  E8 0060				     call PrintNHex		     ;	 |
+    371	0304  B8 0239				     mov ax, 0239h		     ;	 |
     372										     ;	 |
-    373	0306  EB 0F 90				     jmp @@ProcEnd		     ; >-\
-    374	0309			     @@SetErrorBadTheme:			     ; <<|<<<<<<<<<<<
-    375	0309  B8 0240				     mov ax, 0240h		     ; Error code: No argument (more expected) : 240
-    376	030C  B6 0C				     mov dh, 00Ch		     ;	 |
-    377	030E  BB 0286				     mov bx, 160d*4+3d*2	     ;	 |
-    378	0311  E8 004F				     call PrintNHex		     ;	 |
-    379	0314  B8 0240				     mov ax, 0240h		     ;	 |
-    380										     ;	 |
+    373										     ;	 |
+    374	0307  EB 0F 90				     jmp @@ProcEnd		     ; >-\
+    375	030A			     @@SetErrorBadTheme:			     ; <<|<<<<<<<<<<<
+    376	030A  B8 0240				     mov ax, 0240h		     ; Error code: No argument (more expected) : 240
+    377	030D  B6 0C				     mov dh, 00Ch		     ;	 |
+    378	030F  BB 0286				     mov bx, 160d*4+3d*2	     ;	 |
+    379	0312  E8 004F				     call PrintNHex		     ;	 |
+    380	0315  B8 0240				     mov ax, 0240h		     ;	 |
     381										     ;	 |
-    382	0317			     @@ProcEnd:					     ; <-/
-    383	0317  5D				     pop bp			     ; Stack frame
-    384	0318  C3				     ret
-    385	0319			     GetArgs	     endp
-    386
-    387				     ;------------------------------------------------
+    382										     ;	 |
+    383	0318			     @@ProcEnd:					     ; <-/
+    384	0318  5D				     pop bp			     ; Stack frame
+    385	0319  C3				     ret
+    386	031A			     GetArgs	     endp
+    387
     388				     ;------------------------------------------------
-    389
+    389				     ;------------------------------------------------
     390
-    391				     ;------------------------------------------------
-    392				     ; Calculate video mem offset by position
-    393				     ;------------------------------------------------
-    394				     ; Entry:	     CH	= heightPosition
-    395				     ;		     CL	= widthPosition
-    396				     ;
-    397				     ; Expects:	     None
-    398				     ;
-    399				     ; Exit:	     BX	= start	addr to	draw
-Turbo Assembler	 Version 4.1	    03/03/23 25:47:45	    Page 8
+    391
+    392				     ;------------------------------------------------
+    393				     ; Calculate video mem offset by position
+    394				     ;------------------------------------------------
+    395				     ; Entry:	     CH	= heightPosition
+    396				     ;		     CL	= widthPosition
+    397				     ;
+    398				     ; Expects:	     None
+    399				     ;
+Turbo Assembler	 Version 4.1	    03/14/23 22:01:19	    Page 8
 probox.asm
 
 
 
-    400				     ;
-    401				     ; Destroys:     AX
-    402				     ;------------------------------------------------
-    403				     ; Stack frame:
-    404				     ;		     ...
-    405				     ;		     retAddr	 []
-    406				     ;		     ...
-    407				     ;------------------------------------------------
-    408
-    409	0319			     CalculateVidMemPos	 proc
-    410						     ; push bp
-    411						     ; mov bp, sp		       ; Complete stack	frame
-    412
+    400				     ; Exit:	     BX	= start	addr to	draw
+    401				     ;
+    402				     ; Destroys:     AX
+    403				     ;------------------------------------------------
+    404				     ; Stack frame:
+    405				     ;		     ...
+    406				     ;		     retAddr	 []
+    407				     ;		     ...
+    408				     ;------------------------------------------------
+    409
+    410	031A			     CalculateVidMemPos	 proc
+    411						     ; push bp
+    412						     ; mov bp, sp		       ; Complete stack	frame
     413
-    414						     ; bx = 160d * ch +	2 * cl
-    415	0319  B7 00				     mov bh, 0
-    416	031B  8A D9				     mov bl, cl
-    417	031D  D1 E3				     sal bx, 1
-    418
-    419	031F  B8 00A0				     mov ax, 160d
-    420	0322  F6 E5				     mul ch
-    421	0324  03 D8				     add bx, ax
-    422
-    423						     ; mov ax, bx
-    424						     ; mov bx, 80d
-    425						     ; call PrintNDec
-    426
+    414
+    415						     ; bx = 160d * ch +	2 * cl
+    416	031A  B7 00				     mov bh, 0
+    417	031C  8A D9				     mov bl, cl
+    418	031E  D1 E3				     sal bx, 1
+    419
+    420	0320  B8 00A0				     mov ax, 160d
+    421	0323  F6 E5				     mul ch
+    422	0325  03 D8				     add bx, ax
+    423
+    424						     ; mov ax, bx
+    425						     ; mov bx, 80d
+    426						     ; call PrintNDec
     427
-    428						     ; pop bp			       ; Stack frame
-    429	0326  C3				     ret
-    430	0327			     CalculateVidMemPos	 endp
-    431
-    432				     ;------------------------------------------------
+    428
+    429						     ; pop bp			       ; Stack frame
+    430	0327  C3				     ret
+    431	0328			     CalculateVidMemPos	 endp
+    432
     433				     ;------------------------------------------------
-    434
+    434				     ;------------------------------------------------
     435
-    436				     ;------------------------------------------------
-    437				     ; Count the length	of the 0Dh-terminated string (str)
-    438				     ;------------------------------------------------
-    439				     ; Entry:	     ES:DI = str
-    440				     ;
-    441				     ; Expects:	     DF	= 0 (CLD)
-    442				     ;
-    443				     ; Exit:	     CX	= length
-    444				     ;
-    445				     ; Destroys:     AL	DI
-    446				     ;------------------------------------------------
-    447				     ; Stack frame:
-    448				     ;		     ...
-    449				     ;		     retAddr	 []
-    450				     ;		     ...
-    451				     ;------------------------------------------------
-    452				     ;Направление просмотра	 зависит	 от флага		    +
-    453				     направления DF,	значение  которого  можно	менять  с    +
-    454				     помощью команд CLD (DF:=0) и	STD (DF:=1).
-    455
-    456	0327			     StrLen	     proc
-Turbo Assembler	 Version 4.1	    03/03/23 25:47:45	    Page 9
+    436
+    437				     ;------------------------------------------------
+    438				     ; Count the length	of the 0Dh-terminated string (str)
+    439				     ;------------------------------------------------
+    440				     ; Entry:	     ES:DI = str
+    441				     ;
+    442				     ; Expects:	     DF	= 0 (CLD)
+    443				     ;
+    444				     ; Exit:	     CX	= length
+    445				     ;
+    446				     ; Destroys:     AL	DI
+    447				     ;------------------------------------------------
+    448				     ; Stack frame:
+    449				     ;		     ...
+    450				     ;		     retAddr	 []
+    451				     ;		     ...
+    452				     ;------------------------------------------------
+    453				     ;Направление просмотра	 зависит	 от флага		    +
+    454				     направления DF,	значение  которого  можно	менять  с    +
+    455				     помощью команд CLD (DF:=0) и	STD (DF:=1).
+    456
+Turbo Assembler	 Version 4.1	    03/14/23 22:01:19	    Page 9
 probox.asm
 
 
 
-    457						     ; push bp
-    458						     ; mov bp, sp		       ; Complete stack	frame
-    459
-    460	0327  B0 0D				     mov al, 00Dh		     ; AL = terminator
-    461	0329  33 C9				     xor cx, cx			     ; CX = 0
-    462
-    463	032B			     @@CountStep:				     ; <-------------------------\
-    464	032B  41				     inc cx			     ;				 |
-    465	032C  AE				     scasb			     ;				 |
-    466	032D  75 FC				     jne @@CountStep		     ; >-------------------------/
-    467
-    468	032F  49				     dec cx
-    469
-    470						     ; pop bp			       ; Stack frame
-    471	0330  C3				     ret
-    472	0331			     StrLen	     endp
-    473
-    474				     ;------------------------------------------------
+    457	0328			     StrLen	     proc
+    458						     ; push bp
+    459						     ; mov bp, sp		       ; Complete stack	frame
+    460
+    461	0328  B0 0D				     mov al, 00Dh		     ; AL = terminator
+    462	032A  33 C9				     xor cx, cx			     ; CX = 0
+    463
+    464	032C			     @@CountStep:				     ; <-------------------------\
+    465	032C  41				     inc cx			     ;				 |
+    466	032D  AE				     scasb			     ;				 |
+    467	032E  75 FC				     jne @@CountStep		     ; >-------------------------/
+    468
+    469	0330  49				     dec cx
+    470
+    471						     ; pop bp			       ; Stack frame
+    472	0331  C3				     ret
+    473	0332			     StrLen	     endp
+    474
     475				     ;------------------------------------------------
-    476
+    476				     ;------------------------------------------------
     477
-    478				     include ..\LianLib\ScanNDec.asm
-1   479				     ;------------------------------------------------
-1   480				     ; Scans number as decimal
-1   481				     ;------------------------------------------------
-1   482				     ; Entry:	     none
-1   483				     ;
-1   484				     ; Expects:	     BX	= 0
-1   485				     ;
-1   486				     ; Exit:	     BX	= number to print
-1   487				     ;
-1   488				     ; Destroys:     AX	CL Si
-1   489				     ;------------------------------------------------
+    478
+    479				     include ..\LianLib\ScanNDec.asm
+1   480				     ;------------------------------------------------
+1   481				     ; Scans number as decimal
+1   482				     ;------------------------------------------------
+1   483				     ; Entry:	     none
+1   484				     ;
+1   485				     ; Expects:	     BX	= 0
+1   486				     ;
+1   487				     ; Exit:	     BX	= number to print
+1   488				     ;
+1   489				     ; Destroys:     AX	CL Si
 1   490				     ;------------------------------------------------
-1   491	0331			     ScanNDec	     proc
-1   492
-1   493	0331			     @@ScanDigit:				     ; <-------------------------\
-1   494										     ;				 |
-1   495	0331  B4 01				     mov ah, 01h		     ; getc -> al		 |
-1   496	0333  CD 21				     int 21h			     ; ^			 |
-1   497										     ;				 |
-1   498	0335  3C 0D				     cmp al, 13d		     ; Stop scan if enter	 |
-1   499	0337  74 15				     je	@@EndScanDigit		     ; >>========================|=======\\
-1   500										     ;				 |	 ||
-1   501	0339  8A C8				     mov cl, al			     ; Store al	to cl		 |	 ||
-1   502										     ;				 |	 ||
-1   503	033B  8B C3				     mov ax, bx			     ; bx *= 10			 |	 ||
-1   504	033D  BE 000A				     mov si, 10d		     ; ^			 |	 ||
-1   505	0340  F7 E6				     mul si			     ; ^			 |	 ||
-1   506	0342  8B D8				     mov bx, ax			     ; ^			 |	 ||
-1   507										     ;				 |	 ||
-1   508	0344  8A C1				     mov al, cl			     ; Retore al from cl	 |	 ||
-1   509										     ;				 |	 ||
-1   510	0346  2C 30				     sub al, "0"		     ; ASCII "0" offset		 |	 ||
-1   511										     ;				 |	 ||
-1   512	0348  B4 00				     mov ah, 0d			     ; bx += al			 |	 ||
-1   513	034A  03 D8				     add bx, ax			     ; ^			 |	 ||
-Turbo Assembler	 Version 4.1	    03/03/23 25:47:45	    Page 10
+1   491				     ;------------------------------------------------
+1   492	0332			     ScanNDec	     proc
+1   493
+1   494	0332			     @@ScanDigit:				     ; <-------------------------\
+1   495										     ;				 |
+1   496	0332  B4 01				     mov ah, 01h		     ; getc -> al		 |
+1   497	0334  CD 21				     int 21h			     ; ^			 |
+1   498										     ;				 |
+1   499	0336  3C 0D				     cmp al, 13d		     ; Stop scan if enter	 |
+1   500	0338  74 15				     je	@@EndScanDigit		     ; >>========================|=======\\
+1   501										     ;				 |	 ||
+1   502	033A  8A C8				     mov cl, al			     ; Store al	to cl		 |	 ||
+1   503										     ;				 |	 ||
+1   504	033C  8B C3				     mov ax, bx			     ; bx *= 10			 |	 ||
+1   505	033E  BE 000A				     mov si, 10d		     ; ^			 |	 ||
+1   506	0341  F7 E6				     mul si			     ; ^			 |	 ||
+1   507	0343  8B D8				     mov bx, ax			     ; ^			 |	 ||
+1   508										     ;				 |	 ||
+1   509	0345  8A C1				     mov al, cl			     ; Retore al from cl	 |	 ||
+1   510										     ;				 |	 ||
+1   511	0347  2C 30				     sub al, "0"		     ; ASCII "0" offset		 |	 ||
+1   512										     ;				 |	 ||
+1   513	0349  B4 00				     mov ah, 0d			     ; bx += al			 |	 ||
+Turbo Assembler	 Version 4.1	    03/14/23 22:01:19	    Page 10
 probox.asm
 
 
 
-1   514										     ;				 |	 ||
-1   515	034C  EB E3				     jmp @@ScanDigit		     ; >-------------------------/	 ||
-1   516										     ;					 ||
-1   517	034E			     @@EndScanDigit:				     ; <<================================//
-1   518	034E  C3				     ret
-1   519
-1   520	034F			     ScanNDec	     endp
-1   521
-1   522				     ;------------------------------------------------
+1   514	034B  03 D8				     add bx, ax			     ; ^			 |	 ||
+1   515										     ;				 |	 ||
+1   516	034D  EB E3				     jmp @@ScanDigit		     ; >-------------------------/	 ||
+1   517										     ;					 ||
+1   518	034F			     @@EndScanDigit:				     ; <<================================//
+1   519	034F  C3				     ret
+1   520
+1   521	0350			     ScanNDec	     endp
+1   522
 1   523				     ;------------------------------------------------
-1   524
-    525				     include ..\LianLib\PrntNBin.asm
-1   526				     ;------------------------------------------------
-1   527				     ; Prints number as	binary to vidmem
-1   528				     ;------------------------------------------------
-1   529				     ; Entry:	     AX	= number to print
-1   530				     ;		     BX	= start	addr to	print
-1   531				     ;
-1   532				     ; Expects:	     ES	-> Video segment
-1   533				     ;		     DH	= color	code
-1   534				     ;
-1   535				     ; Exit:	     None
-1   536				     ;
-1   537				     ; Destroys:     AX	BX CX DL
-1   538				     ;------------------------------------------------
+1   524				     ;------------------------------------------------
+1   525
+    526				     include ..\LianLib\PrntNBin.asm
+1   527				     ;------------------------------------------------
+1   528				     ; Prints number as	binary to vidmem
+1   529				     ;------------------------------------------------
+1   530				     ; Entry:	     AX	= number to print
+1   531				     ;		     BX	= start	addr to	print
+1   532				     ;
+1   533				     ; Expects:	     ES	-> Video segment
+1   534				     ;		     DH	= color	code
+1   535				     ;
+1   536				     ; Exit:	     None
+1   537				     ;
+1   538				     ; Destroys:     AX	BX CX DL
 1   539				     ;------------------------------------------------
-1   540	034F			     PrintNBin	     proc
-1   541
-1   542	034F  B9 0010				     mov cx, 16d		     ; 16 bit in 2 byte	in ax
-1   543
-1   544	0352			     @@PrintDigit:				     ; <-------------------------\
-1   545										     ;				 |
-1   546	0352  B2 01				     mov dl, 00000001b		     ; Mask			 |
-1   547	0354  22 D0				     and dl, al			     ;				 |
-1   548	0356  80 C2 30				     add dl, 30h		     ; ASCII "0" offset		 |
-1   549										     ;				 |
-1   550	0359  26: 89 17				     mov word ptr es:[bx], dx	     ; Print dl	on position bx	 |
-1   551										     ;				 |
-1   552	035C  4B				     dec bx			     ; Next digit		 |
-1   553	035D  4B				     dec bx			     ; ^			 |
-1   554										     ;				 |
-1   555	035E  D1 E8				     shr ax, 1d			     ; ax >> 1			 |
-1   556										     ;				 |
-1   557	0360  E2 F0				     loop @@PrintDigit		     ; >-------------------------/
-1   558
-1   559	0362  C3				     ret
-1   560
-1   561	0363			     PrintNBin	     endp
-1   562
-1   563				     ;------------------------------------------------
+1   540				     ;------------------------------------------------
+1   541	0350			     PrintNBin	     proc
+1   542
+1   543	0350  B9 0010				     mov cx, 16d		     ; 16 bit in 2 byte	in ax
+1   544
+1   545	0353			     @@PrintDigit:				     ; <-------------------------\
+1   546										     ;				 |
+1   547	0353  B2 01				     mov dl, 00000001b		     ; Mask			 |
+1   548	0355  22 D0				     and dl, al			     ;				 |
+1   549	0357  80 C2 30				     add dl, 30h		     ; ASCII "0" offset		 |
+1   550										     ;				 |
+1   551	035A  26: 89 17				     mov word ptr es:[bx], dx	     ; Print dl	on position bx	 |
+1   552										     ;				 |
+1   553	035D  4B				     dec bx			     ; Next digit		 |
+1   554	035E  4B				     dec bx			     ; ^			 |
+1   555										     ;				 |
+1   556	035F  D1 E8				     shr ax, 1d			     ; ax >> 1			 |
+1   557										     ;				 |
+1   558	0361  E2 F0				     loop @@PrintDigit		     ; >-------------------------/
+1   559
+1   560	0363  C3				     ret
+1   561
+1   562	0364			     PrintNBin	     endp
+1   563
 1   564				     ;------------------------------------------------
-1   565
-    566				     include ..\LianLib\PrntNHex.asm
-1   567				     ;------------------------------------------------
-1   568				     ; Prints number as	hexagen	to vidmem
-1   569				     ;------------------------------------------------
-1   570				     ; Entry:	     AX	= number to print
-Turbo Assembler	 Version 4.1	    03/03/23 25:47:45	    Page 11
+1   565				     ;------------------------------------------------
+1   566
+    567				     include ..\LianLib\PrntNHex.asm
+1   568				     ;------------------------------------------------
+1   569				     ; Prints number as	hexagen	to vidmem
+1   570				     ;------------------------------------------------
+Turbo Assembler	 Version 4.1	    03/14/23 22:01:19	    Page 11
 probox.asm
 
 
 
-1   571				     ;		     BX	= start	addr to	print
-1   572				     ;
-1   573				     ; Expects:	     ES	-> Video segment
-1   574				     ;		     DH	= color	code
-1   575				     ;
-1   576				     ; Exit:	     None
-1   577				     ;
-1   578				     ; Destroys:     AX	BX CX DL Si
-1   579				     ;------------------------------------------------
+1   571				     ; Entry:	     AX	= number to print
+1   572				     ;		     BX	= start	addr to	print
+1   573				     ;
+1   574				     ; Expects:	     ES	-> Video segment
+1   575				     ;		     DH	= color	code
+1   576				     ;
+1   577				     ; Exit:	     None
+1   578				     ;
+1   579				     ; Destroys:     AX	BX CX DL Si
 1   580				     ;------------------------------------------------
-1   581	0363			     PrintNHex	     proc
-1   582
-1   583	0363  B9 0004				     mov cx, 4d			     ; 4 digits	in 2 byte in ax
-1   584
-1   585	0366			     @@PrintDigit:				     ; <-------------------------\
-1   586										     ;				 |
-1   587	0366  B2 0F				     mov dl, 00001111b		     ; Mask			 |
-1   588	0368  22 D0				     and dl, al			     ;				 |
-1   589										     ;				 |
-1   590	036A  8B F2				     mov si, dx			     ; dl -> si			 |
-1   591	036C  83 E6 0F				     and si, 0Fh		     ;				 |
-1   592										     ;				 |
-1   593	036F  8A 94 0000r			     mov dl, byte ptr [Alphabet]+si  ; ASCII "0" offset		 |
-1   594										     ;				 |
-1   595	0373  26: 89 17				     mov word ptr es:[bx], dx	     ; Print dl	on position bx	 |
-1   596										     ;				 |
-1   597	0376  4B				     dec bx			     ; Next digit		 |
-1   598	0377  4B				     dec bx			     ; ^			 |
-1   599										     ;				 |
-1   600	0378  C1 E8 04				     shr ax, 4d			     ; ax >> 4			 |
-1   601										     ;				 |
-1   602	037B  E2 E9				     loop @@PrintDigit		     ; >-------------------------/
-1   603
-1   604	037D  C3				     ret
-1   605
-1   606	037E			     PrintNHex	     endp
-1   607
-1   608				     ;------------------------------------------------
+1   581				     ;------------------------------------------------
+1   582	0364			     PrintNHex	     proc
+1   583
+1   584	0364  B9 0004				     mov cx, 4d			     ; 4 digits	in 2 byte in ax
+1   585
+1   586	0367			     @@PrintDigit:				     ; <-------------------------\
+1   587										     ;				 |
+1   588	0367  B2 0F				     mov dl, 00001111b		     ; Mask			 |
+1   589	0369  22 D0				     and dl, al			     ;				 |
+1   590										     ;				 |
+1   591	036B  8B F2				     mov si, dx			     ; dl -> si			 |
+1   592	036D  83 E6 0F				     and si, 0Fh		     ;				 |
+1   593										     ;				 |
+1   594	0370  8A 94 0000r			     mov dl, byte ptr [Alphabet]+si  ; ASCII "0" offset		 |
+1   595										     ;				 |
+1   596	0374  26: 89 17				     mov word ptr es:[bx], dx	     ; Print dl	on position bx	 |
+1   597										     ;				 |
+1   598	0377  4B				     dec bx			     ; Next digit		 |
+1   599	0378  4B				     dec bx			     ; ^			 |
+1   600										     ;				 |
+1   601	0379  C1 E8 04				     shr ax, 4d			     ; ax >> 4			 |
+1   602										     ;				 |
+1   603	037C  E2 E9				     loop @@PrintDigit		     ; >-------------------------/
+1   604
+1   605	037E  C3				     ret
+1   606
+1   607	037F			     PrintNHex	     endp
+1   608
 1   609				     ;------------------------------------------------
-1   610
-    611				     include ..\LianLib\PrntNDec.asm
-1   612				     ;------------------------------------------------
-1   613				     ; Prints number as	decimal	to vidmem
-1   614				     ;------------------------------------------------
-1   615				     ; Entry:	     AX	= number to print
-1   616				     ;		     BX	= start	addr to	print
-1   617				     ;
-1   618				     ; Expects:	     ES	-> Video segment
-1   619				     ;		     DH	= color	code
-1   620				     ;
-1   621				     ; Exit:	     None
-1   622				     ;
-1   623				     ; Destroys:     AX	BX CX DL Si
-1   624				     ;------------------------------------------------
+1   610				     ;------------------------------------------------
+1   611
+    612				     include ..\LianLib\PrntNDec.asm
+1   613				     ;------------------------------------------------
+1   614				     ; Prints number as	decimal	to vidmem
+1   615				     ;------------------------------------------------
+1   616				     ; Entry:	     AX	= number to print
+1   617				     ;		     BX	= start	addr to	print
+1   618				     ;
+1   619				     ; Expects:	     ES	-> Video segment
+1   620				     ;		     DH	= color	code
+1   621				     ;
+1   622				     ; Exit:	     None
+1   623				     ;
+1   624				     ; Destroys:     AX	BX CX DL Si
 1   625				     ;------------------------------------------------
-1   626	037E			     PrintNDec	     proc
-1   627
-Turbo Assembler	 Version 4.1	    03/03/23 25:47:45	    Page 12
+1   626				     ;------------------------------------------------
+1   627	037F			     PrintNDec	     proc
+Turbo Assembler	 Version 4.1	    03/14/23 22:01:19	    Page 12
 probox.asm
 
 
 
-1   628	037E  B9 0005				     mov cx, 5d			     ; 5 digits	in 2 byte in ax
-1   629
-1   630	0381			     @@PrintDigit:				     ; <-------------------------\
-1   631	0381  8A EE				     mov ch, dh			     ; Store dh	to ch		 |
-1   632										     ;				 |
-1   633	0383  BA 0000				     mov dx, 0d			     ; for division		 |
-1   634	0386  BE 000A				     mov si, 10d		     ; ax/10 ->	ax &		 |
-1   635	0389  F7 F6				     div si			     ; & ax%10 -> dx		 | !!! dx < 10
-1   636										     ;				 |
-1   637	038B  8B F2				     mov si, dx			     ; dl -> si			 |
-1   638										     ;				 |
-1   639	038D  8A 94 0000r			     mov dl, byte ptr [Alphabet]+si  ; ASCII "0" offset		 |
-1   640										     ;				 |
-1   641	0391  8A F5				     mov dh, ch			     ; Restore dh from ch	 |
-1   642	0393  B5 00				     mov ch, 0			     ; ^			 |
-1   643										     ;				 |
-1   644	0395  26: 89 17				     mov word ptr es:[bx], dx	     ; Print dl	on position bx	 |
-1   645										     ;				 |
-1   646	0398  4B				     dec bx			     ; Next digit		 |
-1   647	0399  4B				     dec bx			     ; ^			 |
-1   648										     ;				 |
+1   628
+1   629	037F  B9 0005				     mov cx, 5d			     ; 5 digits	in 2 byte in ax
+1   630
+1   631	0382			     @@PrintDigit:				     ; <-------------------------\
+1   632	0382  8A EE				     mov ch, dh			     ; Store dh	to ch		 |
+1   633										     ;				 |
+1   634	0384  BA 0000				     mov dx, 0d			     ; for division		 |
+1   635	0387  BE 000A				     mov si, 10d		     ; ax/10 ->	ax &		 |
+1   636	038A  F7 F6				     div si			     ; & ax%10 -> dx		 | !!! dx < 10
+1   637										     ;				 |
+1   638	038C  8B F2				     mov si, dx			     ; dl -> si			 |
+1   639										     ;				 |
+1   640	038E  8A 94 0000r			     mov dl, byte ptr [Alphabet]+si  ; ASCII "0" offset		 |
+1   641										     ;				 |
+1   642	0392  8A F5				     mov dh, ch			     ; Restore dh from ch	 |
+1   643	0394  B5 00				     mov ch, 0			     ; ^			 |
+1   644										     ;				 |
+1   645	0396  26: 89 17				     mov word ptr es:[bx], dx	     ; Print dl	on position bx	 |
+1   646										     ;				 |
+1   647	0399  4B				     dec bx			     ; Next digit		 |
+1   648	039A  4B				     dec bx			     ; ^			 |
 1   649										     ;				 |
-1   650	039A  E2 E5				     loop @@PrintDigit		     ; >-------------------------/
-1   651
-1   652	039C  C3				     ret
-1   653
-1   654	039D			     PrintNDec	     endp
-1   655
-1   656				     ;------------------------------------------------
+1   650										     ;				 |
+1   651	039B  E2 E5				     loop @@PrintDigit		     ; >-------------------------/
+1   652
+1   653	039D  C3				     ret
+1   654
+1   655	039E			     PrintNDec	     endp
+1   656
 1   657				     ;------------------------------------------------
-1   658
-    659				     include ..\LianLib\MScnNDec.asm
-1   660				     ;------------------------------------------------
-1   661				     ; Scans number as decimal from string in memory
-1   662				     ;------------------------------------------------
-1   663				     ; Entry:	     DS:SI = memory ptr
-1   664				     ;
-1   665				     ; Expects:	     BX	= 0
-1   666				     ;		     DL	= terminator char 1
-1   667				     ;		     DH	= terminator char 2 (TerminatorEnd)
-1   668				     ;		     DF	= 0 (CLD) [or backward]
-1   669				     ;
-1   670				     ; Exit:	     BX	= scanned number
-1   671				     ;		     SI	to next	word
-1   672				     ;		     AX	= 0 if terminator, 1 if	TerminatorEnd
-1   673				     ;
-1   674				     ; Destroys:     None
-1   675				     ;------------------------------------------------
+1   658				     ;------------------------------------------------
+1   659
+    660				     include ..\LianLib\MScnNDec.asm
+1   661				     ;------------------------------------------------
+1   662				     ; Scans number as decimal from string in memory
+1   663				     ;------------------------------------------------
+1   664				     ; Entry:	     DS:SI = memory ptr
+1   665				     ;
+1   666				     ; Expects:	     BX	= 0
+1   667				     ;		     DL	= terminator char 1
+1   668				     ;		     DH	= terminator char 2 (TerminatorEnd)
+1   669				     ;		     DF	= 0 (CLD) [or backward]
+1   670				     ;
+1   671				     ; Exit:	     BX	= scanned number
+1   672				     ;		     SI	to next	word
+1   673				     ;		     AX	= 0 if terminator, 1 if	TerminatorEnd
+1   674				     ;
+1   675				     ; Destroys:     None
 1   676				     ;------------------------------------------------
-1   677	039D			     MScnNDec	     proc
-1   678
-1   679	039D			     @@ScanDigit:				     ; <-------------------------\
-1   680										     ;				 |
-1   681						     ; mov ah, 01h		     ; getc -> al		 |
-1   682						     ; int 21h			     ; ^			 |
-1   683	039D  AC				     lodsb			     ; char -> al		 |
-1   684										     ;				 |
-Turbo Assembler	 Version 4.1	    03/03/23 25:47:45	    Page 13
+1   677				     ;------------------------------------------------
+1   678	039E			     MScnNDec	     proc
+1   679
+1   680	039E			     @@ScanDigit:				     ; <-------------------------\
+1   681										     ;				 |
+1   682						     ; mov ah, 01h		     ; getc -> al		 |
+1   683						     ; int 21h			     ; ^			 |
+1   684	039E  AC				     lodsb			     ; char -> al		 |
+Turbo Assembler	 Version 4.1	    03/14/23 22:01:19	    Page 13
 probox.asm
 
 
 
-1   685						     ; cmp al, 13d		     ; Stop scan if enter	 |
-1   686	039E  3A C2				     cmp al, dl			     ; Stop scan if terminator	 |
-1   687	03A0  74 19				     je	@@TermScanDigit		     ; >>========================|=======\\
-1   688	03A2  3A C6				     cmp al, dh			     ;				 |	 ||
-1   689	03A4  74 1B				     je	@@TerminatorEndScanDigit     ; >>========================|===========\\
-1   690										     ;				 |	 ||  ||
-1   691						     ; mov cl, al		     ; Store al	to cl		 |	 ||  ||
-1   692	03A6  50				     push ax			     ; Store ax			 |	 ||  ||
-1   693	03A7  52				     push dx			     ; Store dx			 |	 ||  ||
-1   694										     ;				 |	 ||  ||
-1   695	03A8  8B C3				     mov ax, bx			     ; bx *= 10			 |	 ||  ||
-1   696	03AA  BA 000A				     mov dx, 10d		     ; ^			 |	 ||  ||
-1   697	03AD  F7 E2				     mul dx			     ; ^			 |	 ||  ||
-1   698	03AF  8B D8				     mov bx, ax			     ; ^			 |	 ||  ||
-1   699										     ;				 |	 ||  ||
-1   700	03B1  5A				     pop dx			     ; Restore dx		 |	 ||  ||
-1   701	03B2  58				     pop ax			     ; Restore ax		 |	 ||  ||
-1   702						     ; mov al, cl		     ; Restore al from cl	 |	 ||  ||
-1   703										     ;				 |	 ||  ||
-1   704	03B3  2C 30				     sub al, "0"		     ; ASCII "0" offset		 |	 ||  ||
-1   705										     ;				 |	 ||  ||
-1   706	03B5  B4 00				     mov ah, 0d			     ; bx += al			 |	 ||  ||
-1   707	03B7  03 D8				     add bx, ax			     ; ^			 |	 ||  ||
-1   708										     ;				 |	 ||  ||
-1   709	03B9  EB E2				     jmp @@ScanDigit		     ; >-------------------------/	 ||  ||
-1   710										     ;					 ||  ||
-1   711	03BB			     @@TermScanDigit:				     ; <<================================//  ||
-1   712	03BB  B8 0000				     mov ax, 0			     ;					     ||
-1   713	03BE  EB 04 90				     jmp @@EndProc		     ; >-----\				     ||
-1   714	03C1			     @@TerminatorEndScanDigit:			     ; <<====|===============================//
-1   715	03C1  B8 0001				     mov ax, 1			     ;	     |
-1   716	03C4			     @@EndProc:					     ; <-----/
-1   717	03C4  C3				     ret
-1   718
-1   719	03C5			     MScnNDec	     endp
-1   720
-1   721				     ;------------------------------------------------
+1   685										     ;				 |
+1   686						     ; cmp al, 13d		     ; Stop scan if enter	 |
+1   687	039F  3A C2				     cmp al, dl			     ; Stop scan if terminator	 |
+1   688	03A1  74 19				     je	@@TermScanDigit		     ; >>========================|=======\\
+1   689	03A3  3A C6				     cmp al, dh			     ;				 |	 ||
+1   690	03A5  74 1B				     je	@@TerminatorEndScanDigit     ; >>========================|===========\\
+1   691										     ;				 |	 ||  ||
+1   692						     ; mov cl, al		     ; Store al	to cl		 |	 ||  ||
+1   693	03A7  50				     push ax			     ; Store ax			 |	 ||  ||
+1   694	03A8  52				     push dx			     ; Store dx			 |	 ||  ||
+1   695										     ;				 |	 ||  ||
+1   696	03A9  8B C3				     mov ax, bx			     ; bx *= 10			 |	 ||  ||
+1   697	03AB  BA 000A				     mov dx, 10d		     ; ^			 |	 ||  ||
+1   698	03AE  F7 E2				     mul dx			     ; ^			 |	 ||  ||
+1   699	03B0  8B D8				     mov bx, ax			     ; ^			 |	 ||  ||
+1   700										     ;				 |	 ||  ||
+1   701	03B2  5A				     pop dx			     ; Restore dx		 |	 ||  ||
+1   702	03B3  58				     pop ax			     ; Restore ax		 |	 ||  ||
+1   703						     ; mov al, cl		     ; Restore al from cl	 |	 ||  ||
+1   704										     ;				 |	 ||  ||
+1   705	03B4  2C 30				     sub al, "0"		     ; ASCII "0" offset		 |	 ||  ||
+1   706										     ;				 |	 ||  ||
+1   707	03B6  B4 00				     mov ah, 0d			     ; bx += al			 |	 ||  ||
+1   708	03B8  03 D8				     add bx, ax			     ; ^			 |	 ||  ||
+1   709										     ;				 |	 ||  ||
+1   710	03BA  EB E2				     jmp @@ScanDigit		     ; >-------------------------/	 ||  ||
+1   711										     ;					 ||  ||
+1   712	03BC			     @@TermScanDigit:				     ; <<================================//  ||
+1   713	03BC  B8 0000				     mov ax, 0			     ;					     ||
+1   714	03BF  EB 04 90				     jmp @@EndProc		     ; >-----\				     ||
+1   715	03C2			     @@TerminatorEndScanDigit:			     ; <<====|===============================//
+1   716	03C2  B8 0001				     mov ax, 1			     ;	     |
+1   717	03C5			     @@EndProc:					     ; <-----/
+1   718	03C5  C3				     ret
+1   719
+1   720	03C6			     MScnNDec	     endp
+1   721
 1   722				     ;------------------------------------------------
-1   723
-    724				     include ..\LianLib\MScnNHex.asm
-1   725				     ;------------------------------------------------
-1   726				     ; Scans number as hexagen from string in memory
-1   727				     ;------------------------------------------------
-1   728				     ; Entry:	     DS:SI = memory ptr
-1   729				     ;
-1   730				     ; Expects:	     BX	= 0
-1   731				     ;		     DL	= terminator char 1
-1   732				     ;		     DH	= terminator char 2 (TerminatorEnd)
-1   733				     ;		     DF	= 0 (CLD) [or backward]
-1   734				     ;
-1   735				     ; Exit:	     BX	= scanned number
-1   736				     ;		     SI	to next	word
-1   737				     ;		     AX	= 0 if terminator, 1 if	TerminatorEnd
-1   738				     ;
-1   739				     ; Destroys:     None
-1   740				     ;------------------------------------------------
+1   723				     ;------------------------------------------------
+1   724
+    725				     include ..\LianLib\MScnNHex.asm
+1   726				     ;------------------------------------------------
+1   727				     ; Scans number as hexagen from string in memory
+1   728				     ;------------------------------------------------
+1   729				     ; Entry:	     DS:SI = memory ptr
+1   730				     ;
+1   731				     ; Expects:	     BX	= 0
+1   732				     ;		     DL	= terminator char 1
+1   733				     ;		     DH	= terminator char 2 (TerminatorEnd)
+1   734				     ;		     DF	= 0 (CLD) [or backward]
+1   735				     ;
+1   736				     ; Exit:	     BX	= scanned number
+1   737				     ;		     SI	to next	word
+1   738				     ;		     AX	= 0 if terminator, 1 if	TerminatorEnd
+1   739				     ;
+1   740				     ; Destroys:     None
 1   741				     ;------------------------------------------------
-Turbo Assembler	 Version 4.1	    03/03/23 25:47:45	    Page 14
+Turbo Assembler	 Version 4.1	    03/14/23 22:01:19	    Page 14
 probox.asm
 
 
 
-1   742	03C5			     MScnNHex	     proc
-1   743
-1   744	03C5			     @@ScanDigit:				     ; <-------------------------\
-1   745										     ;				 |
-1   746						     ; mov ah, 01h		     ; getc -> al		 |
-1   747						     ; int 21h			     ; ^			 |
-1   748	03C5  AC				     lodsb			     ; char -> al		 |
-1   749										     ;				 |
-1   750						     ; cmp al, 13d		     ; Stop scan if enter	 |
-1   751	03C6  3A C2				     cmp al, dl			     ; Stop scan if terminator	 |
-1   752	03C8  74 43				     je	@@TermScanDigit		     ; >>========================|=======\\
-1   753	03CA  3A C6				     cmp al, dh			     ;				 |	 ||
-1   754	03CC  74 45				     je	@@TerminatorEndScanDigit     ; >>========================|===========\\
-1   755										     ;				 |	 ||  ||
+1   742				     ;------------------------------------------------
+1   743	03C6			     MScnNHex	     proc
+1   744
+1   745	03C6			     @@ScanDigit:				     ; <-------------------------\
+1   746										     ;				 |
+1   747						     ; mov ah, 01h		     ; getc -> al		 |
+1   748						     ; int 21h			     ; ^			 |
+1   749	03C6  AC				     lodsb			     ; char -> al		 |
+1   750										     ;				 |
+1   751						     ; cmp al, 13d		     ; Stop scan if enter	 |
+1   752	03C7  3A C2				     cmp al, dl			     ; Stop scan if terminator	 |
+1   753	03C9  74 43				     je	@@TermScanDigit		     ; >>========================|=======\\
+1   754	03CB  3A C6				     cmp al, dh			     ;				 |	 ||
+1   755	03CD  74 45				     je	@@TerminatorEndScanDigit     ; >>========================|===========\\
 1   756										     ;				 |	 ||  ||
-1   757	03CE  C1 E3 04				     shl bx, 4d			     ; bx *= 16			 |	 ||  ||
-1   758										     ;				 |	 ||  ||
+1   757										     ;				 |	 ||  ||
+1   758	03CF  C1 E3 04				     shl bx, 4d			     ; bx *= 16			 |	 ||  ||
 1   759										     ;				 |	 ||  ||
-1   760	03D1  53				     push bx			     ; Store bx			 |	 ||  ||
-1   761										     ;				 |	 ||  ||
-1   762	03D2  BB 0061				     mov bx, "a"		     ;				 |	 ||  ||
-1   763	03D5  3A C3				     cmp al, bl			     ;				 |	 ||  ||
-1   764	03D7  7C 0B				     jl	@@Nextaf		     ;				 |	 ||  ||
-1   765	03D9  BB 0066				     mov bx, "f"		     ;				 |	 ||  ||
-1   766	03DC  3A C3				     cmp al, bl			     ;				 |	 ||  ||
-1   767	03DE  7F 04				     jg	@@Nextaf		     ;				 |	 ||  ||
-1   768	03E0  2C 61				     sub al, "a"		     ; ASCII "0" offset		 |	 ||  ||
-1   769	03E2  04 0A				     add al, 0ah		     ; ^			 |	 ||  ||
-1   770	03E4			     @@Nextaf:					     ;				 |	 ||  ||
-1   771	03E4  BB 0041				     mov bx, "A"		     ;				 |	 ||  ||
-1   772	03E7  3A C3				     cmp al, bl			     ;				 |	 ||  ||
-1   773	03E9  7C 0B				     jl	@@NextAFCAPS		     ;				 |	 ||  ||
-1   774	03EB  BB 0046				     mov bx, "F"		     ;				 |	 ||  ||
-1   775	03EE  3A C3				     cmp al, bl			     ;				 |	 ||  ||
-1   776	03F0  7F 04				     jg	@@NextAFCAPS		     ;				 |	 ||  ||
-1   777	03F2  2C 41				     sub al, "A"		     ; ASCII "0" offset		 |	 ||  ||
-1   778	03F4  04 0A				     add al, 0Ah		     ; ^			 |	 ||  ||
-1   779	03F6			     @@NextAFCAPS:				     ;				 |	 ||  ||
-1   780	03F6  BB 0030				     mov bx, "0"		     ;				 |	 ||  ||
-1   781	03F9  3A C3				     cmp al, bl			     ;				 |	 ||  ||
-1   782	03FB  7C 09				     jl	@@Next09		     ;				 |	 ||  ||
-1   783	03FD  BB 0039				     mov bx, "9"		     ;				 |	 ||  ||
-1   784	0400  3A C3				     cmp al, bl			     ;				 |	 ||  ||
-1   785	0402  7F 02				     jg	@@Next09		     ;				 |	 ||  ||
-1   786	0404  2C 30				     sub al, "0"		     ; ASCII "0" offset		 |	 ||  ||
-1   787						     ; add al, 0		     ; ^			 |	 ||  ||
-1   788	0406			     @@Next09:					     ;				 |	 ||  ||
-1   789										     ;				 |	 ||  ||
-1   790	0406  5B				     pop bx			     ; Restore bx		 |	 ||  ||
-1   791										     ;				 |	 ||  ||
-1   792	0407  B4 00				     mov ah, 0d			     ; bx += al			 |	 ||  ||
-1   793	0409  03 D8				     add bx, ax			     ; ^			 |	 ||  ||
-1   794										     ;				 |	 ||  ||
-1   795	040B  EB B8				     jmp @@ScanDigit		     ; >-------------------------/	 ||  ||
-1   796										     ;					 ||  ||
-1   797	040D			     @@TermScanDigit:				     ; <<================================//  ||
-1   798	040D  B8 0000				     mov ax, 0			     ;					     ||
-Turbo Assembler	 Version 4.1	    03/03/23 25:47:45	    Page 15
+1   760										     ;				 |	 ||  ||
+1   761	03D2  53				     push bx			     ; Store bx			 |	 ||  ||
+1   762										     ;				 |	 ||  ||
+1   763	03D3  BB 0061				     mov bx, "a"		     ;				 |	 ||  ||
+1   764	03D6  3A C3				     cmp al, bl			     ;				 |	 ||  ||
+1   765	03D8  7C 0B				     jl	@@Nextaf		     ;				 |	 ||  ||
+1   766	03DA  BB 0066				     mov bx, "f"		     ;				 |	 ||  ||
+1   767	03DD  3A C3				     cmp al, bl			     ;				 |	 ||  ||
+1   768	03DF  7F 04				     jg	@@Nextaf		     ;				 |	 ||  ||
+1   769	03E1  2C 61				     sub al, "a"		     ; ASCII "0" offset		 |	 ||  ||
+1   770	03E3  04 0A				     add al, 0ah		     ; ^			 |	 ||  ||
+1   771	03E5			     @@Nextaf:					     ;				 |	 ||  ||
+1   772	03E5  BB 0041				     mov bx, "A"		     ;				 |	 ||  ||
+1   773	03E8  3A C3				     cmp al, bl			     ;				 |	 ||  ||
+1   774	03EA  7C 0B				     jl	@@NextAFCAPS		     ;				 |	 ||  ||
+1   775	03EC  BB 0046				     mov bx, "F"		     ;				 |	 ||  ||
+1   776	03EF  3A C3				     cmp al, bl			     ;				 |	 ||  ||
+1   777	03F1  7F 04				     jg	@@NextAFCAPS		     ;				 |	 ||  ||
+1   778	03F3  2C 41				     sub al, "A"		     ; ASCII "0" offset		 |	 ||  ||
+1   779	03F5  04 0A				     add al, 0Ah		     ; ^			 |	 ||  ||
+1   780	03F7			     @@NextAFCAPS:				     ;				 |	 ||  ||
+1   781	03F7  BB 0030				     mov bx, "0"		     ;				 |	 ||  ||
+1   782	03FA  3A C3				     cmp al, bl			     ;				 |	 ||  ||
+1   783	03FC  7C 09				     jl	@@Next09		     ;				 |	 ||  ||
+1   784	03FE  BB 0039				     mov bx, "9"		     ;				 |	 ||  ||
+1   785	0401  3A C3				     cmp al, bl			     ;				 |	 ||  ||
+1   786	0403  7F 02				     jg	@@Next09		     ;				 |	 ||  ||
+1   787	0405  2C 30				     sub al, "0"		     ; ASCII "0" offset		 |	 ||  ||
+1   788						     ; add al, 0		     ; ^			 |	 ||  ||
+1   789	0407			     @@Next09:					     ;				 |	 ||  ||
+1   790										     ;				 |	 ||  ||
+1   791	0407  5B				     pop bx			     ; Restore bx		 |	 ||  ||
+1   792										     ;				 |	 ||  ||
+1   793	0408  B4 00				     mov ah, 0d			     ; bx += al			 |	 ||  ||
+1   794	040A  03 D8				     add bx, ax			     ; ^			 |	 ||  ||
+1   795										     ;				 |	 ||  ||
+1   796	040C  EB B8				     jmp @@ScanDigit		     ; >-------------------------/	 ||  ||
+1   797										     ;					 ||  ||
+1   798	040E			     @@TermScanDigit:				     ; <<================================//  ||
+Turbo Assembler	 Version 4.1	    03/14/23 22:01:19	    Page 15
 probox.asm
 
 
 
-1   799	0410  EB 04 90				     jmp @@EndProc		     ; >-----\				     ||
-1   800	0413			     @@TerminatorEndScanDigit:			     ; <<====|===============================//
-1   801	0413  B8 0001				     mov ax, 1			     ;	     |
-1   802	0416			     @@EndProc:					     ; <-----/
-1   803	0416  C3				     ret
-1   804
-1   805	0417			     MScnNHex	     endp
-1   806
-1   807				     ;------------------------------------------------
+1   799	040E  B8 0000				     mov ax, 0			     ;					     ||
+1   800	0411  EB 04 90				     jmp @@EndProc		     ; >-----\				     ||
+1   801	0414			     @@TerminatorEndScanDigit:			     ; <<====|===============================//
+1   802	0414  B8 0001				     mov ax, 1			     ;	     |
+1   803	0417			     @@EndProc:					     ; <-----/
+1   804	0417  C3				     ret
+1   805
+1   806	0418			     MScnNHex	     endp
+1   807
 1   808				     ;------------------------------------------------
-1   809
-    810
-    811				     include ..\LianLib\ProBox.asm
-1   812				     ;------------------------------------------------
-1   813				     ; Draws cool box on the screen
-1   814				     ;------------------------------------------------
-1   815				     ; Entry:	     BX	= start	addr to	draw
-1   816				     ;		     CH	= height of box	(without frame)
-1   817				     ;		     CL	= width	of box (without	frame)
-1   818				     ;
-1   819				     ; Expects:	     ES	-> Video segment
-1   820				     ;
-1   821				     ; Exit:	     None
+1   809				     ;------------------------------------------------
+1   810
+    811
+    812				     include ..\LianLib\ProBox.asm
+1   813				     ;------------------------------------------------
+1   814				     ; Draws cool box on the screen
+1   815				     ;------------------------------------------------
+1   816				     ; Entry:	     BX	= start	addr to	draw
+1   817				     ;		     CH	= height of box	(without frame)
+1   818				     ;		     CL	= width	of box (without	frame)
+1   819				     ;
+1   820				     ; Expects:	     ES	-> Video segment
+1   821				     ;		     DS	-> Data	segment
 1   822				     ;
-1   823				     ; Destroys:     AX	BX (CX)	DX DI
-1   824				     ;------------------------------------------------
-1   825				     ; Stack frame:
-1   826				     ;		     ...
-1   827				     ;		     LU	char	 [bp + 20]   //	H - color attr
-1   828				     ;		     _U	char	 [bp + 18]   //	L - symb attr
-1   829				     ;		     RU	char	 [bp + 16]   //
-1   830				     ;		     R_	char	 [bp + 14]   //
-1   831				     ;		     RB	char	 [bp + 12]   //
-1   832				     ;		     _B	char	 [bp + 10]   //
-1   833				     ;		     LB	char	 [bp + 8]    //
-1   834				     ;		     L_	char	 [bp + 6]    //
-1   835				     ;		     FI	char	 [bp + 4]    //
-1   836				     ;		     retAddr	 [bp + 2]
-1   837				     ;		     stored BP	 [bp]
-1   838				     ;		     stored CX	 [bp - 2]    //	size
-1   839				     ;		     ...
-1   840				     ;------------------------------------------------
-1   841
-1   842	0417			     DrawBox	     proc
-1   843	0417  55				     push bp
-1   844	0418  8B EC				     mov bp, sp			     ; Complete	stack frame
-1   845	041A  51				     push cx
-1   846
-1   847										     ;-------------------------------------------
-1   848										     ; Upper line
-1   849	041B  8B FB				     mov di, bx
-1   850	041D  8B 4E FE				     mov cx, [bp - 2]
-1   851	0420  B5 00				     mov ch, 0
-1   852	0422  FF 76 14				     push [bp +	20]
-1   853	0425  FF 76 12				     push [bp +	18]
-1   854	0428  FF 76 10				     push [bp +	16]
-1   855	042B  E8 0044				     call DrawLine
-Turbo Assembler	 Version 4.1	    03/03/23 25:47:45	    Page 16
+1   823				     ; Exit:	     None
+1   824				     ;
+1   825				     ; Destroys:     AX	BX (CX)	DX DI
+1   826				     ;------------------------------------------------
+1   827				     ; Stack frame:
+1   828				     ;		     ...
+1   829				     ;		     LU	char	 [bp + 20]   //	H - color attr
+1   830				     ;		     _U	char	 [bp + 18]   //	L - symb attr
+1   831				     ;		     RU	char	 [bp + 16]   //
+1   832				     ;		     R_	char	 [bp + 14]   //
+1   833				     ;		     RB	char	 [bp + 12]   //
+1   834				     ;		     _B	char	 [bp + 10]   //
+1   835				     ;		     LB	char	 [bp + 8]    //
+1   836				     ;		     L_	char	 [bp + 6]    //
+1   837				     ;		     FI	char	 [bp + 4]    //
+1   838				     ;		     retAddr	 [bp + 2]
+1   839				     ;		     stored BP	 [bp]
+1   840				     ;		     stored CX	 [bp - 2]    //	size
+1   841				     ;		     ...
+1   842				     ;------------------------------------------------
+1   843
+1   844	0418			     DrawBox	     proc
+1   845	0418  55				     push bp
+1   846	0419  8B EC				     mov bp, sp			     ; Complete	stack frame
+1   847	041B  51				     push cx
+1   848
+1   849										     ;-------------------------------------------
+1   850										     ; Upper line
+1   851	041C  8B FB				     mov di, bx
+1   852	041E  8B 4E FE				     mov cx, [bp - 2]
+1   853	0421  B5 00				     mov ch, 0
+1   854	0423  FF 76 14				     push [bp +	20]
+1   855	0426  FF 76 12				     push [bp +	18]
+Turbo Assembler	 Version 4.1	    03/14/23 22:01:19	    Page 16
 probox.asm
 
 
 
-1   856	042E  83 C4 06				     add sp, 2*3d
-1   857										     ;-------------------------------------------
-1   858										     ; Middle line
-1   859	0431  8B 4E FE				     mov cx, [bp - 2]
-1   860	0434  B6 00				     mov dh, 0
-1   861	0436  8A D5				     mov dl, ch
-1   862	0438			     @@MiddleStep:				     ; <-----------------\
-1   863										     ;			 |
-1   864	0438  81 C3 00A0			     add bx, 160d		     ;			 |
-1   865	043C  8B FB				     mov di, bx			     ;			 |
-1   866	043E  8B 4E FE				     mov cx, [bp - 2]		     ;			 |
-1   867	0441  B5 00				     mov ch, 0			     ;			 |
-1   868	0443  FF 76 06				     push [bp +	6]		     ;			 |
-1   869	0446  FF 76 04				     push [bp +	4]		     ;			 |
-1   870	0449  FF 76 0E				     push [bp +	14]		     ;			 |
-1   871	044C  E8 0023				     call DrawLine		     ;			 |
-1   872	044F  83 C4 06				     add sp, 2*3d		     ;			 |
-1   873	0452  4A				     dec dx			     ;			 |
-1   874	0453  75 E3				     jnz @@MiddleStep		     ; >-----------------/
-1   875										     ;-------------------------------------------
-1   876										     ; Bottom line
-1   877	0455  81 C3 00A0			     add bx, 160d
-1   878	0459  8B FB				     mov di, bx
-1   879	045B  8B 4E FE				     mov cx, [bp - 2]
-1   880	045E  B5 00				     mov ch, 0
-1   881	0460  FF 76 08				     push [bp +	8]
-1   882	0463  FF 76 0A				     push [bp +	10]
-1   883	0466  FF 76 0C				     push [bp +	12]
-1   884	0469  E8 0006				     call DrawLine
-1   885	046C  83 C4 06				     add sp, 2*3d
-1   886										     ;-------------------------------------------
-1   887
-1   888	046F  59				     pop cx
-1   889	0470  5D				     pop bp			     ; Stack frame
-1   890	0471  C3				     ret
-1   891	0472			     DrawBox	     endp
-1   892
-1   893				     ;------------------------------------------------
-1   894				     ;------------------------------------------------
-1   895
-1   896				     ; needs <include ?\LianLib\DrawLine.asm>
+1   856	0429  FF 76 10				     push [bp +	16]
+1   857	042C  E8 0044				     call DrawLine
+1   858	042F  83 C4 06				     add sp, 2*3d
+1   859										     ;-------------------------------------------
+1   860										     ; Middle line
+1   861	0432  8B 4E FE				     mov cx, [bp - 2]
+1   862	0435  B6 00				     mov dh, 0
+1   863	0437  8A D5				     mov dl, ch
+1   864	0439			     @@MiddleStep:				     ; <-----------------\
+1   865										     ;			 |
+1   866	0439  81 C3 00A0			     add bx, 160d		     ;			 |
+1   867	043D  8B FB				     mov di, bx			     ;			 |
+1   868	043F  8B 4E FE				     mov cx, [bp - 2]		     ;			 |
+1   869	0442  B5 00				     mov ch, 0			     ;			 |
+1   870	0444  FF 76 06				     push [bp +	6]		     ;			 |
+1   871	0447  FF 76 04				     push [bp +	4]		     ;			 |
+1   872	044A  FF 76 0E				     push [bp +	14]		     ;			 |
+1   873	044D  E8 0023				     call DrawLine		     ;			 |
+1   874	0450  83 C4 06				     add sp, 2*3d		     ;			 |
+1   875	0453  4A				     dec dx			     ;			 |
+1   876	0454  75 E3				     jnz @@MiddleStep		     ; >-----------------/
+1   877										     ;-------------------------------------------
+1   878										     ; Bottom line
+1   879	0456  81 C3 00A0			     add bx, 160d
+1   880	045A  8B FB				     mov di, bx
+1   881	045C  8B 4E FE				     mov cx, [bp - 2]
+1   882	045F  B5 00				     mov ch, 0
+1   883	0461  FF 76 08				     push [bp +	8]
+1   884	0464  FF 76 0A				     push [bp +	10]
+1   885	0467  FF 76 0C				     push [bp +	12]
+1   886	046A  E8 0006				     call DrawLine
+1   887	046D  83 C4 06				     add sp, 2*3d
+1   888										     ;-------------------------------------------
+1   889
+1   890	0470  59				     pop cx
+1   891	0471  5D				     pop bp			     ; Stack frame
+1   892	0472  C3				     ret
+1   893	0473			     DrawBox	     endp
+1   894
+1   895				     ;------------------------------------------------
+1   896				     ;------------------------------------------------
 1   897
-    898				     include ..\LianLib\DrawLine.asm
-1   899				     ;------------------------------------------------
-1   900				     ; Draws line on the screen	(Pattern ABB~BBC)
+1   898				     ; needs <include ?\LianLib\DrawLine.asm>
+1   899
+    900				     include ..\LianLib\DrawLine.asm
 1   901				     ;------------------------------------------------
-1   902				     ; Entry:	     DI	= start	addr to	draw
-1   903				     ;		     CX	= width	of line	(without A&C)
-1   904				     ;
-1   905				     ; Expects:	     ES	-> Video segment
-1   906				     ;		     DF	= 0 (CLD)
-1   907				     ;
-1   908				     ; Exit:	     None
+1   902				     ; Draws line on the screen	(Pattern ABB~BBC)
+1   903				     ;------------------------------------------------
+1   904				     ; Entry:	     DI	= start	addr to	draw
+1   905				     ;		     CX	= width	of line	(without A&C)
+1   906				     ;
+1   907				     ; Expects:	     ES	-> Video segment
+1   908				     ;		     DF	= 0 (CLD)
 1   909				     ;
-1   910				     ; Destroys:     AX	CX DI
-1   911				     ;------------------------------------------------
-1   912				     ; Stack frame:
-Turbo Assembler	 Version 4.1	    03/03/23 25:47:45	    Page 17
+1   910				     ; Exit:	     None
+1   911				     ;
+1   912				     ; Destroys:     AX	CX DI
+Turbo Assembler	 Version 4.1	    03/14/23 22:01:19	    Page 17
 probox.asm
 
 
 
-1   913				     ;		     ...
-1   914				     ;		     'A' char	 [bp + 8]    //	H - color attr
-1   915				     ;		     'B' char	 [bp + 6]    //	L - symb attr
-1   916				     ;		     'C' char	 [bp + 4]    //
-1   917				     ;		     retAddr	 [bp + 2]
-1   918				     ;		     stored BP	 [bp]
-1   919				     ;		     ...
-1   920				     ;------------------------------------------------
-1   921				     ;Направление просмотра	 зависит	 от флага		    +
-    922				     направления DF,	значение  которого  можно	менять  с    +
-    923				     помощью команд CLD (DF:=0) и	STD (DF:=1).
-1   924
-1   925	0472			     DrawLine	     proc
-1   926	0472  55				     push bp
-1   927	0473  8B EC				     mov bp, sp			     ; Complete	stack frame
-1   928
-1   929	0475  8B 46 08				     mov ax, [bp + 8]
-1   930	0478  AB				     stosw
-1   931
-1   932	0479  8B 46 06				     mov ax, [bp + 6]
-1   933	047C  F3> AB				     rep stosw
-1   934
-1   935	047E  8B 46 04				     mov ax, [bp + 4]
-1   936	0481  AB				     stosw
-1   937
-1   938	0482  5D				     pop bp			     ; Stack frame
-1   939	0483  C3				     ret
-1   940	0484			     DrawLine	     endp
-1   941
-1   942				     ;------------------------------------------------
-1   943				     ;------------------------------------------------
-1   944
-    945
-    946	0484			     .data
-    947				     include ..\LianLib\Alphabet.asm
-1   948	0000  30 31 32 33 34 35	36+  Alphabet:	     db	"0123456789ABCDEF"	     ; Alphabet	for printing (Thanks Ilya)
-    949	      37 38 39 41 42 43	44+
-    950	      45 46
-1   951	0010  C9 CD BB BA BC C8	     BoxSymbols:     db	0c9h, 0cdh, 0bbh, 0bah,	0bch, 0c8h ; "╔═╗║╝╚"
-1   952
-1   953	0016			     BoxAssetStart:
-1   954	0016  20 DA C9 00	     BoxAssetLU:     db	020h, 0dah, 0c9h, 000h
-1   955	001A			     BoxAssetStep:
-1   956	001A  20 C4 CD 00	     BoxAsset_U:     db	020h, 0c4h, 0cdh, 000h
-1   957	001E  20 BF BB 00	     BoxAssetRU:     db	020h, 0bfh, 0bbh, 000h
-1   958	0022  20 B3 BA 00	     BoxAssetR_:     db	020h, 0b3h, 0bah, 000h
-1   959	0026  20 D9 BC 00	     BoxAssetRB:     db	020h, 0d9h, 0bch, 000h
-1   960	002A  20 C4 CD 00	     BoxAsset_B:     db	020h, 0c4h, 0cdh, 000h
-1   961	002E  20 C0 C8 00	     BoxAssetLB:     db	020h, 0c0h, 0c8h, 000h
-1   962	0032  20 B3 BA 00	     BoxAssetL_:     db	020h, 0b3h, 0bah, 000h
-1   963	0036  20 20 20 00	     BoxAssetFI:     db	020h, 020h, 020h, 000h
-1   964	003A			     BoxAssetEnd:
-1   965
-1   966				     ; 0:    1:┌─┐ 2:╔═╗ 3:usr
-1   967				     ;	       │ │	 ║ ║   chr
-1   968				     ;	       └─┘   ╚═╝
-1   969
-Turbo Assembler	 Version 4.1	    03/03/23 25:47:45	    Page 18
+1   913				     ;------------------------------------------------
+1   914				     ; Stack frame:
+1   915				     ;		     ...
+1   916				     ;		     'A' char	 [bp + 8]    //	H - color attr
+1   917				     ;		     'B' char	 [bp + 6]    //	L - symb attr
+1   918				     ;		     'C' char	 [bp + 4]    //
+1   919				     ;		     retAddr	 [bp + 2]
+1   920				     ;		     stored BP	 [bp]
+1   921				     ;		     ...
+1   922				     ;------------------------------------------------
+1   923				     ;Направление просмотра	 зависит	 от флага		    +
+    924				     направления DF,	значение  которого  можно	менять  с    +
+    925				     помощью команд CLD (DF:=0) и	STD (DF:=1).
+1   926
+1   927	0473			     DrawLine	     proc
+1   928	0473  55				     push bp
+1   929	0474  8B EC				     mov bp, sp			     ; Complete	stack frame
+1   930
+1   931	0476  8B 46 08				     mov ax, [bp + 8]
+1   932	0479  AB				     stosw
+1   933
+1   934	047A  8B 46 06				     mov ax, [bp + 6]
+1   935	047D  F3> AB				     rep stosw
+1   936
+1   937	047F  8B 46 04				     mov ax, [bp + 4]
+1   938	0482  AB				     stosw
+1   939
+1   940	0483  5D				     pop bp			     ; Stack frame
+1   941	0484  C3				     ret
+1   942	0485			     DrawLine	     endp
+1   943
+1   944				     ;------------------------------------------------
+1   945				     ;------------------------------------------------
+1   946
+    947
+    948	0485			     .data
+    949				     include ..\LianLib\Alphabet.asm
+1   950	0000  30 31 32 33 34 35	36+  Alphabet:	     db	"0123456789ABCDEF"	     ; Alphabet	for printing (Thanks Ilya)
+    951	      37 38 39 41 42 43	44+
+    952	      45 46
+1   953	0010  C9 CD BB BA BC C8	     BoxSymbols:     db	0c9h, 0cdh, 0bbh, 0bah,	0bch, 0c8h ; "╔═╗║╝╚"
+1   954
+1   955	0016			     BoxAssetStart:
+1   956	0016  20 DA C9 00	     BoxAssetLU:     db	020h, 0dah, 0c9h, 000h
+1   957	001A			     BoxAssetStep:
+1   958	001A  20 C4 CD 00	     BoxAsset_U:     db	020h, 0c4h, 0cdh, 000h
+1   959	001E  20 BF BB 00	     BoxAssetRU:     db	020h, 0bfh, 0bbh, 000h
+1   960	0022  20 B3 BA 00	     BoxAssetR_:     db	020h, 0b3h, 0bah, 000h
+1   961	0026  20 D9 BC 00	     BoxAssetRB:     db	020h, 0d9h, 0bch, 000h
+1   962	002A  20 C4 CD 00	     BoxAsset_B:     db	020h, 0c4h, 0cdh, 000h
+1   963	002E  20 C0 C8 00	     BoxAssetLB:     db	020h, 0c0h, 0c8h, 000h
+1   964	0032  20 B3 BA 00	     BoxAssetL_:     db	020h, 0b3h, 0bah, 000h
+1   965	0036  20 20 20 00	     BoxAssetFI:     db	020h, 020h, 020h, 000h
+1   966	003A			     BoxAssetEnd:
+1   967
+1   968				     ; 0:    1:┌─┐ 2:╔═╗ 3:usr
+1   969				     ;	       │ │	 ║ ║   chr
+Turbo Assembler	 Version 4.1	    03/14/23 22:01:19	    Page 18
 probox.asm
 
 
 
-    970
-    971	003A  ??		     boxHeightPos:   db	?
-    972	003B  ??		     boxWidthPos:    db	?
-    973	003C  ??		     boxHeight:	     db	?
-    974	003D  ??		     boxWidth:	     db	?
-    975	003E  ??		     boxTheme:	     db	?
-    976	003F  0A		     boxColor:	     db	00Ah
-    977	0040  0A		     boxTextColor:   db	00Ah
-    978
-    979				     end	     Start
-Turbo Assembler	 Version 4.1	    03/03/23 25:47:45	    Page 19
+1   970				     ;	       └─┘   ╚═╝
+1   971
+    972
+    973	003A  ??		     boxHeightPos:   db	?
+    974	003B  ??		     boxWidthPos:    db	?
+    975	003C  ??		     boxHeight:	     db	?
+    976	003D  ??		     boxWidth:	     db	?
+    977	003E  ??		     boxTheme:	     db	?
+    978	003F  0A		     boxColor:	     db	00Ah
+    979	0040  0A		     boxTextColor:   db	00Ah
+    980
+    981				     end	     Start
+Turbo Assembler	 Version 4.1	    03/14/23 22:01:19	    Page 19
 Symbol Table
 
 
@@ -1075,61 +1077,61 @@ Symbol Table
 
 Symbol Name			  Type	 Value
 
-??DATE				  Text	 "03/03/23"
+??DATE				  Text	 "03/14/23"
 ??FILENAME			  Text	 "probox  "
-??TIME				  Text	 "25:47:45"
+??TIME				  Text	 "22:01:19"
 ??VERSION			  Number 040A
 @32BIT				  Text	 0
 @@CONTINUEHERE1			  Near	 DGROUP:0115
 @@CONTINUEHERE1			  Near	 DGROUP:01F0
-@@CONTINUEHERE10		  Near	 DGROUP:029B
-@@CONTINUEHERE11		  Near	 DGROUP:02A7
-@@CONTINUEHERE12		  Near	 DGROUP:02D1
+@@CONTINUEHERE10		  Near	 DGROUP:029C
+@@CONTINUEHERE11		  Near	 DGROUP:02A8
+@@CONTINUEHERE12		  Near	 DGROUP:02D2
 @@CONTINUEHERE2			  Near	 DGROUP:0208
 @@CONTINUEHERE3			  Near	 DGROUP:0219
 @@CONTINUEHERE4			  Near	 DGROUP:022A
 @@CONTINUEHERE5			  Near	 DGROUP:023B
-@@CONTINUEHERE6			  Near	 DGROUP:027D
-@@COUNTSTEP			  Near	 DGROUP:032B
-@@ENDPROC			  Near	 DGROUP:03C4
-@@ENDPROC			  Near	 DGROUP:0416
-@@ENDSCANDIGIT			  Near	 DGROUP:034E
-@@HASTEXT			  Near	 DGROUP:02ED
-@@LASTARG			  Near	 DGROUP:02DE
+@@CONTINUEHERE6			  Near	 DGROUP:027E
+@@COUNTSTEP			  Near	 DGROUP:032C
+@@ENDPROC			  Near	 DGROUP:03C5
+@@ENDPROC			  Near	 DGROUP:0417
+@@ENDSCANDIGIT			  Near	 DGROUP:034F
+@@HASTEXT			  Near	 DGROUP:02EE
+@@LASTARG			  Near	 DGROUP:02DF
 @@LASTLINE			  Near	 DGROUP:01CB
-@@MIDDLESTEP			  Near	 DGROUP:0438
-@@NEXT09			  Near	 DGROUP:0406
-@@NEXTAF			  Near	 DGROUP:03E4
-@@NEXTAFCAPS			  Near	 DGROUP:03F6
+@@MIDDLESTEP			  Near	 DGROUP:0439
+@@NEXT09			  Near	 DGROUP:0407
+@@NEXTAF			  Near	 DGROUP:03E5
+@@NEXTAFCAPS			  Near	 DGROUP:03F7
 @@NOLINEBREAK			  Near	 DGROUP:01C9
 @@ONECHAR			  Near	 DGROUP:01AF
-@@ONESTEP			  Near	 DGROUP:0276
-@@PRINTDIGIT			  Near	 DGROUP:0352
-@@PRINTDIGIT			  Near	 DGROUP:0366
-@@PRINTDIGIT			  Near	 DGROUP:0381
-@@PROCEND			  Near	 DGROUP:0317
-@@SCANDIGIT			  Near	 DGROUP:0331
-@@SCANDIGIT			  Near	 DGROUP:039D
-@@SCANDIGIT			  Near	 DGROUP:03C5
-@@SETCOLOR			  Near	 DGROUP:02A0
-@@SETERRORBADTHEME		  Near	 DGROUP:0309
-@@SETERRORNOARG			  Near	 DGROUP:02F8
-@@TERMINATORENDSCANDIGIT	  Near	 DGROUP:03C1
-@@TERMINATORENDSCANDIGIT	  Near	 DGROUP:0413
-@@TERMSCANDIGIT			  Near	 DGROUP:03BB
-@@TERMSCANDIGIT			  Near	 DGROUP:040D
-@@THEME02			  Near	 DGROUP:0264
-@@THEMEC			  Near	 DGROUP:0291
-@@THEMEE			  Near	 DGROUP:026C
-@@THEMEECOLOR			  Near	 DGROUP:02C5
-@@THEMEF			  Near	 DGROUP:0267
+@@ONESTEP			  Near	 DGROUP:0277
+@@PRINTDIGIT			  Near	 DGROUP:0353
+@@PRINTDIGIT			  Near	 DGROUP:0367
+@@PRINTDIGIT			  Near	 DGROUP:0382
+@@PROCEND			  Near	 DGROUP:0318
+@@SCANDIGIT			  Near	 DGROUP:0332
+@@SCANDIGIT			  Near	 DGROUP:039E
+@@SCANDIGIT			  Near	 DGROUP:03C6
+@@SETCOLOR			  Near	 DGROUP:02A1
+@@SETERRORBADTHEME		  Near	 DGROUP:030A
+@@SETERRORNOARG			  Near	 DGROUP:02F9
+@@TERMINATORENDSCANDIGIT	  Near	 DGROUP:03C2
+@@TERMINATORENDSCANDIGIT	  Near	 DGROUP:0414
+@@TERMSCANDIGIT			  Near	 DGROUP:03BC
+@@TERMSCANDIGIT			  Near	 DGROUP:040E
+@@THEME02			  Near	 DGROUP:0265
+@@THEMEC			  Near	 DGROUP:0292
+@@THEMEE			  Near	 DGROUP:026D
+@@THEMEECOLOR			  Near	 DGROUP:02C6
+@@THEMEF			  Near	 DGROUP:0268
 @CODE				  Text	 DGROUP
 @CODESIZE			  Text	 0
 @CPU				  Text	 0707H
 @CURSEG				  Text	 _DATA
 @DATA				  Text	 DGROUP
 @DATASIZE			  Text	 0
-Turbo Assembler	 Version 4.1	    03/03/23 25:47:45	    Page 20
+Turbo Assembler	 Version 4.1	    03/14/23 22:01:19	    Page 20
 Symbol Table
 
 
@@ -1162,24 +1164,24 @@ BOXTEXTCOLOR			  Near	 DGROUP:0040
 BOXTHEME			  Near	 DGROUP:003E
 BOXWIDTH			  Near	 DGROUP:003D
 BOXWIDTHPOS			  Near	 DGROUP:003B
-CALCULATEVIDMEMPOS		  Near	 DGROUP:0319
-DRAWBOX				  Near	 DGROUP:0417
-DRAWLINE			  Near	 DGROUP:0472
+CALCULATEVIDMEMPOS		  Near	 DGROUP:031A
+DRAWBOX				  Near	 DGROUP:0418
+DRAWLINE			  Near	 DGROUP:0473
 GETARGS				  Near	 DGROUP:01DE
-MSCNNDEC			  Near	 DGROUP:039D
-MSCNNHEX			  Near	 DGROUP:03C5
-PRINTNBIN			  Near	 DGROUP:034F
-PRINTNDEC			  Near	 DGROUP:037E
-PRINTNHEX			  Near	 DGROUP:0363
+MSCNNDEC			  Near	 DGROUP:039E
+MSCNNHEX			  Near	 DGROUP:03C6
+PRINTNBIN			  Near	 DGROUP:0350
+PRINTNDEC			  Near	 DGROUP:037F
+PRINTNHEX			  Near	 DGROUP:0364
 PRINTTEXT			  Near	 DGROUP:0172
 RETURNPROGRAM			  Near	 DGROUP:016D
-SCANNDEC			  Near	 DGROUP:0331
+SCANNDEC			  Near	 DGROUP:0332
 START				  Near	 DGROUP:0100
-STRLEN				  Near	 DGROUP:0327
+STRLEN				  Near	 DGROUP:0328
 
 Groups & Segments		  Bit Size Align  Combine Class
 
 DGROUP				  Group
   _DATA				  16  0041 Word	  Public  DATA
-  _TEXT				  16  0484 Word	  Public  CODE
+  _TEXT				  16  0485 Word	  Public  CODE
 
