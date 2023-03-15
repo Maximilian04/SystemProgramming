@@ -1,0 +1,6 @@
+Statistic : 1Arr  : 18ms
+Statistic : 1List : 315ms
+Statistic : 2Arr  : 30ms
+Statistic : 2List : 589ms
+Statistic : 3Arr  : 49501ms
+Statistic : 3List : 18128ms
