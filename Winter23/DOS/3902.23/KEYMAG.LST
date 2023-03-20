@@ -1,4 +1,4 @@
-Turbo Assembler	 Version 4.1	    03/20/23 13:56:15	    Page 1
+Turbo Assembler	 Version 4.1	    03/20/23 14:39:27	    Page 1
 keymag.asm
 
 
@@ -14,7 +14,7 @@ keymag.asm
       9	      =0002		     boxTheme  = 2
      10	      =000E		     boxColor  = 00Eh
      11
-     12	0100  EB 6D 90		     Start:	     jmp Main
+     12	0100  E9 0096		     Start:	     jmp Main
      13
      14
      15				     ;------------------------------------------------
@@ -47,7 +47,7 @@ keymag.asm
      42	0116  BB 000E				     mov bx, 0Eh
      43
      44	0119			     @@CycleChar:				     ; <-------------------------\
-     45	0119  81 FF 016Fr			     cmp di, offset StrEnd	     ;				 |
+     45	0119  81 FF 0199r			     cmp di, offset StrEnd	     ;				 |
      46	011D  7D 0D				     jge @@CycleEnd		     ; >-----\			 |
      47										     ;	     |			 |
      48	011F  B5 00				     mov ch, 0			     ;	     |			 |
@@ -60,7 +60,7 @@ keymag.asm
      55	0129  4B				     dec bx			     ;	     |			 |
      56	012A  75 ED				     jnz @@CycleChar		     ; >-----+-------------------/
      57										     ;	     |
-Turbo Assembler	 Version 4.1	    03/20/23 13:56:15	    Page 2
+Turbo Assembler	 Version 4.1	    03/20/23 14:39:27	    Page 2
 keymag.asm
 
 
@@ -92,49 +92,49 @@ keymag.asm
      82
      83	013F  0141r		     CurPos:	     dw	offset String
      84	0141			     String:
-     85						     ; db 1F8h DUP("a")
-     86	0141  20*(61)				     db	20h DUP("a")
-     87	0161  59 6F 75 20 61 72	65+		     db	"You are great!"
-     88	      20 67 72 65 61 74	21
-     89	016F			     StrEnd:
+     85	0141  4E*(A7)				     db	(50h - 2h) DUP(167d)
+     86	018F  0A*(02)				     db	0Ah DUP(2d)
+     87						     ; db 1F8h DUP("a")
+     88						     ; db "You are great!"
+     89	0199			     StrEnd:
      90
-     91	016F			     InterruptorMemEnd:
+     91	0199			     InterruptorMemEnd:
      92
-     93	016F			     Main:
-     94	016F  FA				     cli
-     95	0170  BB 0000				     mov bx, 0
-     96	0173  8E C3				     mov es, bx
-     97	0175  BB 0024				     mov bx, 9*4			 ; DOS interruption address offset
+     93	0199			     Main:
+     94	0199  FA				     cli
+     95	019A  BB 0000				     mov bx, 0
+     96	019D  8E C3				     mov es, bx
+     97	019F  BB 0024				     mov bx, 9*4			 ; DOS interruption address offset
      98
-     99	0178  26: 8B 07				     mov ax, es:[bx]			 ; Old interrupt-09 handler
-    100	017B  A3 013Ar				     mov Old09Ofs, ax
-    101	017E  26: 8B 47	02			     mov ax, es:[bx+2]
-    102	0182  A3 013Cr				     mov Old09Seg, ax
+     99	01A2  26: 8B 07				     mov ax, es:[bx]			 ; Old interrupt-09 handler
+    100	01A5  A3 013Ar				     mov Old09Ofs, ax
+    101	01A8  26: 8B 47	02			     mov ax, es:[bx+2]
+    102	01AC  A3 013Cr				     mov Old09Seg, ax
     103
-    104	0185  26: C7 07	0103r			     mov es:[bx], offset New09Int	 ; Set my interrupt-09 handler
-    105	018A  8C C8				     mov ax, cs
-    106	018C  26: 89 47	02			     mov es:[bx+2], ax
-    107	0190  FB				     sti
+    104	01AF  26: C7 07	0103r			     mov es:[bx], offset New09Int	 ; Set my interrupt-09 handler
+    105	01B4  8C C8				     mov ax, cs
+    106	01B6  26: 89 47	02			     mov es:[bx+2], ax
+    107	01BA  FB				     sti
     108
     109
-    110	0191  B8 3100				     mov ax, 3100h
-    111	0194  BA 016Fr				     mov dx, offset InterruptorMemEnd	 ; Размер	необходимой	    +
+    110	01BB  B8 3100				     mov ax, 3100h
+    111	01BE  BA 0199r				     mov dx, offset InterruptorMemEnd	 ; Размер	необходимой	    +
     112				     памяти
-    113	0197  C1 EA 04				     shr dx, 4				 ; В параграфе 16 байт
-    114	019A  42				     inc dx				 ; С округлением вверх
-Turbo Assembler	 Version 4.1	    03/20/23 13:56:15	    Page 3
+    113	01C1  C1 EA 04				     shr dx, 4				 ; В параграфе 16 байт
+    114	01C4  42				     inc dx				 ; С округлением вверх
+Turbo Assembler	 Version 4.1	    03/20/23 14:39:27	    Page 3
 keymag.asm
 
 
 
     115
-    116	019B  CD 21				     int 21h
+    116	01C5  CD 21				     int 21h
     117
     118						     ; mov ax, 4c00h		       ; exit(0)
     119						     ; int 21h
     120
     121				     end	     Start
-Turbo Assembler	 Version 4.1	    03/20/23 13:56:15	    Page 4
+Turbo Assembler	 Version 4.1	    03/20/23 14:39:27	    Page 4
 Symbol Table
 
 
@@ -144,7 +144,7 @@ Symbol Name			  Type	 Value
 
 ??DATE				  Text	 "03/20/23"
 ??FILENAME			  Text	 "keymag  "
-??TIME				  Text	 "13:56:15"
+??TIME				  Text	 "14:39:27"
 ??VERSION			  Number 040A
 @32BIT				  Text	 0
 @@CONTROLKEY1			  Near	 DGROUP:0111
@@ -168,18 +168,18 @@ BOXHEIGHT			  Number 000D
 BOXTHEME			  Number 0002
 BOXWIDTH			  Number 000A
 CURPOS				  Near	 DGROUP:013F
-INTERRUPTORMEMEND		  Near	 DGROUP:016F
-MAIN				  Near	 DGROUP:016F
+INTERRUPTORMEMEND		  Near	 DGROUP:0199
+MAIN				  Near	 DGROUP:0199
 NEW09INT			  Near	 DGROUP:0103
 OLD09OFS			  Word	 DGROUP:013A
 OLD09SEG			  Word	 DGROUP:013C
 START				  Near	 DGROUP:0100
-STREND				  Near	 DGROUP:016F
+STREND				  Near	 DGROUP:0199
 STRING				  Near	 DGROUP:0141
 
 Groups & Segments		  Bit Size Align  Combine Class
 
 DGROUP				  Group
   _DATA				  16  0000 Word	  Public  DATA
-  _TEXT				  16  019D Word	  Public  CODE
+  _TEXT				  16  01C7 Word	  Public  CODE
 

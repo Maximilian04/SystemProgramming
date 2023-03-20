@@ -81,10 +81,11 @@ Old09Seg        dw 0
 ;------------------------------------------------
 
 CurPos:         dw offset String
-String:         
+String:
+                db (50h - 2h) DUP(167d)
+                db 0Ah DUP(2d)
                 ; db 1F8h DUP("a")
-                db 20h DUP("a")
-                db "You are great!"
+                ; db "You are great!"
 StrEnd:
 
 InterruptorMemEnd:
