@@ -1,0 +1,185 @@
+Turbo Assembler	 Version 4.1	    03/20/23 13:56:15	    Page 1
+keymag.asm
+
+
+
+      1	0000			     .model tiny
+      2	0000			     .code
+      3				     .286
+      4				     locals @@
+      5				     org 100h
+      6
+      7	      =000A		     boxWidth  = 10d
+      8	      =000D		     boxHeight = 13d
+      9	      =0002		     boxTheme  = 2
+     10	      =000E		     boxColor  = 00Eh
+     11
+     12	0100  EB 6D 90		     Start:	     jmp Main
+     13
+     14
+     15				     ;------------------------------------------------
+     16				     ; Keyboard	intterupt handler
+     17				     ;------------------------------------------------
+     18				     ;
+     19				     ;	 Catches control keys &	sets (State) variable
+     20				     ;
+     21				     ;------------------------------------------------
+     22
+     23	0103			     New09Int	     proc
+     24	0103  60				     pusha		     ; Stored regs
+     25						     ; mov ax, cs
+     26						     ; mov ds, ax
+     27
+     28	0104  E4 60				     in	al, 60h		     ; Catch key code
+     29
+     30	0106  3C 1D				     cmp al, 01Dh	     ; ctrl is pressed
+     31	0108  74 07				     je	@@ControlKey1
+     32	010A  3C 9D				     cmp al, 09Dh	     ; ctrl is released
+     33	010C  74 26				     je	@@ControlKey2
+     34
+     35	010E  EB 27 90				     jmp @@NotControlKey
+     36	0111					 @@ControlKey1:
+     37									     ; CTRL is pressed
+     38
+     39
+     40
+     41	0111  2E: 8B 3E	013Fr			     mov di, word ptr cs:[CurPos]
+     42	0116  BB 000E				     mov bx, 0Eh
+     43
+     44	0119			     @@CycleChar:				     ; <-------------------------\
+     45	0119  81 FF 016Fr			     cmp di, offset StrEnd	     ;				 |
+     46	011D  7D 0D				     jge @@CycleEnd		     ; >-----\			 |
+     47										     ;	     |			 |
+     48	011F  B5 00				     mov ch, 0			     ;	     |			 |
+     49	0121  2E: 8A 0D				     mov cl, cs:[di]		     ;	     |			 |
+     50	0124  47				     inc di			     ;	     |			 |
+     51										     ;	     |			 |
+     52	0125  B4 05				     mov ah, 5h			     ; put cx to keyboard	 |
+     53	0127  CD 16				     int 16h			     ;	     |			 |
+     54										     ;	     |			 |
+     55	0129  4B				     dec bx			     ;	     |			 |
+     56	012A  75 ED				     jnz @@CycleChar		     ; >-----+-------------------/
+     57										     ;	     |
+Turbo Assembler	 Version 4.1	    03/20/23 13:56:15	    Page 2
+keymag.asm
+
+
+
+     58	012C					 @@CycleEnd:			     ; <-----/
+     59	012C  2E: 89 3E	013Fr			     mov word ptr cs:[CurPos], di
+     60
+     61
+     62
+     63	0131  EB 04 90				     jmp @@NotControlKey
+     64	0134					 @@ControlKey2:
+     65									     ; CTRL is released
+     66
+     67	0134  EB 01 90				     jmp @@NotControlKey
+     68	0137					 @@NotControlKey:
+     69
+     70
+     71	0137  61				     popa		     ; Stored regs
+     72	0138  9C				     pushf
+     73	0139  9A				     db	09Ah		     ; CALL FAR
+     74	013A  0000		     Old09Ofs	     dw	0		     ; call old	09 interruption
+     75	013C  0000		     Old09Seg	     dw	0
+     76
+     77	013E  CF				     iret
+     78	013F					     endp
+     79
+     80				     ;------------------------------------------------
+     81				     ;------------------------------------------------
+     82
+     83	013F  0141r		     CurPos:	     dw	offset String
+     84	0141			     String:
+     85						     ; db 1F8h DUP("a")
+     86	0141  20*(61)				     db	20h DUP("a")
+     87	0161  59 6F 75 20 61 72	65+		     db	"You are great!"
+     88	      20 67 72 65 61 74	21
+     89	016F			     StrEnd:
+     90
+     91	016F			     InterruptorMemEnd:
+     92
+     93	016F			     Main:
+     94	016F  FA				     cli
+     95	0170  BB 0000				     mov bx, 0
+     96	0173  8E C3				     mov es, bx
+     97	0175  BB 0024				     mov bx, 9*4			 ; DOS interruption address offset
+     98
+     99	0178  26: 8B 07				     mov ax, es:[bx]			 ; Old interrupt-09 handler
+    100	017B  A3 013Ar				     mov Old09Ofs, ax
+    101	017E  26: 8B 47	02			     mov ax, es:[bx+2]
+    102	0182  A3 013Cr				     mov Old09Seg, ax
+    103
+    104	0185  26: C7 07	0103r			     mov es:[bx], offset New09Int	 ; Set my interrupt-09 handler
+    105	018A  8C C8				     mov ax, cs
+    106	018C  26: 89 47	02			     mov es:[bx+2], ax
+    107	0190  FB				     sti
+    108
+    109
+    110	0191  B8 3100				     mov ax, 3100h
+    111	0194  BA 016Fr				     mov dx, offset InterruptorMemEnd	 ; Размер	необходимой	    +
+    112				     памяти
+    113	0197  C1 EA 04				     shr dx, 4				 ; В параграфе 16 байт
+    114	019A  42				     inc dx				 ; С округлением вверх
+Turbo Assembler	 Version 4.1	    03/20/23 13:56:15	    Page 3
+keymag.asm
+
+
+
+    115
+    116	019B  CD 21				     int 21h
+    117
+    118						     ; mov ax, 4c00h		       ; exit(0)
+    119						     ; int 21h
+    120
+    121				     end	     Start
+Turbo Assembler	 Version 4.1	    03/20/23 13:56:15	    Page 4
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "03/20/23"
+??FILENAME			  Text	 "keymag  "
+??TIME				  Text	 "13:56:15"
+??VERSION			  Number 040A
+@32BIT				  Text	 0
+@@CONTROLKEY1			  Near	 DGROUP:0111
+@@CONTROLKEY2			  Near	 DGROUP:0134
+@@CYCLECHAR			  Near	 DGROUP:0119
+@@CYCLEEND			  Near	 DGROUP:012C
+@@NOTCONTROLKEY			  Near	 DGROUP:0137
+@CODE				  Text	 DGROUP
+@CODESIZE			  Text	 0
+@CPU				  Text	 0707H
+@CURSEG				  Text	 _TEXT
+@DATA				  Text	 DGROUP
+@DATASIZE			  Text	 0
+@FILENAME			  Text	 KEYMAG
+@INTERFACE			  Text	 000H
+@MODEL				  Text	 1
+@STACK				  Text	 DGROUP
+@WORDSIZE			  Text	 2
+BOXCOLOR			  Number 000E
+BOXHEIGHT			  Number 000D
+BOXTHEME			  Number 0002
+BOXWIDTH			  Number 000A
+CURPOS				  Near	 DGROUP:013F
+INTERRUPTORMEMEND		  Near	 DGROUP:016F
+MAIN				  Near	 DGROUP:016F
+NEW09INT			  Near	 DGROUP:0103
+OLD09OFS			  Word	 DGROUP:013A
+OLD09SEG			  Word	 DGROUP:013C
+START				  Near	 DGROUP:0100
+STREND				  Near	 DGROUP:016F
+STRING				  Near	 DGROUP:0141
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+DGROUP				  Group
+  _DATA				  16  0000 Word	  Public  DATA
+  _TEXT				  16  019D Word	  Public  CODE
+
