@@ -10,7 +10,7 @@ void sortArr(int* arr, size_t size) {
         swapped = false;
         for (size_t j = 0; j < size - i - 1; ++j) {
             if (arr[j] > arr[j + 1]) {
-                swap(arr, i, j);
+                swap(arr, j, j + 1);
                 swapped = true;
             }
         }

@@ -10,7 +10,7 @@ vector<string> suff1l({
 #undef SUFFS
 
 const int REPEAT_NUM = 3;
-const int STEP_NUM = 30;
+const int STEP_NUM = 10;
 
 SizeGen sizeGenerator;
 

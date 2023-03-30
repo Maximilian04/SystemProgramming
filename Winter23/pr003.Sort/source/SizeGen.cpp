@@ -13,8 +13,8 @@ void SizeGen::newSize() {
 
     if (getSize() == 0) {
         size = (size_t)1e3;
-    } else if (getSize() <= 2e4) {
-        size = getSize() + (size_t)5e2;
+    } else if (getSize() <= 3e4) {
+        size = getSize() + (size_t)1e3;
     } else if (getSize() <= 1e5) {
         size = (size_t)1e5;
     } else {
