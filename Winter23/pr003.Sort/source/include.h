@@ -40,7 +40,7 @@ random_device randGenerator("fo");
 #define TIMEPOINT(name) prTimer name(prClock::now())
 
 #define LOGRESULT \
-    LOG(chrono::duration_cast<chrono::microseconds>(tpEnd - tpBegin).count() << " mks");
+    LOG(chrono::duration_cast<chrono::milliseconds>(tpEnd - tpBegin).count() << " ms");
 
 #define SCAN_ARR                        \
     size_t size = 0;                     \
