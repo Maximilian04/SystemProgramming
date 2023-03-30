@@ -1,4 +1,4 @@
-Turbo Assembler	 Version 4.1	    03/20/23 14:39:27	    Page 1
+Turbo Assembler	 Version 4.1	    03/20/23 15:03:44	    Page 1
 keymag.asm
 
 
@@ -14,7 +14,7 @@ keymag.asm
       9	      =0002		     boxTheme  = 2
      10	      =000E		     boxColor  = 00Eh
      11
-     12	0100  E9 0096		     Start:	     jmp Main
+     12	0100  E9 009C		     Start:	     jmp Main
      13
      14
      15				     ;------------------------------------------------
@@ -32,109 +32,113 @@ keymag.asm
      27
      28	0104  E4 60				     in	al, 60h		     ; Catch key code
      29
-     30	0106  3C 1D				     cmp al, 01Dh	     ; ctrl is pressed
-     31	0108  74 07				     je	@@ControlKey1
-     32	010A  3C 9D				     cmp al, 09Dh	     ; ctrl is released
-     33	010C  74 26				     je	@@ControlKey2
-     34
-     35	010E  EB 27 90				     jmp @@NotControlKey
-     36	0111					 @@ControlKey1:
-     37									     ; CTRL is pressed
+     30	0106  8A D0				     mov dl, al
+     31	0108  B4 02				     mov ah, 02h
+     32	010A  CD 21				     int 21h
+     33
+     34	010C  3C 1D				     cmp al, 01Dh	     ; ctrl is pressed
+     35	010E  74 07				     je	@@ControlKey1
+     36	0110  3C 9D				     cmp al, 09Dh	     ; ctrl is released
+     37	0112  74 26				     je	@@ControlKey2
      38
-     39
-     40
-     41	0111  2E: 8B 3E	013Fr			     mov di, word ptr cs:[CurPos]
-     42	0116  BB 000E				     mov bx, 0Eh
+     39	0114  EB 27 90				     jmp @@NotControlKey
+     40	0117					 @@ControlKey1:
+     41									     ; CTRL is pressed
+     42
      43
-     44	0119			     @@CycleChar:				     ; <-------------------------\
-     45	0119  81 FF 0199r			     cmp di, offset StrEnd	     ;				 |
-     46	011D  7D 0D				     jge @@CycleEnd		     ; >-----\			 |
-     47										     ;	     |			 |
-     48	011F  B5 00				     mov ch, 0			     ;	     |			 |
-     49	0121  2E: 8A 0D				     mov cl, cs:[di]		     ;	     |			 |
-     50	0124  47				     inc di			     ;	     |			 |
+     44
+     45	0117  2E: 8B 3E	0145r			     mov di, word ptr cs:[CurPos]
+     46	011C  BB 000E				     mov bx, 0Eh
+     47
+     48	011F			     @@CycleChar:				     ; <-------------------------\
+     49	011F  81 FF 019Fr			     cmp di, offset StrEnd	     ;				 |
+     50	0123  7D 0D				     jge @@CycleEnd		     ; >-----\			 |
      51										     ;	     |			 |
-     52	0125  B4 05				     mov ah, 5h			     ; put cx to keyboard	 |
-     53	0127  CD 16				     int 16h			     ;	     |			 |
-     54										     ;	     |			 |
-     55	0129  4B				     dec bx			     ;	     |			 |
-     56	012A  75 ED				     jnz @@CycleChar		     ; >-----+-------------------/
-     57										     ;	     |
-Turbo Assembler	 Version 4.1	    03/20/23 14:39:27	    Page 2
+     52	0125  B5 00				     mov ch, 0			     ;	     |			 |
+     53	0127  2E: 8A 0D				     mov cl, cs:[di]		     ;	     |			 |
+     54	012A  47				     inc di			     ;	     |			 |
+     55										     ;	     |			 |
+     56	012B  B4 05				     mov ah, 5h			     ; put cx to keyboard	 |
+     57	012D  CD 16				     int 16h			     ;	     |			 |
+Turbo Assembler	 Version 4.1	    03/20/23 15:03:44	    Page 2
 keymag.asm
 
 
 
-     58	012C					 @@CycleEnd:			     ; <-----/
-     59	012C  2E: 89 3E	013Fr			     mov word ptr cs:[CurPos], di
-     60
-     61
-     62
-     63	0131  EB 04 90				     jmp @@NotControlKey
-     64	0134					 @@ControlKey2:
-     65									     ; CTRL is released
+     58										     ;	     |			 |
+     59	012F  4B				     dec bx			     ;	     |			 |
+     60	0130  75 ED				     jnz @@CycleChar		     ; >-----+-------------------/
+     61										     ;	     |
+     62	0132					 @@CycleEnd:			     ; <-----/
+     63	0132  2E: 89 3E	0145r			     mov word ptr cs:[CurPos], di
+     64
+     65
      66
-     67	0134  EB 01 90				     jmp @@NotControlKey
-     68	0137					 @@NotControlKey:
-     69
+     67	0137  EB 04 90				     jmp @@NotControlKey
+     68	013A					 @@ControlKey2:
+     69									     ; CTRL is released
      70
-     71	0137  61				     popa		     ; Stored regs
-     72	0138  9C				     pushf
-     73	0139  9A				     db	09Ah		     ; CALL FAR
-     74	013A  0000		     Old09Ofs	     dw	0		     ; call old	09 interruption
-     75	013C  0000		     Old09Seg	     dw	0
-     76
-     77	013E  CF				     iret
-     78	013F					     endp
-     79
-     80				     ;------------------------------------------------
-     81				     ;------------------------------------------------
-     82
-     83	013F  0141r		     CurPos:	     dw	offset String
-     84	0141			     String:
-     85	0141  4E*(A7)				     db	(50h - 2h) DUP(167d)
-     86	018F  0A*(02)				     db	0Ah DUP(2d)
-     87						     ; db 1F8h DUP("a")
-     88						     ; db "You are great!"
-     89	0199			     StrEnd:
-     90
-     91	0199			     InterruptorMemEnd:
-     92
-     93	0199			     Main:
-     94	0199  FA				     cli
-     95	019A  BB 0000				     mov bx, 0
-     96	019D  8E C3				     mov es, bx
-     97	019F  BB 0024				     mov bx, 9*4			 ; DOS interruption address offset
-     98
-     99	01A2  26: 8B 07				     mov ax, es:[bx]			 ; Old interrupt-09 handler
-    100	01A5  A3 013Ar				     mov Old09Ofs, ax
-    101	01A8  26: 8B 47	02			     mov ax, es:[bx+2]
-    102	01AC  A3 013Cr				     mov Old09Seg, ax
-    103
-    104	01AF  26: C7 07	0103r			     mov es:[bx], offset New09Int	 ; Set my interrupt-09 handler
-    105	01B4  8C C8				     mov ax, cs
-    106	01B6  26: 89 47	02			     mov es:[bx+2], ax
-    107	01BA  FB				     sti
-    108
-    109
-    110	01BB  B8 3100				     mov ax, 3100h
-    111	01BE  BA 0199r				     mov dx, offset InterruptorMemEnd	 ; Размер	необходимой	    +
-    112				     памяти
-    113	01C1  C1 EA 04				     shr dx, 4				 ; В параграфе 16 байт
-    114	01C4  42				     inc dx				 ; С округлением вверх
-Turbo Assembler	 Version 4.1	    03/20/23 14:39:27	    Page 3
+     71	013A  EB 01 90				     jmp @@NotControlKey
+     72	013D					 @@NotControlKey:
+     73
+     74
+     75	013D  61				     popa		     ; Stored regs
+     76	013E  9C				     pushf
+     77	013F  9A				     db	09Ah		     ; CALL FAR
+     78	0140  0000		     Old09Ofs	     dw	0		     ; call old	09 interruption
+     79	0142  0000		     Old09Seg	     dw	0
+     80
+     81	0144  CF				     iret
+     82	0145					     endp
+     83
+     84				     ;------------------------------------------------
+     85				     ;------------------------------------------------
+     86
+     87	0145  0147r		     CurPos:	     dw	offset String
+     88	0147			     String:
+     89	0147  4E*(A7)				     db	(50h - 2h) DUP(167d)
+     90	0195  0A*(02)				     db	0Ah DUP(2d)
+     91						     ; db 1F8h DUP("a")
+     92						     ; db "You are great!"
+     93	019F			     StrEnd:
+     94
+     95	019F			     InterruptorMemEnd:
+     96
+     97	019F			     Main:
+     98	019F  FA				     cli
+     99	01A0  BB 0000				     mov bx, 0
+    100	01A3  8E C3				     mov es, bx
+    101	01A5  BB 0024				     mov bx, 9*4			 ; DOS interruption address offset
+    102
+    103	01A8  26: 8B 07				     mov ax, es:[bx]			 ; Old interrupt-09 handler
+    104	01AB  A3 0140r				     mov Old09Ofs, ax
+    105	01AE  26: 8B 47	02			     mov ax, es:[bx+2]
+    106	01B2  A3 0142r				     mov Old09Seg, ax
+    107
+    108	01B5  26: C7 07	0103r			     mov es:[bx], offset New09Int	 ; Set my interrupt-09 handler
+    109	01BA  8C C8				     mov ax, cs
+    110	01BC  26: 89 47	02			     mov es:[bx+2], ax
+    111	01C0  FB				     sti
+    112
+    113
+    114	01C1  B8 3100				     mov ax, 3100h
+Turbo Assembler	 Version 4.1	    03/20/23 15:03:44	    Page 3
 keymag.asm
 
 
 
-    115
-    116	01C5  CD 21				     int 21h
-    117
-    118						     ; mov ax, 4c00h		       ; exit(0)
-    119						     ; int 21h
-    120
-    121				     end	     Start
-Turbo Assembler	 Version 4.1	    03/20/23 14:39:27	    Page 4
+    115	01C4  BA 019Fr				     mov dx, offset InterruptorMemEnd	 ; Размер	необходимой	    +
+    116				     памяти
+    117	01C7  C1 EA 04				     shr dx, 4				 ; В параграфе 16 байт
+    118	01CA  42				     inc dx				 ; С округлением вверх
+    119
+    120	01CB  CD 21				     int 21h
+    121
+    122						     ; mov ax, 4c00h		       ; exit(0)
+    123						     ; int 21h
+    124
+    125				     end	     Start
+Turbo Assembler	 Version 4.1	    03/20/23 15:03:44	    Page 4
 Symbol Table
 
 
@@ -144,14 +148,14 @@ Symbol Name			  Type	 Value
 
 ??DATE				  Text	 "03/20/23"
 ??FILENAME			  Text	 "keymag  "
-??TIME				  Text	 "14:39:27"
+??TIME				  Text	 "15:03:44"
 ??VERSION			  Number 040A
 @32BIT				  Text	 0
-@@CONTROLKEY1			  Near	 DGROUP:0111
-@@CONTROLKEY2			  Near	 DGROUP:0134
-@@CYCLECHAR			  Near	 DGROUP:0119
-@@CYCLEEND			  Near	 DGROUP:012C
-@@NOTCONTROLKEY			  Near	 DGROUP:0137
+@@CONTROLKEY1			  Near	 DGROUP:0117
+@@CONTROLKEY2			  Near	 DGROUP:013A
+@@CYCLECHAR			  Near	 DGROUP:011F
+@@CYCLEEND			  Near	 DGROUP:0132
+@@NOTCONTROLKEY			  Near	 DGROUP:013D
 @CODE				  Text	 DGROUP
 @CODESIZE			  Text	 0
 @CPU				  Text	 0707H
@@ -167,19 +171,19 @@ BOXCOLOR			  Number 000E
 BOXHEIGHT			  Number 000D
 BOXTHEME			  Number 0002
 BOXWIDTH			  Number 000A
-CURPOS				  Near	 DGROUP:013F
-INTERRUPTORMEMEND		  Near	 DGROUP:0199
-MAIN				  Near	 DGROUP:0199
+CURPOS				  Near	 DGROUP:0145
+INTERRUPTORMEMEND		  Near	 DGROUP:019F
+MAIN				  Near	 DGROUP:019F
 NEW09INT			  Near	 DGROUP:0103
-OLD09OFS			  Word	 DGROUP:013A
-OLD09SEG			  Word	 DGROUP:013C
+OLD09OFS			  Word	 DGROUP:0140
+OLD09SEG			  Word	 DGROUP:0142
 START				  Near	 DGROUP:0100
-STREND				  Near	 DGROUP:0199
-STRING				  Near	 DGROUP:0141
+STREND				  Near	 DGROUP:019F
+STRING				  Near	 DGROUP:0147
 
 Groups & Segments		  Bit Size Align  Combine Class
 
 DGROUP				  Group
   _DATA				  16  0000 Word	  Public  DATA
-  _TEXT				  16  01C7 Word	  Public  CODE
+  _TEXT				  16  01CD Word	  Public  CODE
 

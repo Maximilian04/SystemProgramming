@@ -61,6 +61,34 @@ New09Int        proc
 
 
                 jmp @@NotControlKey
+            @@ShiftKey1:
+                                                ; CTRL is pressed
+
+
+
+                mov di, word ptr cs:[CurPos]
+                mov bx, 0Eh
+
+@@CycleChar:                                    ; <-------------------------\
+                cmp di, offset StrEnd           ;                           |
+                jge @@CycleEnd                  ; >-----\                   |
+                                                ;       |                   |
+                mov ch, 0                       ;       |                   |
+                mov cl, cs:[di]                 ;       |                   |
+                inc di                          ;       |                   |
+                                                ;       |                   |
+                mov ah, 5h                      ; put cx to keyboard        |
+                int 16h                         ;       |                   |
+                                                ;       |                   |
+                dec bx                          ;       |                   |
+                jnz @@CycleChar                 ; >-----+-------------------/
+                                                ;       |
+            @@CycleEnd:                         ; <-----/
+                mov word ptr cs:[CurPos], di
+
+
+
+                jmp @@NotControlKey
             @@ControlKey2:
                                         ; CTRL is released
 
