@@ -25,14 +25,14 @@ random_device randGenerator("fo");
 #define LOG(msg)                               \
     {                                           \
         ofstream file("logNames.txt", ios::app); \
-        file << TESTNAME << endl;                 \
+        file << TESTNAME << " " << size << endl;  \
         file.close();                              \
         file.open("log.txt", ios::app);             \
-        file <<  msg << endl;                        \
+        file << msg << endl;                         \
         file.close();                                 \
     }
 
-#define LOGERROR(msg) {        \
+#define LOGERROR(msg) {     \
     LOG("ERRROR!!! " << msg) \
     return 1;                 \
 }
@@ -40,7 +40,7 @@ random_device randGenerator("fo");
 #define TIMEPOINT(name) prTimer name(prClock::now())
 
 #define LOGRESULT \
-    LOG(chrono::duration_cast<chrono::milliseconds>(tpEnd - tpBegin).count() << " ms");
+    LOG(chrono::duration_cast<chrono::microseconds>(tpEnd - tpBegin).count() << " mks");
 
 #define SCAN_ARR                        \
     size_t size = 0;                     \

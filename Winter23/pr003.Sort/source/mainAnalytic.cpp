@@ -10,7 +10,7 @@ vector<string> suff1l({
 #undef SUFFS
 
 const int REPEAT_NUM = 3;
-const int STEP_NUM = 10;
+const int STEP_NUM = 30;
 
 SizeGen sizeGenerator;
 
@@ -56,8 +56,13 @@ int main() {
         for (int j = 0; j < REPEAT_NUM; ++j) {
             generateArr();
 
-            for (const string& suff1 : suff1l)
+            cout << "run " << sizeGenerator.getSize() << endl;
+            for (const string& suff1 : suff1l) {
                 system(("PracTest" + suff1 + ".exe").c_str());
+                cout << "run " << "PracTest" + suff1 + ".exe" << endl;
+            }
+
+            cout << (i * REPEAT_NUM + j) << "/" << (STEP_NUM * REPEAT_NUM) << "done" << endl;
         }
     }
 

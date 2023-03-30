@@ -4,11 +4,14 @@ project(Prac VERSION 0.1.0)
 include(CTest)
 enable_testing()
 
-add_compile_definitions(PracTestInsert PUBLIC TESTNAME="Test-1-Insert")
-
+add_compile_definitions(PracTestInsert PRIVATE TESTNAME="Test-1-Insert")
 add_executable(PracTestInsert
                         source/mainTest.cpp
                         source/InsertSort.cpp)
+add_compile_definitions(PracTestBubble PRIVATE TESTNAME="Test-1-Bubble")
+add_executable(PracTestBubble
+                        source/mainTest.cpp
+                        source/BubbleSort.cpp)
 add_executable(PracAnalytic
                         source/SizeGen.cpp
                         source/mainAnalytic.cpp)

@@ -38,6 +38,10 @@ public:
     long long getMaxSize() {
         return stats[maxSizeI].first;
     }
+
+    string getLineStyle() {
+        return lineStyle;
+    }
 private:
     string lineStyle;
     vector<pair<long long, long long>> stats;
@@ -106,14 +110,14 @@ int main() {
         // "tck = interpolate.splrep(t1, f(t1))\n"
         python << "tck = interpolate.splrep(xPts, yPts)\n";
         // "plt.plot(t1, f(t1), 'bo', t2, interpolate.splev(t2, tck), 'k')\n"
-        python << "plt.plot(xPts, yPts, 'bo', xSpl, interpolate.splev(xSpl, tck), 'k')\n";
+        python << "plt.plot(xPts, yPts, " << stat.second.getLineStyle() << ", xSpl, interpolate.splev(xSpl, tck), 'k')\n";
         python << "\n";
     }
     // "plt.legend(['kukaruke'])\n"
     python << "\n";
     python << "plt.legend([";
     for (pair<string, SuffInfo> stat : stats) {
-        python << "'" << stat.first << "', ";
+        python << "'" << stat.first << "', '', ";
     }
     python << "])\n";
     python << "\n";
