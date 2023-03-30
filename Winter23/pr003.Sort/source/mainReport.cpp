@@ -56,7 +56,7 @@ map<string, SuffInfo> suffsList({
 int main() {
     ofstream python("report.py", ios::trunc);
     // ofstream python = cout;
-    ofstream report("ReadMe.md", ios::trunc);
+    ofstream report("../../README.md", ios::trunc);
     ifstream fileStat("stat.txt");
 
     while (true) {
@@ -118,7 +118,8 @@ int main() {
     python << "])\n";
     python << "\n";
 
-    python << "plt.show()\n";
+    // python << "plt.show()\n";
+    python << "plt.savefig('../../reportGraph.png')\n";
 
     /*python <<
         "import numpy as np\n"
@@ -138,6 +139,8 @@ int main() {
         "plt.legend(['kukaruke'])\n"
         "plt.show()\n";*/
 
+    report << "# Практическая работа 3.\n";
+    report << "![plot](./reportGraph.png)\n";
 
 
     python.close();
