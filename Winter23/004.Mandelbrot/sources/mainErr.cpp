@@ -3,6 +3,22 @@
 #include <time.h>
 #include <immintrin.h>
 
+__m256i mmy256_set123() {
+    printf("run0\n");
+    __m256i res = { 0 };
+
+    printf("run1\n");
+    for (int32_t i = 0; i < 8; ++i) {
+        ((int32_t*)&res)[i] = i;
+    }
+
+    printf("run0\n");
+    return res;
+}
+
+const __m256i ADDSEQ /**/ = mmy256_set123();
+const __m256i ONESEQ /**/ = _mm256_set1_epi32(1);
+
 int main() {
     __m128i arr1;
     printf("Point 1\n");

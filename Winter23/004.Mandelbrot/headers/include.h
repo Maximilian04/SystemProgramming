@@ -21,7 +21,6 @@
 #pragma GCC diagnostic ignored "-Wall"
 #pragma GCC diagnostic ignored "-Wextra"
 #include <opencv2/opencv.hpp>
-// #include "D:/programming/libraries/opencv-4.6.0/opencv-build-release-freetype/install/include/opencv2/opencv.hpp"
 // #pragma GCC diagnostic pop
 
 using namespace cv;

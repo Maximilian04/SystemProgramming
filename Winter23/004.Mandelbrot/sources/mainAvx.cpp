@@ -5,12 +5,11 @@ __m256i mmy256_set123();
 const char WINNAME[] = "mandelbrotAVX";
 
 const int32_t BOOST_F = 8;
-const __m256i ADDSEQ /**/ = mmy256_set123();
+__m256i ADDSEQ /**/ = { 0 };
 const __m256i ONESEQ /**/ = _mm256_set1_epi32(1);
 const __m256 SCALESEQ/**/ = _mm256_set1_ps(SCALE);
 const __m256 TWOSEQ  /**/ = _mm256_set1_ps(2.f);
-const __m256 INFRADPOSSEQ = _mm256_set1_ps(+INFRAD);
-const __m256 INFRADNEGSEQ = _mm256_set1_ps(-INFRAD);
+const __m256 INFRADPOSSEQ = _mm256_set1_ps(INFRAD);
 
 int main() {
     if (WINSIZEY % BOOST_F) {
@@ -18,6 +17,8 @@ int main() {
         return 1;
     }
     printf("run2\n");
+    ADDSEQ /**/ = mmy256_set123();
+    fflush(stdout);
 
     Mat image(WINSIZEY, WINSIZEX, CV_8UC3);
     imshow(WINNAME, image);
@@ -100,9 +101,9 @@ int main() {
         double spf = ((double)(-timer) + (timer = clock())) / CLOCKS_PER_SEC;
         char fpsS[10] = {};
         sprintf(fpsS, "%f", 1 / spf);
-        putText(image, fpsS, Point(0, 25), cv::FONT_HERSHEY_DUPLEX, 1.0, CV_RGB(118, 185, 0), 2);
+        // putText(image, fpsS, Point(0, 25), cv::FONT_HERSHEY_DUPLEX, 1.0, CV_RGB(118, 185, 0), 2);
 
-        imshow(WINNAME, image);
+        // imshow(WINNAME, image);
         key = waitKey(1);
     }
 
@@ -113,7 +114,7 @@ int main() {
 
 __m256i mmy256_set123() {
     printf("run0\n");
-    __m256i res = { 0 };
+    __m256i res = _mm256_set1_epi32(0);
 
     printf("run1\n");
     for (int32_t i = 0; i < BOOST_F; ++i) {
