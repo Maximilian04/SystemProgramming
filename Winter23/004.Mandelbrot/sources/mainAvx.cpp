@@ -1,29 +1,36 @@
 #include "include.h"
 
-__m256i mmy256_set123();
+void mmy256_set123(__m256i*);
 
 const char WINNAME[] = "mandelbrotAVX";
-
 const int32_t BOOST_F = 8;
-const __m256i ADDSEQ /**/ = mmy256_set123();
+uint16_t x;
 const __m256i ONESEQ /**/ = _mm256_set1_epi32(1);
 const __m256 SCALESEQ/**/ = _mm256_set1_ps(SCALE);
 const __m256 TWOSEQ  /**/ = _mm256_set1_ps(2.f);
-const __m256 INFRADPOSSEQ = _mm256_set1_ps(+INFRAD);
-const __m256 INFRADNEGSEQ = _mm256_set1_ps(-INFRAD);
+const __m256 INFRADPOSSEQ = _mm256_set1_ps(INFRAD);
 
 int main() {
+    alignas(32) __m256i ADDSEQ /**/;
+
     if (WINSIZEY % BOOST_F) {
         printf("BOOST DIVISIBILITY!!!\n");
         return 1;
     }
     printf("run2\n");
+    printf("\n<%p>\n", &ADDSEQ);
+    int xxx = 0;
+    printf("\n<%p>\n", &xxx);
+    mmy256_set123(&ADDSEQ);
+    fflush(stdout);
 
+    printf("DDDD\n");
+    fflush(stdout);
+    // exit(0);
     Mat image(WINSIZEY, WINSIZEX, CV_8UC3);
     imshow(WINNAME, image);
-
     clock_t timer = clock();
-
+    int x = 0;
     int key = 0;
     while (key != 27) {
         for (int32_t pxY = 0; pxY < WINSIZEY; ++pxY) {
@@ -106,20 +113,21 @@ int main() {
         key = waitKey(1);
     }
 
-
     printf("Program finished 0\n");
     return 0;
 }
 
-__m256i mmy256_set123() {
+void mmy256_set123(__m256i* res) {
     printf("run0\n");
-    __m256i res = { 0 };
+    // __m256i res;
+    printf("\n<%p>\n", res);
+    *res = _mm256_set1_epi32(0);
 
     printf("run1\n");
     for (int32_t i = 0; i < BOOST_F; ++i) {
-        ((int32_t*)&res)[i] = i;
+        ((int32_t*)res)[i] = i;
     }
 
-    printf("run0\n");
-    return res;
+    printf("run3\n");
+    // return res;
 }
