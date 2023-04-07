@@ -1,36 +1,27 @@
 #include "include.h"
 
-void mmy256_set123(__m256i*);
+__m256i mmy256_set123();
 
 const char WINNAME[] = "mandelbrotAVX";
 const int32_t BOOST_F = 8;
-uint16_t x;
-const __m256i ONESEQ /**/ = _mm256_set1_epi32(1);
-const __m256 SCALESEQ/**/ = _mm256_set1_ps(SCALE);
-const __m256 TWOSEQ  /**/ = _mm256_set1_ps(2.f);
-const __m256 INFRADPOSSEQ = _mm256_set1_ps(INFRAD);
+
+alignas(32) const __m256i ADDSEQ /**/ = mmy256_set123();
+alignas(32) const __m256i ONESEQ /**/ = _mm256_set1_epi32(1);
+alignas(32) const __m256 SCALESEQ/**/ = _mm256_set1_ps(SCALE);
+alignas(32) const __m256 TWOSEQ  /**/ = _mm256_set1_ps(2.f);
+alignas(32) const __m256 INFRADPOSSEQ = _mm256_set1_ps(INFRAD);
 
 int main() {
-    alignas(32) __m256i ADDSEQ /**/;
-
     if (WINSIZEY % BOOST_F) {
         printf("BOOST DIVISIBILITY!!!\n");
         return 1;
     }
-    printf("run2\n");
-    printf("\n<%p>\n", &ADDSEQ);
-    int xxx = 0;
-    printf("\n<%p>\n", &xxx);
-    mmy256_set123(&ADDSEQ);
-    fflush(stdout);
 
-    printf("DDDD\n");
-    fflush(stdout);
-    // exit(0);
     Mat image(WINSIZEY, WINSIZEX, CV_8UC3);
     imshow(WINNAME, image);
+
     clock_t timer = clock();
-    int x = 0;
+
     int key = 0;
     while (key != 27) {
         for (int32_t pxY = 0; pxY < WINSIZEY; ++pxY) {
@@ -39,26 +30,26 @@ int main() {
                 // float ptX = OFFSETX + SCALE * pxX;
                 // float ptY = OFFSETY + SCALE * pxY;
 
-                __m256 ptX = _mm256_set1_ps(OFFSETX);
-                __m256 ptY = _mm256_set1_ps(OFFSETY);
+                alignas(32) __m256 ptX = _mm256_set1_ps(OFFSETX);
+                alignas(32) __m256 ptY = _mm256_set1_ps(OFFSETY);
 
-                __m256i pxXs = _mm256_add_epi32(_mm256_set1_epi32(pxY), ADDSEQ);
+                alignas(32) __m256i pxXs = _mm256_add_epi32(_mm256_set1_epi32(pxY), ADDSEQ);
                 ptX = _mm256_add_ps(ptX, _mm256_mul_ps(_mm256_cvtepi32_ps(pxXs), SCALESEQ));
                 ptY = _mm256_add_ps(ptY, _mm256_mul_ps(_mm256_cvtepi32_ps(_mm256_set1_epi32(pxY)), SCALESEQ));
 
                 // float vX = ptX;
                 // float vY = ptY;
-                __m256 vX = ptX;
-                __m256 vY = ptY;
+                alignas(32) __m256 vX = ptX;
+                alignas(32) __m256 vY = ptY;
 
                 // float vAbsQuadr = 0;
-                __m256 vAbsQuadr = { 0 };
+                alignas(32) __m256 vAbsQuadr = { 0 };
 
                 int32_t counter = 0;
-                __m256i counterStopped = _mm256_set1_epi32(0);
+                alignas(32) __m256i counterStopped = _mm256_set1_epi32(0);
 
                 // 0 if correct
-                __m256i lessThenInfrad = { 0 };
+                alignas(32) __m256i lessThenInfrad = { 0 };
                 // 0 if less then infinity
                 bool oneLessThenInfrad = 1;
 
@@ -66,9 +57,9 @@ int main() {
                     oneLessThenInfrad) {
 
                     // float quadrX = vX * vX - vY * vY;
-                    __m256 quadrX = _mm256_sub_ps(_mm256_mul_ps(vX, vX), _mm256_mul_ps(vY, vY));
+                    alignas(32) __m256 quadrX = _mm256_sub_ps(_mm256_mul_ps(vX, vX), _mm256_mul_ps(vY, vY));
                     // float quadrY = 2 * vX * vY;
-                    __m256 quadrY = _mm256_mul_ps(_mm256_mul_ps(vX, vY), TWOSEQ);
+                    alignas(32) __m256 quadrY = _mm256_mul_ps(_mm256_mul_ps(vX, vY), TWOSEQ);
 
                     // vX = quadrX + ptX;
                     vX = _mm256_add_ps(quadrX, ptX);
@@ -87,18 +78,20 @@ int main() {
                     ++counter;
                 }
 
-                if (counter == INFNUM) {
-                    image.at<Vec3b>(pxY, pxX)[0] = 0;
-                    image.at<Vec3b>(pxY, pxX)[1] = 0;
-                    image.at<Vec3b>(pxY, pxX)[2] = 0;
-                } else {
-                    // float factor = 1.0f - (float)counter / INFNUM;
-                    float factor = (float)counter / INFNUM;
+                for (int32_t dx = 0; dx < BOOST_F; ++dx) {
+                    counter = ((int32_t*)&counterStopped)[dx];
 
-                    image.at<Vec3b>(pxY, pxX)[0] = 50;
-                    // image.at<Vec3b>(pxY, pxX)[1] = (uint8_t)(256.f * pow(factor, 30));
-                    image.at<Vec3b>(pxY, pxX)[1] = (uint8_t)(256.f * pow(factor, 0.2f));
-                    image.at<Vec3b>(pxY, pxX)[2] = 0;
+                    if (counter == INFNUM) {
+                        image.at<Vec3b>(pxY, pxX + dx)[0] = 0;
+                        image.at<Vec3b>(pxY, pxX + dx)[1] = 0;
+                        image.at<Vec3b>(pxY, pxX + dx)[2] = 0;
+                    } else {
+                        float factor = (float)counter / INFNUM;
+
+                        image.at<Vec3b>(pxY, pxX + dx)[0] = 50;
+                        image.at<Vec3b>(pxY, pxX + dx)[1] = (uint8_t)(256.f * pow(factor, 0.2f));
+                        image.at<Vec3b>(pxY, pxX + dx)[2] = 0;
+                    }
                 }
             }
         }
@@ -107,9 +100,9 @@ int main() {
         double spf = ((double)(-timer) + (timer = clock())) / CLOCKS_PER_SEC;
         char fpsS[10] = {};
         sprintf(fpsS, "%f", 1 / spf);
-        // putText(image, fpsS, Point(0, 25), cv::FONT_HERSHEY_DUPLEX, 1.0, CV_RGB(118, 185, 0), 2);
+        putText(image, fpsS, Point(0, 25), cv::FONT_HERSHEY_DUPLEX, 1.0, CV_RGB(118, 185, 0), 2);
 
-        // imshow(WINNAME, image);
+        imshow(WINNAME, image);
         key = waitKey(1);
     }
 
@@ -117,17 +110,12 @@ int main() {
     return 0;
 }
 
-void mmy256_set123(__m256i* res) {
-    printf("run0\n");
-    // __m256i res;
-    printf("\n<%p>\n", res);
-    *res = _mm256_set1_epi32(0);
+__m256i mmy256_set123() {
+    alignas(32) __m256i res = _mm256_set1_epi32(0);
 
-    printf("run1\n");
     for (int32_t i = 0; i < BOOST_F; ++i) {
-        ((int32_t*)res)[i] = i;
+        ((int32_t*)&res)[i] = i;
     }
 
-    printf("run3\n");
-    // return res;
+    return res;
 }
