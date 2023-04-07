@@ -107,9 +107,9 @@ int main() {
         double spf = ((double)(-timer) + (timer = clock())) / CLOCKS_PER_SEC;
         char fpsS[10] = {};
         sprintf(fpsS, "%f", 1 / spf);
-        putText(image, fpsS, Point(0, 25), cv::FONT_HERSHEY_DUPLEX, 1.0, CV_RGB(118, 185, 0), 2);
+        // putText(image, fpsS, Point(0, 25), cv::FONT_HERSHEY_DUPLEX, 1.0, CV_RGB(118, 185, 0), 2);
 
-        imshow(WINNAME, image);
+        // imshow(WINNAME, image);
         key = waitKey(1);
     }
 
