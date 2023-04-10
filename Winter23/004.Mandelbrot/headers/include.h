@@ -26,14 +26,18 @@
 using namespace cv;
 using namespace std;
 
-const int16_t WINSIZEX = 1000;
-const int16_t WINSIZEY = 704;
+const int32_t WINSIZEX = 1000;
+const int32_t WINSIZEY = 704;
 
 float SCALE = 1.f / 400.0f; // [1/px]
 float OFFSETX = -2.f;
 float OFFSETY = -SCALE * WINSIZEY / 2.f;
 
 const float INFRAD = 10.f;
-const int16_t INFNUM = 700;
+const int32_t INFNUM = 700;
+
+const float FACTORPOW = 40.f;
+
+const Scalar textColor = CV_RGB(255, 185, 0);
 
 #endif // INCLUDE_H
