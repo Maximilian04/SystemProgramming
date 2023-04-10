@@ -14,7 +14,6 @@ void drawM(Mat image) {
     for (int32_t pxY = 0; pxY < WINSIZEY; ++pxY) {
         for (int32_t pxX = 0; pxX < WINSIZEX; pxX += BOOST_F) {
 
-            for (int i = 0; i < 10; ++i) {
             // float ptX = OFFSETX + SCALE * pxX;
             // float ptY = OFFSETY + SCALE * pxY;
 
@@ -65,7 +64,6 @@ void drawM(Mat image) {
                 ++counter;
             }
 
-            if (i == 1)
             for (int32_t dx = 0; dx < BOOST_F; ++dx) {
                 counter = ((int32_t*)&counterStopped)[dx];
 
@@ -80,7 +78,6 @@ void drawM(Mat image) {
                     image.at<Vec3b>(pxY, pxX + dx)[1] = (uint8_t)(255.f * pow(factor, FACTORPOW));
                     image.at<Vec3b>(pxY, pxX + dx)[2] = 255;
                 }
-            }
             }
         }
     }

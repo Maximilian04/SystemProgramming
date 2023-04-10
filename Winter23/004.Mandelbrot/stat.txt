@@ -1,4 +1,6 @@
-plain		
-plainAVX	
-mul		
-mulAVX	
+type		fps[1/sec]	rateAVX	rateMUL
+-------------------------------------------
+plain		0.78				1/9
+plainAVX	1.85		2.4		
+mul		0.080				1/10
+mulAVX	0.203		2.5		
