@@ -28,11 +28,17 @@ LINK_FLAGS     = $(LIBOPENCV_LINK)
 
 
 NAME = main
+OBJECTS    := ${OBJECTS}    build\${NAME}.o
+OBJECTSAVX := ${OBJECTSAVX} build\${NAME}.o
+build\${NAME}.o: sources\${NAME}.cpp
+	${COMPILE_O}
+
+NAME = drawM
 OBJECTS := ${OBJECTS} build\${NAME}.o
 build\${NAME}.o: sources\${NAME}.cpp
 	${COMPILE_O}
 
-NAME = mainAVX
+NAME = drawMAVX
 OBJECTSAVX := ${OBJECTSAVX} build\${NAME}.o
 build\${NAME}.o: sources\${NAME}.cpp
 	${COMPILE_O}

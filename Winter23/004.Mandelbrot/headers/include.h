@@ -1,8 +1,8 @@
 /**
  * @file include.h
- * @author Maximilian (https://github.com/Maximilian04)
- * @brief Useful headers
- * @date 2022-12-16
+ * @author Maximilian (https://github.com/MaximilianYan)
+ * @brief Common consts
+ * @date 2022-04-10
  *
  * @copyright Copyright (c) 2022
  *
@@ -17,7 +17,7 @@
 #include <time.h>
 #include <immintrin.h>
 
-// #pragma GCC diagnostic push
+ // #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wall"
 #pragma GCC diagnostic ignored "-Wextra"
 #include <opencv2/opencv.hpp>
@@ -29,9 +29,9 @@ using namespace std;
 const int32_t WINSIZEX = 1000;
 const int32_t WINSIZEY = 704;
 
-float SCALE = 1.f / 400.0f; // [1/px]
-float OFFSETX = -2.f;
-float OFFSETY = -SCALE * WINSIZEY / 2.f;
+const float SCALE = 1.f / 400.0f; // [1/px]
+const float OFFSETX = -2.f;
+const float OFFSETY = -SCALE * WINSIZEY / 2.f;
 
 const float INFRAD = 10.f;
 const int32_t INFNUM = 700;
@@ -39,5 +39,9 @@ const int32_t INFNUM = 700;
 const float FACTORPOW = 40.f;
 
 const Scalar textColor = CV_RGB(255, 185, 0);
+
+void drawM(Mat image);
+extern const char WINNAME[];
+extern const int32_t BOOST_F;
 
 #endif // INCLUDE_H
