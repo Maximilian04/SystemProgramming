@@ -3,32 +3,40 @@
 const char WINNAME[] = "mandelbrot";
 const int32_t BOOST_F = 1;
 
+void calcMandelbrotP(int32_t pxY, int32_t pxX, int32_t* counterPtr) {
+    float ptX = OFFSETX + SCALE * pxX;
+    float ptY = OFFSETY + SCALE * pxY;
+
+    float vX = ptX;
+    float vY = ptY;
+
+    float vAbsQuadr = 0;
+
+    int32_t counter = 0;
+
+    while (counter < INFNUM &&
+        (isfinite(vAbsQuadr) && vAbsQuadr <= (INFRAD * INFRAD))) {
+
+        float quadrX = vX * vX - vY * vY;
+        float quadrY = 2 * vX * vY;
+
+        vX = quadrX + ptX;
+        vY = quadrY + ptY;
+
+        vAbsQuadr = vX * vX + vY * vY;
+
+        ++counter;
+    }
+
+    *counterPtr = counter;
+}
+
 void drawM(Mat image) {
     for (int32_t pxY = 0; pxY < WINSIZEY; ++pxY) {
         for (int32_t pxX = 0; pxX < WINSIZEX; ++pxX) {
-            float ptX = OFFSETX + SCALE * pxX;
-            float ptY = OFFSETY + SCALE * pxY;
-
-            float vX = ptX;
-            float vY = ptY;
-
-            float vAbsQuadr = 0;
 
             int32_t counter = 0;
-
-            while (counter < INFNUM &&
-                (isfinite(vAbsQuadr) && vAbsQuadr <= (INFRAD * INFRAD))) {
-
-                float quadrX = vX * vX - vY * vY;
-                float quadrY = 2 * vX * vY;
-
-                vX = quadrX + ptX;
-                vY = quadrY + ptY;
-
-                vAbsQuadr = vX * vX + vY * vY;
-
-                ++counter;
-            }
+            calcMandelbrotP(pxY, pxX, &counter);
 
             if (counter == INFNUM) {
                 image.at<Vec3b>(pxY, pxX)[0] = 0;
