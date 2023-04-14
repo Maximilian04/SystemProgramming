@@ -17,11 +17,7 @@
 #include <time.h>
 #include <immintrin.h>
 
- // #pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wall"
-#pragma GCC diagnostic ignored "-Wextra"
 #include <opencv2/opencv.hpp>
-// #pragma GCC diagnostic pop
 
 using namespace cv;
 using namespace std;
@@ -43,5 +39,6 @@ const Scalar textColor = CV_RGB(255, 185, 0);
 void drawM(Mat image);
 extern const char WINNAME[];
 extern const int32_t BOOST_F;
+const char* getPrName();
 
 #endif // INCLUDE_H

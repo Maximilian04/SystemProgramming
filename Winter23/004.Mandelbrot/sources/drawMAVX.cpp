@@ -1,4 +1,5 @@
 #include "include.h"
+#include "getPrName.cpp"
 
 const char WINNAME[] = "mandelbrotAVX";
 const int32_t BOOST_F = 8;
@@ -9,6 +10,8 @@ alignas(32) const __m256i ADDSEQ     /**/ = _mm256_set_epi32(7, 6, 5, 4, 3, 2, 1
 alignas(32) const __m256 SCALESEQ    /**/ = _mm256_set1_ps(SCALE);
 alignas(32) const __m256 TWOSEQ      /**/ = _mm256_set1_ps(2.f);
 alignas(32) const __m256 INFRADQADRPOSSEQ = _mm256_set1_ps(INFRAD * INFRAD);
+
+void calcMandelbrotP(int32_t pxY, int32_t pxX, __m256i* counterStoppedPtr);
 
 void calcMandelbrotP(int32_t pxY, int32_t pxX, __m256i* counterStoppedPtr) {
     // float ptX = OFFSETX + SCALE * pxX;
@@ -72,7 +75,12 @@ void drawM(Mat image) {
         for (int32_t pxX = 0; pxX < WINSIZEX; pxX += BOOST_F) {
 
             alignas(32) __m256i counterStopped = { 0 };
+#ifdef MULTIPLY
+            for (int32_t i = 0; i < MULTIPLY; ++i)
+                calcMandelbrotP(pxY, pxX, &counterStopped);
+#else
             calcMandelbrotP(pxY, pxX, &counterStopped);
+#endif
 
             for (int32_t dx = 0; dx < BOOST_F; ++dx) {
                 int32_t counter = ((int32_t*)&counterStopped)[dx];
