@@ -27,6 +27,15 @@ Computer conditions were stable as possible.
 
 ## Ratios analysis:
 
-- **(Ox-single-y)/(Ox-mul10-y)** - **control index**. The closer the index is to 10.0, the greater share of the time interesting function takes.
-- s
+- `(O?-single-?)/(O?-mul10-?)` - **control index**. The closer the index is to 10.0, the greater share of time the interesting function takes.
+- `(O?-mul10-avx)/(O?-mul10-plain)` - **AVX acceleration**. Intrinsics adding acceleration.
+- `(Ofast-mul10-?)/(Ofast-mul10-?)` - **Ofast acceleration**. -Ofast mode acceleration.
+- `(Ofast-mul10-avx)/(O0-mul10-plain)` - **total acceleration**. Total acceleration.
+
+|             | | control index | AVX acceleration       | -Ofast acceleration    | total acceleration   |
+|:------------|-|:-------------:|:----------------------:|:----------------------:|:--------------------:|
+|-Ofast avx   | | 8.8           | **6.2** *(single 5.5)* | **10.0** *(single 9.1)*| **25** *(single 21)* |
+|-Ofast plain | | 9.9           |                        | **4.0** *(single 3.8)* |                      |
+|-O0 avx      | | 9.7           | **2.5** *(single 2.3)* |                        |                      |
+|-O0 plain    | | 10            |                        |                        |                      |
 
