@@ -1,0 +1,17 @@
+
+O0 single plain 0.773133
+Of single plain 2.857363
+Of single avx   15.862060
+Of mul10  avx   1.797876
+O0 mul10  avx   0.170851
+O0 single avx   1.737237
+Of mul10  plain 0.289025
+O0 mul10  plain 0.070602
+O0 mul10  plain 0.075707
+Of mul10  plain 0.294525
+O0 single avx   1.769803
+O0 mul10  avx   0.183867
+Of mul10  avx   1.804911
+Of single avx   15.867871
+Of single plain 2.864681
+O0 single plain 0.746837
