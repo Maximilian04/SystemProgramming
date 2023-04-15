@@ -1,19 +1,29 @@
 #include "include.h"
 
 int main() {
-    FILE* imgBgr = nullptr;
-    FILE* imgFrt = nullptr;
-    if (openImages(&imgBgr, &imgFrt)) {
+    FILE* fileBgr = nullptr;
+    FILE* fileFrt = nullptr;
+    if (openImages(&fileBgr, &fileFrt)) {
         printf("Pictures error\n");
         return 1;
     }
+
+    ImageSize imgSize = {WINSIZEX, WINSIZEY};
+    uint8_t* imgBgr = readImage(fileBgr, &imgSize);
+    uint8_t* imgFrt = readImage(fileFrt, &imgSize, ImageMode::BLENDABLE);
+    if (!imgBgr || !imgFrt) {
+        printf("image error\n");
+        return 1;
+    }
+
+    closeImages(&fileBgr, &fileFrt);
 
     if (WINSIZEX % BOOST_F) {
         printf("BOOST DIVISIBILITY!!!\n");
         return 1;
     }
 
-    Mat image(WINSIZEY, WINSIZEX, CV_8UC3);
+    Mat image(WINSIZEY, WINSIZEX, CV_8UC3, imgBgr);
     imshow(WINNAME, image);
 
     clock_t timer = clock();
@@ -42,6 +52,9 @@ int main() {
     FILE* logFile = fopen("logfps.txt", "a");
     // fprintf(logFile, "%s %f\n", getPrName(), averageFps);
     fclose(logFile);
+
+    free(imgBgr);
+    free(imgFrt);
 
     printf("Program finished 0\n");
     return 0;

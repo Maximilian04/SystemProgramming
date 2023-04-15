@@ -23,8 +23,8 @@
 
 using namespace cv;
 
-const int32_t WINSIZEX = 1000;
-const int32_t WINSIZEY = 704;
+const int32_t WINSIZEX = 960;
+const int32_t WINSIZEY = 1008;
 
 const float SCALE = 1.f / 400.0f; // [1/px]
 const float OFFSETX = -2.f;
