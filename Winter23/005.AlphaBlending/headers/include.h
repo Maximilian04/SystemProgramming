@@ -36,9 +36,11 @@ const int32_t INFNUM = 700;
 
 const float FACTORPOW = 40.f;
 
-const Scalar textColor = CV_RGB(255, 185, 0);
+const Scalar textColor = CV_RGB(0, 92, 127);
 
-void blend(Mat image, uint8_t* imgBgr, uint8_t* imgFrt);
+const size_t ALIGN_BYTE = 4;
+
+void blend(Mat image, const uint8_t* imgBgr, const uint8_t* imgFrt);
 extern const char WINNAME[];
 extern const int32_t BOOST_F;
 

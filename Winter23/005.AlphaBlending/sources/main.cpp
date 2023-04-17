@@ -22,8 +22,15 @@ int main() {
         return 1;
     }
 
-    Mat image(WINSIZEY, WINSIZEX, CV_8UC4, imgBgr);
+    Mat image(WINSIZEY, WINSIZEX, CV_8UC4);
     imshow(WINNAME, image);
+
+    if ((size_t)imgBgr % ALIGN_BYTE ||
+        (size_t)imgFrt % ALIGN_BYTE ||
+        (size_t)image.data % ALIGN_BYTE) {
+
+        printf("align error");
+    }
 
     clock_t timer = clock();
     double averageFps = 0.;
@@ -49,7 +56,7 @@ int main() {
 
     averageFps /= (double)frameCounter;
     FILE* logFile = fopen("logfps.txt", "a");
-    // fprintf(logFile, "%s %f\n", getPrName(), averageFps);
+    fprintf(logFile, "%s %f\n", getPrName(), averageFps);
     fclose(logFile);
 
     free(imgBgr);

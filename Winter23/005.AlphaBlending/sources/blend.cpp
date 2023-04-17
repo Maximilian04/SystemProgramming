@@ -5,9 +5,9 @@
 const char WINNAME[] = "alphaBlending";
 const int32_t BOOST_F = 1;
 
-void calcBlending(uint8_t* dst, uint8_t* bgr, uint8_t* frt);
+void calcBlending(uint8_t* dst, const uint8_t* bgr, const uint8_t* frt);
 
-void calcBlending(uint8_t* dst, uint8_t* bgr, uint8_t* frt) {
+void calcBlending(uint8_t* dst, const uint8_t* bgr, const uint8_t* frt) {
     float alpha = (float)frt[4] / 255.f;
 
     for (int c = 0; c < 3; ++c) {
@@ -17,8 +17,7 @@ void calcBlending(uint8_t* dst, uint8_t* bgr, uint8_t* frt) {
 
 #define OFFSET COORD2INDEX(pxX, pxY, WINSIZEX, WINSIZEY, BYTECOUNT)
 
-void blend(Mat image, uint8_t* imgBgr, uint8_t* imgFrt) {
-    if (!imgBgr || !imgFrt) return;
+void blend(Mat image, const uint8_t* imgBgr, const uint8_t* imgFrt) {
     for (int32_t pxY = 0; pxY < WINSIZEY; ++pxY) {
         for (int32_t pxX = 0; pxX < WINSIZEX; ++pxX) {
 

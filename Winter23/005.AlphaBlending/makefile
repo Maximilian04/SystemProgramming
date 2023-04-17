@@ -1,7 +1,8 @@
 .PHONY: all clean
-all: alphaBlending
+all: alphaBlendingFast alphaBlending
 
-MULTIPLIER = 10
+MULTIPLIERPLAIN = 50
+MULTIPLIER      = 10 * MULTIPLIERPLAIN
 
 COMPILE_DEFAULT_FLAGS_WITHOUTO = -I headers -Wno-attributes -Wshadow -Winit-self -Wredundant-decls -Wcast-align -Wundef -Wfloat-equal -Winline -Wunreachable-code -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Wmain -Wextra -Wall -g -pipe -fexceptions -Wcast-qual -Wconversion -Wctor-dtor-privacy -Wempty-body -Wformat-security -Wformat=2 -Wignored-qualifiers -Wlogical-op -Wmissing-field-initializers -Wnon-virtual-dtor -Woverloaded-virtual -Wpointer-arith -Wsign-promo -Wstack-usage=8192 -Wstrict-aliasing -Wstrict-null-sentinel -Wtype-limits -Wwrite-strings -D_EJUDGE_CLIENT_SIDE
 
@@ -23,13 +24,6 @@ LIBOPENCV_NAME := opencv_world460
 LIBOPENCV_LINK := -L$(LIBOPENCV_PATH)\bin -l$(LIBOPENCV_NAME)
 LIBOPENCV_INCLUDE := -isystem$(LIBOPENCV_HEADERS)
 
-# LIBWINMM_PATH := "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.22000.0\um\x64"
-# LIBWINMM_NAME := WinMM
-# LIBWINMM_LINK := -L$(LIBWINMM_PATH) -l$(LIBWINMM_NAME)
-#LIBWINMM_PATH := .\..
-#LIBWINMM_NAME := WinMM
-#LIBWINMM_LINK := -L$(LIBWINMM_PATH) -l$(LIBWINMM_NAME)
-
 # CONFIG_INCLUDE :=  -I "..\config"
 
 COMPILE_FLAGS += $(LIBOPENCV_INCLUDE)
@@ -38,6 +32,7 @@ LINK_FLAGS     = $(LIBOPENCV_LINK)
 
 
 NAME = main
+OBJECTSFAST     := ${OBJECTSFAST}     build\${NAME}.o
 OBJECTS         := ${OBJECTS}         build\${NAME}.o
 OBJECTSAVX      := ${OBJECTSAVX}      build\${NAME}.o
 OBJECTSMUL      := ${OBJECTSMUL}      build\${NAME}.o
@@ -48,9 +43,9 @@ OBJECTSMULO0    := ${OBJECTSMULO0}    build\${NAME}.o
 OBJECTSAVXMULO0 := ${OBJECTSAVXMULO0} build\${NAME}.o
 build\${NAME}.o: sources\${NAME}.cpp
 	${COMPILE_O} 
-# -DCOMPILENAME=$(COMPILENAME)
 
 NAME = fileIO
+OBJECTSFAST     := ${OBJECTSFAST}     build\${NAME}.o
 OBJECTS         := ${OBJECTS}         build\${NAME}.o
 OBJECTSAVX      := ${OBJECTSAVX}      build\${NAME}.o
 OBJECTSMUL      := ${OBJECTSMUL}      build\${NAME}.o
@@ -63,10 +58,16 @@ build\${NAME}.o: sources\${NAME}.cpp
 	${COMPILE_O}
 
 
+NAMEcpp = blend
+NAME = blendFast
+OBJECTSFAST := ${OBJECTSFAST} build\${NAME}.o
+build\${NAME}.o: sources\${NAMEcpp}.cpp
+	${COMPILE_O}                               -DCOMPILENAME='"fast"'
+
 NAME = blend
 OBJECTS := ${OBJECTS} build\${NAME}.o
 build\${NAME}.o: sources\${NAME}.cpp
-	${COMPILE_O}                          -DCOMPILENAME='"Of single plain"'
+	${COMPILE_O} -DMULTIPLY=${MULTIPLIERPLAIN} -DCOMPILENAME='"Of single plain"'
 
 # NAME = drawMAVX
 # OBJECTSAVX := ${OBJECTSAVX} build\${NAME}.o
@@ -110,6 +111,8 @@ build\${NAME}.o: sources\${NAME}.cpp
 # 	$(COMPILE_O_O0) -DMULTIPLY=${MULTIPLIER} -DCOMPILENAME='"O0 mul10  avx  "'
 
 
+alphaBlendingFast: ${OBJECTSFAST}
+	@ g++ $(COMPILE_FLAGS) $^ -o build\alphaBlendingFast $(LINK_FLAGS)
 alphaBlending: ${OBJECTS}
 	@ g++ $(COMPILE_FLAGS) $^ -o build\alphaBlending $(LINK_FLAGS)
 # mandelbrotAVX: ${OBJECTSAVX}
