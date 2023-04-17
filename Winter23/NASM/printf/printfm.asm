@@ -20,23 +20,15 @@ extern WriteConsoleA                    ; kernel32.dll
 extern ExitProcess                      ; kernel32.dll
 extern MessageBoxA                      ; user32.dll
 
-global __asmFunction
-global _asmFunction
 global asmFunction
 
 section .text
-
-global __asmFunction
-global _asmFunction
-global asmFunction
 
 ;-------------------------------------------
 ; Main program
 ;-------------------------------------------
 
 asmFunction:
-_asmFunction:
-__asmFunction:
                 push rbx
 
                 mov rcx, -11            ; STD_OUTPUT_HANDLE = -11
@@ -82,7 +74,7 @@ __asmFunction:
                 mov rcx, 0
                 ret
 
-                call ExitProcess        ; ExitProcess (0)
+                ; call ExitProcess        ; ExitProcess (0)
 
 
 ;-------------------------------------------
@@ -111,26 +103,28 @@ __asmFunction:
 ;               stored BP   [rbp]
 ;               ...
 ;-------------------------------------------
+global callPrintf
 callPrintf:
-
+        push rbp
         mov rbp, rsp                    ; Stack frame
 
 
         ; mov     rdi, format             ; set 1st parameter (format)
-        mov     rsi, rax                ; set 2nd parameter (current_number)
-        xor     rax, rax                ; because printf is varargs
+        ; mov     rsi, rax                ; set 2nd parameter (current_number)
+        ; xor     rax, rax                ; because printf is varargs
 
         ; ? Stack is already aligned because we pushed three 8 byte registers
         ; call    printf                  ; printf(format, current_number)
 
 
-        mov     rdx, rax                ; save the current number
-        mov     rax, rbx                ; next number is now current
-        add     rbx, rdx                ; get the new next number
-        dec     ecx                     ; count down
+        ; mov     rdx, rax                ; save the current number
+        ; mov     rax, rbx                ; next number is now current
+        ; add     rbx, rdx                ; get the new next number
+        ; dec     ecx                     ; count down
         ; jnz     print                   ; if not done counting, do some more
 
-        pop     rbx                     ; restore rbx before returning
+        ; pop     rbx                     ; restore rbx before returning
+        pop rbp
         ret
 
 section .data
