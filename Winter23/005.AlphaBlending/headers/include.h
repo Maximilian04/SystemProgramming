@@ -1,7 +1,7 @@
 /**
  * @file include.h
  * @author Maximilian (https://github.com/MaximilianYan)
- * @brief Common consts
+ * @brief Common consts & defines
  * @date 2022-04-10
  *
  * @copyright Copyright (c) 2022
@@ -25,6 +25,7 @@ using namespace cv;
 
 const int32_t WINSIZEX = 960;
 const int32_t WINSIZEY = 1008;
+const int32_t BYTECOUNT = 4;
 
 const float SCALE = 1.f / 400.0f; // [1/px]
 const float OFFSETX = -2.f;
@@ -37,12 +38,10 @@ const float FACTORPOW = 40.f;
 
 const Scalar textColor = CV_RGB(255, 185, 0);
 
-// void drawM(Mat image);
-// extern const char WINNAME[];
-// extern const int32_t BOOST_F;
+void blend(Mat image, uint8_t* imgBgr, uint8_t* imgFrt);
+extern const char WINNAME[];
+extern const int32_t BOOST_F;
 
-const char WINNAME[] = "alphaBlending";
-const int32_t BOOST_F = 1;
-// const char* getPrName();
+const char* getPrName();
 
 #endif // INCLUDE_H

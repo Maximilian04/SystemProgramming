@@ -8,9 +8,8 @@ int main() {
         return 1;
     }
 
-    ImageSize imgSize = {WINSIZEX, WINSIZEY};
-    uint8_t* imgBgr = readImage(fileBgr, &imgSize);
-    uint8_t* imgFrt = readImage(fileFrt, &imgSize, ImageMode::BLENDABLE);
+    uint8_t* imgBgr = readImage(fileBgr, WINSIZEX, WINSIZEY, BYTECOUNT);
+    uint8_t* imgFrt = readImage(fileFrt, WINSIZEX, WINSIZEY, BYTECOUNT, ImageMode::BLENDABLE);
     if (!imgBgr || !imgFrt) {
         printf("image error\n");
         return 1;
@@ -23,7 +22,7 @@ int main() {
         return 1;
     }
 
-    Mat image(WINSIZEY, WINSIZEX, CV_8UC3, imgBgr);
+    Mat image(WINSIZEY, WINSIZEX, CV_8UC4, imgBgr);
     imshow(WINNAME, image);
 
     clock_t timer = clock();
@@ -32,7 +31,7 @@ int main() {
 
     int key = 0;
     while (key != 27) {
-        // drawM(image);
+        blend(image, imgBgr, imgFrt);
 
         double spf = ((double)(-timer) + (timer = clock())) / CLOCKS_PER_SEC;
         double fps = 1 / spf;

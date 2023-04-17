@@ -47,18 +47,26 @@ OBJECTSAVXO0    := ${OBJECTSAVXO0}    build\${NAME}.o
 OBJECTSMULO0    := ${OBJECTSMULO0}    build\${NAME}.o
 OBJECTSAVXMULO0 := ${OBJECTSAVXMULO0} build\${NAME}.o
 build\${NAME}.o: sources\${NAME}.cpp
-	${COMPILE_O} -DCOMPILENAME=$(COMPILENAME)
+	${COMPILE_O} 
+# -DCOMPILENAME=$(COMPILENAME)
 
 NAME = fileIO
-OBJECTS := ${OBJECTS} build\${NAME}.o
+OBJECTS         := ${OBJECTS}         build\${NAME}.o
+OBJECTSAVX      := ${OBJECTSAVX}      build\${NAME}.o
+OBJECTSMUL      := ${OBJECTSMUL}      build\${NAME}.o
+OBJECTSAVXMUL   := ${OBJECTSAVXMUL}   build\${NAME}.o
+OBJECTSO0       := ${OBJECTSO0}       build\${NAME}.o
+OBJECTSAVXO0    := ${OBJECTSAVXO0}    build\${NAME}.o
+OBJECTSMULO0    := ${OBJECTSMULO0}    build\${NAME}.o
+OBJECTSAVXMULO0 := ${OBJECTSAVXMULO0} build\${NAME}.o
 build\${NAME}.o: sources\${NAME}.cpp
 	${COMPILE_O}
 
 
-# NAME = drawM
-# OBJECTS := ${OBJECTS} build\${NAME}.o
-# build\${NAME}.o: sources\${NAME}.cpp
-# 	${COMPILE_O}                          -DCOMPILENAME='"Of single plain"'
+NAME = blend
+OBJECTS := ${OBJECTS} build\${NAME}.o
+build\${NAME}.o: sources\${NAME}.cpp
+	${COMPILE_O}                          -DCOMPILENAME='"Of single plain"'
 
 # NAME = drawMAVX
 # OBJECTSAVX := ${OBJECTSAVX} build\${NAME}.o

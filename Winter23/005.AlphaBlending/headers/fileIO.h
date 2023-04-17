@@ -25,11 +25,6 @@ enum ImageMode {
     BLENDABLE,
 };
 
-struct ImageSize {
-    size_t sizeX;
-    size_t sizeY;
-};
-
-uint8_t* readImage(FILE* file, ImageSize* sizePtr, ImageMode mode = ImageMode::BACKGROUND);
+uint8_t* readImage(FILE* file, const int32_t WINSIZEX, const int32_t WINSIZEY, size_t COMMON_BYTECOUNT, ImageMode mode = ImageMode::BACKGROUND);
 
 #endif // FILEIO_H
