@@ -8,12 +8,13 @@ const int32_t BOOST_F = 1;
 void calcBlending(uint8_t* dst, const uint8_t* bgr, const uint8_t* frt);
 
 void calcBlending(uint8_t* dst, const uint8_t* bgr, const uint8_t* frt) {
-    uint16_t alpha = frt[4];
+    uint16_t alpha = frt[3];
     uint16_t alphaRev = (uint16_t)(255 - alpha);
+
     for (int c = 0; c < 3; ++c) {
         dst[c] = uint8_t(
-            (alpha * bgr[c] + alphaRev * frt[c]) >> 8
-            );
+            (alphaRev * bgr[c] + alpha * frt[c]) >> 8
+        );
     }
 }
 

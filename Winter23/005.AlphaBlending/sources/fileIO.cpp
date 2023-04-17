@@ -73,12 +73,10 @@ uint8_t* readImage(FILE* file, const int32_t WINSIZEX, const int32_t WINSIZEY, s
     for (size_t y = 0; y < (size_t)WINSIZEY; ++y) {
         for (size_t x = 0; x < (size_t)WINSIZEX; ++x) {
             for (size_t c = 0; c < (size_t)BYTECOUNT; ++c) {
-                // data[(WINSIZEX * y + x) * COMMON_BYTECOUNT + c] = dataT[bytewidth * (HEIGHT - y - 1) + x * BYTECOUNT + c];
                 data[COORD2INDEX(x, y, WINSIZEX, WINSIZEY, COMMON_BYTECOUNT) + c] = dataT[bytewidth * (HEIGHT - y - 1) + x * BYTECOUNT + c];
             }
             for (size_t c = BYTECOUNT; c < (size_t)COMMON_BYTECOUNT; ++c) {
-                // data[(WINSIZEX * y + x) * COMMON_BYTECOUNT + c] = 0; // 255
-                data[COORD2INDEX(x, y, WINSIZEX, WINSIZEY, COMMON_BYTECOUNT) + c] = 0; // 255
+                data[COORD2INDEX(x, y, WINSIZEX, WINSIZEY, COMMON_BYTECOUNT) + c] = 255;
             }
         }
     }
