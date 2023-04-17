@@ -1,5 +1,5 @@
 .PHONY: all clean
-all: alphaBlendingFast alphaBlending
+all: alphaBlendingFast alphaBlending alphaBlendingAVX
 
 MULTIPLIERPLAIN = 50
 MULTIPLIER      = 10 * MULTIPLIERPLAIN
@@ -69,10 +69,10 @@ OBJECTS := ${OBJECTS} build\${NAME}.o
 build\${NAME}.o: sources\${NAME}.cpp
 	${COMPILE_O} -DMULTIPLY=${MULTIPLIERPLAIN} -DCOMPILENAME='"Of single plain"'
 
-# NAME = drawMAVX
-# OBJECTSAVX := ${OBJECTSAVX} build\${NAME}.o
-# build\${NAME}.o: sources\${NAME}.cpp
-# 	$(COMPILE_O)                          -DCOMPILENAME='"Of single avx  "'
+NAME = blendAVX
+OBJECTSAVX := ${OBJECTSAVX} build\${NAME}.o
+build\${NAME}.o: sources\${NAME}.cpp
+	$(COMPILE_O) -DMULTIPLY=${MULTIPLIERPLAIN} -DCOMPILENAME='"Of single avx  "'
 
 # NAMEcpp = drawM
 # NAME = drawMMUL
@@ -115,8 +115,8 @@ alphaBlendingFast: ${OBJECTSFAST}
 	@ g++ $(COMPILE_FLAGS) $^ -o build\alphaBlendingFast $(LINK_FLAGS)
 alphaBlending: ${OBJECTS}
 	@ g++ $(COMPILE_FLAGS) $^ -o build\alphaBlending $(LINK_FLAGS)
-# mandelbrotAVX: ${OBJECTSAVX}
-# 	@ g++ $(COMPILE_FLAGS) $^ -o build\mandelbrotAVX $(LINK_FLAGS)
+alphaBlendingAVX: ${OBJECTSAVX}
+	@ g++ $(COMPILE_FLAGS) $^ -o build\alphaBlendingAVX $(LINK_FLAGS)
 # mandelbrotMUL: ${OBJECTSMUL}
 # 	@ g++ $(COMPILE_FLAGS) $^ -o build\mandelbrotMUL $(LINK_FLAGS)
 # mandelbrotAVXMUL: ${OBJECTSAVXMUL}

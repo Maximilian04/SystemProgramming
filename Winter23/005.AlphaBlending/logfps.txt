@@ -21,3 +21,8 @@ Of single plain 28.998943
 Of single plain 6.972647
 Of single plain 6.061069
 Of single plain 6.071416
+Of single avx   22.749918
+Of single plain 5.463616
+Of single plain 5.936836
+Of single plain 5.983367
+Of single plain 5.980358

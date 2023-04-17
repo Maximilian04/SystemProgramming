@@ -2,18 +2,16 @@
 #include "getPrName.cpp"
 #include "coord2index.cpp"
 
-const char WINNAME[] = "alphaBlending";
-const int32_t BOOST_F = 1;
+const char WINNAME[] = "alphaBlendingAVX";
+const int32_t BOOST_F = 8;
 
 void calcBlending(uint8_t* dst, const uint8_t* bgr, const uint8_t* frt);
 
 void calcBlending(uint8_t* dst, const uint8_t* bgr, const uint8_t* frt) {
-    uint16_t alpha = frt[4];
-    uint16_t alphaRev = (uint16_t)(255 - alpha);
+    float alpha = (float)frt[4] / 255.f;
+
     for (int c = 0; c < 3; ++c) {
-        dst[c] = uint8_t(
-            (alpha * bgr[c] + alphaRev * frt[c]) >> 8
-            );
+        dst[c] = uint8_t(alpha * bgr[c] + (1 - alpha) * frt[c]);
     }
 }
 
@@ -21,7 +19,7 @@ void calcBlending(uint8_t* dst, const uint8_t* bgr, const uint8_t* frt) {
 
 void blend(Mat image, const uint8_t* imgBgr, const uint8_t* imgFrt) {
     for (int32_t pxY = 0; pxY < WINSIZEY; ++pxY) {
-        for (int32_t pxX = 0; pxX < WINSIZEX; ++pxX) {
+        for (int32_t pxX = 0; pxX < WINSIZEX; pxX += BOOST_F) {
 
 #ifdef MULTIPLY
             for (int32_t i = 0; i < MULTIPLY; ++i)
