@@ -4,11 +4,6 @@
 locals @@
 org 100h
 
-boxWidth  = 10d
-boxHeight = 13d
-boxTheme  = 2
-boxColor  = 00Eh
-
 Start:          jmp Main
 
 
@@ -29,8 +24,8 @@ New09Int        proc
 
                 cmp al, 01Dh            ; ctrl is pressed
                 je @@ControlKey1
-                cmp al, 09Dh            ; ctrl is released
-                je @@ControlKey2
+                ; cmp al, 09Dh            ; ctrl is released
+                ; je @@ControlKey2
 
                 jmp @@NotControlKey
             @@ControlKey1:
@@ -59,40 +54,6 @@ New09Int        proc
                 mov word ptr cs:[CurPos], di
 
 
-
-                jmp @@NotControlKey
-            @@ShiftKey1:
-                                                ; CTRL is pressed
-
-
-
-                mov di, word ptr cs:[CurPos]
-                mov bx, 0Eh
-
-@@CycleChar:                                    ; <-------------------------\
-                cmp di, offset StrEnd           ;                           |
-                jge @@CycleEnd                  ; >-----\                   |
-                                                ;       |                   |
-                mov ch, 0                       ;       |                   |
-                mov cl, cs:[di]                 ;       |                   |
-                inc di                          ;       |                   |
-                                                ;       |                   |
-                mov ah, 5h                      ; put cx to keyboard        |
-                int 16h                         ;       |                   |
-                                                ;       |                   |
-                dec bx                          ;       |                   |
-                jnz @@CycleChar                 ; >-----+-------------------/
-                                                ;       |
-            @@CycleEnd:                         ; <-----/
-                mov word ptr cs:[CurPos], di
-
-
-
-                jmp @@NotControlKey
-            @@ControlKey2:
-                                        ; CTRL is released
-
-                jmp @@NotControlKey
             @@NotControlKey:
 
 
