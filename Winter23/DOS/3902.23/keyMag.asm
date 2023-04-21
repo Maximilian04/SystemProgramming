@@ -24,13 +24,12 @@ New09Int        proc
 
                 cmp al, 01Dh            ; ctrl is pressed
                 je @@ControlKey1
-                ; cmp al, 09Dh            ; ctrl is released
-                ; je @@ControlKey2
+                cmp al, 02Ah            ; shift is pressed
+                je @@ControlKey2
 
                 jmp @@NotControlKey
             @@ControlKey1:
-                                        ; CTRL is pressed
-
+                                                ; CTRL is pressed
 
 
                 mov di, word ptr cs:[CurPos]
@@ -52,6 +51,33 @@ New09Int        proc
                                                 ;       |
             @@CycleEnd:                         ; <-----/
                 mov word ptr cs:[CurPos], di
+
+
+                jmp @@NotControlKey
+            @@ControlKey2:
+                                                ; SHIFT is pressed
+
+
+                mov di, word ptr cs:[PswPos]
+                mov bx, 0Eh
+
+@@CycleChar2:                                   ; <-------------------------\
+                cmp di, offset PswEnd           ;                           |
+                jge @@CycleEnd2                 ; >-----\                   |
+                                                ;       |                   |
+                mov ch, 0                       ;       |                   |
+                mov cl, cs:[di]                 ;       |                   |
+                inc di                          ;       |                   |
+                                                ;       |                   |
+                mov ah, 5h                      ; put cx to keyboard        |
+                int 16h                         ;       |                   |
+                                                ;       |                   |
+                dec bx                          ;       |                   |
+                jnz @@CycleChar2                ; >-----+-------------------/
+                                                ;       |
+            @@CycleEnd2:                        ; <-----/
+                mov word ptr cs:[PswPos], di
+
 
 
             @@NotControlKey:
@@ -76,6 +102,21 @@ String:
                 ; db 1F8h DUP("a")
                 ; db "You are great!"
 StrEnd:
+
+PswPos:         dw offset Psw
+Psw:
+                db "Old"
+                ; db 040h 
+                ; db 03Ah 
+                ; db 0D2h 
+                ; db 071h 
+                ; db 0CEh 
+                ; db 049h 
+                ; db 08Eh 
+                ; db 073h 
+                ; db 05Ch 
+                ; db 002h
+PswEnd:
 
 InterruptorMemEnd:
 
