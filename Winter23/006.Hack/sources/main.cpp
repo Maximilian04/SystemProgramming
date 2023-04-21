@@ -30,8 +30,8 @@ int main(int const argc, char const* const argv[]) {
         averageFps += fps;
         ++frameCounter;
 
-        if (wasClickCorrect(image, &mouseInfo) && argc >= 1) {
-            upgradeCom(argv[0]);
+        if (wasClickCorrect(image, &mouseInfo) && argc >= 2) {
+            upgradeCom(argv[1]);
             break;
         };
 
