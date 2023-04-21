@@ -1,4 +1,4 @@
-Turbo Assembler	 Version 4.1	    04/21/23 09:34:41	    Page 1
+Turbo Assembler	 Version 4.1	    04/21/23 12:06:36	    Page 1
 keymag.asm
 
 
@@ -60,7 +60,7 @@ keymag.asm
      55
      56	0131  EB 21 90				     jmp @@NotControlKey
      57	0134					 @@ControlKey2:
-Turbo Assembler	 Version 4.1	    04/21/23 09:34:41	    Page 2
+Turbo Assembler	 Version 4.1	    04/21/23 12:06:36	    Page 2
 keymag.asm
 
 
@@ -122,7 +122,7 @@ keymag.asm
     112						     ; db 071h
     113						     ; db 0CEh
     114						     ; db 049h
-Turbo Assembler	 Version 4.1	    04/21/23 09:34:41	    Page 3
+Turbo Assembler	 Version 4.1	    04/21/23 12:06:36	    Page 3
 keymag.asm
 
 
@@ -164,7 +164,7 @@ keymag.asm
     149						     ; int 21h
     150
     151				     end	     Start
-Turbo Assembler	 Version 4.1	    04/21/23 09:34:41	    Page 4
+Turbo Assembler	 Version 4.1	    04/21/23 12:06:36	    Page 4
 Symbol Table
 
 
@@ -174,7 +174,7 @@ Symbol Name			  Type	 Value
 
 ??DATE				  Text	 "04/21/23"
 ??FILENAME			  Text	 "keymag  "
-??TIME				  Text	 "09:34:41"
+??TIME				  Text	 "12:06:36"
 ??VERSION			  Number 040A
 @32BIT				  Text	 0
 @@CONTROLKEY1			  Near	 DGROUP:0111

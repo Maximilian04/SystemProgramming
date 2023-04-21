@@ -6,7 +6,7 @@
 
 const size_t MASKSIZE = 5;
 const uint8_t SEARCHMASK[MASKSIZE] = { 0x3D, 0x01, 0x00, 0x75, 0x03 };
-const uint8_t FIXMASK[MASKSIZE] = { 0x3D, 0x01, 0x00, 0x74, 0x03 };
+const uint8_t    FIXMASK[MASKSIZE] = { 0xB8, 0x01, 0x00, 0x74, 0x03 };
 
 void upgradeCom(char const name[]) {
     if (!name) return;
@@ -18,10 +18,11 @@ void upgradeCom(char const name[]) {
     size_t bufSize = 100;
     buffer = (char*)calloc(bufSize, 1);
 
-    int c = 0;
+    int counter = 0;
 
-    for (size_t i = 0; true; ++i) {
-        if (i == bufSize - 1) {
+    size_t index = 0;
+    for (index = 0; true; ++index) {
+        if (index == bufSize - 1) {
             bufSize *= 2;
             buffer = (char*)realloc(buffer, bufSize);
         }
@@ -29,26 +30,36 @@ void upgradeCom(char const name[]) {
         int in = fgetc(file);
         if (in == EOF) break;
 
-        buffer[i] = (char)in;
+        buffer[index] = (char)in;
 
-        if (i < MASKSIZE) continue;
+        if (index < MASKSIZE) continue;
 
         bool correctMask = true;
         for (size_t offset = 0; offset < MASKSIZE; ++offset) {
-            if (buffer[i + offset - MASKSIZE] != SEARCHMASK[offset]) correctMask = false;
+            if (buffer[index + offset - MASKSIZE] != SEARCHMASK[offset]) correctMask = false;
         }
 
         if (!correctMask) continue;
-        ++c;
+        ++counter;
         for (size_t offset = 0; offset < MASKSIZE; ++offset) {
-            buffer[i + offset - MASKSIZE] = FIXMASK[offset];
+            buffer[index + offset - MASKSIZE] = FIXMASK[offset];
         }
     }
 
     fclose(file);
 
 
-    printf("fixed %d occurences\n", c);
+    file = nullptr;
+    file = fopen(name, "wb");
+    if (file == nullptr) return;
+
+    for (size_t wrIndex = 0; wrIndex < index; ++wrIndex) {
+        fputc(buffer[wrIndex], file);
+    }
+
+    fclose(file);
+
+    printf("fixed %d occurences\n", counter);
 
     free(buffer);
 }
