@@ -67,8 +67,8 @@ MsgTextLength   equ ($ - MsgText)
 MsgText2        db "Noooo", 0
 MsgText3        db "Yess", 0ah, 0
 
-MsgPrintf       db "Ququququ %d'%s' qwe rsp:%d,%d", 0ah, 0
-MsgPrintf2      db "KUKUKUuu %d'%s' qwe rsp:%d,%d", 0ah, 0
+MsgPrintf       db "Ququququ %d'%s' qwe%% rsp:%d,%d", 0ah, 0
+MsgPrintf2      db "KUKUKUuu %d'%s' qwe%% rsp:%d,%d", 0ah, 0
 
 STD_OUTPUT_HANDLE equ (-11)
 

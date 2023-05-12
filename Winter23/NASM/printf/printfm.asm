@@ -60,50 +60,61 @@ printfm:
         push rax                        ; hConsoleOutput -> stack
 
 
+        mov rbx, 0
         mov r12, [rbp + formatStrOffset]; r12 = format string ptr
         mov r13, ModeNormal             ; r13 = mode ( = 0)
 
 
         jmp .ScanBeginning              ;               >>>>>>>>>>>>>>>>
-        .OneChar:                       ; <---------------------\
-                                        ;                       |
-                jmp [ModeCallTable + r13];                      |
-                                        ;                       |
-                                        ;                       |
+                                        ; <---------------------\
+                                        ;!!!!!!                 |
             ..@ModeProcent:             ;                       |
                 mov r13, ModeNormal     ;                       |
                                         ;                       |
-                jmp .PrintChar          ;       >>>>>>>>        |
+                mov al, "%"             ;                       |
+                cmp bl, al              ;                       |
+                jne .NotProcentSymb     ; >>====\\              |
+                call printChar          ;       ||              |
+                jmp .ScanNext           ;       ||      >>>>>>>>>>>>>>>>
+                                        ;       ||              |
+                .NotProcentSymb:        ; <<====//              |
+                mov al, "b"             ;                       |
+                cmp bl, al              ;                       |
+                jl .OutOfTable          ; >>====\\              |
+                mov al, "x"             ;       ||              |
+                cmp bl, al              ;       ||              |
+                jg .OutOfTable          ; >>====\\              |
+                                        ;       ||              |
+                call [ProcentCallTable + 8 * (rbx - "b")];      |
+                jmp .ScanNext           ;       ||      >>>>>>>>>>>>>>>>
+                                        ;       ||              |
+            .OutOfTable:                ; <<====//              |
+                call printChar          ;                       |
+                jmp .ScanNext           ;               >>>>>>>>>>>>>>>>
                                         ;                       |
-                                        ;                       |
-                                        ;                       |
+                                        ;!!!!!!                 |
             ..@ModeNormal:              ;                       |
                 mov al, "%"             ;                       |
                 cmp al, bl              ;                       |
                 jne .NotProcent         ; >>====\\              |
-                                        ;       ||              |
                 mov r13, ModeProcent    ;       ||              |
                 jmp .ScanNext           ;       ||      >>>>>>>>>>>>>>>>
                                         ;       ||              |
-            .NotProcent:                ; <<====//              |
-                jmp .PrintChar          ;       >>>>>>>>        |
+                .NotProcent:            ; <<====//              |
                                         ;                       |
-            .PrintChar:                 ;       <<<<<<<<        |
-                mov rcx, [rbp + hConsoleOutputOffset];          |
-                mov rdx, r12            ; string ptr            |
-                mov r8, 1               ; one character         |
-                mov r9, 0               ;                       |
-                sub rsp, (8*4)          ;                       |
-                push qword 0            ;                       |
-                call WriteConsoleA      ; WriteConsole  (hConsoleOutput, ptr, 1, 0, 0)
-                add rsp, (8*5)          ;                       |
+                call printChar          ;                       |
+                jmp .ScanNext           ;               >>>>>>>>>>>>>>>>
+                                        ;!!!!!!                 |
+                                        ;                       |
                                         ;                       |
             .ScanNext:                  ;               <<<<<<<<<<<<<<<<
                 inc r12                 ;                       |
             .ScanBeginning:             ;               <<<<<<<<<<<<<<<<
-                mov bl, [r12]           ; next character -> bl  |
+                mov bl, [r12]           ; bl = next character   |
                 test bl, bl             ;                       |
-                jnz .OneChar            ; >---------------------/
+                jz .Finish              ; >>====\\              |
+                jmp [ModeCallTable + 8 * r13]; >||--------------/
+        .Finish:                        ; <<====//
 
 
         pop rax                         ; remove hConsoleOutput
@@ -114,6 +125,38 @@ printfm:
         pop r12                         ; restore external r12
         pop rbx                         ; restore external rbx
         pop rbp
+        ret
+;-------------------------------------------
+;-------------------------------------------
+
+
+;-------------------------------------------
+; printChar - Print one character (no rbp func)
+;-------------------------------------------
+; Entry:        r12  - ptr to char
+;
+; Expects:      [rbp + hConsoleOutputOffset] = hConsoleOutput
+;
+; Exit:         None
+;
+; Destroys:     
+;-------------------------------------------
+; Stack frame:
+;               ...
+;               retAddr     [...]
+;               ...
+;-------------------------------------------
+section .text
+printChar:
+        mov rcx, [rbp + hConsoleOutputOffset]
+        mov rdx, r12                    ; string ptr
+        mov r8, 1                       ; one character
+        mov r9, 0
+        sub rsp, (8*4)
+        push qword 0
+        call WriteConsoleA              ; WriteConsole  (hConsoleOutput, ptr, 1, 0, 0)
+        add rsp, (8*5)
+
         ret
 ;-------------------------------------------
 ;-------------------------------------------
@@ -139,18 +182,26 @@ STD_OUTPUT_HANDLE equ (-11)
 
 
         ; Mode table:
-        ;        index  | mode
+        ;        value  | mode
         ;       --------+---------------
         ;          0    | normal
         ;          1    | character after %
 
-ModeNormal      equ 8*0
-ModeProcent     equ 8*1
+ModeNormal      equ 0
+ModeProcent     equ 1
 
 ModeCallTable   dq ..@ModeNormal
                 dq ..@ModeProcent
 
-
+ProcentCallTable dq printChar   ; b
+                dq printChar    ; c
+                dq printChar    ; d
+                dq 10 dup(printChar)
+                dq printChar    ; o
+                dq 3 dup(printChar)
+                dq printChar    ; s
+                dq 4 dup(printChar)
+                dq printChar    ; x
 
 ; OUTDATED:     ----------------------------
 ;         ;          1    | special symbol after \ (\n, \t)
