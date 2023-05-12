@@ -24,7 +24,7 @@ extern WriteConsoleA                    ; kernel32.dll
 ;
 ; Exit:         None
 ;
-; Destroys:     
+; Destroys:     rax rcx rdx r8 r9
 ;-------------------------------------------
 ; Stack frame:
 ;               ...
@@ -612,7 +612,7 @@ printD:
 ;
 ; Exit:         None
 ;
-; Destroys:     bl
+; Destroys:     rax rcx rdx r8 r9
 ;-------------------------------------------
 ; Stack frame:
 ;               ...
@@ -635,6 +635,36 @@ printS:
                 mov bl, [r12]           ; bl = next character   |
                 test bl, bl             ;                       |
                 jnz .OneChar            ; >---------------------/
+
+        pop r12
+        ret
+;-------------------------------------------
+;-------------------------------------------
+
+
+;-------------------------------------------
+; printC - Print for %c (no rbp func)
+;-------------------------------------------
+; Entry:        r14 - ptr value
+;
+; Expects:      [rbp + hConsoleOutputOffset] = hConsoleOutput
+;
+; Exit:         None
+;
+; Destroys:     rax rcx rdx r8 r9
+;-------------------------------------------
+; Stack frame:
+;               ...
+;               retAddr     [...]
+;               ...
+;-------------------------------------------
+section .text
+printC:
+        push r12
+        mov r12, r14
+        add r14, 8
+
+        call printChar
 
         pop r12
         ret
@@ -693,7 +723,7 @@ ModeCallTable   dq ..@ModeNormal
                 dq ..@ModeProcent
 
 ProcentCallTable dq printB      ; b
-                dq printChar    ; c
+                dq printC       ; c
                 dq printD       ; d
                 dq 10 dup(printChar)
                 dq printO       ; o

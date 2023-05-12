@@ -26,13 +26,15 @@ asmMain:
                 mov r8, 775
                 mov r9, 776
 
+                push qword "g"
                 push qword 778
                 ; push qword 777
                 sub rsp, (8*4)
                 call printf             ; printf (MsgPrintf, 7, MsgText2, rsp, 775)
-                add rsp, (8*5)
+                add rsp, (8*6)
 
 
+                push qword "g"
                 push qword 778
                 push qword 777
                 push qword 776
@@ -40,7 +42,7 @@ asmMain:
                 push qword StringPrintf
                 push qword MsgPrintf
                 call printfm
-                add rsp, (8*6)
+                add rsp, (8*7)
 
 
                 pop rbx                 ; restore external rbx
@@ -77,8 +79,8 @@ MsgText3        db "Yess", 0ah, 0
 ; MsgPrintf       db "Ququququ '%s'%x|%d qwe%% rsp:%d,%d,%b,%d,%d", 0ah, 0
 ; MsgPrintf2      db "KUKUKUuu '%s'%x|%d qwe%% rsp:%d,%d,%b", 0ah, 0
 
-MsgPrintfSimple db "Ququ string:'%s', dec:%d, dec:%d, dec:%d, dec:%d~", 0ah, 0
-MsgPrintf       db "Ququ string:'%s', hex:%x, oct:%o, bin:%b, dec:%d~", 0ah, 0
+MsgPrintfSimple db "Ququ string:'%s', dec:%d, dec:%d, dec:%d, dec:%d, char:%c~", 0ah, 0
+MsgPrintf       db "Ququ string:'%s', hex:%x, oct:%o, bin:%b, dec:%d, char:%c~", 0ah, 0
 StringPrintf    db "Yeaa", 0
 
 STD_OUTPUT_HANDLE equ (-11)
