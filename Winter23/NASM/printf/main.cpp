@@ -1,11 +1,11 @@
 #include "stdio.h"
 
-extern "C" void asmFunction();
+extern "C" void asmMain();
 
 int main() {
     printf("normal printf%d%d%d%d%d\n\n", 0, 0, 0, 0, 0);
 
-    asmFunction();
+    asmMain();
     
     printf("normal printf%d%d%d%d%d\n\n", 7, 7, 7, 7, 7);
 

@@ -4,6 +4,7 @@
 :: a.exe
 
 nasm printfm.asm -f win64
+nasm asmMain.asm -f win64
 g++ -c main.cpp -o main.obj
-g++ -S -c main.cpp -O0
-g++ printfm.obj main.obj -o printfTest
+:: g++ -S -c main.cpp -O0
+g++ printfm.obj asmMain.obj main.obj -o printfTest
