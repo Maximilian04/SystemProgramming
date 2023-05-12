@@ -31,9 +31,13 @@ asmMain:
                 add rsp, (8*5)
 
 
-                push MsgPrintf2
+                push qword 775
+                push qword rsp
+                push qword MsgText2
+                ; push qword 7
+                push qword MsgPrintf2
                 call printfm
-                pop rax
+                add rsp, (8*4)
 
 
                 pop rbx                 ; restore external rbx

@@ -35,12 +35,14 @@ extern WriteConsoleA                    ; kernel32.dll
 ;               stored rbx  [rbp - 8]
 ;               stored r12  [rbp - 16]
 ;               stored r13  [rbp - 24]
-;               stored rsi  [rbp - 32]
-;               stored rdi  [rbp - 40]
-;            hConsoleOutput [rbp - 48]
+;               stored r14  [rbp - 32]
+;               stored rsi  [rbp - 40]
+;               stored rdi  [rbp - 48]
+;            hConsoleOutput [rbp - 56]
 ;               ...
 formatStrOffset               equ +16
-hConsoleOutputOffset          equ -48
+formatArgOffset               equ +24
+hConsoleOutputOffset          equ -56
 ;-------------------------------------------
 section .text
 global printfm
@@ -50,6 +52,7 @@ printfm:
         push rbx                        ; store external rbx to stack
         push r12                        ; store external r12 to stack
         push r13                        ; store external r13 to stack
+        push r14                        ; store external r13 to stack
         push rsi                        ; store external rsi to stack
         push rdi                        ; store external rdi to stack
 
@@ -63,6 +66,8 @@ printfm:
         mov rbx, 0
         mov r12, [rbp + formatStrOffset]; r12 = format string ptr
         mov r13, ModeNormal             ; r13 = mode ( = 0)
+        mov r14, rbp
+        add r14, formatArgOffset        ; r14 = ptr to varargs
 
 
         jmp .ScanBeginning              ;               >>>>>>>>>>>>>>>>
@@ -121,6 +126,7 @@ printfm:
 
         pop rdi                         ; restore external rdi
         pop rsi                         ; restore external rsi
+        pop r14                         ; restore external r14
         pop r13                         ; restore external r13
         pop r12                         ; restore external r12
         pop rbx                         ; restore external rbx
@@ -163,6 +169,45 @@ printChar:
 
 
 ;-------------------------------------------
+; printS - Print for %s (no rbp func)
+;-------------------------------------------
+; Entry:        r14  - ptr to ptr string
+;
+; Expects:      [rbp + hConsoleOutputOffset] = hConsoleOutput
+;
+; Exit:         None
+;
+; Destroys:     bl
+;-------------------------------------------
+; Stack frame:
+;               ...
+;               retAddr     [...]
+;               ...
+;-------------------------------------------
+section .text
+printS:
+        push r12
+        mov r12, [r14]
+        add r14, 8
+
+        jmp .ScanBeginning              ;               >>>>>>>>>>>>>>>>
+        .OneChar:                       ; <---------------------\
+                nop                     ;                       |
+                call printChar          ;                       |
+                                        ;                       |
+                inc r12                 ;                       |
+            .ScanBeginning:             ;               <<<<<<<<<<<<<<<<
+                mov bl, [r12]           ; bl = next character   |
+                test bl, bl             ;                       |
+                jnz .OneChar            ; >---------------------/
+
+        pop r12
+        ret
+;-------------------------------------------
+;-------------------------------------------
+
+
+;-------------------------------------------
 ; x64 c calling convention
 ;
 ;       1st     RCX
@@ -199,7 +244,7 @@ ProcentCallTable dq printChar   ; b
                 dq 10 dup(printChar)
                 dq printChar    ; o
                 dq 3 dup(printChar)
-                dq printChar    ; s
+                dq printS       ; s
                 dq 4 dup(printChar)
                 dq printChar    ; x
 
