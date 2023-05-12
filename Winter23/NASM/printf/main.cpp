@@ -1,12 +1,13 @@
+#include "stdio.h"
 
 extern "C" void asmFunction();
-extern "C" void callPrintf();
-extern void example();
 
 int main() {
+    printf("normal printf%d%d%d%d%d\n\n", 0, 0, 0, 0, 0);
+
     asmFunction();
-    callPrintf();
-    example();
+    
+    printf("normal printf%d%d%d%d%d\n\n", 7, 7, 7, 7, 7);
 
     return 0;
 }
