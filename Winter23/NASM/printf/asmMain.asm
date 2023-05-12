@@ -27,10 +27,10 @@ asmMain:
                 mov r9, 776
 
                 push qword 778
-                push qword 777
+                ; push qword 777
                 sub rsp, (8*4)
                 call printf             ; printf (MsgPrintf, 7, MsgText2, rsp, 775)
-                add rsp, (8*6)
+                add rsp, (8*5)
 
 
                 push qword 778
