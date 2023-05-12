@@ -7,11 +7,6 @@
 ; External stuff
 ;-------------------------------------------
 
-extern GetStdHandle                     ; kernel32.dll
-extern WriteConsoleA                    ; kernel32.dll
-extern ExitProcess                      ; kernel32.dll
-extern MessageBoxA                      ; user32.dll
-
 extern printf                           ; stl
 
 extern printfm
@@ -24,22 +19,6 @@ section .text
 global asmMain
 asmMain:
                 push rbx                ; store external rbx to stack
-
-
-                mov rcx, STD_OUTPUT_HANDLE; STD_OUTPUT_HANDLE = -11
-                call GetStdHandle       ; rax = hConsoleOutput = GetStdHandle(-11)
-
-                mov rbx, rax            ; store hConsoleOutput -> rbx
-
-
-                mov rcx, rbx            ; hConsoleOutput
-                mov rdx, MsgText
-                mov r8, MsgTextLength
-                mov r9, 0
-                sub rsp, (8*4)
-                push qword 0
-                call WriteConsoleA      ; WriteConsole (hConsoleOutput, msg, length, 0, 0)
-                add rsp, (8*5)
 
 
                 mov rcx, MsgPrintf

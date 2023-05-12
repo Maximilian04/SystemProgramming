@@ -3,11 +3,11 @@
 extern "C" void asmMain();
 
 int main() {
-    printf("normal printf%d%d%d%d%d\n\n", 0, 0, 0, 0, 0);
+    printf("No segfault) %d%d%d%d%d\n\n", 0, 0, 0, 0, 0);
 
     asmMain();
     
-    printf("normal printf%d%d%d%d%d\n\n", 7, 7, 7, 7, 7);
+    printf("\nNo segfault) %d%d%d%d%d\n", 7, 7, 7, 7, 7);
 
     return 0;
 }
