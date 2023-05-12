@@ -33,11 +33,12 @@ asmMain:
 
                 push qword 775
                 push qword rsp
+                push qword 82
                 push qword MsgText2
                 ; push qword 7
                 push qword MsgPrintf2
                 call printfm
-                add rsp, (8*4)
+                add rsp, (8*5)
 
 
                 pop rbx                 ; restore external rbx
@@ -71,8 +72,8 @@ MsgTextLength   equ ($ - MsgText)
 MsgText2        db "Noooo", 0
 MsgText3        db "Yess", 0ah, 0
 
-MsgPrintf       db "Ququququ %d'%s' qwe%% rsp:%d,%d", 0ah, 0
-MsgPrintf2      db "KUKUKUuu %d'%s' qwe%% rsp:%d,%d", 0ah, 0
+MsgPrintf       db "Ququququ %d'%s' qwe%% rsp:%d,%d,%b*", 0ah, 0
+MsgPrintf2      db "KUKUKUuu %d'%s' qwe%% rsp:%d,%d,%b*", 0ah, 0
 
 STD_OUTPUT_HANDLE equ (-11)
 
