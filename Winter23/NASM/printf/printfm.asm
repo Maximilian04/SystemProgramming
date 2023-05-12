@@ -145,7 +145,7 @@ printfm:
 ;
 ; Exit:         None
 ;
-; Destroys:     rcx, rdx, r8, r9
+; Destroys:     rax rcx, rdx, r8, r9
 ;-------------------------------------------
 ; Stack frame:
 ;               ...
@@ -169,9 +169,9 @@ printChar:
 
 
 ;-------------------------------------------
-; printB - Print for %b (no rbp func)
+; printB - Print for %b
 ;-------------------------------------------
-; Entry:        r14  - value
+; Entry:        r14 - ptr to value
 ;
 ; Expects:      [rbp + hConsoleOutputOffset] = hConsoleOutput
 ;
@@ -191,18 +191,15 @@ printChar:
 ;               stored r8   [rbp - 48]
 ;               stored r9   [rbp - 56]
 ;               stored r12  [rbp - 64]
-;               stored r15  [rbp - 72]
-;               digit 1     [rbp - 73]
-;               ...
-;               digit (DIGIT_COUNT_B)
-;                           [rbp - DIGIT_OFF - i] , i = 1..n !!!
-DIGIT_OFF       equ 8*9
+;               stored r13  [rbp - 72]
+;               stored r14  [rbp - 80]
+;               stored r15  [rbp - 88]
 ;-------------------------------------------
 section .text
 printB:
         push rbp
         mov rbp, rsp                    ; Stack frame
-        push 0                          ; space for hConsoleOutput
+        push qword 0                    ; space for hConsoleOutput
         push rax                        ; store external rax to stack
         push rbx                        ; store external rbx to stack
         push rcx                        ; store external rcx to stack
@@ -210,78 +207,60 @@ printB:
         push r8                         ; store external r8  to stack
         push r9                         ; store external r9  to stack
         push r12                        ; store external r12 to stack
+        push r13                        ; store external r13 to stack
+        push r14                        ; store external r14 to stack
         push r15                        ; store external r15 to stack
-        sub rsp, 2 * DIGIT_COUNT_B
-        
-        mov rbx, [rbp]
-        mov rbx, [rbx + hConsoleOutputOffset]
-        mov [rbp + hConsoleOutputOffset], rbx
 
-        mov rbx, [r14]                  ; rbx = value
-        add r14, 8
+        mov rax, [rbp]
+        mov rax, [rax + hConsoleOutputOffset]
+        mov [rbp + hConsoleOutputOffset], rax
 
 
-        mov rcx, DIGIT_COUNT_B
+        mov r12, DigitBuffer
+        mov r13, [r14]                  ; r13 = value
+        add r14, 8                      ; next vararg
+        mov rbx, DIGIT_COUNT_B
 
-        mov r12, rbp
-        sub r12, (DIGIT_OFF + 8 * DIGIT_COUNT_B); ptr to last digit
+        mov r15, DIGIT_COUNT_B          ; r15 = last not zero index (from rbx)
 
-        mov rbx, 0
+
+        ; printChar destroys rax rcx rdx r8 r9
+
         .GetDigit:                      ; <---------------------\
-                ; mov al, bl              ;                       |
-                ; shr rbx, SHR_COUNT_B    ;                       |
-                ; and al, MASK_B          ;                       |
-                ; add al, "0"             ;                       |
+                nop                     ;                       |
+                mov rax, r13            ;                       |
+                shr r13, SHR_COUNT_B    ;                       |
                                         ;                       |
-                ; mov [r12], al           ;                       |
-                mov [r12], bl           ;                       |
+                and rax, MASK_B         ;                       |
+                jz .Zero                ; >>====\\              |
+                mov r15, rbx            ;       ||              |
+                                        ;       ||              |
+            .Zero:                      ; <<====//              |
+                add al, "0"             ;                       |
+                mov [r12], al           ;                       |
+                                        ;                       |
+                add r12, 1              ;                       |
+                dec rbx                 ;                       |
+                test rbx, rbx           ;                       |
+                jnz .GetDigit           ; >---------------------/
 
-                
-                push rbx                        ;                       |
-                push rcx                        ;                       |
+        mov rbx, DIGIT_COUNT_B + 1
+        sub rbx, r15
+        sub r12, r15
+        .OneDigit:                      ; <---------------------\
+                                        ;                       |
                 call printChar          ;                       |
-                pop rcx                        ;                       |
-                pop rbx                        ;                       |
                                         ;                       |
-                ; add r12, 8              ;                       |
-                loop .GetDigit          ; >---------------------/
+                sub r12, 1              ;                       |
+                                        ;                       |
+                dec rbx                 ;                       |
+                test rbx, rbx           ;                       |
+                jnz .OneDigit           ; >---------------------/
 
 
-
-        ; jmp .End
-        ; ; rcx = 0
-        ; ; r12 = ptr before first digit
-        ; mov rax, 0                      ; rax = skip zeroes flag
-
-        ; jmp .NextDigit                  ;       >>>>>>>>
-        ; .OneDigit:                      ; <---------------------\
-        ;         mov r15, [r12]          ; r15 = digit           |
-        ;                                 ;                       |
-        ;         test rax, rax           ;                       |
-        ;         jnz .SignifDigit        ; >>====\\              |
-        ;                                 ;       ||              |
-        ;         test r15, r15           ;       ||              |
-        ;         jz .NextDigit           ;       >>>>>>>>        |
-        ;                                 ;       ||              |
-        ;         inc rax                 ;       ||              |
-        ;     .SignifDigit:               ; <<====//              |
-        ;                                 ;                       |
-        ;         push rcx                        ;                       |
-        ;         call printChar          ;                       |
-        ;         pop rcx                        ;                       |
-        ;                                 ;                       |
-        ;     .NextDigit:                 ;       <<<<<<<<        |
-        ;         inc rcx                 ;                       |
-        ;         sub r12, 8              ;                       |
-        ;                                 ;                       |
-        ;         mov rbx, DIGIT_COUNT_B  ;                       |
-        ;         cmp rcx, rbx            ;                       |
-        ;         jl .OneDigit            ; >---------------------/
-
-        ; .End:
-
-        add rsp, 2 * DIGIT_COUNT_B
         pop r15                         ; restore external r15
+        pop r14                         ; restore external r14
+        pop r13                         ; restore external r13
         pop r12                         ; restore external r12
         pop r9                          ; restore external r9
         pop r8                          ; restore external r8
@@ -299,7 +278,7 @@ printB:
 ;-------------------------------------------
 ; printS - Print for %s (no rbp func)
 ;-------------------------------------------
-; Entry:        r14  - ptr to ptr string
+; Entry:        r14 - ptr to ptr string
 ;
 ; Expects:      [rbp + hConsoleOutputOffset] = hConsoleOutput
 ;
@@ -347,18 +326,25 @@ printS:
 
 
 ;-------------------------------------------
+; Buffers
+;-------------------------------------------
+section .bss
+
+DigitBuffer     db 64 dup(?)
+
+
+;-------------------------------------------
 ; Constants
 ;-------------------------------------------
 section .data
 
 STD_OUTPUT_HANDLE equ (-11)
 
-MASK_B          equ 127
-; MASK_B          equ 1
+MASK_B          equ 1
 MASK_O          equ 7
 MASK_X          equ 15
 DIGIT_COUNT_B   equ 64
-DIGIT_COUNT_O   equ 22
+DIGIT_COUNT_O   equ 24 ; 22 -> 24
 DIGIT_COUNT_X   equ 16
 SHR_COUNT_B     equ 1
 SHR_COUNT_O     equ 3
