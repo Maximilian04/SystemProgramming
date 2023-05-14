@@ -1,6 +1,7 @@
 #include "stdio.h"
 
 extern "C" void asmMain();
+extern "C" void callPrintfm(const char* format, ...);
 
 int main() {
     printf("No segfault) %d%d%d%d%d\n\n", 0, 0, 0, 0, 0);
@@ -8,6 +9,10 @@ int main() {
     asmMain();
     
     printf("\nNo segfault) %d%d%d%d%d\n", 7, 7, 7, 7, 7);
+
+    callPrintfm("%s-%s-%s-%s-%s", "aaa", "bbb", "ccc", "ddd", "eee");
+
+    printf("\nNo segfault) %d%d%d%d%d\n", 8, 8, 8, 8, 8);
 
     return 0;
 }
