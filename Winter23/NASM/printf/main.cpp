@@ -1,7 +1,15 @@
-#include "stdio.h"
+#include <stdio.h>
+#include <cstdarg>
 
 extern "C" void asmMain();
 extern "C" void callPrintfm(const char* format, ...);
+
+void func(int i, ...) {
+    va_list args;
+    va_start(args, i);
+    vprintf("ququ%d\n", args);
+    va_end(args);
+}
 
 int main() {
     printf("No segfault) %d%d%d%d%d\n\n", 0, 0, 0, 0, 0);
@@ -13,6 +21,8 @@ int main() {
     callPrintfm("%s-%s-%s-%s-%s", "aaa", "bbb", "ccc", "ddd", "eee");
 
     printf("\nNo segfault) %d%d%d%d%d\n", 8, 8, 8, 8, 8);
+
+    func(0, 1, 2, 3);
 
     return 0;
 }
