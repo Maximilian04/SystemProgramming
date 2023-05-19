@@ -8,6 +8,7 @@
 ;-------------------------------------------
 
 extern printfm
+extern printf                           ; stl
 
 
 ;-------------------------------------------
@@ -49,10 +50,10 @@ callPrintfm:
         ; Save all info that will be erased
 
 
-        mov [SavedStack +  8], rcx
-        mov [SavedStack + 16], rdx
-        mov [SavedStack + 24], r8
-        mov [SavedStack + 32], r9
+        mov [rsp +  8], rcx
+        mov [rsp + 16], rdx
+        mov [rsp + 24], r8
+        mov [rsp + 32], r9
         add rsp, 8
         call printfm
         sub rsp, 8

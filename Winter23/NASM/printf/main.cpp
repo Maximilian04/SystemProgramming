@@ -16,11 +16,11 @@ int main() {
 
     asmMain();
     
-    printf("\nNo segfault) %d%d%d%d%d\n", 7, 7, 7, 7, 7);
+    // printf("\nNo segfault) %d%d%d%d%d\n", 7, 7, 7, 7, 7);
 
     callPrintfm("%s-%s-%s-%s-%s", "aaa", "bbb", "ccc", "ddd", "eee");
 
-    printf("\nNo segfault) %d%d%d%d%d\n", 8, 8, 8, 8, 8);
+    // printf("\nNo segfault) %d%d%d%d%d\n", 8, 8, 8, 8, 8);
 
     // func(0, 1, 2, 3);
 
