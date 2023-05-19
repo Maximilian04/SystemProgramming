@@ -449,7 +449,9 @@ printX:
                 mov r15, rbx            ;       ||              |
                                         ;       ||              |
             .Zero:                      ; <<====//              |
-                add al, "0"             ;                       |
+                ; add al, "0"             ;                     |
+                mov al, [HexAlphabet + rax];                    |
+                                        ;                       |
                 mov [r12], al           ;                       |
                                         ;                       |
                 add r12, 1              ;                       |
@@ -718,6 +720,8 @@ DIV_BASE_D      equ 10
 
 ModeNormal      equ 0
 ModeProcent     equ 1
+
+HexAlphabet     db "0123456789abcdef"
 
 ModeCallTable   dq ..@ModeNormal
                 dq ..@ModeProcent

@@ -23,7 +23,7 @@ asmMain:
 
                 mov rcx, MsgPrintf
                 mov rdx, StringPrintf
-                mov r8, 775
+                mov r8, 1775
                 mov r9, 776
 
                 push qword "g"
@@ -38,7 +38,7 @@ asmMain:
                 push qword 778
                 push qword 777
                 push qword 776
-                push qword 775
+                push qword 1775
                 push qword StringPrintf
                 push qword MsgPrintf
                 call printfm
