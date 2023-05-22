@@ -79,18 +79,15 @@ printfm:
             ..@ModeProcent:             ;                       |
                 mov r13, ModeNormal     ;                       |
                                         ;                       |
-                mov al, "%"             ;                       |
-                cmp bl, al              ;                       |
+                cmp bl, "%"             ;                       |
                 jne .NotProcentSymb     ; >>====\\              |
                 call printChar          ;       ||              |
                 jmp .ScanNext           ;       ||      >>>>>>>>>>>>>>>>
                                         ;       ||              |
                 .NotProcentSymb:        ; <<====//              |
-                mov al, "b"             ;                       |
-                cmp bl, al              ;                       |
+                cmp bl, "b"             ;                       |
                 jl .OutOfTable          ; >>====\\              |
-                mov al, "x"             ;       ||              |
-                cmp bl, al              ;       ||              |
+                cmp bl, "x"             ;       ||              |
                 jg .OutOfTable          ; >>====\\              |
                                         ;       ||              |
                 call [ProcentCallTable + 8 * (rbx - "b")];      |
@@ -102,8 +99,7 @@ printfm:
                                         ;                       |
                                         ;!!!!!!                 |
             ..@ModeNormal:              ;                       |
-                mov al, "%"             ;                       |
-                cmp al, bl              ;                       |
+                cmp bl, "%"             ;                       |
                 jne .NotProcent         ; >>====\\              |
                 mov r13, ModeProcent    ;       ||              |
                 jmp .ScanNext           ;       ||      >>>>>>>>>>>>>>>>
@@ -280,6 +276,7 @@ SHR_COUNT_B     equ 1
 SHR_COUNT_O     equ 3
 SHR_COUNT_X     equ 4
 DIV_BASE_D      equ 10
+MASK_32BIT      equ (0ffffffffh)
 
         ; Mode table:
         ;        value  | mode
@@ -299,11 +296,13 @@ ModeCallTable   dq ..@ModeNormal
 ProcentCallTable dq printB      ; b
                 dq printC       ; c
                 dq printD       ; d
-                dq 10 dup(printChar)
+                dq ("l" - "d" - 1) dup(printChar)
+                dq printL       ; l
+                dq ("o" - "l" - 1) dup(printChar)
                 dq printO       ; o
-                dq 3 dup(printChar)
+                dq ("s" - "o" - 1) dup(printChar)
                 dq printS       ; s
-                dq 4 dup(printChar)
+                dq ("x" - "s" - 1) dup(printChar)
                 dq printX       ; x
 
 ; OUTDATED:     ----------------------------

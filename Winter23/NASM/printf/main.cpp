@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <cstdarg>
+#include <stdint.h>
 
 extern "C" void asmMain();
 extern "C" void callPrintfm(const char* format, ...);
@@ -18,7 +19,10 @@ int main() {
     
     // printf("\nNo segfault) %d%d%d%d%d\n", 7, 7, 7, 7, 7);
 
-    callPrintfm("%s-%s-%s-%s-%s", "aaa", "bbb", "ccc", "ddd", "eee");
+    callPrintfm("C(l): %s-%s-%s-%s-%s%l %s %x %d%%%c%b\n", "aaa", "bbb", "ccc", "ddd", "eee", (int64_t)(-1), "love", 3802, 100, 33, 127);
+    callPrintfm("C(d): %s-%s-%s-%s-%s%d %s %x %d%%%c%b\n", "aaa", "bbb", "ccc", "ddd", "eee", -1, "love", 3802, 100, 33, 127);
+
+    // callPrintfm("|%d| |%b|\n", (int64_t)(-1), (int64_t)(-1));
 
     // printf("\nNo segfault) %d%d%d%d%d\n", 8, 8, 8, 8, 8);
 
