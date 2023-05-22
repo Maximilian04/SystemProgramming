@@ -8,16 +8,18 @@
 	.ascii "bbb\0"
 .LC2:
 	.ascii "aaa\0"
+	.align 8
 .LC3:
-	.ascii "%s-%s-%s-%s-%s%l %s %d%%%c%b\12\0"
+	.ascii "C(l): %s-%s-%s-%s-%s%l %s %x %d%%%c%b\12\0"
 .LC4:
 	.ascii "love\0"
 .LC5:
 	.ascii "eee\0"
 .LC6:
 	.ascii "ddd\0"
+	.align 8
 .LC7:
-	.ascii "%s-%s-%s-%s-%s%d %s %d%%%c%b\12\0"
+	.ascii "C(d): %s-%s-%s-%s-%s%d %s %x %d%%%c%b\12\0"
 	.text
 	.globl	main
 	.def	main;	.scl	2;	.type	32;	.endef
@@ -36,7 +38,7 @@ main:
 	movl	$127, 88(%rsp)
 	movl	$33, 80(%rsp)
 	movl	$100, 72(%rsp)
-	movl	$30802, 64(%rsp)
+	movl	$3802, 64(%rsp)
 	leaq	.LC4(%rip), %rax
 	movq	%rax, 56(%rsp)
 	movq	$-1, 48(%rsp)
@@ -52,10 +54,10 @@ main:
 	movl	$127, 88(%rsp)
 	movl	$33, 80(%rsp)
 	movl	$100, 72(%rsp)
-	movl	$30802, 64(%rsp)
+	movl	$3802, 64(%rsp)
 	leaq	.LC4(%rip), %rax
 	movq	%rax, 56(%rsp)
-	movl	$-7, 48(%rsp)
+	movl	$-1, 48(%rsp)
 	leaq	.LC5(%rip), %rax
 	movq	%rax, 40(%rsp)
 	leaq	.LC6(%rip), %rax

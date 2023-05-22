@@ -79,18 +79,15 @@ printfm:
             ..@ModeProcent:             ;                       |
                 mov r13, ModeNormal     ;                       |
                                         ;                       |
-                mov al, "%"             ;                       |
-                cmp bl, al              ;                       |
+                cmp bl, "%"             ;                       |
                 jne .NotProcentSymb     ; >>====\\              |
                 call printChar          ;       ||              |
                 jmp .ScanNext           ;       ||      >>>>>>>>>>>>>>>>
                                         ;       ||              |
                 .NotProcentSymb:        ; <<====//              |
-                mov al, "b"             ;                       |
-                cmp bl, al              ;                       |
+                cmp bl, "b"             ;                       |
                 jl .OutOfTable          ; >>====\\              |
-                mov al, "x"             ;       ||              |
-                cmp bl, al              ;       ||              |
+                cmp bl, "x"             ;       ||              |
                 jg .OutOfTable          ; >>====\\              |
                                         ;       ||              |
                 call [ProcentCallTable + 8 * (rbx - "b")];      |
@@ -102,8 +99,7 @@ printfm:
                                         ;                       |
                                         ;!!!!!!                 |
             ..@ModeNormal:              ;                       |
-                mov al, "%"             ;                       |
-                cmp al, bl              ;                       |
+                cmp bl, "%"             ;                       |
                 jne .NotProcent         ; >>====\\              |
                 mov r13, ModeProcent    ;       ||              |
                 jmp .ScanNext           ;       ||      >>>>>>>>>>>>>>>>

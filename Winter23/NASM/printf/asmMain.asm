@@ -45,16 +45,34 @@ asmMain:
                 call printfm
                 add rsp, (8*7)
 
-                push qword -1
-                push qword -1
-                push qword MsgD
-                call printfm
-                add rsp, (8*3)
 
-                mov rcx, MsgD
-                mov rdx, -1
-                mov r8, -1
-                call callPrintfm
+; callPrintfm("%s-%s-%s-%s-%s%d %s %x %d%%%c%b\n", "aaa", "bbb", "ccc", "ddd", "eee", -1, "love", 3802, 100, 33, 127);
+
+                push qword PrintfParam12
+                push qword PrintfParam11
+                push qword PrintfParam10
+                push qword PrintfParam9
+                push qword PrintfParam8
+                push qword PrintfParam7
+                push qword PrintfParam6
+                push qword PrintfParam5
+                push qword PrintfParam4
+                push qword PrintfParam3
+                push qword PrintfParam2
+                push qword PrintfParam1
+                call printfm
+                add rsp, (8*12)
+
+                ; push qword -1
+                ; push qword -1
+                ; push qword MsgD
+                ; call printfm
+                ; add rsp, (8*3)
+
+                ; mov rcx, MsgD
+                ; mov rdx, -1
+                ; mov r8, -1
+                ; call callPrintfm
 
 
                 pop rbx                 ; restore external rbx
@@ -97,6 +115,19 @@ StringPrintf    db "Yeaa", 0
 MsgD            db "|%d| |%b|", 0ah , 0
 
 STD_OUTPUT_HANDLE equ (-11)
+
+PrintfParam1    db "Asm : %s-%s-%s-%s-%s%d %s %x %d%%%c%b", 0ah, 0
+PrintfParam2    db "aaa", 0
+PrintfParam3    db "bbb", 0
+PrintfParam4    db "ccc", 0
+PrintfParam5    db "ddd", 0
+PrintfParam6    db "eee", 0
+PrintfParam7    equ -1
+PrintfParam8    db "love", 0
+PrintfParam9    equ 3802
+PrintfParam10   equ 100
+PrintfParam11   equ 33
+PrintfParam12   equ 127
 
 ;-------------------------------------------
 ;-------------------------------------------

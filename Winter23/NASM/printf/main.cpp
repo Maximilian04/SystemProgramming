@@ -19,8 +19,8 @@ int main() {
     
     // printf("\nNo segfault) %d%d%d%d%d\n", 7, 7, 7, 7, 7);
 
-    callPrintfm("%s-%s-%s-%s-%s%l %s %d%%%c%b\n", "aaa", "bbb", "ccc", "ddd", "eee", (int64_t)(-1), "love", 30802, 100, 33, 127);
-    callPrintfm("%s-%s-%s-%s-%s%d %s %d%%%c%b\n", "aaa", "bbb", "ccc", "ddd", "eee", -7, "love", 30802, 100, 33, 127);
+    callPrintfm("C(l): %s-%s-%s-%s-%s%l %s %x %d%%%c%b\n", "aaa", "bbb", "ccc", "ddd", "eee", (int64_t)(-1), "love", 3802, 100, 33, 127);
+    callPrintfm("C(d): %s-%s-%s-%s-%s%d %s %x %d%%%c%b\n", "aaa", "bbb", "ccc", "ddd", "eee", -1, "love", 3802, 100, 33, 127);
 
     // callPrintfm("|%d| |%b|\n", (int64_t)(-1), (int64_t)(-1));
 
