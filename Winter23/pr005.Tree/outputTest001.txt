@@ -1,0 +1,25 @@
+Add 10^5      rands  : 30 ms
+Remove 5*10^4 rands  : 13 ms
+Add 7*10^4    sorted : 4606 ms
+Remove 3*10^4 sorted : 3 ms
+_____________________
+Add 10^5      rands  : 37 ms
+Remove 5*10^4 rands  : 13 ms
+Add 7*10^4    sorted : 4585 ms
+Remove 3*10^4 sorted : 3 ms
+_____________________
+Add 10^5      rands  : 37 ms
+Remove 5*10^4 rands  : 13 ms
+Add 7*10^4    sorted : 4643 ms
+Remove 3*10^4 sorted : 3 ms
+_____________________
+Add 10^5      rands  : 33 ms
+Remove 5*10^4 rands  : 13 ms
+Add 7*10^4    sorted : 4570 ms
+Remove 3*10^4 sorted : 3 ms
+_____________________
+Add 10^5      rands  : 30 ms
+Remove 5*10^4 rands  : 13 ms
+Add 7*10^4    sorted : 4308 ms
+Remove 3*10^4 sorted : 3 ms
+_____________________
