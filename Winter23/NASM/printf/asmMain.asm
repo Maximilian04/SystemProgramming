@@ -10,6 +10,7 @@
 extern printf                           ; stl
 
 extern printfm
+extern callPrintfm
 
 
 ;-------------------------------------------
@@ -43,6 +44,17 @@ asmMain:
                 push qword MsgPrintf
                 call printfm
                 add rsp, (8*7)
+
+                push qword -1
+                push qword -1
+                push qword MsgD
+                call printfm
+                add rsp, (8*3)
+
+                mov rcx, MsgD
+                mov rdx, -1
+                mov r8, -1
+                call callPrintfm
 
 
                 pop rbx                 ; restore external rbx
@@ -82,6 +94,7 @@ MsgText3        db "Yess", 0ah, 0
 MsgPrintfSimple db "Ququ string:'%s', dec:%d, dec:%d, dec:%d, dec:%d, char:%c~", 0ah, 0
 MsgPrintf       db "Ququ string:'%s', hex:%x, oct:%o, bin:%b, dec:%d, char:%c~", 0ah, 0
 StringPrintf    db "Yeaa", 0
+MsgD            db "|%d| |%b|", 0ah , 0
 
 STD_OUTPUT_HANDLE equ (-11)
 

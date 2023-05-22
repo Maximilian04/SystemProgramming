@@ -280,6 +280,7 @@ SHR_COUNT_B     equ 1
 SHR_COUNT_O     equ 3
 SHR_COUNT_X     equ 4
 DIV_BASE_D      equ 10
+MASK_32BIT      equ (0ffffffffh)
 
         ; Mode table:
         ;        value  | mode
@@ -299,7 +300,9 @@ ModeCallTable   dq ..@ModeNormal
 ProcentCallTable dq printB      ; b
                 dq printC       ; c
                 dq printD       ; d
-                dq 10 dup(printChar)
+                dq 7 dup(printChar)
+                dq printL       ; l
+                dq 2 dup(printChar)
                 dq printO       ; o
                 dq 3 dup(printChar)
                 dq printS       ; s
