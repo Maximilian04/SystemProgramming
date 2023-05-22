@@ -296,13 +296,13 @@ ModeCallTable   dq ..@ModeNormal
 ProcentCallTable dq printB      ; b
                 dq printC       ; c
                 dq printD       ; d
-                dq 7 dup(printChar)
+                dq ("l" - "d" - 1) dup(printChar)
                 dq printL       ; l
-                dq 2 dup(printChar)
+                dq ("o" - "l" - 1) dup(printChar)
                 dq printO       ; o
-                dq 3 dup(printChar)
+                dq ("s" - "o" - 1) dup(printChar)
                 dq printS       ; s
-                dq 4 dup(printChar)
+                dq ("x" - "s" - 1) dup(printChar)
                 dq printX       ; x
 
 ; OUTDATED:     ----------------------------
