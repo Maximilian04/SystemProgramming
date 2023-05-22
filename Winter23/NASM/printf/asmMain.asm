@@ -36,7 +36,7 @@ asmMain:
 
                 push qword "g"
                 push qword -778
-                push qword 777
+                push qword -777
                 push qword 776
                 push qword 1775
                 push qword StringPrintf

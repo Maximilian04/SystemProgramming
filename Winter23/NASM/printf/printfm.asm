@@ -255,7 +255,7 @@ printC:
 ;-------------------------------------------
 section .bss
 
-SignBuffer      db ?
+SignBuffer      dq ?
 DigitBuffer     db 64 dup(?)
 
 
@@ -266,8 +266,8 @@ section .data
 
 STD_OUTPUT_HANDLE equ (-11)
 
-MASK_SIGN       equ 0x8000000000000000
-MASK_POSITIVE   equ (MASK_SIGN - 1)
+; MASK_SIGN       equ -0x8000000000000000
+; MASK_POSITIVE   equ  0x7fffffffffffffff
 
 MASK_B          equ 1
 MASK_O          equ 7
@@ -291,6 +291,7 @@ ModeNormal      equ 0
 ModeProcent     equ 1
 
 HexAlphabet     db "0123456789abcdef"
+MinusAlpha      db "-"
 
 ModeCallTable   dq ..@ModeNormal
                 dq ..@ModeProcent

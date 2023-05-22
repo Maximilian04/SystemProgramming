@@ -59,6 +59,20 @@ printB:
         mov r15, DIGIT_COUNT_B          ; r15 = last not zero index (from rbx)
 
 
+        mov rax, r13
+
+        mov rcx, 1
+        shl rcx, 63                     ; MASK_SIGN
+        and rax, rcx                    ; +/-
+        mov [SignBuffer], rax
+        test rax, rax
+        jz .Positive                    ; >>====\\
+        ; mov r13, rax                  ;       ||
+        not r13                         ;       ||
+        add r13, 1                      ;       ||
+        .Positive:                      ; <<====//
+
+
         ; printChar destroys rax rcx rdx r8 r9
 
         .GetDigit:                      ; <---------------------\
@@ -78,6 +92,19 @@ printB:
                 dec rbx                 ;                       |
                 test rbx, rbx           ;                       |
                 jnz .GetDigit           ; >---------------------/
+
+
+        mov rax, [SignBuffer]
+        test rax, rax
+        jz .Plus                        ; >>====\\
+                                        ;       ||
+        mov rbx, r12                    ;       ||
+        mov r12, MinusAlpha             ;       ||
+        call printChar                  ;       ||
+        mov r12, rbx                    ;       ||
+                                        ;       ||
+        .Plus:                          ; <<====//
+
 
         mov rbx, DIGIT_COUNT_B + 1
         sub rbx, r15
@@ -166,6 +193,20 @@ printO:
         mov r15, DIGIT_COUNT_O          ; r15 = last not zero index (from rbx)
 
 
+        mov rax, r13
+
+        mov rcx, 1
+        shl rcx, 63                     ; MASK_SIGN
+        and rax, rcx                    ; +/-
+        mov [SignBuffer], rax
+        test rax, rax
+        jz .Positive                    ; >>====\\
+        ; mov r13, rax                  ;       ||
+        not r13                         ;       ||
+        add r13, 1                      ;       ||
+        .Positive:                      ; <<====//
+
+
         ; printChar destroys rax rcx rdx r8 r9
 
         .GetDigit:                      ; <---------------------\
@@ -185,6 +226,19 @@ printO:
                 dec rbx                 ;                       |
                 test rbx, rbx           ;                       |
                 jnz .GetDigit           ; >---------------------/
+
+
+        mov rax, [SignBuffer]
+        test rax, rax
+        jz .Plus                        ; >>====\\
+                                        ;       ||
+        mov rbx, r12                    ;       ||
+        mov r12, MinusAlpha             ;       ||
+        call printChar                  ;       ||
+        mov r12, rbx                    ;       ||
+                                        ;       ||
+        .Plus:                          ; <<====//
+
 
         mov rbx, DIGIT_COUNT_O + 1
         sub rbx, r15
@@ -273,6 +327,20 @@ printX:
         mov r15, DIGIT_COUNT_X          ; r15 = last not zero index (from rbx)
 
 
+        mov rax, r13
+
+        mov rcx, 1
+        shl rcx, 63                     ; MASK_SIGN
+        and rax, rcx                    ; +/-
+        mov [SignBuffer], rax
+        test rax, rax
+        jz .Positive                    ; >>====\\
+        ; mov r13, rax                  ;       ||
+        not r13                         ;       ||
+        add r13, 1                      ;       ||
+        .Positive:                      ; <<====//
+
+
         ; printChar destroys rax rcx rdx r8 r9
 
         .GetDigit:                      ; <---------------------\
@@ -294,6 +362,19 @@ printX:
                 dec rbx                 ;                       |
                 test rbx, rbx           ;                       |
                 jnz .GetDigit           ; >---------------------/
+
+
+        mov rax, [SignBuffer]
+        test rax, rax
+        jz .Plus                        ; >>====\\
+                                        ;       ||
+        mov rbx, r12                    ;       ||
+        mov r12, MinusAlpha             ;       ||
+        call printChar                  ;       ||
+        mov r12, rbx                    ;       ||
+                                        ;       ||
+        .Plus:                          ; <<====//
+
 
         mov rbx, DIGIT_COUNT_X + 1
         sub rbx, r15
@@ -381,6 +462,21 @@ printD:
 
         mov r15, DIGIT_COUNT_D          ; r15 = last not zero index (from rbx)
 
+
+        mov rax, r13
+
+        mov rcx, 1
+        shl rcx, 63                     ; MASK_SIGN
+        and rax, rcx                    ; +/-
+        mov [SignBuffer], rax
+        test rax, rax
+        jz .Positive                    ; >>====\\
+        ; mov r13, rax                  ;       ||
+        not r13                         ;       ||
+        add r13, 1                      ;       ||
+        .Positive:                      ; <<====//
+
+
         ; division:   {rdx|rax}/m64 = rax (остаток rdx)
         ; division:   {    rax}/m8  = al  (остаток ah)
         ; printChar destroys rax rcx rdx r8 r9
@@ -408,6 +504,19 @@ printD:
                 dec rbx                 ;                       |
                 test rbx, rbx           ;                       |
                 jnz .GetDigit           ; >---------------------/
+
+
+        mov rax, [SignBuffer]
+        test rax, rax
+        jz .Plus                        ; >>====\\
+                                        ;       ||
+        mov rbx, r12                    ;       ||
+        mov r12, MinusAlpha             ;       ||
+        call printChar                  ;       ||
+        mov r12, rbx                    ;       ||
+                                        ;       ||
+        .Plus:                          ; <<====//
+
 
         mov rbx, DIGIT_COUNT_D + 1
         sub rbx, r15
